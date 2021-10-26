@@ -35,8 +35,7 @@ def cart2sph(x,y,z):
     return phi, theta, radius
 
 
-def df2XYZ(df):
+def df2ZYX(df):
     "Convert the XYZ columns of a dataframe to an Nx3 array"
-    
 
-    return np.vstack([df.X, df.Y, df.Z]).transpose()
+    return np.vstack([df.Z, df.Y, df.X]).transpose()

@@ -10,7 +10,7 @@ import tqdm
 from scipy import interpolate
 import pandas as pd
 
-def get_traces(image, points, start_pts, target_pts, **kwargs):
+def get_traces(image, start_pts, target_pts, **kwargs):
     """
     Generates intensity profiles along traces defined by start points and target points.
     The profiles are interpolated from the input image with linear interpolation
@@ -89,9 +89,13 @@ def get_traces(image, points, start_pts, target_pts, **kwargs):
         # get coordinate of surface point
         surf_point = start_pts[idx] + (idx_border * sample_distance) * v
         
-        # APpend to list
+        # Append to list
         surface_points.append(surf_point)
         profiles.append(profile)
+
+    surface_points = np.asarray(surface_points)
+    if surface_points.shape[0] == 3:
+        surface_points= surface_points.transpose()
         
     if detection == 'quick_edge':
         errors = np.zeros(np.max(target_pts.shape))
@@ -99,12 +103,12 @@ def get_traces(image, points, start_pts, target_pts, **kwargs):
         
     # df = pd.DataFrame(columns=['XYZ', 'X', 'Y', 'Z', 'FitErrors', 'FitParams'])
     
-    points['XYZ'] = surface_points
-    surface_points = np.asarray(surface_points)
-    # points['X'] = surface_points[:, 0]
-    # points['Y'] = surface_points[:, 1]
-    # points['Z'] = surface_points[:, 2]
-    points['FitErrors'] = errors
-    points['FitParams'] = FitParams
+    # points['XYZ'] = surface_points
+    # surface_points = np.asarray(surface_points)
+    # # points['X'] = surface_points[:, 0]
+    # # points['Y'] = surface_points[:, 1]
+    # # points['Z'] = surface_points[:, 2]
+    # points['FitErrors'] = errors
+    # points['FitParams'] = FitParams
         
-    return points
+    return surface_points, errors, FitParams

@@ -12,6 +12,7 @@ from scipy import interpolate
 from scipy.spatial import cKDTree
 import pandas as pd
 
+from stress import utils
 from stress.utils import cart2sph, get_IQs
 
 def get_local_normals(points, **kwargs):
@@ -158,7 +159,7 @@ def resample_surface(STRESS):
 #     idx_error = [True] * N
 #     idx_fitparams = [True] * N
 
-def clean_coordinates(STRESS):
+def clean_coordinates(points, **kwargs):
     """
     Browse all coordinates and identify their respective neighbouring points within a certain radius
         1. If provided, error values from the curve fit process are used to eliminate
@@ -176,15 +177,12 @@ def clean_coordinates(STRESS):
 
     """
     
-    points = STRESS.points
-    patch_radius = STRESS.patch_radius
-    scale = STRESS.point_filter_scale
-    
-    # patch_radius = kwargs.get('patch_radius', 2)
-    # scale = kwargs.get('scale', 1.5)
+
+    patch_radius = kwargs.get('patch_radius', 2)
+    scale = kwargs.get('scale', 1.5)
     
     # get neighbours of points
-    points = get_neighbours(points, patch_radius=patch_radius)
+    neighbours, n_neighbours = get_neighbours(utils.df2ZYX(points), patch_radius=patch_radius)
     
     N = len(points)
     
@@ -292,8 +290,7 @@ def get_neighbours(points, patch_radius):
 
     Parameters
     ----------
-    points : pandas dataframe
-        dataframe with columns X, Y and Z
+    points : Nx3 array
     patch_radius : float
         range around one point within which points are counted as neighbours
 
@@ -305,18 +302,15 @@ def get_neighbours(points, patch_radius):
     
     neighbours = []
     
-    XYZ = np.vstack(points.XYZ)
-    tree = cKDTree(XYZ)
+    tree = cKDTree(points)
     
     # browse all points and append the indeces of its neighbours to a list
     for i, point in points.iterrows():
         neighbours.append(tree.query_ball_point(point.XYZ, patch_radius))
     
-    # Add the indeces of the neighbours and the number of neighbours to the dataframe
-    points['Neighbours'] = neighbours
-    points['N_neighbours'] = [len(x) for x in points['Neighbours']]
+    N_neighbours = [len(x) for x in neighbours]
     
-    return points
+    return neighbours, N_neighbours
     
     
 
