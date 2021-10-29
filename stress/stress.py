@@ -167,12 +167,6 @@ def resample_surface(image, points, center, n_refinements=2, **kwargs):
     n_refinements = kwargs.get('n_refinements', 2)
     fluorescence = kwargs.get('fluorescence', 'interior')
     
-    # Do tracing
-    points = tracing.get_traces(image, start_pts=center, target_pts=points,
-                                detection=trace_fit_method, fluorescence=fluorescence)
-    
-    # Clean up points based on neighborhood, etc
-    self.points = surface.clean_coordinates(self)
     print('\n---- Refinement-----')
     
     for i in range(n_refinements):

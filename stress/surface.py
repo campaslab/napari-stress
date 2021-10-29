@@ -5,15 +5,16 @@ Created on Tue Oct 12 13:31:56 2021
 @author: johan
 """
 
-from skimage.transform import rescale, resize
+from skimage.transform import rescale
 import numpy as np
 import tqdm
 from scipy import interpolate
 from scipy.spatial import cKDTree
-import pandas as pd
 
 from stress import utils
 from stress.utils import cart2sph, get_IQs
+
+import pandas as pd
 
 def get_local_normals(points, **kwargs):
     """
@@ -21,9 +22,9 @@ def get_local_normals(points, **kwargs):
     Calculate normal vectors for points on a curved surface
     Parameters
     ----------
-    points : TYPE
-        DESCRIPTION.
-    patch_radius : TYPE
+    points : Nx3 numpy array
+        3D coordinates of points
+    patch_radius : radius within which
         DESCRIPTION.
 
     Returns
@@ -34,16 +35,23 @@ def get_local_normals(points, **kwargs):
     
     patch_radius = kwargs.get('patch_radius', 2.5)
     
-    points = get_neighbours(points, patch_radius=patch_radius)
-    center = np.asarray([points.X.mean(), points.Y.mean(), points.Z.mean()])
+    neighbours, n_neighbours = get_neighbours(points, patch_radius=patch_radius)
+    center = np.mean(points, axis=0)
+    
+    df = pd.DataFrame(columns = ['Z', 'Y', 'X', 'neighbours', 'n_neighbours'])
+    df['Z'] = points[:, 0]
+    df['Y'] = points[:, 1]
+    df['X'] = points[:, 2]
+    df['neighbours'] = neighbours
+    df['n_neighbours'] = n_neighbours
     
     # find the patch center for each point and its neighbours
     normals = []
-    for i, point in tqdm.tqdm(points.iterrows(), desc='Finding normals'):
-        neighbours = point.Neighbours
-        x_nghb = points.iloc[neighbours].X
-        y_nghb = points.iloc[neighbours].Y
-        z_nghb = points.iloc[neighbours].Z
+    for idx, point in tqdm.tqdm(df.iterrows(), desc='Finding normals'):
+        neighbours = point.neighbours
+        x_nghb = df.iloc[neighbours].X
+        y_nghb = df.iloc[neighbours].Y
+        z_nghb = df.iloc[neighbours].Z
         
         # get the center in space of each patch
         patch_center_x = x_nghb.mean()
@@ -84,24 +92,42 @@ def get_local_normals(points, **kwargs):
         
         normals.append(nV)
     
-    points['Normals'] = normals
+    normals = np.vstack(normals)
     
-    return points
+    # Transpose ax order if not Nx3
+    if normals.shape[0] == 3:
+        normals = normals.transpose()
+    
+    return normals
     
 
-def resample_surface(STRESS):
-    
+def resample_points(points, **kwargs):
+    """
+    Resample input points on a surface to a predefined density on the surface
+
+    Parameters
+    ----------
+    points : Nx3 array
+        Input array with point coordinates in 3D
+
+    **surface_sampling_density**: designated density of points on the surface. Default = 1
+
+    Returns
+    -------
+    points : Nx3 array
+        Array with coordinates of new, resampled points
+
+    """
     # Parse input
-    points = STRESS.points
-    sampling_length = STRESS.surface_sampling_density
+    sampling_length = kwargs.get('surface_sampling_density', 1)
     
     # First find center of currently provided coordinates
-    center = STRESS.get_center()
+    center = np.mean(points, axis=0)
     
     # calculate centered coordinates
-    x = STRESS.get_x() - center[0]
-    y = STRESS.get_y() - center[1]
-    z = STRESS.get_z() - center[2]
+    x = points[:, 0] - center[0]
+    y = points[:, 1] - center[1]
+    z = points[:, 2] - center[2]
     
     _phi, _theta, _r = cart2sph(x, y, z)
     
@@ -129,20 +155,18 @@ def resample_surface(STRESS):
     y = Fy(phi, theta)
     z = Fz(phi, theta)
     
-    # Return as dataframe
-    _points = pd.DataFrame(columns=points.columns)
-    
     # Translate to non-centered coordinates
     x = x + center[0]
     y = y + center[1]
     z = z + center[2]
-    _points['X'] = x
-    _points['Y'] = y
-    _points['Z'] = z
-    _points.dropna(subset=['X', 'Y', 'Z'], axis=0, inplace=True)
-    _points['XYZ'] = list(np.vstack([_points.X, _points.Y, _points.Z]).transpose())
     
-    return _points
+    # Convert to Nx3 array
+    points = np.vstack([x, y, z]).transpose()
+    
+    # Make sure there are no nans
+    points = points[~np.isnan(points).any(axis=1), :]
+    
+    return points
     
 
 # def clean_points(STRESS):
@@ -305,8 +329,8 @@ def get_neighbours(points, patch_radius):
     tree = cKDTree(points)
     
     # browse all points and append the indeces of its neighbours to a list
-    for i, point in points.iterrows():
-        neighbours.append(tree.query_ball_point(point.XYZ, patch_radius))
+    for idx in range(points.shape[0]):
+        neighbours.append(tree.query_ball_point(points[idx], patch_radius))
     
     N_neighbours = [len(x) for x in neighbours]
     
