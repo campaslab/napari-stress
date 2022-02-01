@@ -8,6 +8,108 @@ Created on Fri Oct 15 10:31:29 2021
 import numpy as np
 import pandas
 
+from scipy.spatial import Delaunay
+
+def filter_dataframe(df, columns = [], criteria=[], **kwargs):
+    """
+    Filter a dataframe with regard to values in columns and provided criteria.
+    The rows in the dataframe that do not pass the criteria are then removed or
+    marked for removal in an additional columns
+
+    Parameters
+    ----------
+    df : pandas dataframe
+        
+    columns : list of dataframe columns: [column1, column2, ...]
+        DESCRIPTION. The default is [].
+    criteria : list of filter criteria, which can be either ['above', 'below', 'within']
+        DESCRIPTION. List of criteria by which the values in the corresponding 
+        column should be filtered.
+        
+    **inplace** default True. Removes elements that do not satisfy the filters from the dataframe.
+        False: An additional column 'pass' will be added to the dataframe .
+        
+    **scale** multiplication factor of interquartile distance: If a value exceeds
+        I75 + scale * interquartile_distance, it is considered an outlier.
+
+    Returns
+    -------
+    pandas dataframe
+
+    """
+    
+    inplace = kwargs.get('inplace', True)
+    scale = kwargs.get('scale', 1.5)
+    verbose = kwargs.get('verbose', True)
+    
+    if len(columns) != len(criteria):
+        raise Exception('Number of criteria ({len(criteria)} must match number of filtered columns ({len(columns)})! ')
+        
+    # Allocate vector referring to pass/fail of df entry
+    idx_pass = [True] * len(df)
+        
+    # iterate over all supplied filters
+    for criterion, column in zip(criteria, columns):        
+        
+        # skip column if all values are zero.
+        if np.sum(df[column]) == 0:
+            pass
+        
+        I25, median, I75, IQ = get_IQs(df[column])
+        
+        if criterion == 'above':
+            threshold = I25 - scale * IQ
+            idx_pass_crit = df[column] > threshold
+            
+            if verbose:
+                print(f'Removed {np.sum(~idx_pass_crit)} points based on {column}-criterion')
+                
+        elif criterion == 'below':
+            threshold = I25 - scale * IQ
+            idx_pass_crit = df[column] < threshold
+            
+            if verbose:
+                print(f'Removed {np.sum(~idx_pass_crit)} points based on {column}-criterion')
+                
+        elif criterion == 'within':
+            threshold_low = I25 - scale * IQ
+            threshold_upp = I75 + scale * IQ
+            idx_pass_crit = (df[column] > threshold_low) * (df[column] < threshold_upp)
+            
+            if verbose:
+                print(f'Removed {np.sum(~idx_pass_crit)} points based on {column}-criterion')
+            
+        # apply new filter to filter vector
+        idx_pass = idx_pass * idx_pass_crit
+        
+    if inplace:
+        df = df[idx_pass].reset_index(drop=True)
+    else:
+        df['pass'] = idx_pass
+        
+    return df
+            
+            
+
+def points2mesh(points):
+    """
+    Function to triangulate a mesh from a list of points.
+
+    Parameters
+    ----------
+    array : Nx3 array
+        Array holding point coordinates.
+
+    Returns
+    -------
+    mesh
+
+    """
+    
+    tri = Delaunay(points)
+    
+    return tri.simplices, tri.neighbors
+
 def get_IQs(array):
     """Calculate quantiles and interquartile distance for a given array"""
     
@@ -35,8 +137,7 @@ def cart2sph(x,y,z):
     return phi, theta, radius
 
 
-def df2XYZ(df):
+def df2ZYX(df):
     "Convert the XYZ columns of a dataframe to an Nx3 array"
-    
 
-    return np.vstack([df.X, df.Y, df.Z]).transpose()
+    return np.vstack([df.Z, df.Y, df.X]).transpose()
