@@ -4,7 +4,7 @@ from skimage.transform import rescale
 import numpy as np
 import tqdm
 from scipy import interpolate
-from scipy.spatial import cKDTree
+from scipy.spatial import cKDTree, Delaunay
 
 from ._utils import cart2sph, get_IQs
 
@@ -337,6 +337,30 @@ def get_patch(points, idx_query, center, norm=True):
     return _XYZ_rot, _Xq_rot
 
 
+def triangulate_surface(points):
+    """
+    Function to triangulate a mesh from a list of points.
+
+    Parameters
+    ----------
+    points : Nx3 array
+        Array holding point coordinates.
+
+    Returns
+    -------
+    mesh
+
+    """
+    CoM = np.mean(points, axis=0)
+
+    _phi, _theta, _r = cart2sph(points[:, 0] - CoM[0],
+                                points[:, 1] - CoM[1],
+                                points[:, 2] - CoM[2])
+
+    points_spherical = np.vstack([_phi, _theta]).transpose((1,0))
+    tri = Delaunay(points_spherical)
+
+    return tri
 
 
 def get_neighbours(points, patch_radius):
