@@ -112,9 +112,9 @@ def fit_ellipse(binary_image: np.ndarray,
            props['centroid-2'][0]]
 
     # Create coordinate grid:
-    YY, ZZ, XX = np.meshgrid(np.arange(binary_image.shape[0]),
+    ZZ, YY, XX = np.meshgrid(np.arange(binary_image.shape[0]),
                               np.arange(binary_image.shape[1]),
-                              np.arange(binary_image.shape[2]))
+                              np.arange(binary_image.shape[2]), indexing='ij')
 
     # Substract center of mass and mask
     ZZ = (ZZ.astype(float) - CoM[0]) * binary_image
