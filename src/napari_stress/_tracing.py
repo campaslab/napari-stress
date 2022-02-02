@@ -10,29 +10,46 @@ import tqdm
 from scipy import interpolate
 import pandas as pd
 
-def get_traces(image, start_pts, target_pts, **kwargs):
+def get_traces(image: np.ndarray,
+               start_pts: np.ndarray,
+               target_pts: np.ndarray,
+               sample_distance: float =  1.0,
+               detection: str = 'quick_edge',
+               fluorescence: str = 'interior') -> [np.ndarray, np.ndarray, np.ndarray]:
     """
-    Generates intensity profiles along traces defined by start points and target points.
-    The profiles are interpolated from the input image with linear interpolation
+    Generate intensity profiles along traces.
 
+    The profiles are interpolated from the input image with linear interpolation
     Parameters
     ----------
-    image : array
-        3D-image containing the raw intesity values
-    start_pts : Nx3 array
-        list of length-3 coordinate vectors that refer to the starting location of each trace.
-    target_pts : Mx3 array
-        list of length-3 coordinate vectors that refer to the target direction of each trace.
+    image : np.ndarray
+        Input intensity image from which traces will be calculated
+    start_pts : np.ndarray
+        Nx3 or 1x3 array of points that should be used as base points for trace
+        vectors. If vector is 1x3-sized, the same coordinate will be used as
+        base point for all trace vectors.
+    target_pts : np.ndarray
+        Nx3-sized array of points that are used as direction vectors for each
+        trace. Traces will be calculated along the line from the base points
+        `start_pts` towards `target_pts`
+    sample_distance : float, optional
+        Distance between sampled intensity along a trace. Default is 1.0
+    detection : str, optional
+        Detection method, can be `quick_edge` or `advanced`. The default is'quick_edge'.
+    fluorescence : str, optional
+        Fluorescence type of water droppled, can be `interior` or `surface`.
+        The default is 'interior'.
 
     Returns
     -------
-    list: List of intensity profiles
+    surface_points : np.ndarray
+        Nx3 array of points on the surface of the structure in the image.
+    errors : np.ndarray
+        Nx1 array of error values for the points on the surface.
+    FitParams : np.ndarray
+        Nx3 array with determined fit parameters if detection was set to `advanced`
+
     """
-
-    sample_distance = kwargs.get('sample_distance', 1)
-    detection = kwargs.get('detection', 'quick_edge')
-    fluorescence = kwargs.get('fluorescence', 'interior')
-
     # Do type conversion if points come from pandas array
     if type(target_pts) == pd.core.series.Series:
         target_pts = np.vstack(target_pts)
