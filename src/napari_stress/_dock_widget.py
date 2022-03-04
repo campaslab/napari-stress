@@ -7,18 +7,17 @@ see: https://napari.org/docs/dev/plugins/hook_specifications.html
 Replace code below according to your needs.
 """
 from napari_plugin_engine import napari_hook_implementation
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
 from magicgui import magic_factory
 
 import napari
-from napari.qt import create_worker
 
 import numpy as np
 import tifffile as tf
+import vedo
 
+from napari_stress._surface import reconstruct_surface
 from napari_stress._preprocess import preprocessing, fit_ellipse
 from napari_stress._tracing import get_traces
-from napari.qt.threading import thread_worker
 
 @magic_factory
 def stress_widget(viewer: napari.Viewer,
@@ -28,6 +27,11 @@ def stress_widget(viewer: napari.Viewer,
                   vsz: float = 3.99,
                   vt:float = 3,
                   N_points: np.uint16 = 256):
+    
+    image = img_layer.data
+    
+    if image.shape ==3:
+        img_layer.data = img_layer.data[None, :]  # add empty time dimension if it doesn't exist
 
     # Preprocessing
     img_layer.scale = [vt, vsz, vsy, vsx]
@@ -36,8 +40,8 @@ def stress_widget(viewer: napari.Viewer,
     scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
     n_frames = img_layer.data.shape[0]
 
-    image_resampled = viewer.add_image(image_resampled, name='Resampled image', scale=scale)
-    mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask', scale=scale)
+    image_resampled = viewer.add_image(image_resampled, name='Resampled image')
+    mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask')
 
     # Fit ellipse
     pts = np.zeros([N_points * n_frames, 4])
@@ -45,9 +49,6 @@ def stress_widget(viewer: napari.Viewer,
         _pts = fit_ellipse(binary_image=mask_resampled.data[t])
         pts[t * N_points : (t + 1) * N_points, 1:] = _pts
         pts[t * N_points : (t + 1) * N_points, 0] = t
-
-    viewer.add_points(pts, ndim=4, face_color='orange', opacity=0.4, scale=scale,
-                      edge_width=0.1, size=0.5, edge_color='white', name='Fitted elipse')
 
     # Do first tracing
     # Calculate the center of mass of determined points for every frame
@@ -62,9 +63,32 @@ def stress_widget(viewer: napari.Viewer,
         pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
         pts_surf[t * N_points : (t + 1) * N_points, 0] = t
 
-    viewer.add_points(pts_surf, ndim=4, face_color='blue', opacity=0.4, scale=scale,
+    viewer.add_points(pts_surf, ndim=4, face_color='blue', opacity=0.4,
                       edge_width=0.1, size=0.5, edge_color='white', name='Fitted surface')
+    
+    surfs = reconstruct_surface(pts_surf, dims=image_resampled.data[0].shape)
 
+    # add surfaces to viewer
+    vertices = []
+    faces = []
+    values = []
+    n_verts = 0
+    for idx, surf in enumerate(surfs):
+        t = np.ones((surf.points().shape[0], 1)) * idx
+        vertices.append(np.hstack([t, surf.points()]))
+        faces.append(n_verts + np.array(surf.faces()))
+        values.append(surf.pointdata['Mean_Curvature'])
+        
+        n_verts += surf.N()
+        
+    props = {'curvature': np.concatenate(values)}
+    viewer.add_points(np.vstack(vertices),
+                      properties=props,
+                      face_color='curvature',
+                      face_colormap='viridis',
+                      edge_width=0.1, size=0.6)
+
+    
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
@@ -74,7 +98,7 @@ def napari_experimental_provide_dock_widget():
 
 if __name__ == "__main__":
 
-    filename = r'E:\BiAPoL\Projects\napari-stress\data\synthetic3.tif'
+    filename = r'E:\BiAPoL\Shared\BiAPoLprojects\STRESS\1_first data\ExampleTifSequence-InteriorLabel-vsx_2.076um-vsz_3.998um-TimeInterval_3.00min-21timesteps.tif'
     image = tf.imread(filename)
 
     if len(image.shape) == 3:
@@ -83,9 +107,9 @@ if __name__ == "__main__":
     viewer = napari.Viewer()
     viewer.add_image(image)
 
-    vsx: float = 1
-    vsy: float = 1
-    vsz: float = 1
+    vsx: float = 2.076
+    vsy: float = 2.076
+    vsz: float = 3.99
     vt: float = 3
     N_points: np.uint16 = 256
 
@@ -98,8 +122,8 @@ if __name__ == "__main__":
     scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
     n_frames = img_layer.data.shape[0]
 
-    image_resampled = viewer.add_image(image_resampled, name='Resampled image', scale=scale)
-    mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask', scale=scale)
+    image_resampled = viewer.add_image(image_resampled, name='Resampled image')
+    mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask')
 
     # Fit ellipse
     pts = np.zeros([N_points * n_frames, 4])
@@ -107,9 +131,6 @@ if __name__ == "__main__":
         _pts = fit_ellipse(binary_image=mask_resampled.data[t])
         pts[t * N_points : (t + 1) * N_points, 1:] = _pts
         pts[t * N_points : (t + 1) * N_points, 0] = t
-
-    viewer.add_points(pts, ndim=4, face_color='orange', opacity=0.4, scale=scale,
-                      edge_width=0.1, size=0.5, edge_color='white', name='Fitted elipse')
 
     # Do first tracing
     # Calculate the center of mass of determined points for every frame
@@ -123,6 +144,15 @@ if __name__ == "__main__":
 
         pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
         pts_surf[t * N_points : (t + 1) * N_points, 0] = t
+        
+    # pts_layer = viewer.add_points(pts_surf, edge_width=0.1, size=0.5)
+    
+    surfs = reconstruct_surface(pts_surf)
+        
 
-    viewer.add_points(pts_surf, ndim=4, face_color='blue', opacity=0.4, scale=scale,
-                      edge_width=0.1, size=0.5, edge_color='white', name='Fitted surface')
+
+
+    
+    
+
+    
