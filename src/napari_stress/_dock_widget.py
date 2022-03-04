@@ -13,9 +13,8 @@ import napari
 
 import numpy as np
 import tifffile as tf
-import vedo
 
-from napari_stress._surface import reconstruct_surface
+from napari_stress._surface import reconstruct_surface, calculate_curvatures, surface2layerdata
 from napari_stress._preprocess import preprocessing, fit_ellipse
 from napari_stress._tracing import get_traces
 
@@ -26,8 +25,9 @@ def stress_widget(viewer: napari.Viewer,
                   vsy: float = 2.076,
                   vsz: float = 3.99,
                   vt:float = 3,
-                  N_points: np.uint16 = 256):
-    
+                  N_points: np.uint16 = 256,
+                  curvature_radius: float = 2):
+
     image = img_layer.data
     
     if image.shape ==3:
@@ -37,7 +37,7 @@ def stress_widget(viewer: napari.Viewer,
     img_layer.scale = [vt, vsz, vsy, vsx]
     image_resampled, mask_resampled = preprocessing(img_layer.data,
                                                     vsx=vsx, vsy=vsy, vsz=vsz)
-    scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
+    # scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
     n_frames = img_layer.data.shape[0]
 
     image_resampled = viewer.add_image(image_resampled, name='Resampled image')
@@ -63,30 +63,17 @@ def stress_widget(viewer: napari.Viewer,
         pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
         pts_surf[t * N_points : (t + 1) * N_points, 0] = t
 
-    viewer.add_points(pts_surf, ndim=4, face_color='blue', opacity=0.4,
-                      edge_width=0.1, size=0.5, edge_color='white', name='Fitted surface')
-    
+    # Reconstruct the surface and calculate curvatures
     surfs = reconstruct_surface(pts_surf, dims=image_resampled.data[0].shape)
+    surfs = calculate_curvatures(surfs, radius=curvature_radius)
 
-    # add surfaces to viewer
-    vertices = []
-    faces = []
-    values = []
-    n_verts = 0
-    for idx, surf in enumerate(surfs):
-        t = np.ones((surf.points().shape[0], 1)) * idx
-        vertices.append(np.hstack([t, surf.points()]))
-        faces.append(n_verts + np.array(surf.faces()))
-        values.append(surf.pointdata['Mean_Curvature'])
-        
-        n_verts += surf.N()
-        
-    props = {'curvature': np.concatenate(values)}
-    viewer.add_points(np.vstack(vertices),
-                      properties=props,
-                      face_color='curvature',
-                      face_colormap='viridis',
-                      edge_width=0.1, size=0.6)
+    # Add to viewer
+    surf_data = surface2layerdata(surfs)
+    viewer.add_surface(surf_data,
+                       colormap='viridis',
+                       contrast_limits=(np.quantile(surf_data[2], 0.2),
+                                        np.quantile(surf_data[2], 0.8))
+                       )
 
     
 
@@ -96,63 +83,87 @@ def napari_experimental_provide_dock_widget():
     return [stress_widget]
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    filename = r'E:\BiAPoL\Shared\BiAPoLprojects\STRESS\1_first data\ExampleTifSequence-InteriorLabel-vsx_2.076um-vsz_3.998um-TimeInterval_3.00min-21timesteps.tif'
-    image = tf.imread(filename)
+#     filename = r'D:\Documents\Biapol\Shared\BiAPoLprojects\STRESS\1_first data\ExampleTifSequence-InteriorLabel-vsx_2.076um-vsz_3.998um-TimeInterval_3.00min-21timesteps.tif'
+#     image = tf.imread(filename)
 
-    if len(image.shape) == 3:
-        image = image[None, :]
+#     if len(image.shape) == 3:
+#         image = image[None, :]
 
-    viewer = napari.Viewer()
-    viewer.add_image(image)
+#     viewer = napari.Viewer()
+#     viewer.add_image(image)
 
-    vsx: float = 2.076
-    vsy: float = 2.076
-    vsz: float = 3.99
-    vt: float = 3
-    N_points: np.uint16 = 256
+#     vsx: float = 2.076
+#     vsy: float = 2.076
+#     vsz: float = 3.99
+#     vt: float = 3
+#     N_points: np.uint16 = 256
+    
+#     curv_method = 'Gauss_Curvature'
 
-    img_layer = viewer.layers[0]
+#     img_layer = viewer.layers[0]
 
-    # Preprocessing
-    img_layer.scale = [vt, vsz, vsy, vsx]
-    image_resampled, mask_resampled = preprocessing(img_layer.data,
-                                                    vsx=vsx, vsy=vsy, vsz=vsz)
-    scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
-    n_frames = img_layer.data.shape[0]
+#     # Preprocessing
+#     img_layer.scale = [vt, vsz, vsy, vsx]
+#     image_resampled, mask_resampled = preprocessing(img_layer.data,
+#                                                     vsx=vsx, vsy=vsy, vsz=vsz)
+#     scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
+#     n_frames = img_layer.data.shape[0]
 
-    image_resampled = viewer.add_image(image_resampled, name='Resampled image')
-    mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask')
+#     image_resampled = viewer.add_image(image_resampled, name='Resampled image')
+#     mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask')
 
-    # Fit ellipse
-    pts = np.zeros([N_points * n_frames, 4])
-    for t in range(image_resampled.data.shape[0]):
-        _pts = fit_ellipse(binary_image=mask_resampled.data[t])
-        pts[t * N_points : (t + 1) * N_points, 1:] = _pts
-        pts[t * N_points : (t + 1) * N_points, 0] = t
+#     # Fit ellipse
+#     pts = np.zeros([N_points * n_frames, 4])
+#     for t in range(image_resampled.data.shape[0]):
+#         _pts = fit_ellipse(binary_image=mask_resampled.data[t])
+#         pts[t * N_points : (t + 1) * N_points, 1:] = _pts
+#         pts[t * N_points : (t + 1) * N_points, 0] = t
 
-    # Do first tracing
-    # Calculate the center of mass of determined points for every frame
-    pts_surf = np.zeros([N_points * n_frames, 4])
-    for t in range(n_frames):
-        _pts = pts[t * N_points : (t + 1) * N_points, :]
-        CoM = _pts.mean(axis=0)
+#     # Do first tracing
+#     # Calculate the center of mass of determined points for every frame
+#     pts_surf = np.zeros([N_points * n_frames, 4])
+#     for t in range(n_frames):
+#         _pts = pts[t * N_points : (t + 1) * N_points, :]
+#         CoM = _pts.mean(axis=0)
 
-        _pts_surf, _err, _FitP = get_traces(image = image_resampled.data[t],
-                                            start_pts=CoM[1:], target_pts=_pts[:, 1:])
+#         _pts_surf, _err, _FitP = get_traces(image = image_resampled.data[t],
+#                                             start_pts=CoM[1:], target_pts=_pts[:, 1:])
 
-        pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
-        pts_surf[t * N_points : (t + 1) * N_points, 0] = t
+#         pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
+#         pts_surf[t * N_points : (t + 1) * N_points, 0] = t
+    
+#     surfs = reconstruct_surface(pts_surf, dims=image_resampled.data[0].shape,
+#                                 curv_method=curv_method)
+#     surfs = calculate_curvature(surfs, radius=2)
+    
+#     # add surfaces to viewer
+#     vertices = []
+#     faces = []
+#     values = []
+#     n_verts = 0
+#     for idx, surf in enumerate(surfs):
+#         # Add time dimension to points coordinate array
+#         t = np.ones((surf.points().shape[0], 1)) * idx
+#         vertices.append(np.hstack([t, surf.points()]))
         
-    # pts_layer = viewer.add_points(pts_surf, edge_width=0.1, size=0.5)
-    
-    surfs = reconstruct_surface(pts_surf)
+#         # Offset indices in faces list by previous amount of points
+#         faces.append(n_verts + np.array(surf.faces()))
+#         values.append(surf.pointdata['Spherefit_curvature'])
         
-
-
-
+#         # Add number of vertices in current surface to n_verts
+#         n_verts += surf.N()
+        
+#     props = {'curvature': np.concatenate(values)}
+#     viewer.add_points(np.vstack(vertices),
+#                       properties=props,
+#                       face_color='curvature',
+#                       face_colormap='viridis',
+#                       edge_width=0.1, size=0.6)
     
-    
-
-    
+#     viewer.add_surface((
+#         np.vstack(vertices),
+#         np.vstack(faces),
+#         np.concatenate(values)
+#         ))
