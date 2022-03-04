@@ -6,37 +6,127 @@ from scipy.spatial import cKDTree, Delaunay
 from ._utils import cart2sph
 
 import vedo
-
+import tqdm
+import typing
 
 
 def reconstruct_surface(points: np.ndarray,
                         dims: np.ndarray,
                         n_smooth:int = 5) -> list:
-    
+
     # Check if data is 4D and reformat into list of arrays for every frame
     if points.shape[1] == 4:
         timepoints = np.unique(points[:, 0])
         _points = [points[np.where(points[:, 0] == i)][:, 1:] for i in timepoints]
     else:
         _points = [points]        
-        
-    surfs = []
-    for pts in _points:
-        
+
+    surfs = [None] * len(_points)
+    for idx, pts in tqdm.tqdm(enumerate(_points), desc='Reconstructing surfaces',
+                              total=len(_points)):
+
         # Get points and filter
-        pts4vedo = vedo.Points(pts)
+        pts4vedo = vedo.Points(pts).clean(tol=0.02).densify(targetDistance=0.25)
         pts_filtered = vedo.pointcloud.removeOutliers(pts4vedo, radius=4)
+
+        # Smooth surface with moving least squares
+        pts_filtered.smoothMLS2D(radius=2)
         
         # Reconstruct surface
         surf = vedo.pointcloud.recoSurface(pts_filtered, dims=dims)
-        surf.clean(tol=0.05).smooth().computeNormals()
-        
-        # Calculate curvature
-        surf.addCurvatureScalars(method=1)  #0-gaussian, 1-mean, 2-max, 3-min curvature.
-        
-        surfs.append(surf.clone())
+        surf.smooth().computeNormals()
+
+        surfs[idx] = surf
     
     return surfs
+
+def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
+                      value_key: str = 'Spherefit_curvature') -> tuple:
+    """
+    Convert vedo surface object to napari-diggestable data format.
+
+    Parameters
+    ----------
+    surfs : typing.Union[vedo.mesh.Mesh, list]
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    if isinstance(surfs, vedo.mesh.Mesh):
+        surfs = [surfs]
+
+    # add surfaces to viewer
+    vertices = []
+    faces = []
+    values = []
+    n_verts = 0
+    for idx, surf in enumerate(surfs):
+        # Add time dimension to points coordinate array
+        t = np.ones((surf.points().shape[0], 1)) * idx
+        vertices.append(np.hstack([t, surf.points()]))
+        
+        # Offset indices in faces list by previous amount of points
+        faces.append(n_verts + np.array(surf.faces()))
+        values.append(surf.pointdata[value_key])
+        
+        # Add number of vertices in current surface to n_verts
+        n_verts += surf.N()
+        
+    vertices = np.vstack(vertices)
+    faces = np.vstack(faces)
+    values = np.concatenate(values)
+    
+    return (vertices, faces, values)
+
+
+def calculate_curvatures(surf: typing.Union[vedo.mesh.Mesh, list],
+                         radius: float = 1) -> list:
+    """
+    Calculate the curvature for each point on a surface.
+    
+    This function iterates over every vertex of and retrieves all points within
+    a defined neighborhood range. A sphere is then fitted to these patches. The
+    local curvature then corresponds to the squared inverse radius (1/r**2) of
+    the sphere.
+
+    Parameters
+    ----------
+    surf : vedo.mesh
+        DESCRIPTION.
+    radius : int, optional
+        Radius within which points will be considered to be neighbors.
+        The default is 1.
+
+    Returns
+    -------
+    surf : list of vedo mesh objects. 
+    
+        The curvature of each surface in the list is stored in 
+        surface.pointdata['Spherefit_curvature'].
+
+    See also
+    --------
+    https://github.com/marcomusy/vedo/issues/610
+    """
+    # Turn input into a list if a single surface was passed
+    if isinstance(surf, vedo.mesh.Mesh):
+        surf = [surf]
+    
+    for _surf in surf:
+        curvature = np.zeros(_surf.N())  # allocate
+        for idx in tqdm.tqdm(range(_surf.N()), desc='Fitting surface'):
+            patch = _surf.closestPoint(_surf.points()[idx], radius=radius)
+            patch = vedo.pointcloud.Points(patch)  # make it a vedo object
+            s = vedo.pointcloud.fitSphere(patch)
+            
+            curvature[idx] = 1/(s.radius)**2
+            
+        _surf.pointdata['Spherefit_curvature'] = curvature
+    
+    return surf    
 
 
 def get_patch(points, idx_query, center, norm=True):
