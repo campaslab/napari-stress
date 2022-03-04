@@ -59,33 +59,22 @@ def preprocessing(image: np.ndarray,
 
     return image_resampled, mask_resampled
 
-def resample(image, vsx, vsy, vsz, res_mode='high'):
-    """
-    Resamples an image with anistropic voxels of size vsx, vsy and vsz to isotropic
-    voxel size of smallest or largest resolution
-    """
-    # choose final voxel size
-    if res_mode == 'high':
-        vs = np.min([vsx, vsy, vsz])
 
-    elif res_mode == 'low':
-        vs = np.max([vsx, vsy, vsz])
 
-    factor = np.asarray([vsz, vsy, vsx])/vs
-    image_rescaled = rescale(image, factor, anti_aliasing=True)
+def fit_ellipse_4D(binary_image: np.ndarray,
+                   n_rays: np.uint16):
 
-    return image_rescaled
+    n_frames = binary_image.shape[0]
+    print(binary_image.shape)
 
-def threshold(image, threshold = 0.2, **kwargs):
+    # Fit ellipse
+    pts = np.zeros([n_rays * n_frames, 4])
+    for t in range(n_frames):
+        _pts = fit_ellipse(binary_image=binary_image[t])
+        pts[t * n_rays : (t + 1) * n_rays, 1:] = _pts
+        pts[t * n_rays : (t + 1) * n_rays, 0] = t
 
-    sigma = kwargs.get('sigma', 1)
-
-    # Masking
-    image = filters.gaussian(image, sigma=sigma)
-    mask = measure.label(image > threshold*image.max())
-
-    return mask
-
+    return pts
 
 def fit_ellipse(binary_image: np.ndarray,
                 n_samples: np.uint16 = 256) -> np.ndarray:
@@ -141,6 +130,33 @@ def fit_ellipse(binary_image: np.ndarray,
     pts = fibonacci_sphere(semiAxesLengths, R.T, CoM, samples=n_samples)
 
     return np.asarray(pts)
+
+def resample(image, vsx, vsy, vsz, res_mode='high'):
+    """
+    Resamples an image with anistropic voxels of size vsx, vsy and vsz to isotropic
+    voxel size of smallest or largest resolution
+    """
+    # choose final voxel size
+    if res_mode == 'high':
+        vs = np.min([vsx, vsy, vsz])
+
+    elif res_mode == 'low':
+        vs = np.max([vsx, vsy, vsz])
+
+    factor = np.asarray([vsz, vsy, vsx])/vs
+    image_rescaled = rescale(image, factor, anti_aliasing=True)
+
+    return image_rescaled
+
+def threshold(image, threshold = 0.2, **kwargs):
+
+    sigma = kwargs.get('sigma', 1)
+
+    # Masking
+    image = filters.gaussian(image, sigma=sigma)
+    mask = measure.label(image > threshold*image.max())
+
+    return mask
 
 # def fit_curvature():
 #     """
