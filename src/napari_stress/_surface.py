@@ -117,121 +117,20 @@ def calculate_curvatures(surf: typing.Union[vedo.mesh.Mesh, list],
     
     for _surf in surf:
         curvature = np.zeros(_surf.N())  # allocate
+        residues = np.zeros(_surf.N())  # allocate
         for idx in tqdm.tqdm(range(_surf.N()), desc='Fitting surface'):
             patch = _surf.closestPoint(_surf.points()[idx], radius=radius)
             patch = vedo.pointcloud.Points(patch)  # make it a vedo object
             s = vedo.pointcloud.fitSphere(patch)
             
             curvature[idx] = 1/(s.radius)**2
+            residues[idx] = s.residue
             
         _surf.pointdata['Spherefit_curvature'] = curvature
+        _surf.pointdata['residues'] = residues
     
     return surf    
 
-
-def get_patch(points, idx_query, center, norm=True):
-    """
-    Transforms a patch consisting of a query point and its neighbours into a
-    coordinate system with the surface normal pointing towards direction (0, 0, 1) (upwards)
-
-    Parameters
-    ----------
-    points : pandas array with all points on the surface.
-        Must have properties XYZ and Normals
-    idx_query : int
-        index of the point in the dataframe that is queried. The neighbourhood of this
-        point will be transformed into a coordinate system with the normal vector being (0,0,1).
-    center : length-3 array
-        coordinates of dropplet center. Used to determine the orientation of the normal vector
-
-    Returns
-    -------
-    Nx3 numpy array
-
-    """
-
-    XYZ = np.vstack(points.loc[points.Neighbours[idx_query]].XYZ)
-    ctr_patch = np.asarray([XYZ.mean(axis=0)]).repeat(XYZ.shape[0], axis=0)
-    Xq = points.XYZ.loc[idx_query]
-
-    # center coordinates (points and query point)
-    _XYZ = XYZ - ctr_patch
-    ctr_Xq = Xq - ctr_patch[0]
-
-    # get orientation matrix
-    S = 1/len(_XYZ) *np.dot(_XYZ.conjugate().T, _XYZ)
-    D, R =  np.linalg.eig(S)  # R is orientation matrix
-
-    # Transform to new coordinate frame
-    _XYZ_rot = np.dot(_XYZ, R)
-    _Xq_rot = np.dot(ctr_Xq, R)
-
-    # Make sure z-normal points upwards
-    _S = 1/len(_XYZ) *np.dot(_XYZ_rot.conjugate().T, _XYZ_rot)
-    D, R =  np.linalg.eig(_S)
-
-    # If normal is pointing to (0,0,-1), flip orientation upside-down
-    if np.sum(R[:, 2]) < 0:
-        R_flip  = np.asarray([[-1, 0, 0], [0, -1, 0], [0, 0, 1]])
-        _XYZ_rot = np.dot(_XYZ_rot, R_flip)
-        _Xq_rot = np.dot(_Xq_rot, R_flip)
-
-    return _XYZ_rot, _Xq_rot
-
-
-def triangulate_surface(points):
-    """
-    Function to triangulate a mesh from a list of points.
-
-    Parameters
-    ----------
-    points : Nx3 array
-        Array holding point coordinates.
-
-    Returns
-    -------
-    mesh
-
-    """
-    CoM = np.mean(points, axis=0)
-
-    _phi, _theta, _r = cart2sph(points[:, 0] - CoM[0],
-                                points[:, 1] - CoM[1],
-                                points[:, 2] - CoM[2])
-
-    points_spherical = np.vstack([_phi, _theta]).transpose((1,0))
-    tri = Delaunay(points_spherical)
-
-    return tri
-
-
-def get_neighbours(points, patch_radius):
-    """
-    Find neighbours of each point in 3D within a certain radius
-
-    Parameters
-    ----------
-    points : Nx3 array
-    patch_radius : float
-        range around one point within which points are counted as neighbours
-
-    Returns
-    -------
-    list of indeces that refer to the indices of neighbour points for every point.
-
-    """
-
-    neighbours = []
-
-    tree = cKDTree(points)
-
-    # browse all points and append the indeces of its neighbours to a list
-    for idx in range(points.shape[0]):
-        neighbours.append(tree.query_ball_point(points[idx], patch_radius))
-
-    N_neighbours = [len(x) for x in neighbours]
-
-    return neighbours, N_neighbours
 
 
 def fibonacci_sphere(semiAxesLengths, rot_matrix, center, samples=2**8):
