@@ -55,6 +55,7 @@ class stress_widget(QWidget):
 
     def run(self):
 
+        # Retrieve config parameters
         img_layer = self.image_select.value
         vsx = self.spinbox_vsx.value()
         vsy = self.spinbox_vsy.value()
@@ -72,11 +73,10 @@ class stress_widget(QWidget):
         # Preprocessing: Mask image and fit ellipse
         image_resampled, mask_resampled = preprocessing(img_layer.data,
                                                         vsx, vsy, vsz)
-
         pts_ellipse = fit_ellipse_4D(mask_resampled, n_rays=n_rays)
 
+        # Add intermediary image data to viewer if desired
         if self.checkbox_verbose.checkState():
-
             self.viewer.add_image(image_resampled)
             self.viewer.add_labels(mask_resampled)
             self.viewer.add_points(pts_ellipse, face_color='magenta', size=0.5, edge_width=0.1)
