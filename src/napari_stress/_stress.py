@@ -50,6 +50,8 @@ class stress_widget(QWidget):
         self.installEventFilter(self)
 
         self.StartButton.clicked.connect(self.run)
+        
+        self.surfs = None
 
     def run(self):
 
@@ -92,21 +94,35 @@ class stress_widget(QWidget):
             pts_surf[t * n_rays : (t + 1) * n_rays, 1:] = _pts_surf
             pts_surf[t * n_rays : (t + 1) * n_rays, 0] = t
 
-        print(pts_surf)
-
         # Reconstruct the surface and calculate curvatures
-        surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape)
-        surfs = calculate_curvatures(surfs, radius=curvature_radius)
+        self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape)
+        self.surfs = calculate_curvatures(self.surfs, radius=curvature_radius)
 
         # Add to viewer
-        surf_data = surface2layerdata(surfs)
-        self.viewer.add_surface(surf_data,
-                            colormap='viridis',
-                            contrast_limits=(np.quantile(surf_data[2], 0.2),
-                                            np.quantile(surf_data[2], 0.8))
-                            )
+        surf_data = surface2layerdata(self.surfs)
+        self.surface_layer = self.viewer.add_surface(surf_data,
+                                                     colormap='viridis',
+                                                     contrast_limits=(np.quantile(surf_data[2], 0.2),
+                                                                      np.quantile(surf_data[2], 0.8))
+                                                     )
+        
+        # Turn on visualization layer combobox
+        print(list(self.surfs[0].pointdata.keys()))
+        self.combobox_vis_layers.setEnabled(True)
+        self.combobox_vis_layers.addItems(list(self.surfs[0].pointdata.keys()).remove('Normals'))
+        self.combobox_vis_layers
+        
+        self.combobox_vis_layers.currentIndexChanged.connect(self.change_visualization_layer)
 
 
+    def change_visualization_layer(self):
+        "Change the values encoded in the surface color to different layer"
+        key = self.combobox_vis_layers.currentText()
+        layerdata = surface2layerdata(self.surfs, key)
+        
+        self.surface_layer.data = layerdata
+        self.surface_layer.contrast_limits = [np.quantile(layerdata[2], 0.2),
+                                              np.quantile(layerdata[2], 0.8)]
 
 
     def eventFilter(self, obj: QObject, event: QEvent):
