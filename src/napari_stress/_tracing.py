@@ -9,6 +9,58 @@ import numpy as np
 import tqdm
 from scipy import interpolate
 import pandas as pd
+import vedo
+from joblib import Parallel, delayed
+import typing
+
+from ._utils import pointcloud_to_vertices4D
+
+def get_traces_4d(image: np.ndarray,
+                  start_pts: list,
+                  target_pts: list,
+                  sample_distance: float = 1.0,
+                  detection = 'quick_edge',
+                  fluorescence = 'interior',
+                  num_threads: int = -1) -> list:
+    
+    # Parse and check inputs
+    assert len(image.shape) == 4
+        
+    if isinstance(target_pts[0], vedo.pointcloud.Points):
+        target_pts = [pt.points() for pt in target_pts]
+        
+    if isinstance(start_pts[0], vedo.pointcloud.Points):
+        start_pts = [pt.points() for pt in start_pts]
+    
+    # define task to be parallelized
+    def task(image, start_pts, target_pts, sample_distace, detection, fluorescence):
+        return get_traces(image, start_pts, target_pts, 
+                          sample_distance=sample_distance,
+                          detection=detection,
+                          fluorescence=fluorescence)   
+
+    n_frames = image.shape[0]
+    args = list(zip([image[t] for t in range(n_frames)],
+                    start_pts, target_pts,
+                    [sample_distance] * n_frames,
+                    [detection]* n_frames,
+                    [fluorescence] * n_frames))
+    
+    # Execute parallel calculation
+    results = Parallel(n_jobs=num_threads)(delayed(task)(*arg) for arg in args)
+    
+    # Parse outputs
+    pts = []
+    for res in results:
+        pt = vedo.pointcloud.Points(res['points'])
+        for key in res.keys():
+            pt.pointdata[key] = res[key]
+        pts.append(pt)
+        
+        print(list(pt.pointdata.keys()))
+        
+    return pts
+        
 
 def get_traces(image: np.ndarray,
                start_pts: np.ndarray,
@@ -74,7 +126,7 @@ def get_traces(image: np.ndarray,
     surface_points = []
 
     # Iterate over all provided target points
-    for idx in tqdm.tqdm(range(target_pts.shape[0]), desc='Shooting rays: '):
+    for idx in range(target_pts.shape[0]):
 
         profile = []
         r = 0
@@ -119,4 +171,4 @@ def get_traces(image: np.ndarray,
         FitParams = np.zeros(np.max(target_pts.shape))
 
 
-    return surface_points, errors, FitParams
+    return {'points': surface_points, 'errors': errors, 'fitparams': FitParams}
