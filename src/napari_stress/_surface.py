@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from scipy.spatial import cKDTree, Delaunay
+# from scipy.spatial import cKDTree, Delaunay
 
-from ._utils import cart2sph
+from ._utils import pointcloud_to_vertices4D
 
 import vedo
 import tqdm
 import typing
 
 
-def reconstruct_surface(points: np.ndarray,
+def reconstruct_surface(points: typing.Union[np.ndarray, list],
                         dims: np.ndarray,
                         n_smooth:int = 5) -> list:
 
+    if isinstance(points, list):
+        points = pointcloud_to_vertices4D(points)
+    
     # Check if data is 4D and reformat into list of arrays for every frame
     if points.shape[1] == 4:
         timepoints = np.unique(points[:, 0])
