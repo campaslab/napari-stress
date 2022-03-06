@@ -39,18 +39,14 @@ def reconstruct_surface(points: typing.Union[np.ndarray, list],
         surf = vedo.pointcloud.recoSurface(pts_filtered, dims=dims)
         surf.smooth(niter=n_smooth)
         
-        print(f'Number of points before adjustment: {surf.N()}')
         surf = adjust_surface_density(surf, density_target=surf_density)
-        print(f'Number of points after adjustment: {surf.N()}')
         surfs[idx] = surf
     
     return surfs
 
 def adjust_surface_density(surf: vedo.mesh.Mesh,
                            density_target: float) -> vedo.mesh.Mesh:
-    print(density_target)
     n_vertices_target = int(surf.area() * density_target)
-    print(n_vertices_target)
     
     if surf.N() > n_vertices_target:
         surf.decimate(N=n_vertices_target)
@@ -94,9 +90,14 @@ def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
         # Add number of vertices in current surface to n_verts
         n_verts += surf.N()
         
-    vertices = np.vstack(vertices)
-    faces = np.vstack(faces)
-    values = np.concatenate(values)
+    if len(vertices) > 1:
+        vertices = np.vstack(vertices)
+        faces = np.vstack(faces)
+        values = np.concatenate(values)
+    else:
+        vertices = vertices[0]
+        faces = faces[0]
+        values = values[0]
     
     return (vertices, faces, values)
 
