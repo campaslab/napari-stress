@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-# from scipy.spatial import cKDTree, Delaunay
 
 from ._utils import pointcloud_to_vertices4D
 
@@ -12,7 +11,8 @@ import typing
 
 def reconstruct_surface(points: typing.Union[np.ndarray, list],
                         dims: np.ndarray,
-                        n_smooth:int = 5) -> list:
+                        surf_density: float = 10.0,
+                        n_smooth:int = 15) -> list:
 
     if isinstance(points, list):
         points = pointcloud_to_vertices4D(points)
@@ -32,16 +32,32 @@ def reconstruct_surface(points: typing.Union[np.ndarray, list],
         pts4vedo = vedo.Points(pts).clean(tol=0.02).densify(targetDistance=0.25)
         pts_filtered = vedo.pointcloud.removeOutliers(pts4vedo, radius=4)
 
-        # Smooth surface with moving least squares
+        # # Smooth surface with moving least squares
         pts_filtered.smoothMLS2D(radius=2)
         
         # Reconstruct surface
         surf = vedo.pointcloud.recoSurface(pts_filtered, dims=dims)
-        surf.smooth().computeNormals()
-
+        surf.smooth(niter=n_smooth)
+        
+        print(f'Number of points before adjustment: {surf.N()}')
+        surf = adjust_surface_density(surf, density_target=surf_density)
+        print(f'Number of points after adjustment: {surf.N()}')
         surfs[idx] = surf
     
     return surfs
+
+def adjust_surface_density(surf: vedo.mesh.Mesh,
+                           density_target: float) -> vedo.mesh.Mesh:
+    print(density_target)
+    n_vertices_target = int(surf.area() * density_target)
+    print(n_vertices_target)
+    
+    if surf.N() > n_vertices_target:
+        surf.decimate(N=n_vertices_target)
+    else:
+        surf.subdivide().decimate(N=n_vertices_target)
+        
+    return surf
 
 def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
                       value_key: str = 'Spherefit_curvature') -> tuple:
@@ -132,8 +148,7 @@ def calculate_curvatures(surf: typing.Union[vedo.mesh.Mesh, list],
         _surf.pointdata['Spherefit_curvature'] = curvature
         _surf.pointdata['residues'] = residues
     
-    return surf    
-
+    return surf       
 
 
 def fibonacci_sphere(semiAxesLengths, rot_matrix, center, samples=2**8):
