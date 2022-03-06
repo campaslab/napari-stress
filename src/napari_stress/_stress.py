@@ -20,14 +20,13 @@ from napari_tools_menu import register_dock_widget
 
 from napari_stress._surface import reconstruct_surface, calculate_curvatures, surface2layerdata
 from napari_stress._preprocess import preprocessing, fit_ellipse
-from napari_stress._tracing import get_traces, get_traces_4d
+from napari_stress._tracing import get_traces_4d
 from napari_stress._utils import (pointcloud_to_vertices4D,
                                   vertices4d_to_pointcloud)
 
-from qtpy.QtWidgets import QWidget
+from qtpy.QtWidgets import QWidget, QMessageBox, QPushButton
 from qtpy.QtCore import QEvent, QObject
 from qtpy import uic
-
 
 @register_dock_widget(
     menu="Measurement > Measure curvature (stress)"
@@ -47,6 +46,7 @@ class stress_widget(QWidget):
         self.StartButton.clicked.connect(self.run)
         
         self.surfs = None
+        self.max_vertices = 10000  # surfaces should not have more than this number of vertices
 
     def run(self):
         
@@ -90,7 +90,15 @@ class stress_widget(QWidget):
                                  pts_ellipse)
 
         # Reconstruct the surface and calculate curvatures
-        self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape)
+        print(self.spinbox_vertex_density.value())
+        print(type(self.spinbox_vertex_density.value()))
+        self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape,
+                                         surf_density=self.spinbox_vertex_density.value())
+        
+        # Check if number of points exceeds safe limits
+        if self.has_excessive_surface_size(): return 0
+        
+        # Calculate curvatures
         self.surfs = calculate_curvatures(self.surfs, radius=curvature_radius)
 
         # Add to viewer
@@ -101,14 +109,41 @@ class stress_widget(QWidget):
                                                                       np.quantile(surf_data[2], 0.8))
                                                       )
         
-        # Turn on visualization layer combobox
-        self.combobox_vis_layers.setEnabled(True)
-        self.combobox_vis_layers.Clear()
-        self.combobox_vis_layers.addItems(list(self.surfs[0].pointdata.keys()))
+        # Turn on visualization layer widgets
+        self.groupBox_visualization.setEnabled(True)
+        self.combobox_vis_layers.clear()
+        self.combobox_vis_layers.addItems([x for x in list(self.surfs[0].pointdata.keys()) if x != ' Normals'])
         self.combobox_vis_layers
         
+        # Connect widgets when all computation is done
         self.combobox_vis_layers.currentIndexChanged.connect(self.change_visualization_layer)
+        self.checkBox_show_normals.stateChanged .connect(self.show_normals)
 
+    def has_excessive_surface_size(self) -> bool:
+        "Check whether the current surface has too many points."
+        
+        if self.surfs is None: return True
+
+        density = self.spinbox_vertex_density.value()
+        n_vertices = np.array([surf.N() for surf in self.surfs])
+        
+        if any(n_vertices > self.max_vertices):
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setWindowTitle("Warning")
+            msgBox.setText(f"The chosen vertex density on the surface ({density}) " + 
+                           f"would lead to a high number of vertices (n = {max(n_vertices)}). " +
+                           "Consider lowering the vertex density.")
+            msgBox.addButton(QPushButton('Proceed'), QMessageBox.YesRole)
+            msgBox.addButton(QPushButton('Abort'), QMessageBox.NoRole)
+            
+            msgBox.exec()
+            reply = msgBox.buttonRole(msgBox.clickedButton())
+            
+            if reply == QMessageBox.YesRole:
+                return False
+            else:
+                return True
 
     def change_visualization_layer(self):
         "Change the values encoded in the surface color to different layer"
@@ -122,70 +157,26 @@ class stress_widget(QWidget):
         self.surface_layer.data = layerdata
         self.surface_layer.contrast_limits = [np.quantile(layerdata[2], 0.2),
                                               np.quantile(layerdata[2], 0.8)]
-
+        
+    def show_normals(self):
+        
+        if self.surfs is None:
+            return 0
+        
+        if self.checkBox_show_normals.checkState():
+            _bases = pointcloud_to_vertices4D(self.surfs)
+            _normals = _bases.copy()
+            for surf in self.surfs:
+                surf.computeNormals()
+                
+            _normals[:, 1:] = np.vstack([surf.pointdata['Normals'] for surf in self.surfs])
+            
+            normals = np.stack([_bases, _normals]).transpose((1, 0, 2))   # Make it N x 2 x D
+            self.viewer.add_vectors(normals, edge_width=0.1)
+            
 
     def eventFilter(self, obj: QObject, event: QEvent):
         # See https://forum.image.sc/t/composing-workflows-in-napari/61222/3
         if event.type() == QEvent.ParentChange:
-            parent = self.parent()
-            print('parent Changed!, now:', parent)
             self.image_select.parent_changed.emit(self.parent())
         return super().eventFilter(obj, event)
-
-
-
-# def _stress_widget(viewer: napari.Viewer,
-#                   img_layer: "napari.layers.Image",
-#                   vsx: float = 2.076,
-#                   vsy: float = 2.076,
-#                   vsz: float = 3.99,
-#                   vt:float = 3,
-#                   N_points: np.uint16 = 256,
-#                   curvature_radius: float = 2):
-
-#     image = img_layer.data
-    
-#     if image.shape ==3:
-#         img_layer.data = img_layer.data[None, :]  # add empty time dimension if it doesn't exist
-
-#     # Preprocessing
-#     img_layer.scale = [vt, vsz, vsy, vsx]
-#     image_resampled, mask_resampled = preprocessing(img_layer.data,
-#                                                     vsx=vsx, vsy=vsy, vsz=vsz)
-#     # scale = [vt] + [np.min([vsx, vsy, vsz])] * 3
-#     n_frames = img_layer.data.shape[0]
-
-#     image_resampled = viewer.add_image(image_resampled, name='Resampled image')
-#     mask_resampled = viewer.add_labels(mask_resampled, name='Resampled mask')
-
-#     # Fit ellipse
-#     pts = np.zeros([N_points * n_frames, 4])
-#     for t in range(image_resampled.data.shape[0]):
-#         _pts = fit_ellipse(binary_image=mask_resampled.data[t])
-#         pts[t * N_points : (t + 1) * N_points, 1:] = _pts
-#         pts[t * N_points : (t + 1) * N_points, 0] = t
-
-#     # Do first tracing
-#     # Calculate the center of mass of determined points for every frame
-#     pts_surf = np.zeros([N_points * n_frames, 4])
-#     for t in range(n_frames):
-#         _pts = pts[t * N_points : (t + 1) * N_points, :]
-#         CoM = _pts.mean(axis=0)
-
-#         _pts_surf, _err, _FitP = get_traces(image = image_resampled.data[t],
-#                                             start_pts=CoM[1:], target_pts=_pts[:, 1:])
-
-#         pts_surf[t * N_points : (t + 1) * N_points, 1:] = _pts_surf
-#         pts_surf[t * N_points : (t + 1) * N_points, 0] = t
-
-#     # Reconstruct the surface and calculate curvatures
-#     surfs = reconstruct_surface(pts_surf, dims=image_resampled.data[0].shape)
-#     surfs = calculate_curvatures(surfs, radius=curvature_radius)
-
-#     # Add to viewer
-#     surf_data = surface2layerdata(surfs)
-#     viewer.add_surface(surf_data,
-#                        colormap='viridis',
-#                        contrast_limits=(np.quantile(surf_data[2], 0.2),
-#                                         np.quantile(surf_data[2], 0.8))
-#                        )
