@@ -52,7 +52,7 @@
       <item row="3" column="2">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>voxel size t</string>
+         <string>sampling time</string>
         </property>
        </widget>
       </item>
@@ -233,6 +233,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinbox_vsx</tabstop>
+  <tabstop>spinbox_vsy</tabstop>
+  <tabstop>spinbox_vsz</tabstop>
+  <tabstop>spinbox_vst</tabstop>
+  <tabstop>spinbox_n_rays</tabstop>
+  <tabstop>spinBox</tabstop>
+  <tabstop>spinbox_curv_radius</tabstop>
+  <tabstop>checkbox_verbose</tabstop>
+  <tabstop>StartButton</tabstop>
+  <tabstop>combobox_vis_layers</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
