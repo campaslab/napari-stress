@@ -19,17 +19,12 @@ from pathlib import Path
 from napari_tools_menu import register_dock_widget
 
 from napari_stress._surface import reconstruct_surface, calculate_curvatures, surface2layerdata
-from napari_stress._preprocess import preprocessing, fit_ellipse_4D
-from napari_stress._tracing import get_traces
+from napari_stress._preprocess import preprocessing, fit_ellipse
+from napari_stress._tracing import get_traces, get_traces_4d
+from napari_stress._utils import (pointcloud_to_vertices4D,
+                                  vertices4d_to_pointcloud)
 
-from qtpy.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QVBoxLayout,
-    QWidget
-)
+from qtpy.QtWidgets import QWidget
 from qtpy.QtCore import QEvent, QObject
 from qtpy import uic
 
@@ -54,7 +49,9 @@ class stress_widget(QWidget):
         self.surfs = None
 
     def run(self):
-
+        
+        # TODO: Move the contents of this function outside the widget to make
+        # it testable
         # Retrieve config parameters
         img_layer = self.image_select.value
         vsx = self.spinbox_vsx.value()
@@ -73,26 +70,24 @@ class stress_widget(QWidget):
         # Preprocessing: Mask image and fit ellipse
         image_resampled, mask_resampled = preprocessing(img_layer.data,
                                                         vsx, vsy, vsz)
-        pts_ellipse = fit_ellipse_4D(mask_resampled, n_rays=n_rays)
+        pts_ellipse = fit_ellipse(mask_resampled, n_samples=n_rays)  # returns list of vedo pointclouds
 
         # Add intermediary image data to viewer if desired
         if self.checkbox_verbose.checkState():
             self.viewer.add_image(image_resampled)
             self.viewer.add_labels(mask_resampled)
-            self.viewer.add_points(pts_ellipse, face_color='magenta', size=0.5, edge_width=0.1)
+            self.viewer.add_points(pointcloud_to_vertices4D(pts_ellipse),
+                                   face_color='magenta',
+                                   size=0.5,
+                                   edge_width=0.1,
+                                   name='Fitted ellipse')
+        
 
+    
         # Do first tracing
-        # Calculate the center of mass of determined points for every frame
-        pts_surf = np.zeros([n_rays * n_frames, 4])
-        for t in range(n_frames):
-            _pts = pts_ellipse[t * n_rays : (t + 1) * n_rays, :]
-            CoM = _pts.mean(axis=0)
-
-            _pts_surf, _err, _FitP = get_traces(image = image_resampled[t],
-                                                start_pts=CoM[1:], target_pts=_pts[:, 1:])
-
-            pts_surf[t * n_rays : (t + 1) * n_rays, 1:] = _pts_surf
-            pts_surf[t * n_rays : (t + 1) * n_rays, 0] = t
+        pts_surf = get_traces_4d(image_resampled,
+                                 [pt.centerOfMass() for pt in pts_ellipse],
+                                 pts_ellipse)
 
         # Reconstruct the surface and calculate curvatures
         self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape)
@@ -101,15 +96,15 @@ class stress_widget(QWidget):
         # Add to viewer
         surf_data = surface2layerdata(self.surfs)
         self.surface_layer = self.viewer.add_surface(surf_data,
-                                                     colormap='viridis',
-                                                     contrast_limits=(np.quantile(surf_data[2], 0.2),
+                                                      colormap='viridis',
+                                                      contrast_limits=(np.quantile(surf_data[2], 0.2),
                                                                       np.quantile(surf_data[2], 0.8))
-                                                     )
+                                                      )
         
         # Turn on visualization layer combobox
-        print(list(self.surfs[0].pointdata.keys()))
         self.combobox_vis_layers.setEnabled(True)
-        self.combobox_vis_layers.addItems(list(self.surfs[0].pointdata.keys()).remove('Normals'))
+        self.combobox_vis_layers.Clear()
+        self.combobox_vis_layers.addItems(list(self.surfs[0].pointdata.keys()))
         self.combobox_vis_layers
         
         self.combobox_vis_layers.currentIndexChanged.connect(self.change_visualization_layer)
@@ -118,6 +113,10 @@ class stress_widget(QWidget):
     def change_visualization_layer(self):
         "Change the values encoded in the surface color to different layer"
         key = self.combobox_vis_layers.currentText()
+        
+        if key == 'Normals':
+            return 0
+        
         layerdata = surface2layerdata(self.surfs, key)
         
         self.surface_layer.data = layerdata
