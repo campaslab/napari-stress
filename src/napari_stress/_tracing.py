@@ -57,8 +57,6 @@ def get_traces_4d(image: np.ndarray,
             pt.pointdata[key] = res[key]
         pts.append(pt)
         
-        print(list(pt.pointdata.keys()))
-        
     return pts
         
 
