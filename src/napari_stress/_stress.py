@@ -90,8 +90,6 @@ class stress_widget(QWidget):
                                  pts_ellipse)
 
         # Reconstruct the surface and calculate curvatures
-        print(self.spinbox_vertex_density.value())
-        print(type(self.spinbox_vertex_density.value()))
         self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape,
                                          surf_density=self.spinbox_vertex_density.value())
         
