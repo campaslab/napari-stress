@@ -124,16 +124,11 @@ def fit_ellipse(binary_image: np.ndarray,
         S = 1/np.sum(_binary_image) * np.dot(ZYX.conjugate().T, ZYX)
         D, R = np.linalg.eig(S)
     
-        # # get angles from rotation matrix: http://planning.cs.uiuc.edu/node103.html
-        # alpha = np.arctan(R[1,0]/R[0,0])/np.pi*180
-        # beta = np.arctan(-R[2, 0]/np.sqrt(R[2,1]**2 + R[2,2]**2))/np.pi*180
-        # gamma = np.arctan(R[2,1]/R[2,2])/np.pi*180
-    
         # Now create points on the surface of an ellipse
         props = pd.DataFrame(measure.regionprops_table(_binary_image, properties=(['major_axis_length', 'minor_axis_length'])))
-        semiAxesLengths = [props.loc[0].minor_axis_length/2,
-                           props.loc[0].major_axis_length/2,
-                           props.loc[0].major_axis_length/2]
+        semiAxesLengths = [props.loc[0].major_axis_length/2,
+                           props.loc[0].minor_axis_length/2,
+                           props.loc[0].minor_axis_length/2]
         _pts = fibonacci_sphere(semiAxesLengths, R.T, CoM, samples=n_samples)
         pts.append(vedo.pointcloud.Points(_pts))
 
