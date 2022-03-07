@@ -71,9 +71,9 @@ def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
 
     """
     if isinstance(surfs, vedo.mesh.Mesh):
+        print('I did this')
         surfs = [surfs]
 
-    # add surfaces to viewer
     vertices = []
     faces = []
     values = []
@@ -93,7 +93,10 @@ def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
     if len(vertices) > 1:
         vertices = np.vstack(vertices)
         faces = np.vstack(faces)
-        values = np.concatenate(values)
+        _values = []
+        for lst in values:
+            _values += list(lst)
+        values = np.asarray(_values)
     else:
         vertices = vertices[0]
         faces = faces[0]
@@ -139,12 +142,18 @@ def calculate_curvatures(surf: typing.Union[vedo.mesh.Mesh, list],
         curvature = np.zeros(_surf.N())  # allocate
         residues = np.zeros(_surf.N())  # allocate
         for idx in tqdm.tqdm(range(_surf.N()), desc='Fitting surface'):
+
             patch = _surf.closestPoint(_surf.points()[idx], radius=radius)
             patch = vedo.pointcloud.Points(patch)  # make it a vedo object
-            s = vedo.pointcloud.fitSphere(patch)
             
-            curvature[idx] = 1/(s.radius)**2
-            residues[idx] = s.residue
+            # If the patch radius is too small, the curvature can not be measured
+            try:
+                s = vedo.pointcloud.fitSphere(patch)
+                curvature[idx] = 1/(s.radius)**2
+                residues[idx] = s.residue
+            except Exception:
+                curvature[idx] = 0
+                residues[idx] = 0
             
         _surf.pointdata['Spherefit_curvature'] = curvature
         _surf.pointdata['residues'] = residues
