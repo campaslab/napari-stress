@@ -71,7 +71,6 @@ def surface2layerdata(surfs: typing.Union[vedo.mesh.Mesh, list],
 
     """
     if isinstance(surfs, vedo.mesh.Mesh):
-        print('I did this')
         surfs = [surfs]
 
     vertices = []

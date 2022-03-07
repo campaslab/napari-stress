@@ -123,8 +123,6 @@ class stress_widget(QWidget):
         
         surf_data = surface2layerdata(self.surfs)
         
-        print(surf_data[2])
-        
         if 0 in surf_data[2]:
             msgBox = QMessageBox()
             msgBox.setIcon(QMessageBox.Warning)
