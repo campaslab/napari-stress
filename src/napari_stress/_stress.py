@@ -89,15 +89,14 @@ class stress_widget(QWidget):
                                  [pt.centerOfMass() for pt in pts_ellipse],
                                  pts_ellipse)
 
-        # Reconstruct the surface and calculate curvatures
+        # Reconstruct the surface and calculate curvatures and check results
         self.surfs = reconstruct_surface(pts_surf, dims=image_resampled[0].shape,
                                          surf_density=self.spinbox_vertex_density.value())
-        
-        # Check if number of points exceeds safe limits
         if self.has_excessive_surface_size(): return 0
         
-        # Calculate curvatures
+        # Calculate curvatures and check results
         self.surfs = calculate_curvatures(self.surfs, radius=curvature_radius)
+        if not self.check_surface_curvature_integrity(): return 0
 
         # Add to viewer
         surf_data = surface2layerdata(self.surfs)
@@ -116,6 +115,29 @@ class stress_widget(QWidget):
         # Connect widgets when all computation is done
         self.combobox_vis_layers.currentIndexChanged.connect(self.change_visualization_layer)
         self.checkBox_show_normals.stateChanged .connect(self.show_normals)
+        
+    def check_surface_curvature_integrity(self) -> bool:
+        "Check whether the curvature was properly calculated."
+        
+        if self.surfs is None: return True
+        
+        surf_data = surface2layerdata(self.surfs)
+        
+        print(surf_data[2])
+        
+        if 0 in surf_data[2]:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setWindowTitle("Warning")
+            msgBox.setText("The chosen curvature radius "
+                           f"({self.spinbox_curv_radius.value()}) " 
+                           "was too small to calculate curvatures. Increase " 
+                           "the value to silence this error.")
+            msgBox.addButton(QPushButton('Ok'), QMessageBox.YesRole)
+            msgBox.exec()
+            return False
+        else:
+            return True
 
     def has_excessive_surface_size(self) -> bool:
         "Check whether the current surface has too many points."
