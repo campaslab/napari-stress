@@ -168,6 +168,15 @@ def _get_traces(image: np.ndarray,
                             'fit_params': fit_params,
                             'profiles': profiles}
 
+def _remove_outliers_by_index(df):
+    indices = np.ones(len(df), dtype=bool)
+    for col in df.columns:
+        Q1 = df[col].quantile(0.25)
+        Q3 = df[col].quantile(0.75)
+        IQR = Q3 - Q1
+        indices[(df[col] < (Q1 - 1.5 * IQR)) |(df[col] > (Q3 + 1.5 * IQR))] = False
+    return indices
+
 
 def _fancy_edge_fit(profile: np.ndarray, mode: int = 0) -> float:
     "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"
