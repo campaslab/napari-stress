@@ -9,6 +9,7 @@ from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
 import numpy as np
 import tqdm
+import pandas as pd
 
 from enum import Enum
 from typing import List
@@ -56,13 +57,12 @@ def trace_refinement_of_surface(image: ImageData,
                                          sampling_distance=sampling_distance,
                                          fit_method=fit_method,
                                          fluorescence=fluorescence)
-    surf = ((new_points, np.array(mesh.faces()), properties['fit_errors']),
+    surf = ((new_points,  properties['fit_errors']),
             {'colormap': 'magma'},
-            'Surface')
+            'Points')
     vector_data = np.array([start_points, target_points - start_points])
     vectors = (vector_data.transpose((1,0,2)), {}, 'Vectors')
     return [surf, vectors]
-
 
 def _get_traces(image: np.ndarray,
                start_pts: np.ndarray,
@@ -125,6 +125,7 @@ def _get_traces(image: np.ndarray,
     surface_points = np.zeros((len(start_pts), 3))
     idx_of_border = np.zeros(len(start_pts))
     fit_errors = []
+    fit_params = []
     profiles = []
 
     # Iterate over all provided target points
@@ -135,25 +136,38 @@ def _get_traces(image: np.ndarray,
 
         if fit_method == 0:
             _idx_of_border = _quick_edge_fit(profiles[idx], mode=fluorescence)
-            error = 1
+            perror = np.array(0)
+            popt = np.array(0)
         elif fit_method == 1:
             popt, perror = _fancy_edge_fit(profiles[idx], mode=fluorescence)
             _idx_of_border = popt[0]
 
         idx_of_border[idx] = _idx_of_border
-        fit_errors.append(error)
+        fit_errors.append(perror)
+        fit_params.append(popt)
 
-    # filter determined object borders
-    I25 = np.quantile(idx_of_border, 0.25)
-    I75 = np.quantile(idx_of_border, 0.75)
-    IQ = I75 - I25
-    idx_of_border[np.logical_or(idx_of_border < I25 - 1.5 * IQ,
-                                idx_of_border > I75 + 1.5 * IQ)] = np.median(idx_of_border)
+    # convert to arrays
+    fit_errors = np.asarray(fit_errors)
+    fit_params = np.asarray(fit_params)
+    params_matrix = np.concatenate([fit_errors, fit_params], axis=1)
+    df = pd.DataFrame(params_matrix, columns=[''])
+
+    # Filter bad points
+    good_pts = _remove_outliers_by_index(df)
+    start_pts = start_pts[good_pts]
+    idx_of_border = idx_of_border[good_pts]
+    v_step = v_step[good_pts]
+    fit_params = fit_params[good_pts, :]
+    fit_errors = fit_errors[good_pts, :]
+    profiles = profiles[good_pts]
 
     # get coordinate of surface point and errors
     surface_points = start_pts + idx_of_border[:, None] * v_step
 
-    return surface_points, {'fit_errors': fit_errors, 'profiles': profiles}
+    return surface_points, {'fit_errors': fit_errors,
+                            'fit_params': fit_params,
+                            'profiles': profiles}
+
 
 def _fancy_edge_fit(profile: np.ndarray, mode: int = 0) -> float:
     "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html"
