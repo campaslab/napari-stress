@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import vedo
-
 from napari_tools_menu import register_function
-
 from napari.types import SurfaceData, LayerDataTuple, ImageData
+
+from ._utils import _sigmoid, _gaussian, _func_args_to_list
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
@@ -15,21 +15,21 @@ import pandas as pd
 from enum import Enum
 from typing import List
 
-class fit_methods(Enum):
+class fit_types(Enum):
     quick_edge_fit = 0
     fancy_edge_fit = 1
 
-class fluorescence_types(Enum):
-    interior = {'mode': 0, 'n_params': 4}
-    surface = {'mode': 1, 'n_params': 3}
+class edge_functions(Enum):
+    interior_fancy = _sigmoid
+    surface_fancy = _gaussian
 
 @register_function(menu="Surfaces > Retrace surface vertices (vedo, nppas)")
 def trace_refinement_of_surface(image: ImageData,
                                 surface: SurfaceData,
                                 trace_length: float = 2.0,
                                 sampling_distance: float = 0.1,
-                                fit_method: fit_methods = fit_methods.fancy_edge_fit,
-                                fluorescence: fluorescence_types = fluorescence_types.interior,
+                                selected_fit_type: fit_types = fit_types.fancy_edge_fit,
+                                selected_edge: edge_functions = edge_functions.interior_fancy,
                                 scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
                                 show_progress: bool = True
                                 )-> List[LayerDataTuple]:
@@ -38,42 +38,7 @@ def trace_refinement_of_surface(image: ImageData,
 
     The profiles are interpolated from the input image with linear interpolation
     Parameters
-    ----------
-    image : np.ndarray
-        Input intensity image from which traces will be calculated
-    start_pts : np.ndarray
-        Nx3 or 1x3 array of points that should be used as base points for trace
-        vectors. If vector is 1x3-sized, the same coordinate will be used as
-        base point for all trace vectors.
-    target_pts : np.ndarray
-        Nx3-sized array of points that are used as direction vectors for each
-        trace. Traces will be calculated along the line from the base points
-        `start_pts` towards `target_pts`
-    sampling_distance : float, optional
-        Distance between sampled intensity along a trace. Default is 1.0
-    detection : str, optional
-        Detection method, can be `quick_edge` or `advanced`. The default is'quick_edge'.
-    fluorescence : str, optional
-        Fluorescence type of water droppled, can be `interior` or `surface`.
-        The default is 'interior'.
-
-    Returns
-    -------
-    surface_points : np.ndarray
-        Nx3 array of points on the surface of the structure in the image.
-    errors : np.ndarray
-        Nx1 array of error values for the points on the surface.
-    FitParams : np.ndarray
-        Nx3 array with determined fit parameters if detection was set to `advanced`
     """
-
-    # parse inputs
-    if isinstance(fit_method, int):
-        fit_method = fit_methods(fit_method)
-
-    if isinstance(fluorescence, int):
-        fluorescence = fluorescence_types(fluorescence)
-
     # Convert to mesh and calculate normals
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.computeNormals()
@@ -94,12 +59,18 @@ def trace_refinement_of_surface(image: ImageData,
                                   fill_value=image.min())
 
     # Allocate arrays for results
-    surface_points = np.zeros_like(surface[0])
-    idx_of_border = np.zeros(mesh.N())
-    fit_errors = []
-    fit_params = []
-    profiles = []
+    fit_params = _func_args_to_list(selected_edge)[1:]
+    fit_errors = [p + '_err' for p in fit_params]
+    columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
+        fit_params + fit_errors + ['profiles']
 
+    opt_fit_params = []
+    opt_fit_errors = []
+    new_surf_points = []
+    projection_vectors = []
+    idx_of_border = []
+
+    fit_data = pd.DataFrame(columns=columns, index=np.arange(mesh.N()))
 
     if show_progress:
         tk = tqdm.tqdm(range(mesh.N(), desc = 'Processing vertices...'))
@@ -110,67 +81,57 @@ def trace_refinement_of_surface(image: ImageData,
     for idx in tk:
 
         profile_coords = [start_pts[idx] + k * v_step[idx] for k in range(n_samples)]
-        profiles.append(rgi(profile_coords))
+        fit_data.loc[idx, 'profiles'] = rgi(profile_coords)
 
-        if fit_method == fit_methods.quick_edge_fit:
-            _idx_of_border = _quick_edge_fit(profiles[idx],
-                                             mode=fluorescence.value['mode'])
+        # Simple or fancy fit?
+        if selected_fit_type == fit_types.quick_edge_fit:
+            idx_of_border.append(_quick_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
+                                             mode=selected_edge))
             perror = np.array(0)
             popt = np.array(0)
-        elif fit_method == fit_methods.fancy_edge_fit:
-            try:
-                popt, perror = _fancy_edge_fit(profiles[idx],
-                                               mode=fluorescence.value['mode'])
-            except:
-                popt = np.repeat(np.nan, fluorescence.value['n_params'])
-                perror = np.repeat(np.nan, fluorescence.value['n_params'])
 
-            _idx_of_border = popt[0]
+        elif selected_fit_type == fit_types.fancy_edge_fit:
+            popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
+                                           selected_edge_func=selected_edge)
+            idx_of_border.append(popt[0])
 
-        idx_of_border[idx] = _idx_of_border
-        fit_errors.append(perror)
-        fit_params.append(popt)
+        opt_fit_errors.append(perror)
+        opt_fit_params.append(popt)
 
-    # convert to arrays
-    fit_errors = np.vstack(fit_errors)
-    fit_params = np.vstack(fit_params)
+        # get new surface point
+        new_surf_point = (start_pts[idx] + idx_of_border[idx] * v_step[idx]) * scale
+        new_surf_points.append(new_surf_point)
+        projection_vectors.append(n_samples * v_step[idx] * scale)
+
+    fit_data['idx_of_border'] = idx_of_border
+    fit_data[fit_params] = opt_fit_params
+    fit_data[fit_errors] = opt_fit_errors
+    fit_data['surface_points'] = new_surf_points
+    fit_data['projection_vector'] = projection_vectors
 
     # Filter points to remove points with high fit errors
-    good_pts = _remove_outliers_by_index(pd.DataFrame(fit_errors))
+    fit_data = _remove_outliers_by_index(fit_data, on=fit_errors)
 
-    start_pts = start_pts[good_pts]
-    idx_of_border = idx_of_border[good_pts]
-    v_step = v_step[good_pts]
-    fit_params = fit_params[good_pts, :]
-    fit_errors = fit_errors[good_pts, :]
-    profiles = np.array(profiles)[good_pts]
+    return fit_data
 
-    # get coordinate of surface point and errors (respect scale for this)
-    surface_points = (start_pts + idx_of_border[:, None] * v_step) * scale[None, :]
-    vectors = np.array([surface_points, idx_of_border[:, None] * v_step]).transpose((1, 0, 2))
-
-    #TODO
-    # Turn relevant parameters into single dataframe to attach to returned points layer
-    # A viewer on such properties can then visualize this
-
-    properties = {'fit_errors': fit_errors, 'fit_params': fit_params, 'profiles': profiles}
-
-    return [(surface_points, {'properties': properties}, 'Points'),
-            (vectors, {'name': 'Trace vectors'}, 'Vectors')]
-
-def _remove_outliers_by_index(df):
+def _remove_outliers_by_index(df, on=list) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
+    # True if values are good, False if outliers
+    df = df.dropna().reset_index()
     indices = np.ones(len(df), dtype=bool)
-    df = df.dropna()
-    for col in df.columns:
+
+    for col in on:
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
         IQR = Q3 - Q1
         indices[df[df[col] > (Q3 + 1.5 * IQR)].index] = False
-    return indices
+
+    return df[indices]
 
 
-def _fancy_edge_fit(profile: np.ndarray, mode: int = 0) -> float:
+def _fancy_edge_fit(profile: np.ndarray,
+                    selected_edge_func: edge_functions = edge_functions.interior_fancy
+                    ) -> float:
     """
     Fit a line profile with a gaussian normal curve or a sigmoidal function.
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
@@ -188,22 +149,37 @@ def _fancy_edge_fit(profile: np.ndarray, mode: int = 0) -> float:
         DESCRIPTION.
 
     """
-    if mode == 0:
+    params = _func_args_to_list(selected_edge_func)[1:]
+    try:
+        if selected_edge_func == edge_functions.interior_fancy:
 
-        # Make sure that intensity goes up along ray so that fit can work
-        if profile[0] > profile[-1]:
-            profile = profile[::-1]
+            # Make sure that intensity goes up along ray so that fit can work
+            if profile[0] > profile[-1]:
+                profile = profile[::-1]
 
-        p0 = [max(profile), len(profile/2), np.diff(profile).mean(), min(profile)]
-        popt, pcov = curve_fit(_sigmoid, np.arange(0, len(profile), 1), profile, p0)
-        perr = np.sqrt(np.diag(pcov))
-        return popt, perr
+            p0 = [max(profile),
+                  len(profile/2),
+                  np.diff(profile).mean(),
+                  min(profile)]
+            popt, _pcov = curve_fit(
+                selected_edge_func, np.arange(len(profile)), profile, p0
+                )
 
-    elif mode == 1:
-        p0 = [len(profile)/2, len(profile)/2, max(profile)]
-        popt, pcov = curve_fit(_gaussian, np.arange(0, len(profile), 1), profile, p0)
-        perr = np.sqrt(np.diag(pcov))
-        return popt, perr
+        elif selected_edge_func == edge_functions.surface_fancy:
+            p0 = [len(profile)/2, len(profile)/2, max(profile)]
+            popt, _pcov = curve_fit(
+                selected_edge_func, np.arange(0, len(profile), 1), profile, p0
+                )
+
+        # retrieve errors from covariance matrix
+        perr = np.sqrt(np.diag(_pcov))
+
+    # If fit fails:
+    except Exception:
+        popt = np.repeat(np.nan, len(params))
+        perr = np.repeat(np.nan, len(params))
+
+    return popt, perr
 
 def _quick_edge_fit(profile: np.ndarray, mode = 0) -> int:
 
@@ -211,10 +187,3 @@ def _quick_edge_fit(profile: np.ndarray, mode = 0) -> int:
         return np.argmax(np.abs(np.diff(profile)))
     elif mode == 1:
         return np.argmax(profile)
-
-def _sigmoid(x, center, amplitude, slope, offset):
-    "https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python"
-    return amplitude / (1 + np.exp(-slope*(x-center))) + offset
-
-def _gaussian(x, center, sigma, amplitude):
-    return amplitude/np.sqrt((2*np.pi*sigma**2)) * np.exp(-(x - center)**2 / (2*sigma**2))
