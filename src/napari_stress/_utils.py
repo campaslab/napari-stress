@@ -2,6 +2,7 @@ import numpy as np
 import vedo
 
 from napari.types import PointsData
+import inspect
 
 def pointcloud_to_vertices4D(surfs: list) -> np.ndarray:
 
@@ -59,3 +60,15 @@ def list_of_points_to_pointsdata(points: list) -> PointsData:
         new_props[key] = np.vstack([tp[key] for tp in list_of_properties])
 
     return (new_points, {'properties': new_props}, 'Points')
+
+def _sigmoid(x, center, amplitude, slope, offset):
+    "https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python"
+    return amplitude / (1 + np.exp(-slope*(x-center))) + offset
+
+def _gaussian(x, center, sigma, amplitude):
+    return amplitude/np.sqrt((2*np.pi*sigma**2)) * np.exp(-(x - center)**2 / (2*sigma**2))
+
+def _func_args_to_list(func: callable) -> list:
+
+    sig = inspect.signature(func)
+    return list(sig.parameters.keys())
