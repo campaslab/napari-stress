@@ -8,6 +8,25 @@ import vedo
 import typing
 
 
+def reconstruct_surface(points: PointsData,
+                        radius: float = None,
+                        sampleSize: int = None,
+                        holeFilling: bool = True,
+                        bounds: tuple = (),
+                        padding: float = 0.05
+                        ):
+    pointcloud = vedo.pointcloud.Points(points)
+
+    dims = np.max(pointcloud.points(), axis=0) - np.min(pointcloud.points(), axis=0)
+    surf = pointcloud.reconstruct_Surface(dims=dims, radius=radius,
+                                          sampleSize=sampleSize,
+                                          holeFilling=holeFilling,
+                                          bounds=bounds,
+                                          padding=padding)
+
+    return (surf.points(), np.asarray(surf.faces(), dtype=int))
+
+
 def smooth_sinc(surface: SurfaceData,
                 niter: int = 15,
                 passBand: float = 0.1,
@@ -28,7 +47,7 @@ def smoothMLS2D(points: PointsData,
     pointcloud = vedo.pointcloud.Points(points)
     pointcloud.smoothMLS2D(f=f, radius=radius)
 
-    return pointcloud.Points()[pointcloud.info['isvalid']]
+    return pointcloud.points()[pointcloud.info['isvalid']]
 
 def surface_from_label(label_image: LabelsData,
                        scale: typing.Union[list, np.ndarray]) -> SurfaceData:
