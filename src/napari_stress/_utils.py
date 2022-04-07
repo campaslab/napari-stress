@@ -2,7 +2,6 @@ import numpy as np
 import vedo
 
 from napari.types import PointsData, SurfaceData
-from napari.layers import Points
 import inspect
 
 from functools import wraps
