@@ -18,11 +18,12 @@ def reconstruct_surface(points: PointsData,
     pointcloud = vedo.pointcloud.Points(points)
 
     dims = np.max(pointcloud.points(), axis=0) - np.min(pointcloud.points(), axis=0)
-    surf = pointcloud.reconstruct_Surface(dims=dims, radius=radius,
-                                          sampleSize=sampleSize,
-                                          holeFilling=holeFilling,
-                                          bounds=bounds,
-                                          padding=padding)
+    surf = pointcloud.reconstructSurface(dims=dims.astype(int),
+                                         radius=radius,
+                                         sampleSize=sampleSize,
+                                         holeFilling=holeFilling,
+                                         bounds=bounds,
+                                         padding=padding)
 
     return (surf.points(), np.asarray(surf.faces(), dtype=int))
 
