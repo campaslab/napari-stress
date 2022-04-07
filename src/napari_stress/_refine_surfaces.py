@@ -4,7 +4,7 @@ import vedo
 from napari_tools_menu import register_function
 from napari.types import SurfaceData, LayerDataTuple, ImageData
 
-from ._utils import _sigmoid, _gaussian, _func_args_to_list
+from ._utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
@@ -16,12 +16,12 @@ from enum import Enum
 from typing import List
 
 class fit_types(Enum):
-    quick_edge_fit = 0
-    fancy_edge_fit = 1
+    quick_edge_fit = 'quick'
+    fancy_edge_fit = 'fancy'
 
 class edge_functions(Enum):
-    interior_fancy = _sigmoid
-    surface_fancy = _gaussian
+    interior = {'fancy': _sigmoid, 'quick': _detect_drop}
+    surface = {'fancy': _gaussian, 'quick': _detect_maxima}
 
 @register_function(menu="Surfaces > Retrace surface vertices (vedo, nppas)")
 def trace_refinement_of_surface(image: ImageData,
@@ -29,7 +29,7 @@ def trace_refinement_of_surface(image: ImageData,
                                 trace_length: float = 2.0,
                                 sampling_distance: float = 0.1,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
-                                selected_edge: edge_functions = edge_functions.interior_fancy,
+                                selected_edge: edge_functions = edge_functions.interior,
                                 scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
                                 show_progress: bool = True
                                 )-> List[LayerDataTuple]:
@@ -39,6 +39,11 @@ def trace_refinement_of_surface(image: ImageData,
     The profiles are interpolated from the input image with linear interpolation
     Parameters
     """
+    if isinstance(selected_fit_type, str):
+        selected_fit_type = fit_types(selected_fit_type)
+
+    edge_func = selected_edge.value[selected_fit_type.value]
+
     # Convert to mesh and calculate normals
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.computeNormals()
@@ -59,10 +64,13 @@ def trace_refinement_of_surface(image: ImageData,
                                   fill_value=image.min())
 
     # Allocate arrays for results
-    fit_params = _func_args_to_list(selected_edge)[1:]
+    fit_params = _func_args_to_list(edge_func)[1:]
     fit_errors = [p + '_err' for p in fit_params]
     columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
         fit_params + fit_errors + ['profiles']
+
+    if len(fit_params) == 1:
+        fit_params, fit_errors = fit_params[0], fit_errors[0]
 
     opt_fit_params = []
     opt_fit_errors = []
@@ -85,14 +93,15 @@ def trace_refinement_of_surface(image: ImageData,
 
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border.append(_quick_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                             mode=selected_edge))
-            perror = np.array(0)
-            popt = np.array(0)
+            idx_of_border.append(
+                edge_func(np.array(fit_data.loc[idx, 'profiles']))
+                )
+            perror = 0
+            popt = 0
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
             popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                           selected_edge_func=selected_edge)
+                                           selected_edge_func=edge_func)
             idx_of_border.append(popt[0])
 
         opt_fit_errors.append(perror)
@@ -101,7 +110,7 @@ def trace_refinement_of_surface(image: ImageData,
         # get new surface point
         new_surf_point = (start_pts[idx] + idx_of_border[idx] * v_step[idx]) * scale
         new_surf_points.append(new_surf_point)
-        projection_vectors.append(n_samples * v_step[idx] * scale)
+        projection_vectors.append(idx_of_border[idx] * (-1) * v_step[idx])
 
     fit_data['idx_of_border'] = idx_of_border
     fit_data[fit_params] = opt_fit_params
@@ -116,6 +125,9 @@ def trace_refinement_of_surface(image: ImageData,
 
 def _remove_outliers_by_index(df, on=list) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
+    if isinstance(on, str):
+        on = [on]
+
     # True if values are good, False if outliers
     df = df.dropna().reset_index()
     indices = np.ones(len(df), dtype=bool)
@@ -130,7 +142,7 @@ def _remove_outliers_by_index(df, on=list) -> pd.DataFrame:
 
 
 def _fancy_edge_fit(profile: np.ndarray,
-                    selected_edge_func: edge_functions = edge_functions.interior_fancy
+                    selected_edge_func: edge_functions = edge_functions.interior
                     ) -> float:
     """
     Fit a line profile with a gaussian normal curve or a sigmoidal function.
@@ -151,7 +163,7 @@ def _fancy_edge_fit(profile: np.ndarray,
     """
     params = _func_args_to_list(selected_edge_func)[1:]
     try:
-        if selected_edge_func == edge_functions.interior_fancy:
+        if selected_edge_func == _sigmoid:
 
             # Make sure that intensity goes up along ray so that fit can work
             if profile[0] > profile[-1]:
@@ -165,7 +177,7 @@ def _fancy_edge_fit(profile: np.ndarray,
                 selected_edge_func, np.arange(len(profile)), profile, p0
                 )
 
-        elif selected_edge_func == edge_functions.surface_fancy:
+        elif selected_edge_func == _gaussian:
             p0 = [len(profile)/2, len(profile)/2, max(profile)]
             popt, _pcov = curve_fit(
                 selected_edge_func, np.arange(0, len(profile), 1), profile, p0
@@ -180,10 +192,3 @@ def _fancy_edge_fit(profile: np.ndarray,
         perr = np.repeat(np.nan, len(params))
 
     return popt, perr
-
-def _quick_edge_fit(profile: np.ndarray, mode = 0) -> int:
-
-    if mode == 0:
-        return np.argmax(np.abs(np.diff(profile)))
-    elif mode == 1:
-        return np.argmax(profile)
