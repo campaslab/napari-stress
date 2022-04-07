@@ -1,8 +1,11 @@
 import numpy as np
 import vedo
 
-from napari.types import PointsData
+from napari.types import PointsData, SurfaceData
+from napari.layers import Points
 import inspect
+
+from functools import wraps
 
 def pointcloud_to_vertices4D(surfs: list) -> np.ndarray:
 
@@ -78,3 +81,99 @@ def _func_args_to_list(func: callable) -> list:
 
     sig = inspect.signature(func)
     return list(sig.parameters.keys())
+
+def frame_by_frame_points(func):
+
+    @wraps
+    def wrapper(*args, **kwargs):
+
+        # Assume that first argument is points data
+        data = args[0].copy()
+
+        n_frames = np.max(data[:, 0])
+
+        _result = []
+        for t in range(n_frames):
+            args[0] = data[data[:, 0] == t, :]
+            _result.append(func(*args, **kwargs))
+
+        n_points = sum([len(res) for res in _result])
+        result = np.zeros((n_points, 4))
+        return result
+
+def list_of_points_to_points(points: list) -> np.ndarray:
+
+    n_points = sum([len(frame) for frame in points])
+    t = np.vstack([[idx] * len(frame) for idx, frame in enumerate(points)])
+
+    points_out = np.zeros((n_points, 4))
+    points_out[:, 1:] = np.vstack(points)
+    points_out[:, 0] = t
+
+    return points_out
+
+def points_to_list_of_points(points: np.ndarray) -> list:
+    n_frames = len(np.unique(points[:, 0]))
+
+    points_out = [None] * n_frames
+    for t in range(n_frames):
+        points_out[t] = points[points[:, 0] == t, 1:]
+
+    return points_out
+
+def surface_to_list_of_surfaces(surface: SurfaceData) -> list:
+
+    points = surface[0]
+    faces = np.asarray(surface[1], dtype=int)
+
+    n_frames = len(np.unique(points[:, 0]))
+    points_per_frame = [len(points[:, 0] == t) for t in range(n_frames)]
+
+    surfaces = [None] * n_frames
+    for t in range(n_frames):
+        _points = points[points[:, 0] == t, 1:]
+        _faces = faces[points[:, 0] == t] - sum(points_per_frame[:t])
+        surfaces[t] = (_points, _faces)
+
+    return surfaces
+
+def list_of_surfaces_to_surface(surfs: list) -> tuple:
+    """
+    Convert vedo surface object to napari-diggestable data format.
+
+    Parameters
+    ----------
+    surfs : typing.Union[vedo.mesh.Mesh, list]
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    if isinstance(surfs[0], vedo.mesh.Mesh):
+        surfs = [(s.points(), s.faces()) for s in surfs]
+
+
+    vertices = []
+    faces = []
+    n_verts = 0
+    for idx, surf in enumerate(surfs):
+        # Add time dimension to points coordinate array
+        t = np.ones((surf[0].shape[0], 1)) * idx
+        vertices.append(np.hstack([t, surf[0]]))  # add time dimension to points
+
+        # Offset indices in faces list by previous amount of points
+        faces.append(n_verts + np.array(surf[1]))
+
+        # Add number of vertices in current surface to n_verts
+        n_verts += surf[0].shape[0]
+
+    if len(vertices) > 1:
+        vertices = np.vstack(vertices)
+        faces = np.vstack(faces)
+    else:
+        vertices = vertices[0]
+        faces = faces[0]
+
+    return (vertices, faces)
