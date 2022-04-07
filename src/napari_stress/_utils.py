@@ -127,12 +127,20 @@ def surface_to_list_of_surfaces(surface: SurfaceData) -> list:
     faces = np.asarray(surface[1], dtype=int)
 
     n_frames = len(np.unique(points[:, 0]))
-    points_per_frame = [len(points[:, 0] == t) for t in range(n_frames)]
+    points_per_frame = [sum(points[:, 0] == t) for t in range(n_frames)]
+
+    idx_face_new_frame = []
+    t = 0
+    for idx, face in enumerate(faces):
+        if points[face[0], 0] == t:
+          idx_face_new_frame.append(idx)
+          t += 1
+    idx_face_new_frame.append(len(faces))
 
     surfaces = [None] * n_frames
     for t in range(n_frames):
         _points = points[points[:, 0] == t, 1:]
-        _faces = faces[points[:, 0] == t] - sum(points_per_frame[:t])
+        _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t+1]-1] - sum(points_per_frame[:t])
         surfaces[t] = (_points, _faces)
 
     return surfaces
