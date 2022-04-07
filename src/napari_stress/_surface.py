@@ -2,11 +2,33 @@
 
 import numpy as np
 import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData
+from napari.types import LabelsData, SurfaceData, PointsData
 
 import vedo
 import typing
 
+
+def smooth_sinc(surface: SurfaceData,
+                niter: int = 15,
+                passBand: float = 0.1,
+                edgeAngle: float = 15,
+                feature_angle: float = 60,
+                boundary: bool = False) -> SurfaceData:
+
+    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
+    mesh.smooth(niter=niter, passBand=passBand,
+                edgeAngle=edgeAngle, featureAngle=feature_angle,
+                boundary=boundary)
+    return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
+
+def smoothMLS2D(points: PointsData,
+                f: float = 0.2,
+                radius: float = None) -> PointsData:
+
+    pointcloud = vedo.pointcloud.Points(points)
+    pointcloud.smoothMLS2D(f=f, radius=radius)
+
+    return pointcloud.Points()[pointcloud.info['isvalid']]
 
 def surface_from_label(label_image: LabelsData,
                        scale: typing.Union[list, np.ndarray]) -> SurfaceData:
@@ -24,10 +46,10 @@ def surface_from_label(label_image: LabelsData,
     return surfs
 
 
-def adjust_surface_density(mesh: vedo.mesh.Mesh,
+def adjust_surface_density(surface: SurfaceData,
                            density_target: float) -> vedo.mesh.Mesh:
 
-
+    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     n_vertices_target = int(mesh.area() * density_target)
 
     while mesh.N() < n_vertices_target:
@@ -35,45 +57,4 @@ def adjust_surface_density(mesh: vedo.mesh.Mesh,
 
     mesh.decimate(N=n_vertices_target)
 
-    return mesh
-
-def list_of_surfaces_to_surface(surfs: list) -> tuple:
-    """
-    Convert vedo surface object to napari-diggestable data format.
-
-    Parameters
-    ----------
-    surfs : typing.Union[vedo.mesh.Mesh, list]
-        DESCRIPTION.
-
-    Returns
-    -------
-    None.
-
-    """
-    if isinstance(surfs[0], vedo.mesh.Mesh):
-        surfs = [(s.points(), s.faces()) for s in surfs]
-
-
-    vertices = []
-    faces = []
-    n_verts = 0
-    for idx, surf in enumerate(surfs):
-        # Add time dimension to points coordinate array
-        t = np.ones((surf[0].shape[0], 1)) * idx
-        vertices.append(np.hstack([t, surf[0]]))  # add time dimension to points
-
-        # Offset indices in faces list by previous amount of points
-        faces.append(n_verts + np.array(surf[1]))
-
-        # Add number of vertices in current surface to n_verts
-        n_verts += surf[0].shape[0]
-
-    if len(vertices) > 1:
-        vertices = np.vstack(vertices)
-        faces = np.vstack(faces)
-    else:
-        vertices = vertices[0]
-        faces = faces[0]
-
-    return (vertices, faces)
+    return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
