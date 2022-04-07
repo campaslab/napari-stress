@@ -144,16 +144,6 @@ def resample(image: ImageData,
 
     return image_rescaled
 
-def threshold(image, threshold = 0.2, **kwargs):
-
-    sigma = kwargs.get('sigma', 1)
-
-    # Masking
-    image = filters.gaussian(image, sigma=sigma)
-    mask = measure.label(image > threshold*image.max())
-
-    return mask
-
 # def fit_curvature():
 #     """
 #     Find curvature for every point
