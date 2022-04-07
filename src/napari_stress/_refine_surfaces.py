@@ -2,7 +2,7 @@
 
 import vedo
 from napari_tools_menu import register_function
-from napari.types import SurfaceData, LayerDataTuple, ImageData
+from napari.types import SurfaceData, ImageData
 
 from ._utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
 
@@ -13,7 +13,6 @@ import tqdm
 import pandas as pd
 
 from enum import Enum
-from typing import List
 
 class fit_types(Enum):
     quick_edge_fit = 'quick'
@@ -31,8 +30,10 @@ def trace_refinement_of_surface(image: ImageData,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
                                 selected_edge: edge_functions = edge_functions.interior,
                                 scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
-                                show_progress: bool = True
-                                )-> List[LayerDataTuple]:
+                                show_progress: bool = True,
+                                remove_outliers: bool = True,
+                                interquartile_factor: float = 1.5
+                                )-> pd.DataFrame:
     """
     Generate intensity profiles along traces.
 
@@ -119,11 +120,13 @@ def trace_refinement_of_surface(image: ImageData,
     fit_data['projection_vector'] = projection_vectors
 
     # Filter points to remove points with high fit errors
-    fit_data = _remove_outliers_by_index(fit_data, on=fit_errors)
+    if remove_outliers:
+        fit_data = _remove_outliers_by_index(fit_data, on=fit_errors,
+                                             factor=interquartile_factor)
 
     return fit_data
 
-def _remove_outliers_by_index(df, on=list) -> pd.DataFrame:
+def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
     if isinstance(on, str):
         on = [on]
@@ -136,7 +139,7 @@ def _remove_outliers_by_index(df, on=list) -> pd.DataFrame:
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
         IQR = Q3 - Q1
-        indices[df[df[col] > (Q3 + 1.5 * IQR)].index] = False
+        indices[df[df[col] > (Q3 + factor * IQR)].index] = False
 
     return df[indices]
 
