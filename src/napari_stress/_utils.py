@@ -104,7 +104,7 @@ def frame_by_frame_points(func):
 def list_of_points_to_points(points: list) -> np.ndarray:
 
     n_points = sum([len(frame) for frame in points])
-    t = np.vstack([[idx] * len(frame) for idx, frame in enumerate(points)])
+    t = np.concatenate([[idx] * len(frame) for idx, frame in enumerate(points)])
 
     points_out = np.zeros((n_points, 4))
     points_out[:, 1:] = np.vstack(points)
@@ -154,26 +154,26 @@ def list_of_surfaces_to_surface(surfs: list) -> tuple:
     if isinstance(surfs[0], vedo.mesh.Mesh):
         surfs = [(s.points(), s.faces()) for s in surfs]
 
+    vertices = [surf[0] for surf in surfs]
+    faces = [surf[1] for surf in surfs]
+    values = None
+    if len(surfs[0]) == 3:
+        values = np.concatenate([surf[2] for surf in surfs])
 
-    vertices = []
-    faces = []
+    vertices = list_of_points_to_points(vertices)
+
     n_verts = 0
     for idx, surf in enumerate(surfs):
-        # Add time dimension to points coordinate array
-        t = np.ones((surf[0].shape[0], 1)) * idx
-        vertices.append(np.hstack([t, surf[0]]))  # add time dimension to points
 
         # Offset indices in faces list by previous amount of points
-        faces.append(n_verts + np.array(surf[1]))
+        faces[idx] = n_verts + np.array(faces[idx])
 
         # Add number of vertices in current surface to n_verts
         n_verts += surf[0].shape[0]
 
-    if len(vertices) > 1:
-        vertices = np.vstack(vertices)
-        faces = np.vstack(faces)
-    else:
-        vertices = vertices[0]
-        faces = faces[0]
+    faces = np.vstack(faces)
 
-    return (vertices, faces)
+    if values is None:
+        return (vertices, faces)
+    else:
+        return (vertices, faces, values)
