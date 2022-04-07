@@ -4,6 +4,19 @@ This plugin allows to segment fluorescence-labelled droplets , determine the sur
 
 ## Installation
 
+Create a new conda environment with
+
+```
+conda create -n napari-stress Python=3.9
+conda activate napari stress
+```
+
+Install a few necessary plugins:
+
+```
+conda install -c conda-forge napari jupyterlab
+```
+
 To install the plugin, clone the repository and install it:
 
 ```
