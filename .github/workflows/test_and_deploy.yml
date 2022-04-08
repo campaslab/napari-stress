@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9, '3.10']
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
       - uses: actions/checkout@v2
@@ -35,13 +35,6 @@ jobs:
 
       # these libraries enable testing on Qt on linux
       - uses: tlambert03/setup-qt-libs@v1
-
-      # strategy borrowed from vispy for installing opengl libs on windows
-      - name: Install Windows OpenGL
-        if: runner.os == 'Windows'
-        run: |
-          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
-          powershell gl-ci-helpers/appveyor/install_opengl.ps1
 
       - name: Set up conda ${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2.0.0
@@ -62,8 +55,6 @@ jobs:
       - name: Install dependencies
         shell: bash -l {0}
         run: |
-          conda install -c defaults scipy
-          conda install -c conda-forge pytables
           python -m pip install --upgrade pip
           pip install pytest pytest-cov PyQt5 pytest-qt pytest-xvfb
           pip install -e .
