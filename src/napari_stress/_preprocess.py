@@ -1,16 +1,13 @@
 from napari.types import ImageData
-from skimage import measure, transform
+from skimage import transform
 
-import pandas as pd
 import numpy as np
-import vedo
 
 from ._utils import frame_by_frame
 
 @frame_by_frame
 def resample(image: ImageData,
-            scale_factors: np.ndarray,
-            res_mode: str = 'high') -> ImageData:
+            scale_factors: np.ndarray) -> ImageData:
     """ Resample an image according to passed scale factors"""
 
     return transform.rescale(image, scale=scale_factors)
