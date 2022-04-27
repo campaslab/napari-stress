@@ -4,6 +4,52 @@ from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDa
 
 from typing import List
 
+from functools import wraps
+import inspect
+
+import tqdm
+
+def frame_by_frame(function, progress_bar: bool = False):
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+
+        sig = inspect.signature(function)
+        annotations = [
+            sig.parameters[key].annotation for key in sig.parameters.keys()
+            ]
+
+        converter = Converter()
+
+        args = list(args)
+        n_frames = None
+
+        # Convert 4D data to list(s) of 3D data for every supported argument
+        #TODO: Check if objects are actually 4D
+        ind_of_framed_arg = []  # remember which arguments were converted
+
+        for idx, arg in enumerate(args):
+            if annotations[idx] in converter.supported_data:
+                args[idx] = converter.data_to_list_of_data(arg, annotations[idx])
+                ind_of_framed_arg.append(idx)
+                n_frames = len(args[idx])
+
+        # apply function frame by frame
+        #TODO: Put this in a thread by default?
+        results = [None] * n_frames
+        it = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
+        for t in it:
+            _args = args.copy()
+
+            # Replace argument value by frame t of argument value
+            for idx in ind_of_framed_arg:
+                _args[idx] = _args[idx][t]
+
+            results[t] = function(*_args, **kwargs)
+
+        return converter.list_of_data_to_data(results, sig.return_annotation)
+    return wrapper
+
 class Converter:
     def __init__(self):
 
@@ -30,11 +76,58 @@ class Converter:
             'labels': LabelsData,
             }
 
+        self.supported_data = list(self.funcs_data_to_list.keys())
+
     def data_to_list_of_data(self, data, layertype) -> list:
+        """
+        Function to convert 4D data into a list of 3D data frames
+
+        Parameters
+        ----------
+        data : 4D data to be converted
+        layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
+        `ImageData`, `LabelsData` or `List[LayerDataTuple]`
+
+        Raises
+        ------
+        TypeError
+            Error to indicate that the converter does not support the passed
+            layertype
+
+        Returns
+        -------
+        list: List of 3D objects of type `layertype`
+
+        """
+        if not layertype in self.supported_data:
+            raise TypeError(f'{layertype} data to list conversion currently not supported.')
+
         conversion_function = self.funcs_data_to_list(layertype)
         return conversion_function(data)
 
     def list_of_data_to_data(self, data, layertype):
+        """
+        Function to convert a list of 3D frames into 4D data.
+
+        Parameters
+        ----------
+        data : list of 3D data (time)frames
+        layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
+        `ImageData`, `LabelsData` or `List[LayerDataTuple]`
+
+        Raises
+        ------
+        TypeError
+            Error to indicate that the converter does not support the passed
+            layertype
+
+        Returns
+        -------
+        4D data of type `layertype`
+
+        """
+        if not layertype in self.supported_data:
+            raise TypeError(f'{layertype} list to data conversion currently not supported.')
         conversion_function = self.funcs_list_to_data(layertype)
         return conversion_function(data)
 
@@ -119,7 +212,7 @@ class Converter:
         if len(surfs[0]) == 3:
             values = np.concatenate([surf[2] for surf in surfs])
 
-        vertices = list_of_points_to_points(vertices)
+        vertices = self._list_of_points_to_points(vertices)
 
         n_verts = 0
         for idx, surf in enumerate(surfs):
