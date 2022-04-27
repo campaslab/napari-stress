@@ -25,13 +25,14 @@ def frame_by_frame(function, progress_bar: bool = False):
         n_frames = None
 
         # Convert 4D data to list(s) of 3D data for every supported argument
+        # and store the list in the same place as the original 4D data
         #TODO: Check if objects are actually 4D
-        ind_of_framed_arg = []  # remember which arguments were converted
+        index_of_converted_arg = []  # remember which arguments were converted
 
         for idx, arg in enumerate(args):
             if annotations[idx] in converter.supported_data:
                 args[idx] = converter.data_to_list_of_data(arg, annotations[idx])
-                ind_of_framed_arg.append(idx)
+                index_of_converted_arg.append(idx)
                 n_frames = len(args[idx])
 
         # apply function frame by frame
@@ -41,8 +42,8 @@ def frame_by_frame(function, progress_bar: bool = False):
         for t in it:
             _args = args.copy()
 
-            # Replace argument value by frame t of argument value
-            for idx in ind_of_framed_arg:
+            # Replace 4D argument by single frame (arg[t])
+            for idx in index_of_converted_arg:
                 _args[idx] = _args[idx][t]
 
             results[t] = function(*_args, **kwargs)
