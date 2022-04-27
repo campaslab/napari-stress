@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import vedo
-from napari.types import SurfaceData, ImageData, PointsData
+from napari.types import ImageData, PointsData
 
-from ._utils import _sigmoid,\
+from ._utils.fit_utils import _sigmoid,\
     _gaussian,\
     _func_args_to_list,\
     _detect_drop,\
-    _detect_maxima,\
-    frame_by_frame
+    _detect_maxima
+
+from ._utils.time_slicer import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit

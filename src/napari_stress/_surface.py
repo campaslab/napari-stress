@@ -3,7 +3,7 @@
 import numpy as np
 import napari_process_points_and_surfaces as nppas
 from napari.types import LabelsData, SurfaceData, PointsData
-from ._utils import frame_by_frame
+from ._utils.time_slicer import frame_by_frame
 
 import vedo
 import typing
