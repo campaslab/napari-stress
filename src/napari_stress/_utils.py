@@ -112,7 +112,7 @@ def frame_by_frame(function, progress_bar: bool = False):
             List[napari.types.LayerDataTuple]: list_of_layerdatatuple_to_layerdatatuple
             }
 
-        supported_data = [ImageData, PointsData, SurfaceData, LabelsData]
+        supported_data = list(funcs_data_to_list.keys())
 
         args = list(args)
         n_frames = None
