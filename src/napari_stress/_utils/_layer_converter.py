@@ -31,22 +31,6 @@ class Converter:
             }
 
     def data_to_list_of_data(self, data, layertype) -> list:
-        """
-        Function to convert 4D data into a list of 3D frames
-
-        Parameters
-        ----------
-        data : TYPE
-            DESCRIPTION.
-        layertype : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        list
-            DESCRIPTION.
-
-        """
         conversion_function = self.funcs_data_to_list(layertype)
         return conversion_function(data)
 
