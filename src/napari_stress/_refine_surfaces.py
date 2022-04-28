@@ -45,8 +45,55 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     """
     Generate intensity profiles along traces.
 
-    The profiles are interpolated from the input image with linear interpolation
+    This function receives an intensity image and a pointcloud with points on
+    the surface of an object in the intensity image. It assumes that the
+    pointcloud corresponds to the vertices on a surface around that object.
+
+    As a first step, the function calculates normals on the surface and
+    multiplies the length of this vector with `trace_length`. The intensity of
+    the input image is then sampled along this vector perpendicular to the
+    surface with a distance of `sampling distance` between each point along the
+    normal vector.
+
+    The location of the object's surface is then determined by fitting a
+    selected function to the intensity profile along the prolonged normal vector.
+
     Parameters
+    ----------
+    intensity_image : ImageData
+    points : PointsData
+    trace_length : float, optional
+        Length of the normal vector perpendicular to the surface. The default is 2.0.
+    sampling_distance : float, optional
+        Distance between two sampled intensity values along the normal vector.
+        The default is 0.1.
+    selected_fit_type : fit_types, optional
+        Which fit types to choose from. Can be `fit_types.fancy_edge_fit` or
+        `fit_types.quick_edge_fit`.
+    selected_edge : edge_functions, optional
+        Depending on the fluorescence of the intensity image, a different fit
+        function is required. Can be either of `edge_functions.interior` or
+        edge_functions.surface. The default is `edge_functions.interior`.
+    scale : np.ndarray, optional
+        If the image has a scale parameter in Napari, this needs to be entered
+        here. The default is np.array([1.0, 1.0, 1.0]).
+    show_progress : bool, optional
+        The default is False.
+    remove_outliers : bool, optional
+        If this is set to true, the function will evaluate the fit residues of
+        the chosen function and remove points that are classified as outliers.
+        The default is True.
+    interquartile_factor : float, optional
+        Determines how strict the outlier removal will be. Values with
+        `value > Q75 + interquartile_factor * IQR` are classified as outliers,
+        whereas `Q75` and `IQR` denote the 75% quartile and the interquartile
+        range, respectively.
+        The default is 1.5.
+
+    Returns
+    -------
+    PointsData
+
     """
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
