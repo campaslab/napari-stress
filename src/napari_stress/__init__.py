@@ -11,7 +11,7 @@ from ._surface import surface_from_label,\
     smooth_laplacian,\
     resample_points
 
-from ._utils import frame_by_frame
+from ._utils.time_slicer import frame_by_frame
 from napari_plugin_engine import napari_hook_implementation
 
 @napari_hook_implementation
