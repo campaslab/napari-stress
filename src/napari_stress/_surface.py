@@ -10,6 +10,7 @@ import typing
 
 @frame_by_frame
 def resample_points(points: PointsData) -> PointsData:
+    """Redistributes points in a pointcloud in a homogeneous manner"""
     pointcloud = vedo.pointcloud.Points(points)
     surface = pointcloud.reconstructSurface()
     points = nppas.sample_points_poisson_disk((surface.points(), np.asarray(surface.faces())),
