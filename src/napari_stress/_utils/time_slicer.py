@@ -77,7 +77,7 @@ class Converter:
             'labels': LabelsData,
             }
 
-        self.supported_data = list(self.funcs_data_to_list.keys())
+        self.supported_data = list(self.funcs_list_to_data.keys())
 
     def data_to_list_of_data(self, data, layertype) -> list:
         """
@@ -103,7 +103,7 @@ class Converter:
         if not layertype in self.supported_data:
             raise TypeError(f'{layertype} data to list conversion currently not supported.')
 
-        conversion_function = self.funcs_data_to_list(layertype)
+        conversion_function = self.funcs_data_to_list[layertype]
         return conversion_function(data)
 
     def list_of_data_to_data(self, data, layertype):
@@ -129,7 +129,7 @@ class Converter:
         """
         if not layertype in self.supported_data:
             raise TypeError(f'{layertype} list to data conversion currently not supported.')
-        conversion_function = self.funcs_list_to_data(layertype)
+        conversion_function = self.funcs_list_to_data[layertype]
         return conversion_function(data)
 
 
