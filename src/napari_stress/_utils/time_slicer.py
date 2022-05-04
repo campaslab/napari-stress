@@ -142,7 +142,7 @@ class Converter:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """
-        layertype = self.tuple_aliases[tuple_data[-1]]
+        layertype = self.tuple_aliases[tuple_data[0][0][-1]]
 
         # Convert data to array with dimensions [result, frame, data]
         data = list(np.asarray(tuple_data).transpose((1, 0, -1)))
