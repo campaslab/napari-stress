@@ -9,7 +9,8 @@ from ._surface import surface_from_label,\
     smoothMLS2D,\
     reconstruct_surface,\
     smooth_laplacian,\
-    resample_points
+    resample_points,\
+    decimate
 
 from ._utils.time_slicer import frame_by_frame
 from napari_plugin_engine import napari_hook_implementation

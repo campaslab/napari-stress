@@ -100,6 +100,22 @@ def surface_from_label(label_image: LabelsData,
     return surf
 
 @frame_by_frame
+def decimate(surface: SurfaceData,
+             fraction: float = 0.1) -> SurfaceData:
+
+    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
+
+    n_vertices = mesh.N()
+    n_vertices_target = n_vertices * fraction
+
+    while mesh.N() > n_vertices_target:
+        _fraction = n_vertices_target/mesh.N()
+        mesh.decimate(fraction=_fraction)
+
+    return (mesh.points(), np.asarray(mesh.faces()))
+
+
+@frame_by_frame
 def adjust_surface_density(surface: SurfaceData,
                            density_target: float) -> SurfaceData:
     """Adjust the number of vertices of a surface to a defined density"""
