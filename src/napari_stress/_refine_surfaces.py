@@ -19,8 +19,6 @@ import pandas as pd
 
 from enum import Enum
 
-import matplotlib.pyplot as plt
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -104,7 +102,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # Convert to mesh and calculate normals
     pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.computeNormalsWithPCA(orientationPoint=pointcloud.centerOfMass())
+    pointcloud.computeNormalsWithPCA()
+
 
     # Define start and end points for the surface tracing vectors
     n_samples = int(trace_length/sampling_distance)
@@ -177,30 +176,14 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['surface_points'] = new_surf_points
     fit_data['projection_vector'] = projection_vectors
 
-    # fig2, ax2 = plt.subplots()
-    # x = np.arange(0, fit_data['profiles'][i], 0.5)
-    # for i in range(len(fit_data)):
-    #     y = edge_func
-    #     ax1.plot(fit_data['profiles'][i])
-
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data, on=fit_errors,
-                                             factor=interquartile_factor,
-                                             which='above')
-        fit_data = _remove_outliers_by_index(fit_data, on='idx_of_border',
-                                             factor=interquartile_factor,
-                                             which='both')
-
-    fig, ax = plt.subplots()
-    ax.hist(fit_data['idx_of_border'])
+                                             factor=interquartile_factor)
 
     return np.stack(fit_data['surface_points'].to_numpy())
 
-def _remove_outliers_by_index(df,
-                              on = list,
-                              which: str = 'above',
-                              factor: float = 1.5) -> pd.DataFrame:
+def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
     if isinstance(on, str):
         on = [on]
@@ -213,13 +196,7 @@ def _remove_outliers_by_index(df,
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
         IQR = Q3 - Q1
-        if which == 'above':
-            idx = df[col] > (Q3 + factor * IQR)
-        elif which == 'below':
-            idx = df[col] < (Q1 - factor * IQR)
-        elif which == 'both':
-            idx = (df[col] < (Q1 - factor * IQR)) + (df[col] > (Q3 + factor * IQR))
-        indices[df[idx].index] = False
+        indices[df[df[col] > (Q3 + factor * IQR)].index] = False
 
     return df[indices]
 
