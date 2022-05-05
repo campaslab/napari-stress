@@ -177,12 +177,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['surface_points'] = new_surf_points
     fit_data['projection_vector'] = projection_vectors
 
-    # fig2, ax2 = plt.subplots()
-    # x = np.arange(0, fit_data['profiles'][i], 0.5)
-    # for i in range(len(fit_data)):
-    #     y = edge_func
-    #     ax1.plot(fit_data['profiles'][i])
-
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data, on=fit_errors,
@@ -191,9 +185,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data = _remove_outliers_by_index(fit_data, on='idx_of_border',
                                              factor=interquartile_factor,
                                              which='both')
-
-    fig, ax = plt.subplots()
-    ax.hist(fit_data['idx_of_border'])
 
     return np.stack(fit_data['surface_points'].to_numpy())
 
