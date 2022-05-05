@@ -81,13 +81,16 @@ def smooth_sinc(surface: SurfaceData,
 
 @frame_by_frame
 def smoothMLS2D(points: PointsData,
-                f: float = 0.2,
+                factor: float = 0.5,
                 radius: float = None) -> PointsData:
 
     pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.smoothMLS2D(f=f, radius=radius)
+    pointcloud.smoothMLS2D(f=factor, radius=radius)
 
-    return pointcloud.points()[pointcloud.info['isvalid']]
+    if radius is not None:
+        return pointcloud.points()[pointcloud.info['isvalid']]
+    else:
+        return pointcloud.points()
 
 @frame_by_frame
 def surface_from_label(label_image: LabelsData,
