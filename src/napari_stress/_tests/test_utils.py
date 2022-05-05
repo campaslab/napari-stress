@@ -1,7 +1,7 @@
 import numpy as np
 
 def test_fit_functions():
-    from napari_stress._utils import _sigmoid, _gaussian, _detect_maxima, _detect_drop
+    from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_drop
 
     x = np.arange(0, 100, 1)
 
@@ -18,54 +18,31 @@ def test_fit_functions():
     argmax = _detect_maxima(y)
     assert 49 <= argmax <= 51
 
-
-def test_point_utils():
-
-    from napari_stress._utils import list_of_points_to_points,\
-        points_to_list_of_points
-
-    # distribute fibonacci points
-    points = np.zeros((100, 4))
-    points[:, 0] = np.repeat(np.arange(0, 50, 1), 2)
-
-    list_of_points = points_to_list_of_points(points)
-    assert  isinstance(list_of_points, list)
-
-    _points = list_of_points_to_points(list_of_points)
-    assert np.array_equal(points, _points)
-
-def test_surf_utils():
-
-    from napari_stress._utils import surface_to_list_of_surfaces,\
-    list_of_surfaces_to_surface
+def test_decorator():
+    from napari_stress._utils import time_slicer
     from vedo import Sphere
 
-    list_of_surfaces = [
-        (Sphere().points(), np.asarray(Sphere().faces(), dtype=int))
-        ] * 10
+    from napari.types import LayerData, PointsData, SurfaceData, ImageData
 
-    surfaces = list_of_surfaces_to_surface(list_of_surfaces)
-    _list_of_surfaces = surface_to_list_of_surfaces(surfaces)
+    Converter = time_slicer.Converter()
 
-    for idx in range(10):
-        assert np.array_equal(list_of_surfaces[idx][0], _list_of_surfaces[idx][0])
-        assert np.array_equal(list_of_surfaces[idx][1][1], _list_of_surfaces[idx][1][1])
+    points_list = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
+    points_array = Converter.list_of_data_to_data(points_list, PointsData)
+    points_list_conv = Converter.data_to_list_of_data(points_array, PointsData)
 
-def test_decorator(make_napari_viewer):
-    from napari_stress import reconstruct_surface
-    from napari_stress._utils import list_of_points_to_points
-    from vedo import Sphere
+    for pts, _pts in zip(points_list, points_list_conv):
+        assert np.array_equal(points_list, points_list_conv)
 
-    viewer = make_napari_viewer()
+    surface_list = [
+        (Sphere().points() * k, np.asarray(Sphere().faces())) for k in np.arange(1.9, 2.1, 0.1)
+        ]
+    surface_array = Converter.list_of_data_to_data(surface_list, SurfaceData)
+    surface_list_conv = Converter.data_to_list_of_data(surface_array, SurfaceData)
 
-    points = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
-    points = list_of_points_to_points(points)
-    viewer.add_points(points, size=0.05)
-
-    surf = reconstruct_surface(points)
-    viewer.add_surface(surf)
-
+    for surf, _surf in zip(surface_list, surface_list_conv):
+        assert np.array_equal(surf[0], _surf[0])
+        assert np.array_equal(surf[1], _surf[1])
 
 if __name__ == '__main__':
     import napari
-    test_decorator(napari.Viewer)
+    test_decorator()
