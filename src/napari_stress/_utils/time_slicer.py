@@ -186,15 +186,18 @@ class Converter:
         n_frames = len(np.unique(points[:, 0]))
         points_per_frame = [sum(points[:, 0] == t) for t in range(n_frames)]
 
-        # find out at which index in the point array a new timeframe begins
-        frame_of_face = [points[face[0], 0] for face in faces]
-        idx_face_new_frame = list(np.argwhere(np.diff(frame_of_face) != 0).flatten() + 1)
-        idx_face_new_frame = [0] + idx_face_new_frame + [len(faces)]
+        idx_face_new_frame = []
+        t = 0
+        for idx, face in enumerate(faces):
+            if points[face[0], 0] == t:
+              idx_face_new_frame.append(idx)
+              t += 1
+        idx_face_new_frame.append(len(faces))
 
         surfaces = [None] * n_frames
         for t in range(n_frames):
             _points = points[points[:, 0] == t, 1:]
-            _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t+1]] - sum(points_per_frame[:t])
+            _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t+1]-1] - sum(points_per_frame[:t])
             surfaces[t] = (_points, _faces)
 
         return surfaces
@@ -204,7 +207,6 @@ class Converter:
         Convert list of 3D surfaces to single 4D surface.
         """
 
-        # Put vertices, faces and values into separate lists
         vertices = [surf[0] for surf in surfs]
         faces = [surf[1] for surf in surfs]
         values = None
