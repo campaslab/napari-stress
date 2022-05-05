@@ -1,4 +1,5 @@
 import numpy as np
+from napari.types import LayerData, PointsData, SurfaceData, ImageData
 
 def test_fit_functions():
     from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_drop
@@ -18,11 +19,9 @@ def test_fit_functions():
     argmax = _detect_maxima(y)
     assert 49 <= argmax <= 51
 
-def test_decorator():
+def test_decorator_points():
     from napari_stress._utils import time_slicer
     from vedo import Sphere
-
-    from napari.types import LayerData, PointsData, SurfaceData, ImageData
 
     Converter = time_slicer.Converter()
 
@@ -32,6 +31,12 @@ def test_decorator():
 
     for pts, _pts in zip(points_list, points_list_conv):
         assert np.array_equal(points_list, points_list_conv)
+
+def test_decorator_surfaces():
+    from napari_stress._utils import time_slicer
+    from vedo import Sphere
+
+    Converter = time_slicer.Converter()
 
     surface_list = [
         (Sphere().points() * k, np.asarray(Sphere().faces())) for k in np.arange(1.9, 2.1, 0.1)
@@ -43,6 +48,19 @@ def test_decorator():
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-if __name__ == '__main__':
-    import napari
-    test_decorator()
+def test_decorator_images():
+
+    from napari_stress._utils import time_slicer
+
+    Converter = time_slicer.Converter()
+
+    image = np.random.random(size=(50,50,50))
+    image_list = [k * image for k in np.arange(0.1, 1, 0.1)]
+
+    image_array = Converter.list_of_data_to_data(image_list, ImageData)
+
+    assert image_array.shape[0] == len(image_list)
+
+    image_list_conv = Converter.list_of_data_to_data(image_array, ImageData)
+    for img, _img in zip(image_list, image_list_conv):
+        assert np.array_equiv(img, _img)
