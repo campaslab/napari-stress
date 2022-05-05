@@ -13,7 +13,7 @@ def _detect_maxima(profile, center: float = None):
     return np.argmax(profile)
 
 def _detect_drop(profile, center: float = None):
-    return np.argmax(np.abs(np.diff(profile)))
+    return np.argmax(np.diff(profile))
 
 def _func_args_to_list(func: callable) -> list:
 
