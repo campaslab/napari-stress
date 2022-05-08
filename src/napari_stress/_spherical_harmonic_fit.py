@@ -51,6 +51,6 @@ def spherical_harmonic_fit(points: PointsData,
     popt_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
     errors = np.linalg.norm(popt_points - points, axis=1)
 
-    properties = {'errors': errors}
+    features = {'errors': errors}
 
-    return (popt_points, {'properties': properties}, 'points')
+    return (popt_points, {'features': features}, 'points')
