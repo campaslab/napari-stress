@@ -11,7 +11,7 @@ conda create -n napari-stress Python=3.9
 conda activate napari stress
 ```
 
-Install a few necessary plugins:
+Install necessary plugins:
 
 ```
 conda install -c conda-forge napari jupyterlab
@@ -28,20 +28,9 @@ pip install -e .
 ## Usage
 Napari-stress is intended to work for 3D+t datasets in `[TZYX]` format. This is an example of input data from a confocal microscope (taken from [here](https://github.com/campaslab/STRESS/blob/main/ExampleTifSequence-InteriorLabel-vsx_2.076um-vsz_3.998um-TimeInterval_3.00min-21timesteps.tif):
 
-<img src="./docs/imgs/confocal/1_raw_confocal.png" width=45% height=45%>
+<img src="./docs/imgs/confocal/1_raw_confocal.png" width=100% height=100%>
 
-Napari-stress currently provides notebooks for the following data/image types:
+In order to use napari-stress for your data type, please refer to the [notebooks](`./docs/notebooks/`) section. To run the notebook, open jupyter-lab in your activated environment with the `jupyter-lab` command and open the respective notebook (indicated by the `ipynb` file ending).
 
-* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb)
+* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as shown in [this notebook](https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb)
 * Lightsheet data (*.czi*), 3D + t: coming soon....
-
-The resulting surface will look like this:
-
-||Low curvature radius (r=5)| Medium curvature radius (r=10) | Higher curvature radius (r=20) |
-| --- | --- | --- | --- |
-|Curvature | <img src="./docs/imgs/confocal/2_result_curvature_5radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_10radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_20radius0.png" width=100% height=100%> |
-|Fit residue|<img src="./docs/imgs/confocal/2_result_fit_residues_5radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_10radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_20radius0.png" width=100% height=100%>|
-
-Depending on the set curvature radius, the calculation captures the global or the local curvature.
-
-
