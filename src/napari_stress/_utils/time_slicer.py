@@ -52,8 +52,12 @@ def frame_by_frame(function, progress_bar: bool = False):
     return wrapper
 
 class Converter:
+    """
+    This class allows converting napari 4D layer data between different formats.
+    """
     def __init__(self):
 
+        # Supported LayerData types
         self.funcs_data_to_list = {
             PointsData: self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
@@ -61,6 +65,7 @@ class Converter:
             LabelsData: self._image_to_list_of_images
             }
 
+    # Supported list data types
         self.funcs_list_to_data = {
             PointsData: self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
