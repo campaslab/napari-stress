@@ -51,6 +51,14 @@ def spherical_harmonic_fit(points: PointsData,
     popt_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
     errors = np.linalg.norm(popt_points - points, axis=1)
 
+    """
+    #TODO: Add code from campas stress repo
+    Link: https://github.com/campaslab/STRESS/blob/29c6627cb4c95330567cde5d0189238e3b95d7ab/Refactored_Droplet_Class.py#L888
+
+    This code simplifies the surface points to a set of lebedev points which allows to calculate
+    mean curvatures very easily.
+    """
+
     features = {'errors': errors}
 
     return (popt_points, {'features': features}, 'points')
