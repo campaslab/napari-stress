@@ -5,21 +5,18 @@ import vedo
 from ._spherical_harmonics import lbdv_info_SPB as lbdv_i
 from ._spherical_harmonics import sph_func_SPB as sph_f
 
-from ._spherical_harmonics._utils import leastsquares_ellipsoid,\
-    polyToParams3D,\
+from ._spherical_harmonics._utils import fit_ellipsoid,\
     Conv_3D_pts_to_Elliptical_Coors,\
     pointcloud_relative_coords,\
     Ellipsoid_LBDV,\
     Least_Squares_Harmonic_Fit
 
-def spherical_harmonics_fit(surface: SurfaceData,
-                            fit_degree: int = 3,
-                            cap_number_of_points: bool = True,
-                            tension_gamma_value: float = 0.5,
-                            use_true_harmonics: bool = False):
-
-    points = vedo.pointcloud.Points(surface[0])
-    mean_curvature = surface[2]
+def spherical_harmonic_fit(points: PointsData,
+                           mean_curvature: np.ndarray,
+                           fit_degree: int = 3,
+                           cap_number_of_points: bool = True,
+                           tension_gamma_value: float = 0.5,
+                           use_true_harmonics: bool = False):
 
     # Tension: \gamma  =.5, by default, so we multiply by this to get anistropic tension for curvature
     TwoGammaVal = 2. * tension_gamma_value
@@ -28,18 +25,17 @@ def spherical_harmonics_fit(surface: SurfaceData,
     #1st way we estimate H0: mean of input curvatures Elijah calculated
     H0_avg_input_curvs = np.average(mean_curvature)
 
-    points_relative = pointcloud_relative_coords(points.points())
+    points_relative = pointcloud_relative_coords(points)
 
     #JM: This part is important
     # get LS Ellipsoid estimate and get ellipsoid 3D parameters of original points
-    ellipse_fit_coefficients =  leastsquares_ellipsoid(points)
-    ls_ellipse_params = polyToParams3D(ellipse_fit_coefficients, False)
+    ellipse_params = fit_ellipsoid(points)
 
     # Put our point cloud in LS Ellipsoid coordinates:
     U_coors_pts_in = np.zeros_like(mean_curvature)
     V_coors_pts_in = np.zeros_like(mean_curvature)
 
-    U, V = Conv_3D_pts_to_Elliptical_Coors(points, ls_ellipse_params)
+    U, V = Conv_3D_pts_to_Elliptical_Coors(points, ellipse_params)
 
     # self.LS_Ellps_Mean_Curvs = Mean_Curvs_on_Ellipsoid(a0, a1, a2, self.U_coors_pts_in, self.V_coors_pts_in)
 
@@ -178,14 +174,14 @@ def spherical_harmonics_fit(surface: SurfaceData,
     # self.sigma_22_tissue_y =  self.Tissue_Stress_Tens_Cart_Coors[1,1]
     # self.sigma_33_tissue_z =  self.Tissue_Stress_Tens_Cart_Coors[2,2]
 
-    fitted_points = Least_Squares_Harmonic_Fit(fit_degree=fit_degree,
-                                               points_ellipse_coords = (U, V),
-                                               input_points = points,
-                                               use_true_harmonics=use_true_harmonics)
+    popt = Least_Squares_Harmonic_Fit(fit_degree=fit_degree,
+                                      points_ellipse_coords = (U, V),
+                                      input_points = points,
+                                      use_true_harmonics=use_true_harmonics)
 
-    X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(fitted_points[:, 0], fit_degree)
-    Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(fitted_points[:, 1], fit_degree)
-    Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(fitted_points[:, 2], fit_degree)
+    X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(popt[:, 0], fit_degree)
+    Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(popt[:, 1], fit_degree)
+    Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(popt[:, 2], fit_degree)
 
     # Create SPH_func to represent X, Y, Z:
     X_fit_sph = sph_f.sph_func(X_fit_sph_coef_mat, fit_degree)
