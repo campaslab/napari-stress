@@ -3,8 +3,7 @@ from napari.types import PointsData
 
 from ._spherical_harmonics import sph_func_SPB as sph_f
 
-from ._spherical_harmonics._utils import fit_ellipsoid,\
-    Conv_3D_pts_to_Elliptical_Coors,\
+from ._spherical_harmonics._utils import Conv_3D_pts_to_Elliptical_Coors,\
     Least_Squares_Harmonic_Fit
 
 def spherical_harmonic_fit(points: PointsData,
@@ -29,8 +28,7 @@ def spherical_harmonic_fit(points: PointsData,
     """
 
     # get LS Ellipsoid estimate and get ellipsoid 3D parameters of original points
-    ellipse_params = fit_ellipsoid(points)
-    U, V = Conv_3D_pts_to_Elliptical_Coors(points, ellipse_params)
+    U, V = Conv_3D_pts_to_Elliptical_Coors(points)
 
     popt = Least_Squares_Harmonic_Fit(fit_degree=fit_degree,
                                       points_ellipse_coords = (U, V),

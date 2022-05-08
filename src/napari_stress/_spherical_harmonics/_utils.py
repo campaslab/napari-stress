@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData
+from typing import Tuple
 
 from scipy.special import sph_harm
 from scipy.spatial.transform import Rotation
@@ -17,6 +18,11 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
                                points_ellipse_coords: tuple,
                                input_points: PointsData,
                                use_true_harmonics: bool = True) -> np.ndarray:
+    """
+    Perform least squares fit of spherical harmonic basis functions.
+
+    This function
+    """
 
     U, V = points_ellipse_coords[0], points_ellipse_coords[1]
 
@@ -106,26 +112,45 @@ def Ellipsoid_LBDV(LBDV_Fit,
 
     return results
 
-# Convert input R^3 points into Ellipsoidal coors:
-def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
-                                    ellipse_params: dict):
 
-    center = ellipse_params.center
-    r = Rotation.from_euler('xyz', ellipse_params.GetOrientation())
+def Conv_3D_pts_to_Elliptical_Coors(points: PointsData
+                                    ) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Fit an ellipse to points and convert R^3 points to ellipsoidal coordinates.
+
+    Parameters
+    ----------
+    points : PointsData
+        DESCRIPTION.
+
+    Returns
+    -------
+    U_coors_calc : np.ndarray
+        1st component of points in ellipsoidal coordinate system
+    V_coors_calc : np.ndarray
+        2nd component of points in ellipsoidal coordinate system
+
+    """
+
+    points = vedo.pointcloud.Points(points)
+    ellipsoid = vedo.pcaEllipsoid(points)
+
+    center = ellipsoid.center
+    r = Rotation.from_euler('xyz', ellipsoid.GetOrientation())
     inv_rot_mat = np.linalg.inv(r.as_matrix())
 
-    num_pts_used = len(point_cloud)
+    num_pts_used = len(points)
     U_coors_calc = np.zeros(( num_pts_used, 1 ))
     V_coors_calc = np.zeros(( num_pts_used, 1 ))
 
     for pt_numb in range(num_pts_used):
-        y_tilde_pt = np.linalg.solve(inv_rot_mat, point_cloud[pt_numb, :].reshape(3,1) - center.reshape(3, 1)  )
+        y_tilde_pt = np.linalg.solve(inv_rot_mat, points[pt_numb, :].reshape(3,1) - center.reshape(3, 1)  )
 
         yt_0 = y_tilde_pt[0,0]
         yt_1 = y_tilde_pt[1,0]
         yt_2 = y_tilde_pt[2,0]
 
-        U_pt = np.arctan2( yt_1 * ellipse_params.va, yt_0 * ellipse_params.vb)
+        U_pt = np.arctan2( yt_1 * ellipsoid.va, yt_0 * ellipsoid.vb)
 
         if(U_pt < 0):
             U_pt = U_pt + 2. * np.pi
@@ -133,9 +158,9 @@ def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
         U_coors_calc[pt_numb] = U_pt
 
         cylinder_r = np.sqrt(yt_0**2 + yt_1**2)    # r in cylinderical coors for y_tilde
-        cyl_r_exp = np.sqrt( (ellipse_params.va * np.cos(U_pt))**2 + (ellipse_params.vb * np.sin(U_pt))**2 )
+        cyl_r_exp = np.sqrt( (ellipsoid.va * np.cos(U_pt))**2 + (ellipsoid.vb * np.sin(U_pt))**2 )
 
-        V_pt = np.arctan2( cylinder_r * ellipse_params.vc, yt_2 * cyl_r_exp )
+        V_pt = np.arctan2( cylinder_r * ellipsoid.vc, yt_2 * cyl_r_exp )
 
         if(V_pt < 0):
             V_pt = V_pt + 2.*np.pi
@@ -143,15 +168,3 @@ def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
         V_coors_calc[pt_numb] = V_pt
 
     return U_coors_calc, V_coors_calc
-
-def pointcloud_relative_coords(points: PointsData) -> PointsData:
-    center = points.mean(axis=0)
-    rel_coords = points - center[None, :]
-    return rel_coords
-
-def fit_ellipsoid(points: PointsData):
-
-    points = vedo.pointcloud.Points(points)
-    ellipsoid = vedo.pcaEllipsoid(points)
-
-    return ellipsoid
