@@ -12,6 +12,8 @@ from ._surface import surface_from_label,\
     resample_points,\
     decimate
 
+from ._spherical_harmonic_fit import spherical_harmonic_fit
+
 from ._utils.time_slicer import frame_by_frame
 from napari_plugin_engine import napari_hook_implementation
 
