@@ -131,15 +131,14 @@ def Conv_3D_pts_to_Elliptical_Coors(points: PointsData
         2nd component of points in ellipsoidal coordinate system
 
     """
-
-    points = vedo.pointcloud.Points(points)
-    ellipsoid = vedo.pcaEllipsoid(points)
+    _pts = vedo.pointcloud.Points(points)
+    ellipsoid = vedo.pcaEllipsoid(_pts)
 
     center = ellipsoid.center
     r = Rotation.from_euler('xyz', ellipsoid.GetOrientation())
     inv_rot_mat = np.linalg.inv(r.as_matrix())
 
-    num_pts_used = len(points)
+    num_pts_used = _pts.N()
     U_coors_calc = np.zeros(( num_pts_used, 1 ))
     V_coors_calc = np.zeros(( num_pts_used, 1 ))
 
