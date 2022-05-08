@@ -1,3 +1,4 @@
+# From https://github.com/campaslab/STRESS
 #!!! WILL DEPEND ON DIFF GEO WHEN WE GO OFF SPHERE !!! #
 from numpy  import *
 import numpy as np

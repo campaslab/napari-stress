@@ -1,3 +1,4 @@
+# From https://github.com/campaslab/STRESS
 #! This class Generates All of the quadrature information that sph_func, k_form use
 
 from numpy  import *

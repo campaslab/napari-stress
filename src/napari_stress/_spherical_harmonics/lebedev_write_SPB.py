@@ -1,3 +1,4 @@
+# From https://github.com/campaslab/STRESS
 #!/usr/bin/env python
 """\
  C version: Dmitri Laikov
@@ -5,15 +6,15 @@
  Python version: Richard P. Muller, 2002.
 
  This subroutine is part of a set of subroutines that generate
- Lebedev grids [1-6] for integration on a sphere. The original 
- C-code [1] was kindly provided by Dr. Dmitri N. Laikov and 
+ Lebedev grids [1-6] for integration on a sphere. The original
+ C-code [1] was kindly provided by Dr. Dmitri N. Laikov and
  translated into fortran by Dr. Christoph van Wuellen.
  This subroutine was translated from C to fortran77 by hand.
 
  Users of this code are asked to include reference [1] in their
- publications, and in the user- and programmers-manuals 
+ publications, and in the user- and programmers-manuals
  describing their codes.
- 
+
    [1] V.I. Lebedev, and D.N. Laikov
        'A quadrature formula for the sphere of the 131st
         algebraic order of accuracy'
@@ -22,24 +23,24 @@
    [2] V.I. Lebedev
        'A quadrature formula for the sphere of 59th algebraic
         order of accuracy'
-       Russian Acad. Sci. Dokl. Math., Vol. 50, 1995, pp. 283-286. 
+       Russian Acad. Sci. Dokl. Math., Vol. 50, 1995, pp. 283-286.
 
    [3] V.I. Lebedev, and A.L. Skorokhodov
        'Quadrature formulas of orders 41, 47, and 53 for the sphere'
-       Russian Acad. Sci. Dokl. Math., Vol. 45, 1992, pp. 587-592. 
+       Russian Acad. Sci. Dokl. Math., Vol. 45, 1992, pp. 587-592.
 
    [4] V.I. Lebedev
        'Spherical quadrature formulas exact to orders 25-29'
-       Siberian Mathematical Journal, Vol. 18, 1977, pp. 99-107. 
+       Siberian Mathematical Journal, Vol. 18, 1977, pp. 99-107.
 
    [5] V.I. Lebedev
        'Quadratures on a sphere'
        Computational Mathematics and Mathematical Physics, Vol. 16,
-       1976, pp. 10-24. 
+       1976, pp. 10-24.
 
    [6] V.I. Lebedev
-       'Values of the nodes and weights of ninth to seventeenth 
-        order Gauss-Markov quadrature formulae invariant under the 
+       'Values of the nodes and weights of ninth to seventeenth
+        order Gauss-Markov quadrature formulae invariant under the
         octahedron group with inversion'
        Computational Mathematics and Mathematical Physics, Vol. 15,
        1975, pp. 44-51.
@@ -189,7 +190,7 @@ def leb194():
                      0.8360360154824589E+0)
 
 def leb230():
-  
+
   v=-0.5522639919727325E-1;
   out = genOh_a00(v);
   v=0.4450274607445226E-2;
@@ -219,7 +220,7 @@ def leb230():
   b=0.4864661535886647E+0;
   v=0.4695720972568883E-2;
   out = out + genOh_abc(v,a,b);
-  
+
   return out
 
 def leb266():
@@ -255,7 +256,7 @@ def leb266():
   b=0.5244939240922365E+0;
   v=0.4071467593830964E-2;
   out = out + genOh_abc(v,a,b);
-  
+
   return out
 
 def leb302():
@@ -295,11 +296,11 @@ def leb302():
   b=0.4127724083168531E+0;
   v=0.3392312205006170E-2;
   out = out + genOh_abc(v,a,b);
-  
+
   return out
 
 def leb350():
-  
+
   v=0.3006796749453936E-2;
   out = genOh_a00(v);
   v=0.3050627745650771E-2;
@@ -343,7 +344,7 @@ def leb350():
   return out
 
 def leb434():
-  
+
   v=0.5265897968224436E-3;
   out = genOh_a00(v);
   v=0.2548219972002607E-2;
@@ -396,7 +397,7 @@ def leb434():
   return out
 
 def leb590():
-  
+
   v=0.3095121295306187E-3;
   out = genOh_a00(v);
   v=0.1852379698597489E-2;
@@ -2760,11 +2761,11 @@ def leb3890():
   b=0.3569455268820809E-1;
   v=0.2843455206008783E-3;
   out = out + genOh_abc(v,a,b);
-  
+
   return out
 
 def leb4334():
-  
+
   v=0.1449063022537883E-4;
   out = genOh_a00(v);
   v=0.2546377329828424E-3;
@@ -3164,11 +3165,11 @@ def leb4334():
   a=0.6710994302899275E+0;
   b=0.6755249309678028E-1;
   v=0.2552114127580376E-3;
-  out = out + genOh_abc(v,a,b);  
+  out = out + genOh_abc(v,a,b);
   return out
 
 def leb4802():
-  
+
   v=0.9687521879420705E-4;
   out = genOh_a00(v);
   v=0.2307897895367918E-3;
@@ -3609,11 +3610,11 @@ def leb4802():
   a=0.6741354429572275E+0;
   b=0.3211853196273233E-1;
   v=0.2304831913227114E-3;
-  out = out + genOh_abc(v,a,b); 
+  out = out + genOh_abc(v,a,b);
   return out
 
 def leb5294():
-  
+
   v=0.9080510764308163E-4;
   out = genOh_a00(v);
   v=0.2084824361987793E-3;
@@ -4101,7 +4102,7 @@ def leb5294():
   return out
 
 def leb5810():
-  
+
   v=0.9735347946175486E-5;
   out = genOh_a00(v);
   v=0.1907581241803167E-3;
@@ -4669,7 +4670,7 @@ LebFunc = {
     4802: leb4802,
     5294: leb5294,
     5810: leb5810
-    
+
 }
 
 
@@ -4700,19 +4701,10 @@ if __name__ == '__main__':
 #  self.r      = [];
 #  self.phi    = [];
 #  self.theta  = [];
-#  
+#
 #def cart2sph():
 #  self.r = sqrt(self.x**2 + self.y**2 + self.z**2)
 #  self.phi = atan(self.y/self.x)
 #  self.theta = atan(self.z/sqrt(self.x**2+self.y**2)
 #
 #  return self
-  
-  
-  
-  
-  
-  
-  
-  
-  

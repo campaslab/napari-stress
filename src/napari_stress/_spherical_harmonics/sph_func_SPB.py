@@ -1,3 +1,4 @@
+# From https://github.com/campaslab/STRESS
 #! We use sph_func to encapsulate data from SPH Basis of functions, regardless of chart
 
 from numpy  import *
