@@ -3,11 +3,14 @@ import numpy as np
 from napari.types import PointsData
 
 from scipy.special import sph_harm
+from scipy.spatial.transform import Rotation
 
-import lbdv_info_SPB as lbdv_i
-import sph_func_SPB as sph_f
-import euc_k_form_SPB as euc_kf
-import manifold_SPB as mnfd
+import vedo
+
+from .._spherical_harmonics import sph_func_SPB as sph_f
+from .._spherical_harmonics import lbdv_info_SPB as lbdv_i
+from .._spherical_harmonics import euc_k_form_SPB as euc_kf
+from .._spherical_harmonics import manifold_SPB as mnfd
 
 # return least squares harmonic fit to point cloud, given choice of basis and degree:
 def Least_Squares_Harmonic_Fit(fit_degree: int,
@@ -36,7 +39,7 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
     x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 1])[0]
     x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 2])[0]
 
-    return np.hstack([x1, x2, x3])
+    return np.vstack([x1, x2, x3]).transpose()
 
 # Use same lbdv_fit to analyze ellipsoid on lbdv points:
 def Ellipsoid_LBDV(LBDV_Fit,
@@ -107,9 +110,9 @@ def Ellipsoid_LBDV(LBDV_Fit,
 def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
                                     ellipse_params: dict):
 
-    major_axis = ellipse_params['ellipse_axes']
-    center = ellipse_params['center']
-    inv_rot_mat = ellipse_params['inverse_rotation_matrix']
+    center = ellipse_params.center
+    r = Rotation.from_euler('xyz', ellipse_params.GetOrientation())
+    inv_rot_mat = np.linalg.inv(r.as_matrix())
 
     num_pts_used = len(point_cloud)
     U_coors_calc = np.zeros(( num_pts_used, 1 ))
@@ -122,7 +125,7 @@ def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
         yt_1 = y_tilde_pt[1,0]
         yt_2 = y_tilde_pt[2,0]
 
-        U_pt = np.arctan2( yt_1 * major_axis[0], yt_0 * major_axis[1])
+        U_pt = np.arctan2( yt_1 * ellipse_params.va, yt_0 * ellipse_params.vb)
 
         if(U_pt < 0):
             U_pt = U_pt + 2. * np.pi
@@ -130,9 +133,9 @@ def Conv_3D_pts_to_Elliptical_Coors(point_cloud: PointsData,
         U_coors_calc[pt_numb] = U_pt
 
         cylinder_r = np.sqrt(yt_0**2 + yt_1**2)    # r in cylinderical coors for y_tilde
-        cyl_r_exp = np.sqrt( (major_axis[0] * np.cos(U_pt))**2 + (major_axis[1] * np.sin(U_pt))**2 )
+        cyl_r_exp = np.sqrt( (ellipse_params.va * np.cos(U_pt))**2 + (ellipse_params.vb * np.sin(U_pt))**2 )
 
-        V_pt = np.arctan2( cylinder_r * major_axis[2], yt_2 * cyl_r_exp )
+        V_pt = np.arctan2( cylinder_r * ellipse_params.vc, yt_2 * cyl_r_exp )
 
         if(V_pt < 0):
             V_pt = V_pt + 2.*np.pi
@@ -146,113 +149,9 @@ def pointcloud_relative_coords(points: PointsData) -> PointsData:
     rel_coords = points - center[None, :]
     return rel_coords
 
-def leastsquares_ellipsoid(pointcloud: PointsData):
-    #finds best fit ellipsoid. Found at http://www.juddzone.com/ALGORITHMS/least_squares_3D_ellipsoid.html
-    #least squares fit to a 3D-ellipsoid
-    #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz  = 1
-    #
-    # Note that sometimes it is expressed as a solution to
-    #  Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx + 2Hy + 2Iz  = 1
-    # where the last six terms have a factor of 2 in them
-    # This is in anticipation of forming a matrix with the polynomial coefficients.
-    # Those terms with factors of 2 are all off diagonal elements.  These contribute
-    # two terms when multiplied out (symmetric) so would need to be divided by two
+def fit_ellipsoid(points: PointsData):
 
-    # change xx from vector of length N to Nx1 matrix so we can use hstack
-    x = pointcloud[:, 0, np.newaxis]
-    y = pointcloud[:, 0, np.newaxis]
-    z = pointcloud[:, 0, np.newaxis]
+    points = vedo.pointcloud.Points(points)
+    ellipsoid = vedo.pcaEllipsoid(points)
 
-    #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz = 1
-    J = np.hstack((x*x,y*y,z*z,x*y,x*z,y*z, x, y, z))
-    K = np.ones_like(x) #column of ones
-
-    #np.hstack performs a loop over all samples and creates
-    #a row in J for each x,y,z sample:
-    # J[ix,0] = x[ix]*x[ix]
-    # J[ix,1] = y[ix]*y[ix]
-    # etc.
-
-    JT = J.transpose()
-    JTJ = np.dot(JT,J)
-    InvJTJ = np.linalg.inv(JTJ);
-    ABC = np.dot(InvJTJ, np.dot(JT,K)) #!!!! LOOK AT RESIDUALS TO GET ELLIPSOID ERRORS !!!!#
-
-    # Rearrange, move the 1 to the other side
-    #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz - 1 = 0
-    #    or
-    #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz + J = 0
-    #  where J = -1
-    eansa=np.append(ABC,-1)
-
-    return (eansa)
-
-# For above Ellipsoid Code:
-def polyToParams3D(vec, verbose: bool = True):
-    """
-    gets 3D parameters of an ellipsoid. Found at http://www.juddzone.com/ALGORITHMS/least_squares_3D_ellipsoid.html
-    convert the polynomial form of the 3D-ellipsoid to parameters
-    center, axes, and transformation matrix
-    vec is the vector whose elements are the polynomial
-    coefficients A..J
-
-
-    Parameters
-    ----------
-    vec : TYPE
-        DESCRIPTION.
-    verbose : bool, optional
-        DESCRIPTION. The default is True.
-
-    Returns
-    -------
-    returns (center, axes, rotation matrix)
-
-    """
-    #Algebraic form: X.T * Amat * X --> polynomial form
-
-    if verbose: print('\npolynomial\n',vec)
-
-    Amat = np.array([
-        [ vec[0],     vec[3]/2.0, vec[4]/2.0, vec[6]/2.0 ],
-        [ vec[3]/2.0, vec[1],     vec[5]/2.0, vec[7]/2.0 ],
-        [ vec[4]/2.0, vec[5]/2.0, vec[2],     vec[8]/2.0 ],
-        [ vec[6]/2.0, vec[7]/2.0, vec[8]/2.0, vec[9]     ]
-    ])
-
-    if verbose: print('\nAlgebraic form of polynomial\n', Amat)
-
-    #See B.Bartoni, Preprint SMU-HEP-10-14 Multi-dimensional Ellipsoidal Fitting
-    # equation 20 for the following method for finding the center
-    A3 = Amat[0:3,0:3]
-    A3inv=np.linalg.inv(A3)
-    ofs=vec[6:9]/2.0
-    center=-np.dot(A3inv,ofs)
-    if verbose: print('\nCenter at:',center)
-
-    # Center the ellipsoid at the origin
-    Tofs=np.eye(4)
-    Tofs[3,0:3]=center
-    R = np.dot(Tofs,np.dot(Amat,Tofs.T))
-    if verbose: print('\nAlgebraic form translated to center\n',R,'\n')
-
-    R3=R[0:3,0:3]
-    R3test=R3/R3[0,0]
-    # print('normed \n',R3test)
-    s1=-R[3, 3]
-    R3S=R3/s1
-    (el,ec)=np.linalg.eig(R3S)
-
-    recip=1.0/np.abs(el)
-    axes=np.sqrt(recip)
-    if verbose: print('\nAxes are\n',axes  ,'\n')
-
-    inve=np.linalg.inv(ec) #inverse is actually the transpose here
-    if verbose: print('\nRotation matrix\n',inve)
-
-    results = {}
-    results['center'] = center
-    results['ellipse_axes'] = axes
-    results['inverse'] = inve
-    results['eigenvectors'] = ec
-    return results
+    return ellipsoid

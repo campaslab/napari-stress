@@ -6,12 +6,12 @@ import mpmath
 import cmath
 from scipy.special import sph_harm
 
-from lebedev_write_SPB import * # lists all Lebdv quadratures
-from charts_SPB import * # For Lebedev Point Conversion
+from .lebedev_write_SPB import * # lists all Lebdv quadratures
+from .charts_SPB import * # For Lebedev Point Conversion
 
 #for pickling:
 #import cPickle as pkl # BJG: py2pt7 version
-import pickle as pkl   
+import pickle as pkl
 import os, sys
 
 # Allows us to find appropriate quadrature:
@@ -91,9 +91,9 @@ pts_of_lbdv_lookup = {
 def look_up_lbdv_pts(Degree):
 	if(Degree > 66 or Degree < 2):
 		print("Error: Cannot have Basis of Degree: "+str(Degree))
-	
+
 	elif(Degree in pts_of_lbdv_lookup):
-		return pts_of_lbdv_lookup[Degree]		
+		return pts_of_lbdv_lookup[Degree]
 
 	else:
 		return look_up_lbdv_pts(Degree+1)
@@ -109,7 +109,7 @@ def Eval_SPH_Basis(M_Coef, N_Coef, Theta, Phi):
 
 	else: # m<0, we use Y^(-m)_n.imag
 		return sph_harm(-1*M_Coef, N_Coef, Theta, Phi).imag
-		
+
 
 #Evaluates d_phi(Y^m_n) at SINGLE PT
 def Der_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to Z^|M|_N
@@ -119,30 +119,30 @@ def Der_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to Z^|M
         # For Scalar Case, we use usual vectorization:
 	if(isscalar(Theta)):
 		#COPIED FROM SPH_DER_PHI_FN
-		Der_Phi_Val = 0	
+		Der_Phi_Val = 0
 
 		if(M_Coef == 0): #No Cotangent terms:
 			if(N_Coef > 0):
 				return sqrt((N_Coef)*(N_Coef+1))*(((e**(-1j*Theta))*sph_harm(1, N_Coef, Theta, Phi))).real
-			else: 
+			else:
 				return 0 #d_phi Y^0_0 = 0
 
 		elif(M_Coef < 0):
 
-			m_sph = -1*M_Coef 
+			m_sph = -1*M_Coef
 			Der_Phi_Val += (m_sph*mpmath.cot(Phi))*sph_harm(m_sph, N_Coef, Theta, Phi).imag
 
 			if(m_sph < N_Coef):
 				Der_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef+m_sph+1))*(((e**(-1j*Theta))*sph_harm(m_sph+1, N_Coef, Theta, Phi))).imag
 
-		else: # M_Coef >= 0	
+		else: # M_Coef >= 0
 
 			m_sph = M_Coef
-			Der_Phi_Val += (m_sph*mpmath.cot(Phi))*sph_harm(m_sph, N_Coef, Theta, Phi).real	
+			Der_Phi_Val += (m_sph*mpmath.cot(Phi))*sph_harm(m_sph, N_Coef, Theta, Phi).real
 
-			if(m_sph < N_Coef):		
+			if(m_sph < N_Coef):
 				Der_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef+m_sph+1))*(((e**(-1j*Theta))*sph_harm(m_sph+1, N_Coef, Theta, Phi))).real
-	
+
 	else: # array input case:
 
 		#COPIED FROM SPH_DER_PHI_FN
@@ -151,24 +151,24 @@ def Der_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to Z^|M
 		if(M_Coef == 0): #No Cotangent terms:
 			if(N_Coef > 0):
 				return sqrt((N_Coef)*(N_Coef+1))*(((np.exp(-1j*Theta))*sph_harm(1, N_Coef, Theta, Phi))).real
-			else: 
+			else:
 				return 0 #d_phi Y^0_0 = 0
 
 		elif(M_Coef < 0):
 
-			m_sph = -1*M_Coef 
+			m_sph = -1*M_Coef
 			Der_Phi_Val += (m_sph*(1./np.tan(Phi)))*sph_harm(m_sph, N_Coef, Theta, Phi).imag
 
 			if(m_sph < N_Coef):
 				Der_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef+m_sph+1))*(((np.exp(-1j*Theta))*sph_harm(m_sph+1, N_Coef, Theta, Phi))).imag
 
-		else: # M_Coef >= 0	
+		else: # M_Coef >= 0
 
 			m_sph = M_Coef
-			Der_Phi_Val += (m_sph*(1./np.tan(Phi)))*sph_harm(m_sph, N_Coef, Theta, Phi).real	
+			Der_Phi_Val += (m_sph*(1./np.tan(Phi)))*sph_harm(m_sph, N_Coef, Theta, Phi).real
 
-			if(m_sph < N_Coef):		
-				Der_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef+m_sph+1))*(((np.exp(-1j*Theta))*sph_harm(m_sph+1, N_Coef, Theta, Phi))).real				
+			if(m_sph < N_Coef):
+				Der_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef+m_sph+1))*(((np.exp(-1j*Theta))*sph_harm(m_sph+1, N_Coef, Theta, Phi))).real
 
 	return Der_Phi_Val
 
@@ -176,11 +176,11 @@ def Der_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to Z^|M
 #Evaluates d_phi(d_phi((Y^m_n)) at SINGLE PT
 def Der_Phi_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to Z^|M|_N
 
-	Der_Phi_Phi_Val = 0	
-	
+	Der_Phi_Phi_Val = 0
+
 	if(M_Coef < 0):
 
-		m_sph = -1*M_Coef 
+		m_sph = -1*M_Coef
 		Der_Phi_Phi_Val += m_sph*(m_sph*(mpmath.cot(Phi)**2) - (mpmath.csc(Phi)**2))*sph_harm(m_sph, N_Coef, Theta, Phi).imag
 
 		if(m_sph < N_Coef):
@@ -189,7 +189,7 @@ def Der_Phi_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to 
 		if(m_sph < (N_Coef -1) ):
 			Der_Phi_Phi_Val += sqrt((N_Coef-m_sph)*(N_Coef-m_sph-1)*(N_Coef+m_sph+1)*(N_Coef+m_sph+2))*(((e**(-2j*Theta))*sph_harm(m_sph+2, N_Coef, Theta, Phi))).imag
 
-	else: # M_Coef >= 0	
+	else: # M_Coef >= 0
 
 		m_sph = M_Coef
 		Der_Phi_Phi_Val +=  m_sph*(m_sph*(mpmath.cot(Phi)**2) - (mpmath.csc(Phi)**2))*sph_harm(m_sph, N_Coef, Theta, Phi).real
@@ -203,22 +203,22 @@ def Der_Phi_Phi_Basis_Fn(M_Coef,N_Coef, Theta, Phi): # M_Coef < 0 Corresonds to 
 
 
 def Lbdv_Cart_To_Sph(Cart_Pts_Wts): #takes matrix with rows [x,y,z,w] -> [theta, phi, w] (r=1)
-	
-	num_lbdv_pts = shape(Cart_Pts_Wts)[0]	
-	
-	Sph_Pts_Wts = zeros((num_lbdv_pts, 3))	
-	
+
+	num_lbdv_pts = shape(Cart_Pts_Wts)[0]
+
+	Sph_Pts_Wts = zeros((num_lbdv_pts, 3))
+
 	for pt in range(num_lbdv_pts):
-		
+
 
 		x = Cart_Pts_Wts[pt][0]
 		y = Cart_Pts_Wts[pt][1]
 		z = Cart_Pts_Wts[pt][2]
-		
-		# set quad_pt weight
-		Sph_Pts_Wts[pt][2] = Cart_Pts_Wts[pt][3] 
 
-		#Conversion Fn now on its own		
+		# set quad_pt weight
+		Sph_Pts_Wts[pt][2] = Cart_Pts_Wts[pt][3]
+
+		#Conversion Fn now on its own
 		Angles = Cart_To_Coor_A(x, y, z)
 		Sph_Pts_Wts[pt][0] = Angles[0]
 		Sph_Pts_Wts[pt][1] = Angles[1]
@@ -227,20 +227,20 @@ def Lbdv_Cart_To_Sph(Cart_Pts_Wts): #takes matrix with rows [x,y,z,w] -> [theta,
 
 # Get max degree quad pts for plotting/interpolation:
 def get_5810_quad_pts():
-	
+
 	euc_quad_pts = Lebedev(5810)
 	sph_quad_pts = Lbdv_Cart_To_Sph(euc_quad_pts)
 
 	x_pts, y_pts, z_pts, w_pts = hsplit(euc_quad_pts, 4)
 	theta_pts, phi_pts, w_pts = hsplit(sph_quad_pts, 3)
-	
+
 	return x_pts, y_pts, z_pts, theta_pts, phi_pts
 
 
 ######################################################################################################################################################
 
-class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info 
-	
+class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
+
 	def __init__(self, Max_SPH_Deg, Num_Quad_Pts): # This generates lebedev and quad pt info upon instantiation
 
 		MY_DIR  = os.path.realpath(os.path.dirname(__file__)) #current folder
@@ -250,12 +250,12 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 		### GENERATE 5810 Quadrature ONCE #######
 		#print("generating quad pts") # BJG: only notify if NEW mats are needed (time-consuming)
 		self.lbdv_quad_pts = Num_Quad_Pts #Needs to be appropriate number up to 5810
-		
-		#### To see if there are errors in assigning points ###############		
+
+		#### To see if there are errors in assigning points ###############
 		self.Lbdv_Cart_Pts_Quad = Lebedev(self.lbdv_quad_pts)
-		
-		self.X, self.Y, self.Z, self.W = hsplit(self.Lbdv_Cart_Pts_Quad, 4)		
-		###################################################################		
+
+		self.X, self.Y, self.Z, self.W = hsplit(self.Lbdv_Cart_Pts_Quad, 4)
+		###################################################################
 
 		self.Lbdv_Sph_Pts_Quad = Lbdv_Cart_To_Sph(self.Lbdv_Cart_Pts_Quad)
 		self.theta_pts, self.phi_pts, self.weight_pts = hsplit(self.Lbdv_Sph_Pts_Quad, 3)
@@ -264,16 +264,16 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 		#########################################
 
 
-		
-		LBDV_Basis_at_Quad_Pts_Mats_filename = "LBDV_Basis_at_Quad_Pts"+LBDV_name 
+
+		LBDV_Basis_at_Quad_Pts_Mats_filename = "LBDV_Basis_at_Quad_Pts"+LBDV_name
 		LBDV_Basis_at_Quad_Pts_Mats_filepath =  os.path.join(PICKLE_DIR, LBDV_Basis_at_Quad_Pts_Mats_filename) # we store as a 4-dim array:
 
 		if(os.path.isfile(LBDV_Basis_at_Quad_Pts_Mats_filepath)): # If already pickled, we load it, and split it into the needed arrays:
-			
+
 			#print("\n"+"Loading Pickled LBDV data Mats"+"\n") # BJG: only notify if NEW mats are needed (time-consuming)
-			
-			Pickled_LBDV_Basis_at_Quad_Pts_Mats = []		
-	
+
+			Pickled_LBDV_Basis_at_Quad_Pts_Mats = []
+
 			with open(LBDV_Basis_at_Quad_Pts_Mats_filepath, 'rb') as f_lbdv_basis:
 				Pickled_LBDV_Basis_at_Quad_Pts_Mats = pkl.load(f_lbdv_basis)
 
@@ -282,9 +282,9 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 			self.SPH_Basis_At_Quad_Pts = Pickled_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 1]
 			self.SPH_Phi_Der_At_Quad_Pts = Pickled_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 2]
 			self.SPH_Phi_Phi_Der_At_Quad_Pts = Pickled_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 3]
-			
 
-				
+
+
 		else: #If not pickled, we generate and pickle these files:
 
 			print("\n"+"Pickling This LBDV data:"+"\n")
@@ -294,29 +294,29 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 
 			# Store for W_pt*Y^m_n at each point, in same format as coef mat
 			self.SPH_Basis_Wt_At_Quad_Pts = zeros((Max_SPH_Deg+1, Max_SPH_Deg+1, self.lbdv_quad_pts)) #includes weights
-	 
-			self.SPH_Basis_At_Quad_Pts = zeros((Max_SPH_Deg+1, Max_SPH_Deg+1, self.lbdv_quad_pts)) #does NOT inculude weights 
+
+			self.SPH_Basis_At_Quad_Pts = zeros((Max_SPH_Deg+1, Max_SPH_Deg+1, self.lbdv_quad_pts)) #does NOT inculude weights
 
 
 			for N_Coef in range(Max_SPH_Deg+1): # 0,...,Max_SPH_Deg
 				for M_Coef in range(-1*N_Coef,N_Coef+1): #-N,...,N
 					for quad_pt in range(self.lbdv_quad_pts):
 
-						Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]			
+						Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]
 						Phi_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][1]
 						Weight_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][2]
 
 						if(M_Coef >= 0):
 							self.SPH_Basis_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Eval_SPH_Basis(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt)
-							self.SPH_Basis_Wt_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Weight_Quad_Pt*self.SPH_Basis_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt]				
-			
+							self.SPH_Basis_Wt_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Weight_Quad_Pt*self.SPH_Basis_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt]
+
 
 						else: #M_Coef < 0
 							self.SPH_Basis_At_Quad_Pts[N_Coef][N_Coef -(-1*M_Coef)][quad_pt] = Eval_SPH_Basis(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt)
 							self.SPH_Basis_Wt_At_Quad_Pts[N_Coef][N_Coef -(-1*M_Coef)][quad_pt] = Weight_Quad_Pt*self.SPH_Basis_At_Quad_Pts[N_Coef][N_Coef -(-1*M_Coef)][quad_pt]
 
 
-	
+
 
 			print("generated basis vals")
 			#######################   Der Phi Fns To Speed Up Code    ##############################
@@ -338,29 +338,29 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 				for M_Coef in range(-1*N_Coef,N_Coef+1): #-N,...,N
 					for quad_pt in range(self.lbdv_quad_pts):
 
-						Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]			
+						Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]
 						Phi_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][1]
 						# Dont need Weight, since Quadrature covers that
-					
+
 						if(M_Coef == 0): #We Dont need eta_A for first der in this case
 
 							self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt)
-				
-							self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)					
+
+							self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)
 
 						elif(M_Coef >= 0):
 
 
 							self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)
-				
+
 							self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)
-			
+
 						else: #M_Coef < 0
 							self.SPH_Phi_Der_At_Quad_Pts[N_Coef][N_Coef -(-1*M_Coef)][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)
-						
+
 							self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef][N_Coef -(-1*M_Coef)][quad_pt] = eta_A(lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt), Theta_Quad_Pt, Phi_Quad_Pt)
 
-		
+
 			print("done with dphi/ dphi_phi vals"+"\n")
 
 
@@ -368,77 +368,77 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats = zeros((Max_SPH_Deg+1, Max_SPH_Deg+1, self.lbdv_quad_pts, 4))
 
 			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 0] = self.SPH_Basis_Wt_At_Quad_Pts
-			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 1] = self.SPH_Basis_At_Quad_Pts 
+			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 1] = self.SPH_Basis_At_Quad_Pts
 			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 2] = self.SPH_Phi_Der_At_Quad_Pts
 			To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:,:,:, 3] = self.SPH_Phi_Phi_Der_At_Quad_Pts
-			
+
 			with open(LBDV_Basis_at_Quad_Pts_Mats_filepath, 'wb') as f_lbdv_basis:
 				pkl.dump(To_Pickle_LBDV_Basis_at_Quad_Pts_Mats, f_lbdv_basis)
-				
-		
+
+
 		####################### LBDV Rotation To Speed Up Code ##############################
 
 
-		LBDV_Chart_of_Quad_Pts_Mats_filename = "LBDV_Chart_of_Quad_Pts"+LBDV_name 
+		LBDV_Chart_of_Quad_Pts_Mats_filename = "LBDV_Chart_of_Quad_Pts"+LBDV_name
 		LBDV_Chart_of_Quad_Pts_Mats_filepath =  os.path.join(PICKLE_DIR, LBDV_Chart_of_Quad_Pts_Mats_filename) #store these in seperate file, but in same directory
 
 		if(os.path.isfile(LBDV_Chart_of_Quad_Pts_Mats_filepath)): # If already pickled, we load it, and split it into the needed arrays:
-			
+
 			#print("\n"+"Loading Pickled LBDV Chart Mats"+"\n") # BJG: only notify if NEW mats are needed (time-consuming)
-			
-			Pickled_LBDV_Charts_Quad_Pts_Mats = []		
-	
+
+			Pickled_LBDV_Charts_Quad_Pts_Mats = []
+
 			with open(LBDV_Chart_of_Quad_Pts_Mats_filepath, 'rb') as f_lbdv_chart:
 				Pickled_LBDV_Charts_Quad_Pts_Mats = pkl.load(f_lbdv_chart)
 
 			# Split into needed matricies:
 			self.Rot_Lbdv_Quad_vals, self.Inv_Rot_Lbdv_Quad_vals, self.Chart_of_Quad_Pts = np.hsplit(Pickled_LBDV_Charts_Quad_Pts_Mats ,3)
-			
 
-				
+
+
 		else: #If not pickled, we generate and pickle these files:
 
 			print("\n"+"Pickling This LBDV  Chart data:"+"\n")
 
 			### Generate Chart LBDV Data ONCE  ########
-			
+
 
 			print("generating lbdv rotation vals")
 
 			self.Rot_Lbdv_Quad_vals = zeros(( self.lbdv_quad_pts, 1 )) # Stores equivlent Quad_pt in Chart B, for input Quad_Pt in Chart A
-			self.Inv_Rot_Lbdv_Quad_vals = zeros(( self.lbdv_quad_pts, 1 )) # Stores equivlent Quad_pt in Chart A, for input Quad_Pt in Chart B	
-	
+			self.Inv_Rot_Lbdv_Quad_vals = zeros(( self.lbdv_quad_pts, 1 )) # Stores equivlent Quad_pt in Chart A, for input Quad_Pt in Chart B
+
 
 			'''
-			Example: if quad_pt = i corresponds to (theta, phi) = (0, pi/2), and quad_pt = j corresponds to (0, pi), 
-			then  self.Rot_Lbdv_Quad_vals[j] = i, 
+			Example: if quad_pt = i corresponds to (theta, phi) = (0, pi/2), and quad_pt = j corresponds to (0, pi),
+			then  self.Rot_Lbdv_Quad_vals[j] = i,
 			and  self.Inv_Rot_Lbdv_Quad_vals[i] = j,
 			since (theta, phi) = (0, pi) has the same euclidean coors as (theta_bar, phi_bar) = (0, pi/2)
 			'''
-		
-			self.Chart_of_Quad_Pts = zeros(( self.lbdv_quad_pts, 1 )) # 1 if pt is in Chart A, -1 if not		
+
+			self.Chart_of_Quad_Pts = zeros(( self.lbdv_quad_pts, 1 )) # 1 if pt is in Chart A, -1 if not
 
 			# Choose which values we use and where:
 			for quad_pt in range(self.lbdv_quad_pts):
 
 				theta_pt = self.theta_pts[quad_pt]
 				phi_pt = self.phi_pts[quad_pt]
-			
+
 				# Determine which Chart Each Quad Pt is in:
 				if(Domain(theta_pt, phi_pt) >= 0):
 
 					self.Chart_of_Quad_Pts[quad_pt] = 1
-				
+
 				else:
 					self.Chart_of_Quad_Pts[quad_pt] = -1
-			
+
 				#If we are able to identify rotated quad pt in Chart B
 				rot_pt_found = False
-			
+
 				x_pt = self.X[quad_pt] #cos(theta_pt)*sin(phi_pt)
 				y_pt = self.Y[quad_pt] #sin(theta_pt)*sin(phi_pt)
 				z_pt = self.Z[quad_pt] #cos(phi_pt)
-	
+
 				# Find Rotated Quad Pt at same location:
 				for quad_pt_rot in range(self.lbdv_quad_pts):
 
@@ -459,16 +459,16 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 									self.Rot_Lbdv_Quad_vals[quad_pt] = quad_pt_rot
 									self.Inv_Rot_Lbdv_Quad_vals[quad_pt_rot] = quad_pt
 
-	
+
 				if(rot_pt_found == False):
 					print("!!ROTATED QUAD PT NOT FOUND!!")
 
 
 			print("done with lbdv rotation vals"+"\n")
-			
+
 			###!!! PICLKLE RESULTS FOR FUTURE USE !!!###
 			To_Pickle_LBDV_Charts_at_Quad_Pts_Mats = np.hstack(( self.Rot_Lbdv_Quad_vals, self.Inv_Rot_Lbdv_Quad_vals, self.Chart_of_Quad_Pts ))
-			
+
 			with open(LBDV_Chart_of_Quad_Pts_Mats_filepath, 'wb') as f_lbdv_charts:
 				pkl.dump(To_Pickle_LBDV_Charts_at_Quad_Pts_Mats, f_lbdv_charts)
 
@@ -479,7 +479,7 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 	def Eval_SPH_Basis_Wt_At_Quad_Pts(self, M,N, Quad_Pt):
 		if(M >= 0):
 			return self.SPH_Basis_Wt_At_Quad_Pts[N-M][N][Quad_Pt]
-		else: # If M<0 
+		else: # If M<0
 			return self.SPH_Basis_Wt_At_Quad_Pts[N][N-(-1*M)][Quad_Pt]
 
 
@@ -487,7 +487,7 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 	def Eval_SPH_At_Quad_Pts(self, M,N, Quad_Pt):
 		if(M >= 0):
 			return self.SPH_Basis_At_Quad_Pts[N-M][N][Quad_Pt]
-		else: # If M<0 
+		else: # If M<0
 			return self.SPH_Basis_At_Quad_Pts[N][N-(-1*M)][Quad_Pt]
 
 
@@ -495,42 +495,42 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 	def Eval_SPH_Der_Phi_At_Quad_Pts(self, M,N, Quad_Pt):
 		if(M >= 0):
 			return self.SPH_Phi_Der_At_Quad_Pts[N-M][N][Quad_Pt]
-		else: # If M<0 
+		else: # If M<0
 			return self.SPH_Phi_Der_At_Quad_Pts[N][N-(-1*M)][Quad_Pt]
 
 	#Fn that will retrieve 2nd Der Phi values in nice format
 	def Eval_SPH_Der_Phi_Phi_At_Quad_Pts(self, M,N, Quad_Pt):
 		if(M >= 0):
 			return self.SPH_Phi_Phi_Der_At_Quad_Pts[N-M][N][Quad_Pt]
-		else: # If M<0 
+		else: # If M<0
 			return self.SPH_Phi_Phi_Der_At_Quad_Pts[N][N-(-1*M)][Quad_Pt]
 
-	
+
 	# Return in Matrix format for VECTORIZATION in Sph_Func:
-	
+
 	#Fn that will retrieve all values to be used in quadrature, in nice format (of All quad points, for Y^M_N)
 	def Eval_SPH_Basis_Wt_M_N(self, M, N):
 
 		if(M >= 0):
 			return self.SPH_Basis_Wt_At_Quad_Pts[N-M, N, :]
-		else: # If M<0 
+		else: # If M<0
 			return self.SPH_Basis_Wt_At_Quad_Pts[N, N-(-1*M), :]
 
 
 
 	#Fn that will retrieve all basis vals at quad pt for product projections
 	def Eval_SPH_At_Quad_Pt_Mat(self, Quad_Pt):
-			
+
 		return self.SPH_Basis_At_Quad_Pts[:, :, Quad_Pt]
-	
+
 
 
 	#Fn that will retrieve ALL Der Phi values in nice format
 	def Eval_SPH_Der_Phi_At_Quad_Pt_Mat(self, Quad_Pt):
 
 		return self.SPH_Phi_Der_At_Quad_Pts[:, :, Quad_Pt]
-	
-	
+
+
 
 	#Fn that will retrieve ALL 2nd Der Phi values in nice format
 	def Eval_SPH_Der_Phi_Phi_At_Quad_Pt_Mat(self, Quad_Pt):
@@ -542,7 +542,7 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 	# Fn that will retrive vals of Rot_Lbdv_Quad_vals, USE astpye(int)!!
 	def Eval_Rot_Lbdv_Quad_vals(self, Quad_Pt):
 		return self.Rot_Lbdv_Quad_vals.astype(int)[Quad_Pt, 0]
-	
+
 	# Fn that will retrive vals of Inv_Rot_Lbdv_Quad_vals, USE astpye(int)!!
 	def Eval_Inv_Rot_Lbdv_Quad_vals(self, Quad_Pt):
 		return self.Inv_Rot_Lbdv_Quad_vals.astype(int)[Quad_Pt, 0]
@@ -558,15 +558,12 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 
 		if(abs(z_pt) <= .25):
 			return 1
-		
+
 		elif(abs(z_pt) >= .75):
 			return 0
 
 		elif(z_pt >= .25 and z_pt <= .75):
 			return np.exp((-1.0)/(1.0 - ((z_pt - .25)/(.5))**2))*np.exp(1.0)
-		
+
 		else: #(z_pt <= -.25 and z_pt >= -.75):
 			return np.exp((-1.0)/(1.0 - ((z_pt + .25)/(-.5))**2))*np.exp(1.0)
-
-		
-
