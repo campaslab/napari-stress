@@ -4,7 +4,7 @@ import vedo
 from napari_tools_menu import register_function
 from napari.types import SurfaceData, ImageData
 
-from ._utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
+from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
