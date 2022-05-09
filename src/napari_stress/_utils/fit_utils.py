@@ -1,10 +1,5 @@
 import numpy as np
-import vedo
-
-from napari.types import PointsData, SurfaceData
 import inspect
-
-from functools import wraps
 
 def _sigmoid(x, center, amplitude, slope, offset):
     "https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python"
