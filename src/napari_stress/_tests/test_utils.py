@@ -20,10 +20,10 @@ def test_fit_functions():
     assert 49 <= argmax <= 51
 
 def test_decorator_points():
-    from napari_stress._utils import time_slicer
+    from napari_stress import TimelapseConverter
     from vedo import Sphere
 
-    Converter = time_slicer.Converter()
+    Converter = TimelapseConverter()
 
     points_list = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
     points_array = Converter.list_of_data_to_data(points_list, PointsData)
@@ -33,10 +33,10 @@ def test_decorator_points():
         assert np.array_equal(points_list, points_list_conv)
 
 def test_decorator_surfaces():
-    from napari_stress._utils import time_slicer
+    from napari_stress import TimelapseConverter
     from vedo import Sphere
 
-    Converter = time_slicer.Converter()
+    Converter = TimelapseConverter()
 
     surface_list = [
         (Sphere().points() * k, np.asarray(Sphere().faces())) for k in np.arange(1.9, 2.1, 0.1)
@@ -50,9 +50,9 @@ def test_decorator_surfaces():
 
 def test_decorator_images():
 
-    from napari_stress._utils import time_slicer
+    from napari_stress import TimelapseConverter
 
-    Converter = time_slicer.Converter()
+    Converter = TimelapseConverter()
 
     image = np.random.random(size=(50,50,50))
     image_list = [k * image for k in np.arange(0.1, 1, 0.1)]

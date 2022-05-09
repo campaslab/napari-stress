@@ -8,6 +8,8 @@ from ._surface import surface_from_label,\
     smooth_sinc,\
     smoothMLS2D,\
     reconstruct_surface
+
+from ._utils.time_slicer import TimelapseConverter
 from napari_plugin_engine import napari_hook_implementation
 
 @napari_hook_implementation

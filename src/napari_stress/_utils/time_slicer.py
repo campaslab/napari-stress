@@ -19,7 +19,7 @@ def frame_by_frame(function, progress_bar: bool = False):
             sig.parameters[key].annotation for key in sig.parameters.keys()
             ]
 
-        converter = Converter()
+        converter = TimelapseConverter()
 
         args = list(args)
         n_frames = None
@@ -51,7 +51,7 @@ def frame_by_frame(function, progress_bar: bool = False):
         return converter.list_of_data_to_data(results, sig.return_annotation)
     return wrapper
 
-class Converter:
+class TimelapseConverter:
     """
     This class allows converting napari 4D layer data between different formats.
     """
