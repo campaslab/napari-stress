@@ -84,7 +84,7 @@ class TimelapseConverter:
 
         self.supported_data = list(self.funcs_list_to_data.keys())
 
-    def data_to_list_of_data(self, data, layertype) -> list:
+    def data_to_list_of_data(self, data, layertype: type) -> list:
         """
         Function to convert 4D data into a list of 3D data frames
 
@@ -111,7 +111,7 @@ class TimelapseConverter:
         conversion_function = self.funcs_data_to_list[layertype]
         return conversion_function(data)
 
-    def list_of_data_to_data(self, data, layertype):
+    def list_of_data_to_data(self, data, layertype: type):
         """
         Function to convert a list of 3D frames into 4D data.
 
