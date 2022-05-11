@@ -8,4 +8,5 @@ contributions:
 
   widgets:
     - command: napari-stress.rescale
+      autogenerate: true
       display_name: Rescale image data
