@@ -68,20 +68,3 @@ def resample(image: ImageData,
     image_rescaled = rescale(image, factor, anti_aliasing=True)
 
     return image_rescaled
-
-# def fit_curvature():
-#     """
-#     Find curvature for every point
-#     """
-
-#     print('\n---- Curvature-----')
-#     curv = []
-#     for idx, point in tqdm.tqdm(self.points.iterrows(), desc='Measuring mean curvature', total=len(self.points)):
-#         sXYZ, sXq = surface.get_patch(self.points, idx, self.CoM)
-#         curv.append(curvature.surf_fit(sXYZ, sXq))
-
-#     self.points['Curvature'] = curv
-#     self.points = surface.clean_coordinates(self)
-
-#     # Raise flags for provided data
-#     self.has_curv = True
