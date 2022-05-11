@@ -170,7 +170,8 @@ class TimelapseConverter:
 
     def _image_to_list_of_images(self, image: ImageData) -> list:
         """Convert 4D image to list of images"""
-        #TODO: Check if it actually is 4D
+        while len(image.shape) < 4:
+            image = image[np.newaxis, :]
         return list(image)
 
     def _list_of_images_to_image(self, images: list) -> ImageData:
