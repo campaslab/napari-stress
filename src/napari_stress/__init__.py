@@ -10,10 +10,3 @@ from ._surface import surface_from_label,\
     reconstruct_surface
 
 from ._utils.time_slicer import TimelapseConverter, frame_by_frame
-from napari_plugin_engine import napari_hook_implementation
-
-@napari_hook_implementation
-def napari_experimental_provide_dock_widget():
-    return [
-        trace_refinement_of_surface, rescale
-    ]
