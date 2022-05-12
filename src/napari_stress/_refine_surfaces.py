@@ -61,8 +61,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         Distance between two sampled intensity values along the normal vector.
         The default is 0.1.
     selected_fit_type : fit_types, optional
-        Which fit types to choose from. Can be `fit_types.fancy_edge_fit` or
-        `fit_types.quick_edge_fit`.
+        Which fit types to choose from. Can be `fit_types.fancy_edge_fit`/`"fancy"` or
+        `fit_types.quick_edge_fit`/`"quick"`.
     selected_edge : edge_functions, optional
         Depending on the fluorescence of the intensity image, a different fit
         function is required. Can be either of `edge_functions.interior` or
