@@ -172,9 +172,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data, on=fit_errors,
-                                             factor=interquartile_factor)
+                                             factor=interquartile_factor,
+                                             which='above')
+        fit_data = _remove_outliers_by_index(fit_data, on='idx_of_border',
+                                             factor=interquartile_factor,
+                                             which='both')
 
-    return fit_data
+    return np.stack(fit_data['surface_points'].to_numpy())
 
 def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
