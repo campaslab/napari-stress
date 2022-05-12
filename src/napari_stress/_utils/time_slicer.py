@@ -189,6 +189,10 @@ class TimelapseConverter:
         points = surface[0]
         faces = np.asarray(surface[1], dtype=int)
 
+        while points.shape[1] < 4:
+            t = np.ones(len(points), dtype=points.dtype)
+            points = np.insert(points, 0, t, axis=1)
+
         n_frames = len(np.unique(points[:, 0]))
         points_per_frame = [sum(points[:, 0] == t) for t in range(n_frames)]
 
@@ -255,7 +259,11 @@ class TimelapseConverter:
 
     def _points_to_list_of_points(self, points: PointsData) -> list:
         """Convert a 4D point array to list of 3D points"""
-        #TODO: Check if it actually is 4D
+
+        while points.shape[1] < 4:
+            t = np.zeros(len(points), dtype=points.dtype)
+            points = np.insert(points, 0, t, axis=1)
+
         n_frames = len(np.unique(points[:, 0]))
 
         points_out = [None] * n_frames
