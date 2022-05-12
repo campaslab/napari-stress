@@ -5,8 +5,14 @@ contributions:
     - id: napari-stress.rescale
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
+    - id: napari-stress.trace_refine_surface
+      python_name: napari_stress._refine_surfaces.py
+      title: Fit point location on a surface according to a given intensity image
 
   widgets:
     - command: napari-stress.rescale
       autogenerate: true
       display_name: Rescale image data
+    - command: napari-stress.trace_refine_surface
+      autogenerate: true
+      display_name: Trace-refine surface points
