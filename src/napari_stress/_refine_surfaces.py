@@ -180,7 +180,10 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     #TODO: Add fit results to point properties
     return np.stack(fit_data['surface_points'].to_numpy())
 
-def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
+def _remove_outliers_by_index(df,
+                              on = list,
+                              which: str = 'above',
+                              factor: float = 1.5) -> pd.DataFrame:
     "Filter all rows that qualify as outliers based on column-statistics."
     if isinstance(on, str):
         on = [on]
@@ -193,9 +196,17 @@ def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
         IQR = Q3 - Q1
-        indices[df[df[col] > (Q3 + factor * IQR)].index] = False
+        if which == 'above':
+            idx = df[col] > (Q3 + factor * IQR)
+        elif which == 'below':
+            idx = df[col] < (Q1 - factor * IQR)
+        elif which == 'both':
+            idx = (df[col] < (Q1 - factor * IQR)) + (df[col] > (Q3 + factor * IQR))
+        indices[df[idx].index] = False
 
     return df[indices]
+
+
 
 
 def _fancy_edge_fit(profile: np.ndarray,
