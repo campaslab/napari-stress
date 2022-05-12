@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import vedo
-from napari_tools_menu import register_function
-from napari.types import SurfaceData, ImageData, PointsData
+from napari.types import ImageData, PointsData
 
 from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
 from ._utils.time_slicer import frame_by_frame
@@ -178,6 +177,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              factor=interquartile_factor,
                                              which='both')
 
+    #TODO: Add fit results to point properties
     return np.stack(fit_data['surface_points'].to_numpy())
 
 def _remove_outliers_by_index(df, on=list, factor: float = 1.5) -> pd.DataFrame:
