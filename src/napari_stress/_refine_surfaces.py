@@ -188,6 +188,12 @@ def _remove_outliers_by_index(df,
     if isinstance(on, str):
         on = [on]
 
+    # Remove the offset error from the list of relevant errors - fluorescence
+    # intensity offset is not meaningful for distinction of good/bad fit
+    if 'offset_err' in on:
+        on.remove('offset_err' )
+
+
     # True if values are good, False if outliers
     df = df.dropna().reset_index()
     indices = np.ones(len(df), dtype=bool)
