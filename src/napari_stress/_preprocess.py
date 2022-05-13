@@ -32,7 +32,4 @@ def rescale(image: ImageData,
 
     scale_factors = np.asarray([scale_z, scale_y, scale_x])
 
-    # Make sure to use the correct amount of factors if dimension of image is smaller than three
-    scale_factors = scale_factors[:len(image.shape)]
-
     return transform.rescale(image, scale=scale_factors)
