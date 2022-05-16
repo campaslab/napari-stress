@@ -2,10 +2,12 @@ import numpy as np
 from napari.types import LayerDataTuple, PointsData
 
 from ._spherical_harmonics import sph_func_SPB as sph_f
+from ._utils.time_slicer import frame_by_frame
 
 from ._spherical_harmonics._utils import Conv_3D_pts_to_Elliptical_Coors,\
     Least_Squares_Harmonic_Fit
 
+@frame_by_frame
 def spherical_harmonic_fit(points: PointsData,
                            fit_degree: int = 3) -> LayerDataTuple:
     """
@@ -60,5 +62,9 @@ def spherical_harmonic_fit(points: PointsData,
     """
 
     features = {'errors': errors}
+    properties = {'face_color': features['errors'],
+                  'size': 1,
+                  'features': features,
+                  'color_map': 'hot'}
 
-    return (popt_points, {'features': features}, 'points')
+    return (popt_points, properties, 'points')
