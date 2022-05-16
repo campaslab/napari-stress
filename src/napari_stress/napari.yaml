@@ -5,8 +5,14 @@ contributions:
     - id: napari-stress.rescale
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
+    - id: napari-stress.spherical_harmonics_fit
+      python_name: napari_stress._spherical_harmonic_fit:spherical_harmonic_fit
+      title: Approximate a surface with spherical harmonics functions
 
   widgets:
     - command: napari-stress.rescale
       autogenerate: true
       display_name: Rescale image data
+    - command: napari-stress.spherical_harmonics_fit
+      autogenerate: true
+      display_name: Fit spherical harmonics functions
