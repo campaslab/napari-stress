@@ -19,7 +19,7 @@ def frame_by_frame(function, progress_bar: bool = False):
             sig.parameters[key].annotation for key in sig.parameters.keys()
             ]
 
-        converter = Converter()
+        converter = TimelapseConverter()
 
         args = list(args)
         n_frames = None
@@ -51,9 +51,13 @@ def frame_by_frame(function, progress_bar: bool = False):
         return converter.list_of_data_to_data(results, sig.return_annotation)
     return wrapper
 
-class Converter:
+class TimelapseConverter:
+    """
+    This class allows converting napari 4D layer data between different formats.
+    """
     def __init__(self):
 
+        # Supported LayerData types
         self.funcs_data_to_list = {
             PointsData: self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
@@ -61,6 +65,7 @@ class Converter:
             LabelsData: self._image_to_list_of_images
             }
 
+    # Supported list data types
         self.funcs_list_to_data = {
             PointsData: self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
@@ -79,7 +84,7 @@ class Converter:
 
         self.supported_data = list(self.funcs_list_to_data.keys())
 
-    def data_to_list_of_data(self, data, layertype) -> list:
+    def data_to_list_of_data(self, data, layertype: type) -> list:
         """
         Function to convert 4D data into a list of 3D data frames
 
@@ -106,7 +111,7 @@ class Converter:
         conversion_function = self.funcs_data_to_list[layertype]
         return conversion_function(data)
 
-    def list_of_data_to_data(self, data, layertype):
+    def list_of_data_to_data(self, data, layertype: type):
         """
         Function to convert a list of 3D frames into 4D data.
 
@@ -165,7 +170,8 @@ class Converter:
 
     def _image_to_list_of_images(self, image: ImageData) -> list:
         """Convert 4D image to list of images"""
-        #TODO: Check if it actually is 4D
+        while len(image.shape) < 4:
+            image = image[np.newaxis, :]
         return list(image)
 
     def _list_of_images_to_image(self, images: list) -> ImageData:
