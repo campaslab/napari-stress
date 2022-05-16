@@ -71,7 +71,7 @@ class TimelapseConverter:
             SurfaceData: self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
-            List[LayerDataTuple]: self._list_of_layerdatatuple_to_layerdatatuple
+            LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple
             }
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
@@ -138,31 +138,43 @@ class TimelapseConverter:
         return conversion_function(data)
 
 
-    # =============================================================================
-    # LayerDataTuple
-    # =============================================================================
     def _list_of_layerdatatuple_to_layerdatatuple(self,
                                                  tuple_data: list
                                                  ) -> LayerDataTuple:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """
-        layertype = self.tuple_aliases[tuple_data[0][0][-1]]
+        layertype = self.tuple_aliases[tuple_data[-1][-1]]
 
-        # Convert data to array with dimensions [result, frame, data]
-        data = list(np.asarray(tuple_data).transpose((1, 0, -1)))
+        # Convert data to array with dimensions [frame, data]
+        data = np.stack(tuple_data)
+        properties = data[:, 1]
+        _properties = self.stack_dict(properties)
 
         # Reminder: Each list entry is tuple (data, properties, type)
-        results = [None] * len(data)  # allocate list for results
-        for idx, res in enumerate(data):
-            dtype = res[0, -1]
-            _result = [None] * 3
-            _result[0] = self.funcs_list_to_data[layertype](res[:, 0])
-            _result[1] = res[0, 1]  # smarter way to combine properties?
-            _result[2] = dtype
-            results[idx] = _result
+        results = [None] * 3 # allocate list for results
+
+        results[0] = self.funcs_list_to_data[layertype](data[:, 0])
+        results[1] = _properties
+        results[2] = tuple_data[-1][-1]
 
         return results
+
+    def stack_dict(self, dictionaries: list) -> dict:
+        _dictionary = {}
+        for key in dictionaries[-1].keys():
+            if isinstance(dictionaries[-1][key], dict):
+                _dictionary[key] = self.stack_dict([frame[key] for frame in dictionaries])
+                continue
+            elif isinstance(dictionaries[-1][key], str):
+                _dictionary[key] = dictionaries[-1][key]
+                continue
+
+            if hasattr(dictionaries[-1][key], '__len__'):
+                _dictionary[key] = np.concatenate([frame[key] for frame in dictionaries])
+            else:
+                _dictionary[key] = dictionaries[-1][key]
+        return _dictionary
 
     # =============================================================================
     # Images
