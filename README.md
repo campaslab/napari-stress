@@ -32,7 +32,7 @@ Napari-stress is intended to work for 3D+t datasets in `[TZYX]` format. This is 
 
 Napari-stress currently provides notebooks for the following data/image types:
 
-* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb)
+* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/notebooks/Process_confocal.ipynb)
 * Lightsheet data (*.czi*), 3D + t: coming soon....
 
 The resulting surface will look like this:
