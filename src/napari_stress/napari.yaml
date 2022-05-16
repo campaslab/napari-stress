@@ -1,0 +1,12 @@
+name: napari-stress
+display_name: napari STRESS
+contributions:
+  commands:
+    - id: napari-stress.rescale
+      python_name: napari_stress._preprocess:rescale
+      title: Rescale image data by given scale factors
+
+  widgets:
+    - command: napari-stress.rescale
+      autogenerate: true
+      display_name: Rescale image data
