@@ -1,162 +1,35 @@
-from napari_tools_menu import register_function
 from napari.types import ImageData
 
-from skimage.transform import rescale
-from skimage import filters, measure
+from skimage import transform
 
-import pandas as pd
 import numpy as np
-import vedo
+from ._utils.time_slicer import frame_by_frame
 
 
-def reshape(image: np.ndarray,
-            vsx: float,
-            vsy: float,
-            vsz: float,
-            res_mode: str = 'high'):
+@frame_by_frame
+def rescale(image: ImageData,
+            scale_z: float = 1.0,
+            scale_y: float = 1.0,
+            scale_x: float = 1.0) -> ImageData:
     """
-    Preprocesses an input 3D image for further processing. Preprocessing includes
-    resampling to isotropic voxels.
+    Rescale an image by a given set of scale factors.
 
     Parameters
     ----------
-    image : ndarray
-        3/4D image array with intensity values in each pixel
-    vsx : float, optional
-        pixel size in x-dimension. Default value: vsx = 2.076
-    vsx : float, optional
-        pixel size in x-dimension. Default value: vsx = 2.076
-    vsx : float, optional
-        pixel size in x-dimension. Default value: vsx = 3.998
+    image : ImageData
+    scale_z : float, optional
+        factor by which to scale the image along the z axis. The default is 1.0.
+    scale_y : float, optional
+        factor by which to scale the image along the y dimension. The default is 1.0.
+    scale_x : float, optional
+        factor by which to scale the image along the x dimension. The default is 1.0.
 
     Returns
     -------
-    image : MxNxK array
-        binary image
+    ImageData
 
     """
-    image_resampled = []
 
-    # resample every timepoint
-    for t in range(image.shape[0]):
-        _image_resampled = resample(image[t], vsx=vsx, vsy=vsy, vsz=vsz)
-        image_resampled.append(_image_resampled)
+    scale_factors = np.asarray([scale_z, scale_y, scale_x])
 
-    image_resampled = np.asarray(image_resampled)
-
-    return image_resampled
-
-
-def fit_ellipse_4D(binary_image: np.ndarray,
-                   n_rays: np.uint16):
-
-    n_frames = binary_image.shape[0]
-
-    # Fit ellipse
-    pts = np.zeros([n_rays * n_frames, 4])
-    for t in range(n_frames):
-        _pts = fit_ellipse(binary_image=binary_image[t])
-        pts[t * n_rays : (t + 1) * n_rays, 1:] = _pts
-        pts[t * n_rays : (t + 1) * n_rays, 0] = t
-
-    return pts
-
-def fit_ellipse(binary_image: np.ndarray,
-                n_samples: np.uint16 = 256) -> list:
-    """
-    Fit an ellipse to a binary image.
-
-    Parameters
-    ----------
-    binary_image : np.ndarray
-        DESCRIPTION.
-    n_samples : np.uint16, optional
-        DESCRIPTION. The default is 256.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    """
-    if not len(binary_image.shape) == 4:
-        binary_image = binary_image[None, :]
-
-    # Allocate points
-    n_frames = binary_image.shape[0]
-    pts = []
-
-    for t in range(n_frames):
-
-        _binary_image = binary_image[t]
-        props = measure.regionprops_table(_binary_image,
-                                          properties=(['centroid']))
-        CoM = [props['centroid-0'][0],
-               props['centroid-1'][0],
-               props['centroid-2'][0]]
-
-        # Create coordinate grid:
-        ZZ, YY, XX = np.meshgrid(np.arange(_binary_image.shape[0]),
-                                  np.arange(_binary_image.shape[1]),
-                                  np.arange(_binary_image.shape[2]), indexing='ij')
-
-        # Substract center of mass and mask
-        ZZ = (ZZ.astype(float) - CoM[0]) * _binary_image
-        YY = (YY.astype(float) - CoM[1]) * _binary_image
-        XX = (XX.astype(float) - CoM[2]) * _binary_image
-
-        # Concatenate to single (Nx3) coordinate vector
-        ZYX = np.vstack([ZZ.ravel(), YY.ravel(), XX.ravel()]).transpose((1, 0))
-
-        # Calculate orientation matrix
-        S = 1/np.sum(_binary_image) * np.dot(ZYX.conjugate().T, ZYX)
-        D, R = np.linalg.eig(S)
-
-        # Now create points on the surface of an ellipse
-        props = pd.DataFrame(measure.regionprops_table(_binary_image, properties=(['major_axis_length', 'minor_axis_length'])))
-        semiAxesLengths = [props.loc[0].major_axis_length/2,
-                           props.loc[0].minor_axis_length/2,
-                           props.loc[0].minor_axis_length/2]
-        _pts = fibonacci_sphere(semiAxesLengths, R.T, CoM, samples=n_samples)
-        pts.append(vedo.pointcloud.Points(_pts))
-
-    return pts
-
-@register_function(menu="Process > Resample image (skimage, ns)")
-def resample(image: ImageData,
-             vsz: float,
-             vsy: float,
-             vsx: float,
-             res_mode='high') -> ImageData:
-    """
-    Resample an image with anistropic voxels of size vsx, vsy and vsz to isotropic
-    voxel size of smallest or largest resolution
-    """
-    # choose final voxel size
-    if res_mode == 'high':
-        vs = np.min([vsx, vsy, vsz])
-
-    elif res_mode == 'low':
-        vs = np.max([vsx, vsy, vsz])
-
-    factor = np.asarray([vsz, vsy, vsx])/vs
-    image_rescaled = rescale(image, factor, anti_aliasing=True)
-
-    return image_rescaled
-
-# def fit_curvature():
-#     """
-#     Find curvature for every point
-#     """
-
-#     print('\n---- Curvature-----')
-#     curv = []
-#     for idx, point in tqdm.tqdm(self.points.iterrows(), desc='Measuring mean curvature', total=len(self.points)):
-#         sXYZ, sXq = surface.get_patch(self.points, idx, self.CoM)
-#         curv.append(curvature.surf_fit(sXYZ, sXq))
-
-#     self.points['Curvature'] = curv
-#     self.points = surface.clean_coordinates(self)
-
-#     # Raise flags for provided data
-#     self.has_curv = True
+    return transform.rescale(image, scale=scale_factors)
