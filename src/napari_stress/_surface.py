@@ -44,7 +44,6 @@ def fit_spherical_harmonics(points: PointsData,
 
     values = clm.expand(lat=lat, lon=lon)
 
-
     points = vedo.spher2cart(values, np.deg2rad(lat), np.deg2rad(lon))
     return points.transpose() + center[np.newaxis, :]
 
