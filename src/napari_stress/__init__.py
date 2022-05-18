@@ -7,6 +7,7 @@ from ._surface import surface_from_label,\
     adjust_surface_density,\
     smooth_sinc,\
     smoothMLS2D,\
-    reconstruct_surface
+    reconstruct_surface,\
+    fit_spherical_harmonics
 
 from ._utils.time_slicer import TimelapseConverter, frame_by_frame
