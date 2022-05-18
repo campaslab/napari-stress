@@ -3,9 +3,35 @@
 import numpy as np
 import napari_process_points_and_surfaces as nppas
 from napari.types import LabelsData, SurfaceData, PointsData
+from napari_stress._utils.time_slicer import frame_by_frame
 
 import vedo
 import typing
+
+import pyshtools
+
+@frame_by_frame
+def fit_spherical_harmonics(points: PointsData,
+                            max_degree: int) -> PointsData:
+
+    center = points.mean(axis=0)
+    pts = points - center[np.newaxis, :]
+    pts_spherical = vedo.cart2spher(pts[:, 0], pts[:, 1], pts[:, 2])
+
+    r = pts_spherical[0, :]
+    lat = np.rad2deg(pts_spherical[1, :])
+    lon = np.rad2deg(pts_spherical[2, :])
+    popt = pyshtools._SHTOOLS.SHExpandLSQ(r, lat, lon, lmax = max_degree)[1]
+    clm = pyshtools.SHCoeffs.from_array(popt)
+
+    values = clm.expand(lat=lat, lon=lon)
+
+
+    points = vedo.spher2cart(values, np.deg2rad(lat), np.deg2rad(lon))
+    return points.transpose() + center[np.newaxis, :]
+
+
+
 
 
 def reconstruct_surface(points: PointsData,
