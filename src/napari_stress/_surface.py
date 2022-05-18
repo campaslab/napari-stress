@@ -13,7 +13,25 @@ import pyshtools
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int) -> PointsData:
+    """
+    Approximate a surface by spherical harmonics expansion
 
+    Parameters
+    ----------
+    points : PointsData
+    max_degree : int
+        Order up to which spherical harmonics should be included for the approximation.
+
+    Returns
+    -------
+    PointsData
+        DESCRIPTION.
+
+    See also
+    --------
+    [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
+
+    """
     center = points.mean(axis=0)
     pts = points - center[np.newaxis, :]
     pts_spherical = vedo.cart2spher(pts[:, 0], pts[:, 1], pts[:, 2])
@@ -29,9 +47,6 @@ def fit_spherical_harmonics(points: PointsData,
 
     points = vedo.spher2cart(values, np.deg2rad(lat), np.deg2rad(lon))
     return points.transpose() + center[np.newaxis, :]
-
-
-
 
 
 def reconstruct_surface(points: PointsData,
