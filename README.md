@@ -8,7 +8,7 @@ Create a new conda environment with
 
 ```
 conda create -n napari-stress Python=3.9
-conda activate napari stress
+conda activate napari-stress
 ```
 
 Install a few necessary plugins:
