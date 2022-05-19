@@ -38,8 +38,8 @@ def frame_by_frame(function, progress_bar: bool = False):
         # apply function frame by frame
         #TODO: Put this in a thread by default?
         results = [None] * n_frames
-        it = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
-        for t in it:
+        frames = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
+        for t in frames:
             _args = args.copy()
 
             # Replace 4D argument by single frame (arg[t])
