@@ -211,28 +211,31 @@ class TimelapseConverter:
 
         return surfaces
 
-    def _list_of_surfaces_to_surface(self, surfs: list) -> tuple:
+    def _list_of_surfaces_to_surface(self, surfaces: list) -> tuple:
         """
         Convert list of 3D surfaces to single 4D surface.
         """
-
         # Put vertices, faces and values into separate lists
-        vertices = [surf[0] for surf in surfs]
-        faces = [surf[1] for surf in surfs]
-        values = None
-        if len(surfs[0]) == 3:
-            values = np.concatenate([surf[2] for surf in surfs])
+        # The original array is tuple (vertices, faces, values)
+        vertices = [surface[0] for surface in surfaces]  # retrieve vertices
+        faces = [surface[1] for surface in surfaces]  # retrieve faces
+
+        # Surfaces do not necessarily have values - check if this is the case
+        if len(surfaces[0]) == 3:
+            values = np.concatenate([surface[2] for surface in surfaces])  # retrieve values if existant
+        else:
+            values = None
 
         vertices = self._list_of_points_to_points(vertices)
 
-        n_verts = 0
-        for idx, surf in enumerate(surfs):
+        n_vertices = 0
+        for idx, surface in enumerate(surfaces):
 
             # Offset indices in faces list by previous amount of points
-            faces[idx] = n_verts + np.array(faces[idx])
+            faces[idx] = n_vertices + np.array(faces[idx])
 
-            # Add number of vertices in current surface to n_verts
-            n_verts += surf[0].shape[0]
+            # Add number of vertices in current surface to n_vertices
+            n_vertices += surface[0].shape[0]
 
         faces = np.vstack(faces)
 
