@@ -9,4 +9,4 @@ from ._surface import surface_from_label,\
     reconstruct_surface,\
     fit_spherical_harmonics
 
-from ._utils.time_slicer import TimelapseConverter, frame_by_frame
+from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
