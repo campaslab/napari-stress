@@ -36,15 +36,18 @@ def fit_spherical_harmonics(points: PointsData,
     pts = points - center[np.newaxis, :]
     pts_spherical = vedo.cart2spher(pts[:, 0], pts[:, 1], pts[:, 2])
 
-    r = pts_spherical[0]
-    lat = np.rad2deg(pts_spherical[1])
-    lon = np.rad2deg(pts_spherical[2])
-    popt = pyshtools._SHTOOLS.SHExpandLSQ(r, lat, lon, lmax = max_degree)[1]
-    clm = pyshtools.SHCoeffs.from_array(popt)
+    radius = pts_spherical[0]
+    latitude = np.rad2deg(pts_spherical[1])
+    longitude = np.rad2deg(pts_spherical[2])
+    opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
+                                                    lmax = max_degree)[1]
+    clm = pyshtools.SHCoeffs.from_array(opt_fit_params)
 
-    values = clm.expand(lat=lat, lon=lon)
+    values = clm.expand(lat=latitude, lon=longitude)
 
-    points = vedo.spher2cart(values, np.deg2rad(lat), np.deg2rad(lon))
+    points = vedo.spher2cart(values,
+                             np.deg2rad(latitude),
+                             np.deg2rad(longitude))
     return points.transpose() + center[np.newaxis, :]
 
 
