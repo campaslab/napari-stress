@@ -197,9 +197,15 @@ class TimelapseConverter:
         idx_face_new_frame = list(np.argwhere(np.diff(frame_of_face) != 0).flatten() + 1)
         idx_face_new_frame = [0] + idx_face_new_frame + [len(faces)]
 
+        # Fill list of frames with correct points and corresponding faces
+        # as previously determined
         surfaces = [None] * n_frames
         for t in range(n_frames):
+
+            # Find points with correct frame index
             _points = points[points[:, 0] == t, 1:]
+
+            # Get parts of faces array that correspond to this frame
             _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t+1]] - sum(points_per_frame[:t])
             surfaces[t] = (_points, _faces)
 
@@ -262,8 +268,14 @@ class TimelapseConverter:
 
         n_frames = len(np.unique(points[:, 0]))
 
+        # Allocate empty list
         points_out = [None] * n_frames
+
+        # Fill the respective entries in the list with coordinates in the
+        # original data where time-coordinate matches the current frame
         for t in range(n_frames):
+
+            # Find points with correct frame index
             points_out[t] = points[points[:, 0] == t, 1:]
 
         return points_out
