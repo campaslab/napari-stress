@@ -58,7 +58,7 @@ class TimelapseConverter:
     def __init__(self):
 
         # Supported LayerData types
-        self.funcs_data_to_list = {
+        self.data_to_list_conversion_functions = {
             PointsData: self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
@@ -66,7 +66,7 @@ class TimelapseConverter:
             }
 
     # Supported list data types
-        self.funcs_list_to_data = {
+        self.list_to_data_conversion_functions = {
             PointsData: self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
@@ -82,7 +82,7 @@ class TimelapseConverter:
             'labels': LabelsData,
             }
 
-        self.supported_data = list(self.funcs_list_to_data.keys())
+        self.supported_data = list(self.list_to_data_conversion_functions.keys())
 
     def data_to_list_of_data(self, data, layertype: type) -> list:
         """
@@ -108,7 +108,7 @@ class TimelapseConverter:
         if not layertype in self.supported_data:
             raise TypeError(f'{layertype} data to list conversion currently not supported.')
 
-        conversion_function = self.funcs_data_to_list[layertype]
+        conversion_function = self.data_to_list_conversion_functions[layertype]
         return conversion_function(data)
 
     def list_of_data_to_data(self, data, layertype: type):
@@ -134,7 +134,7 @@ class TimelapseConverter:
         """
         if not layertype in self.supported_data:
             raise TypeError(f'{layertype} list to data conversion currently not supported.')
-        conversion_function = self.funcs_list_to_data[layertype]
+        conversion_function = self.list_to_data_conversion_functions[layertype]
         return conversion_function(data)
 
 
@@ -157,7 +157,7 @@ class TimelapseConverter:
         for idx, res in enumerate(data):
             dtype = res[0, -1]
             _result = [None] * 3
-            _result[0] = self.funcs_list_to_data[layertype](res[:, 0])
+            _result[0] = self.list_to_data_conversion_functions[layertype](res[:, 0])
             _result[1] = res[0, 1]  # smarter way to combine properties?
             _result[2] = dtype
             results[idx] = _result
