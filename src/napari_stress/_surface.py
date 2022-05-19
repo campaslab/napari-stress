@@ -25,7 +25,8 @@ def fit_spherical_harmonics(points: PointsData,
     Returns
     -------
     PointsData
-        DESCRIPTION.
+        Pointcloud on surface of a spherical harmonics expansion at the same
+        latitude/longitude as the input points.
 
     See also
     --------
