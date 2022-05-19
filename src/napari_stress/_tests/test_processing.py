@@ -46,9 +46,3 @@ def test_rescaling():
     assert np.array_equal(resampled_image1.shape, np.asarray([100, 50]))
     assert np.array_equal(resampled_image2.shape, np.asarray([50, 100]))
     assert np.array_equal(resampled_image3.shape, np.asarray([100, 100]))
-
-
-
-
-if __name__ == '__main__':
-    test_rescaling()

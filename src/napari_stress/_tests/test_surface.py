@@ -9,6 +9,3 @@ def test_spherical_harmonics():
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
 
     assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
-
-if __name__ =='__main__':
-    test_spherical_harmonics()
