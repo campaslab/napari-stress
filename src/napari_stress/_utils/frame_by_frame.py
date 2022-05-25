@@ -26,7 +26,6 @@ def frame_by_frame(function, progress_bar: bool = False):
 
         # Convert 4D data to list(s) of 3D data for every supported argument
         # and store the list in the same place as the original 4D data
-        #TODO: Check if objects are actually 4D
         index_of_converted_arg = []  # remember which arguments were converted
 
         for idx, arg in enumerate(args):
@@ -185,9 +184,13 @@ class TimelapseConverter:
 
     def _surface_to_list_of_surfaces(self, surface: SurfaceData) -> list:
         """Convert a 4D surface to list of 3D surfaces"""
-        #TODO: Check if it actually is 4D
+
         points = surface[0]
         faces = np.asarray(surface[1], dtype=int)
+
+        while points.shape[1] < 4:
+            t = np.zeros(len(points), dtype=points.dtype)
+            points = np.insert(points, 0, t, axis=1)
 
         n_frames = len(np.unique(points[:, 0]))
         points_per_frame = [sum(points[:, 0] == t) for t in range(n_frames)]
