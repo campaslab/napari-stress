@@ -3,7 +3,7 @@
 import vedo
 from napari.types import SurfaceData, ImageData, PointsData
 
-from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
+from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_max_gradient, _detect_maxima
 from ._utils.frame_by_frame import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
@@ -20,7 +20,7 @@ class fit_types(Enum):
     fancy_edge_fit = 'fancy'
 
 class edge_functions(Enum):
-    interior = {'fancy': _sigmoid, 'quick': _detect_drop}
+    interior = {'fancy': _sigmoid, 'quick': _detect_max_gradient}
     surface = {'fancy': _gaussian, 'quick': _detect_maxima}
 
 @frame_by_frame

@@ -21,9 +21,9 @@ def _detect_maxima(profile, center: float = None):
     """
     return np.argmax(profile)
 
-def _detect_drop(profile, center: float = None):
+def _detect_max_gradient(profile, center: float = None):
     """
-    Function to find the location of the steepest drop for sigmoidal data
+    Function to find the location of the steepest gradient for sigmoidal data
     """
     return np.argmax(np.abs(np.diff(profile)))
 

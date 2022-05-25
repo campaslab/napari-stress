@@ -2,7 +2,7 @@ import numpy as np
 from napari.types import LayerData, PointsData, SurfaceData, ImageData
 
 def test_fit_functions():
-    from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_drop
+    from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_max_gradient
 
     x = np.arange(0, 100, 1)
 
@@ -10,7 +10,7 @@ def test_fit_functions():
     assert np.max(y) <= 1.0
     assert y[51] > 0.5 and y[49] < 0.5
 
-    argdrop = _detect_drop(y)
+    argdrop = _detect_max_gradient(y)
     assert 49 <= argdrop <= 51
 
     y = _gaussian(x, center=50, sigma=2.0, amplitude=2.0)
