@@ -8,7 +8,7 @@ Create a new conda environment with
 
 ```
 conda create -n napari-stress Python=3.9
-conda activate napari stress
+conda activate napari-stress
 ```
 
 Install a few necessary plugins:
@@ -35,7 +35,7 @@ Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + ti
 
 Napari-stress provides jupyter notebooks with complete workflows for different types of input data. Napari-stress currently provides notebooks for the following data/image types:
 
-* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook]([https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/Process_confocal.ipynb))
+* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook]([https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/Process_confocal.ipynb))
 * Lightsheet data (*.czi*), 3D + t: coming soon....
 
 The resulting surface will look like this:
