@@ -26,13 +26,16 @@ pip install -e .
 ```
 
 ## Usage
-Napari-stress is intended to work for 3D+t datasets in `[TZYX]` format. This is an example of input data from a confocal microscope (taken from [here](https://github.com/campaslab/STRESS/blob/main/ExampleTifSequence-InteriorLabel-vsx_2.076um-vsz_3.998um-TimeInterval_3.00min-21timesteps.tif):
 
-<img src="./docs/imgs/confocal/1_raw_confocal.png" width=45% height=45%>
+### General timelapse-processing
 
-Napari-stress currently provides notebooks for the following data/image types:
+Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers some convenient way to extent other function's functionality (which are often made for 3D data) to timelapse data using the `frame_by_frame` function and the `TimelapseConverter` class, both of which are described in more detail in [this notebook]([url](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/demo/TimeLapse_processing.ipynb)).
 
-* Confical data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/notebooks/Process_confocal.ipynb)
+### Recipes
+
+Napari-stress provides jupyter notebooks with complete workflows for different types of input data. Napari-stress currently provides notebooks for the following data/image types:
+
+* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook]([https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/Process_confocal.ipynb))
 * Lightsheet data (*.czi*), 3D + t: coming soon....
 
 The resulting surface will look like this:

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import vedo
-from napari_tools_menu import register_function
-from napari.types import SurfaceData, ImageData
+from napari.types import SurfaceData, ImageData, PointsData
 
-from ._utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
+from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_max_gradient, _detect_maxima
+from ._utils.frame_by_frame import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
+
 import numpy as np
 import tqdm
 import pandas as pd
@@ -19,26 +20,73 @@ class fit_types(Enum):
     fancy_edge_fit = 'fancy'
 
 class edge_functions(Enum):
-    interior = {'fancy': _sigmoid, 'quick': _detect_drop}
+    interior = {'fancy': _sigmoid, 'quick': _detect_max_gradient}
     surface = {'fancy': _gaussian, 'quick': _detect_maxima}
 
-@register_function(menu="Surfaces > Retrace surface vertices (vedo, nppas)")
-def trace_refinement_of_surface(image: ImageData,
-                                surface: SurfaceData,
+@frame_by_frame
+def trace_refinement_of_surface(intensity_image: ImageData,
+                                points: PointsData,
                                 trace_length: float = 2.0,
                                 sampling_distance: float = 0.1,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
                                 selected_edge: edge_functions = edge_functions.interior,
                                 scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
-                                show_progress: bool = True,
+                                show_progress: bool = False,
                                 remove_outliers: bool = True,
                                 interquartile_factor: float = 1.5
-                                )-> pd.DataFrame:
+                                )-> PointsData:
     """
     Generate intensity profiles along traces.
 
-    The profiles are interpolated from the input image with linear interpolation
+    This function receives an intensity image and a pointcloud with points on
+    the surface of an object in the intensity image. It assumes that the
+    pointcloud corresponds to the vertices on a surface around that object.
+
+    As a first step, the function calculates normals on the surface and
+    multiplies the length of this vector with `trace_length`. The intensity of
+    the input image is then sampled along this vector perpendicular to the
+    surface with a distance of `sampling distance` between each point along the
+    normal vector.
+
+    The location of the object's surface is then determined by fitting a
+    selected function to the intensity profile along the prolonged normal vector.
+
     Parameters
+    ----------
+    intensity_image : ImageData
+    points : PointsData
+    trace_length : float, optional
+        Length of the normal vector perpendicular to the surface. The default is 2.0.
+    sampling_distance : float, optional
+        Distance between two sampled intensity values along the normal vector.
+        The default is 0.1.
+    selected_fit_type : fit_types, optional
+        Which fit types to choose from. Can be `fit_types.fancy_edge_fit` or
+        `fit_types.quick_edge_fit`.
+    selected_edge : edge_functions, optional
+        Depending on the fluorescence of the intensity image, a different fit
+        function is required. Can be either of `edge_functions.interior` or
+        edge_functions.surface. The default is `edge_functions.interior`.
+    scale : np.ndarray, optional
+        If the image has a scale parameter in Napari, this needs to be entered
+        here. The default is np.array([1.0, 1.0, 1.0]).
+    show_progress : bool, optional
+        The default is False.
+    remove_outliers : bool, optional
+        If this is set to true, the function will evaluate the fit residues of
+        the chosen function and remove points that are classified as outliers.
+        The default is True.
+    interquartile_factor : float, optional
+        Determines how strict the outlier removal will be. Values with
+        `value > Q75 + interquartile_factor * IQR` are classified as outliers,
+        whereas `Q75` and `IQR` denote the 75% quartile and the interquartile
+        range, respectively.
+        The default is 1.5.
+
+    Returns
+    -------
+    PointsData
+
     """
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
@@ -46,23 +94,24 @@ def trace_refinement_of_surface(image: ImageData,
     edge_func = selected_edge.value[selected_fit_type.value]
 
     # Convert to mesh and calculate normals
-    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.computeNormals()
+    pointcloud = vedo.pointcloud.Points(points)
+    pointcloud.computeNormalsWithPCA(orientationPoint=pointcloud.centerOfMass())
 
     # Define start and end points for the surface tracing vectors
     n_samples = int(trace_length/sampling_distance)
-    start_pts = mesh.points()/scale[None, :] - 0.5 * trace_length * mesh.pointdata['Normals']
+    start_pts = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
 
     # Define trace vectors for full length and for single step
-    vectors = trace_length * mesh.pointdata['Normals']
+    vectors = trace_length * pointcloud.pointdata['Normals']
     v_step = vectors/n_samples
 
     # Create coords for interpolator
-    X1 = np.arange(0, image.shape[0], 1)
-    X2 = np.arange(0, image.shape[1], 1)
-    X3 = np.arange(0, image.shape[2], 1)
-    rgi = RegularGridInterpolator((X1, X2, X3), image, bounds_error=False,
-                                  fill_value=image.min())
+    X1 = np.arange(0, intensity_image.shape[0], 1)
+    X2 = np.arange(0, intensity_image.shape[1], 1)
+    X3 = np.arange(0, intensity_image.shape[2], 1)
+    rgi = RegularGridInterpolator((X1, X2, X3), intensity_image,
+                                  bounds_error=False,
+                                  fill_value=intensity_image.min())
 
     # Allocate arrays for results
     fit_params = _func_args_to_list(edge_func)[1:]
@@ -79,12 +128,12 @@ def trace_refinement_of_surface(image: ImageData,
     projection_vectors = []
     idx_of_border = []
 
-    fit_data = pd.DataFrame(columns=columns, index=np.arange(mesh.N()))
+    fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
 
     if show_progress:
-        tk = tqdm.tqdm(range(mesh.N(), desc = 'Processing vertices...'))
+        tk = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
     else:
-        tk = range(mesh.N())
+        tk = range(pointcloud.N())
 
     # Iterate over all provided target points
     for idx in tk:
