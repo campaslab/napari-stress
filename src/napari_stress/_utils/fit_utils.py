@@ -17,19 +17,19 @@ def _gaussian(x, center, sigma, amplitude):
 
 def _detect_maxima(profile, center: float = None):
     """
-    Simple function to find the maximum's index of data with a single peak.
+    Function to find the maximum's index of data with a single peak.
     """
     return np.argmax(profile)
 
 def _detect_drop(profile, center: float = None):
     """
-    Simple function to find the location of the steepest drop for sigmoidal data
+    Function to find the location of the steepest drop for sigmoidal data
     """
     return np.argmax(np.abs(np.diff(profile)))
 
 def _func_args_to_list(func: callable) -> list:
     """
-    Simple function to return a functions' keywords as a list of strings
+    Function to return a functions' keywords as a list of strings
     """
 
     sig = inspect.signature(func)
