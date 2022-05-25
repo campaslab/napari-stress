@@ -1,7 +1,7 @@
 import numpy as np
 import inspect
 
-def _sigmoid(x, center, amplitude, slope, offset):
+def _sigmoid(x, center:float, amplitude:float, slope:float, offset:float):
     """
     Sigmoidal fit function
     https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
