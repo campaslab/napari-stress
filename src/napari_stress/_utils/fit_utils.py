@@ -25,7 +25,7 @@ def _detect_max_gradient(profile, center: float = None):
     """
     Function to find the location of the steepest gradient for sigmoidal data
     """
-    return np.argmax(np.abs(np.diff(profile)))
+    return np.argmax(np.diff(profile))
 
 def _func_args_to_list(func: callable) -> list:
     """
