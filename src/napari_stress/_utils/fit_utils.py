@@ -8,7 +8,7 @@ def _sigmoid(x, center, amplitude, slope, offset):
     """
     return amplitude / (1 + np.exp(-slope*(x-center))) + offset
 
-def _gaussian(x, center, sigma, amplitude):
+def _gaussian(x, center:float, sigma:float, amplitude:float):
     """
     Gaussian normal fit function
     https://en.wikipedia.org/wiki/Normal_distribution
