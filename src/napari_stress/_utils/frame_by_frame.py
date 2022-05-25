@@ -26,7 +26,6 @@ def frame_by_frame(function, progress_bar: bool = False):
 
         # Convert 4D data to list(s) of 3D data for every supported argument
         # and store the list in the same place as the original 4D data
-        #TODO: Check if objects are actually 4D
         index_of_converted_arg = []  # remember which arguments were converted
 
         for idx, arg in enumerate(args):
