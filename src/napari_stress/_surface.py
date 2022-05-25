@@ -33,19 +33,24 @@ def fit_spherical_harmonics(points: PointsData,
     [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
 
     """
+    # Convert points coordinates relative to center
     center = points.mean(axis=0)
     pts = points - center[np.newaxis, :]
-    pts_spherical = vedo.cart2spher(pts[:, 0], pts[:, 1], pts[:, 2])
 
+    # Convert point coordinates to spherical coordinates (in degree!)
+    pts_spherical = vedo.cart2spher(pts[:, 0], pts[:, 1], pts[:, 2])
     radius = pts_spherical[0]
     latitude = np.rad2deg(pts_spherical[1])
     longitude = np.rad2deg(pts_spherical[2])
+
+    # Find spherical harmonics expansion coefficients until specified degree
     opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
                                                     lmax = max_degree)[1]
+    # Sample radius values at specified latitude/longitude
     clm = pyshtools.SHCoeffs.from_array(opt_fit_params)
-
     values = clm.expand(lat=latitude, lon=longitude)
 
+    # Convert points back to cartesian coordinates
     points = vedo.spher2cart(values,
                              np.deg2rad(latitude),
                              np.deg2rad(longitude))
