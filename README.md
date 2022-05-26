@@ -35,16 +35,8 @@ Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + ti
 
 Napari-stress provides jupyter notebooks with complete workflows for different types of input data. Napari-stress currently provides notebooks for the following data/image types:
 
-* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook]([https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/Process_confocal.ipynb))
+* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/notebooks/Process_confocal.ipynb)
 * Lightsheet data (*.czi*), 3D + t: coming soon....
 
-The resulting surface will look like this:
-
-||Low curvature radius (r=5)| Medium curvature radius (r=10) | Higher curvature radius (r=20) |
-| --- | --- | --- | --- |
-|Curvature | <img src="./docs/imgs/confocal/2_result_curvature_5radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_10radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_20radius0.png" width=100% height=100%> |
-|Fit residue|<img src="./docs/imgs/confocal/2_result_fit_residues_5radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_10radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_20radius0.png" width=100% height=100%>|
-
-Depending on the set curvature radius, the calculation captures the global or the local curvature.
 
 
