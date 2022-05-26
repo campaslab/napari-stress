@@ -1,5 +1,4 @@
-
-__version__ = "0.0.2"
+__version__ = "0.0.4"
 
 from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
@@ -10,7 +9,11 @@ from ._surface import surface_from_label,\
     reconstruct_surface,\
     smooth_laplacian,\
     resample_points,\
-    decimate
+    decimate,\
+    fit_spherical_harmonics
 
 from ._spherical_harmonic_fit import spherical_harmonic_fit
 from ._utils.time_slicer import TimelapseConverter, frame_by_frame
+    
+
+from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame

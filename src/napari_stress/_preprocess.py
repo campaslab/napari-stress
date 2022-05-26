@@ -4,7 +4,7 @@ from skimage import transform
 from skimage import transform
 
 import numpy as np
-from ._utils.time_slicer import frame_by_frame
+from ._utils.frame_by_frame import frame_by_frame
 
 @frame_by_frame
 def rescale(image: ImageData,
