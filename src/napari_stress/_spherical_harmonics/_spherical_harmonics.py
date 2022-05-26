@@ -3,13 +3,16 @@ from napari.types import PointsData
 import vedo
 import numpy as np
 
+from typing import Tuple
+from enum import Enum
+
+from .._utils.frame_by_frame import frame_by_frame
+
 import pyshtools
 from . import sph_func_SPB as sph_f
-
-from typing import Tuple
-
 from ._utils import Conv_3D_pts_to_Elliptical_Coors,\
     Least_Squares_Harmonic_Fit
+
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5
@@ -72,38 +75,68 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     """
 
     # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-    points_elliptical_1, points_elliptical_2 = Conv_3D_pts_to_Elliptical_Coors(points)
+    longitude, latitude = Conv_3D_pts_to_Elliptical_Coors(points)
 
     # This implementation fits a superposition of three sets of spherical harmonics
     # to the data, one for each cardinal direction (x/y/z).
     optimal_fit_parameters = Least_Squares_Harmonic_Fit(
         fit_degree=max_degree,
-        points_ellipse_coords = (points_elliptical_1, points_elliptical_2),
+        points_ellipse_coords = (longitude, latitude),
         input_points = points)
 
     X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 0], max_degree)
     Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 1], max_degree)
     Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 2], max_degree)
 
-    spherical_harmonics_coeffcients = np.stack([X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat])
+    coefficients = np.stack([X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat])
 
     # Create SPH_func to represent X, Y, Z:
-    X_fit_sph = sph_f.sph_func(spherical_harmonics_coeffcients[0], max_degree)
-    Y_fit_sph = sph_f.sph_func(spherical_harmonics_coeffcients[1], max_degree)
-    Z_fit_sph = sph_f.sph_func(spherical_harmonics_coeffcients[2], max_degree)
+    X_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
+    Y_fit_sph = sph_f.spherical_harmonics_function(coefficients[1], max_degree)
+    Z_fit_sph = sph_f.spherical_harmonics_function(coefficients[2], max_degree)
 
-    X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(points_elliptical_1, points_elliptical_2)
-    Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(points_elliptical_1, points_elliptical_2)
-    Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(points_elliptical_1, points_elliptical_2)
+    X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
+    Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
+    Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
 
     fitted_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
 
-    """
-    #TODO: Add code from campas stress repo
-    Link: https://github.com/campaslab/STRESS/blob/29c6627cb4c95330567cde5d0189238e3b95d7ab/Refactored_Droplet_Class.py#L888
+    return fitted_points, coefficients
 
-    This code simplifies the surface points to a set of lebedev points which allows to calculate
-    mean curvatures very easily.
-    """
+class spherical_harmonics_methods(Enum):
+    shtools = {'function': shtools_spherical_harmonics_expansion}
+    stress = {'function': stress_spherical_harmonics_expansion}
 
-    return fitted_points, spherical_harmonics_coeffcients
+@frame_by_frame
+def fit_spherical_harmonics(points: PointsData,
+                            max_degree: int = 5,
+                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.shtools
+                            ) -> PointsData:
+    """
+    Approximate a surface by spherical harmonics expansion
+
+    Parameters
+    ----------
+    points : PointsData
+    max_degree : int
+        Order up to which spherical harmonics should be included for the approximation.
+
+    Returns
+    -------
+    PointsData
+        Pointcloud on surface of a spherical harmonics expansion at the same
+        latitude/longitude as the input points.
+
+    See also
+    --------
+    [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
+
+    """
+    # Parse inputs
+    if isinstance(implementation, str):
+        fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
+    else:
+        fit_function = implementation.value['function']
+    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
+
+    return fitted_points

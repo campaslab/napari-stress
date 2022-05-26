@@ -5,9 +5,6 @@ import napari_process_points_and_surfaces as nppas
 from napari.types import LabelsData, SurfaceData, PointsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 
-from ._spherical_harmonics._sh_implementations import shtools_spherical_harmonics_expansion,\
-    stress_spherical_harmonics_expansion
-
 import vedo
 import typing
 
@@ -21,44 +18,6 @@ def resample_points(points: PointsData) -> PointsData:
     points = nppas.sample_points_poisson_disk((surface.points(), np.asarray(surface.faces())),
                                               number_of_points=pointcloud.N())
     return points
-
-class spherical_harmonics_methods(Enum):
-    shtools = {'function': shtools_spherical_harmonics_expansion}
-    stress = {'function': stress_spherical_harmonics_expansion}
-
-@frame_by_frame
-def fit_spherical_harmonics(points: PointsData,
-                            max_degree: int = 5,
-                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.shtools
-                            ) -> PointsData:
-    """
-    Approximate a surface by spherical harmonics expansion
-
-    Parameters
-    ----------
-    points : PointsData
-    max_degree : int
-        Order up to which spherical harmonics should be included for the approximation.
-
-    Returns
-    -------
-    PointsData
-        Pointcloud on surface of a spherical harmonics expansion at the same
-        latitude/longitude as the input points.
-
-    See also
-    --------
-    [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
-
-    """
-    # Parse inputs
-    if isinstance(implementation, str):
-        fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
-    else:
-        fit_function = implementation.value['function']
-    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
-
-    return fitted_points
 
 
 @frame_by_frame
