@@ -1,42 +1,26 @@
 # -*- coding: utf-8 -*-
 import vedo
 import numpy as np
+import napari_stress
 
+def test_spherical_harmonics():
 
-def test_fit():
+    ellipse = vedo.shapes.Ellipsoid()
 
-    from napari_stress import spherical_harmonic_fit
-    from napari_stress import TimelapseConverter
-    from napari.types import PointsData
+    # Test pyshtools implementation
+    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
+                                                   implementation='shtools')
+    assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
 
-    # 3D case
-    sphere = vedo.shapes.Sphere()
-    points = sphere.points()
+    # Test stress implementation
+    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
+                                                   implementation='stress')
+    assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
 
-    fitted_points = spherical_harmonic_fit(points, fit_degree=50)
-    errors = fitted_points[1]['features']['errors']
-    assert np.array_equal(fitted_points[0].shape[0], points.shape[0])
-
-    # # Check that errors get smaller with higher fit degree
-    # for fit_degree in range(2, 10):
-    #     fitted_points = spherical_harmonic_fit(points, fit_degree)
-
-    #     assert np.mean(fitted_points[1]['features']['errors'] < errors)
-    #     errors = fitted_points[1]['features']['errors']
-
-    #4D case
-    Converter = TimelapseConverter()
-    points_list = [vedo.shapes.Ellipsoid().points() * k for k in np.arange(1.9, 2.1, 0.1)]
-    points_array = Converter.list_of_data_to_data(points_list, PointsData)
-
-    fitted_points = spherical_harmonic_fit(points_array, fit_degree=3)
-    assert np.array_equal(fitted_points[0].shape, points_array.shape)
-
-    import napari
-    viewer = napari.Viewer()
-    viewer.add_points(points_array, size=0.1)
-    viewer.add_points(fitted_points[0], size=0.1, face_color='orange')
+    # Test default implementations
+    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
+    assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
 
 
 if __name__ == '__main__':
-    test_fit()
+    test_spherical_harmonics()
