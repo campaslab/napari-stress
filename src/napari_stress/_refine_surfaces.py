@@ -81,7 +81,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         If this is set to true, the function will evaluate the fit residues of
         the chosen function and remove points that are classified as outliers.
         The default is True.
-    interquartile_factor : float, optional
+    outlier_tolerance : float, optional
         Determines how strict the outlier removal will be. Values with
         `value > Q75 + interquartile_factor * IQR` are classified as outliers,
         whereas `Q75` and `IQR` denote the 75% quartile and the interquartile
@@ -183,7 +183,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              factor=interquartile_factor,
                                              which='above')
         fit_data = _remove_outliers_by_index(fit_data, on='idx_of_border',
-                                             factor=interquartile_factor,
+                                             factor=outlier_tolerance,
                                              which='both')
 
     #TODO: Add fit results to point properties
