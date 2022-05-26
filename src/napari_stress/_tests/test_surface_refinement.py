@@ -63,5 +63,13 @@ def test_surface_tracing():
                                                 selected_edge='surface',
                                                 remove_outliers=False)
 
+    fit_type = 'quick'
+    traced_points = trace_refinement_of_surface(blurry_ring, surf_points,
+                                                trace_length=10,
+                                                sampling_distance=0.1,
+                                                selected_fit_type=fit_type,
+                                                selected_edge='surface',
+                                                remove_outliers=False)
+
 if __name__ == '__main__':
     test_surface_tracing()
