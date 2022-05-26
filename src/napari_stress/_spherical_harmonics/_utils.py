@@ -3,7 +3,6 @@ import numpy as np
 from napari.types import PointsData
 from typing import Tuple
 
-from scipy.special import sph_harm
 from scipy.spatial.transform import Rotation
 
 import vedo
@@ -20,8 +19,6 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
                                use_true_harmonics: bool = True) -> np.ndarray:
     """
     Perform least squares fit of spherical harmonic basis functions.
-
-    This function
     """
 
     U, V = points_ellipse_coords[0], points_ellipse_coords[1]
@@ -31,13 +28,7 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
     for n in range(fit_degree + 1):
         for m in range(-1*n, n+1):
             Y_mn_coors_in = []
-
-            # we can use actual harmonics or our basis:
-            if(use_true_harmonics == True):
-                Y_mn_coors_in = sph_harm(m, n, U, V)
-            else:
-                Y_mn_coors_in = lbdv_i.Eval_SPH_Basis(m, n, U, V)
-
+            Y_mn_coors_in = lbdv_i.Eval_SPH_Basis(m, n, U, V)
             All_Y_mn_pt_in.append(Y_mn_coors_in)
 
     All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
