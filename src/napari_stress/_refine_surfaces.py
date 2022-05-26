@@ -3,7 +3,7 @@
 import vedo
 from napari.types import SurfaceData, ImageData, PointsData
 
-from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_max_gradient, _detect_maxima
+from ._utils.fit_utils import _sigmoid, _gaussian, _function_args_to_list, _detect_max_gradient, _detect_maxima
 from ._utils.frame_by_frame import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
@@ -26,13 +26,13 @@ class edge_functions(Enum):
 @frame_by_frame
 def trace_refinement_of_surface(intensity_image: ImageData,
                                 points: PointsData,
-                                trace_length: float = 2.0,
-                                sampling_distance: float = 0.1,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
                                 selected_edge: edge_functions = edge_functions.interior,
-                                scale_dim_1: float = 1.0,
-                                scale_dim_2: float = 1.0,
-                                scale_dim_3: float = 1.0,
+                                trace_length: float = 2.0,
+                                sampling_distance: float = 0.1,
+                                scale_z: float = 1.0,
+                                scale_y: float = 1.0,
+                                scale_x: float = 1.0,
                                 show_progress: bool = False,
                                 remove_outliers: bool = True,
                                 interquartile_factor: float = 1.5
@@ -57,11 +57,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     ----------
     intensity_image : ImageData
     points : PointsData
-    trace_length : float, optional
-        Length of the normal vector perpendicular to the surface. The default is 2.0.
-    sampling_distance : float, optional
-        Distance between two sampled intensity values along the normal vector.
-        The default is 0.1.
     selected_fit_type : fit_types, optional
         Which fit types to choose from. Can be `fit_types.fancy_edge_fit`/`"fancy"` or
         `fit_types.quick_edge_fit`/`"quick"`.
@@ -69,13 +64,17 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         Depending on the fluorescence of the intensity image, a different fit
         function is required. Can be either of `edge_functions.interior` or
         edge_functions.surface. The default is `edge_functions.interior`.
-    scale_dim_1 : float
-        If the image has a scale parameter in Napari, this needs to be entered
-        here. The default is np.array([1.0, 1.0, 1.0]).
+    trace_length : float, optional
+        Length of the normal vector perpendicular to the surface. The default is 2.0.
+    sampling_distance : float, optional
+        Distance between two sampled intensity values along the normal vector.
+        The default is 0.1.
+    scale_z : float
+        Voxel size in z
     scale_dim_2: float
-        See scale_dim_2
+        Voxel size in y
     scale_dim_3: float
-        See scale_dim_2
+        Voxel size in x
     show_progress : bool, optional
         The default is False.
     remove_outliers : bool, optional
@@ -107,7 +106,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     pointcloud.computeNormalsWithPCA(orientationPoint=pointcloud.centerOfMass())
 
     # Define start and end points for the surface tracing vectors
-    scale = np.asarray([scale_dim_1, scale_dim_2, scale_dim_3])
+    scale = np.asarray([scale_z, scale_y, scale_x])
     n_samples = int(trace_length/sampling_distance)
     start_points = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
 
