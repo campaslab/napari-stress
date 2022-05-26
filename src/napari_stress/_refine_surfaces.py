@@ -180,7 +180,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data, on=fit_errors,
-                                             factor=interquartile_factor,
+                                             factor=outlier_tolerance,
                                              which='above')
         fit_data = _remove_outliers_by_index(fit_data, on='idx_of_border',
                                              factor=outlier_tolerance,
