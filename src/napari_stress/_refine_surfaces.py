@@ -3,7 +3,7 @@
 import vedo
 from napari.types import ImageData, PointsData
 
-from ._utils.fit_utils import _sigmoid, _gaussian, _func_args_to_list, _detect_drop, _detect_maxima
+from ._utils.fit_utils import _sigmoid, _gaussian, _function_args_to_list, _detect_drop, _detect_maxima
 from ._utils.time_slicer import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
@@ -97,7 +97,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
 
-    edge_func = selected_edge.value[selected_fit_type.value]
+    if isinstance(selected_edge, str):
+        edge_detection_function = edge_functions(selected_fit_type.value)
 
     # Convert to mesh and calculate normals
     pointcloud = vedo.pointcloud.Points(points)
@@ -106,72 +107,72 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # Define start and end points for the surface tracing vectors
     scale = np.asarray([scale_dim_1, scale_dim_2, scale_dim_3])
     n_samples = int(trace_length/sampling_distance)
-    start_pts = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
+    start_points = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
 
-    # Define trace vectors for full length and for single step
+    # Define trace vectors (full length and single step
     vectors = trace_length * pointcloud.pointdata['Normals']
-    v_step = vectors/n_samples
+    vector_step = vectors/n_samples
 
     # Create coords for interpolator
     X1 = np.arange(0, intensity_image.shape[0], 1)
     X2 = np.arange(0, intensity_image.shape[1], 1)
     X3 = np.arange(0, intensity_image.shape[2], 1)
-    rgi = RegularGridInterpolator((X1, X2, X3), intensity_image,
-                                  bounds_error=False,
-                                  fill_value=intensity_image.min())
+    interpolator = RegularGridInterpolator((X1, X2, X3),
+                                           intensity_image,
+                                           bounds_error=False,
+                                           fill_value=intensity_image.min())
 
     # Allocate arrays for results
-    fit_params = _func_args_to_list(edge_func)[1:]
-    fit_errors = [p + '_err' for p in fit_params]
+    fit_parameters = _function_args_to_list(edge_detection_function)[1:]
+    fit_errors = [p + '_err' for p in fit_parameters]
     columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
-        fit_params + fit_errors + ['profiles']
+        fit_parameters + fit_errors + ['profiles']
 
-    if len(fit_params) == 1:
-        fit_params, fit_errors = fit_params[0], fit_errors[0]
+    if len(fit_parameters) == 1:
+        fit_parameters, fit_errors = fit_parameters[0], fit_errors[0]
 
-    opt_fit_params = []
-    opt_fit_errors = []
+    optimal_fit_parameters = []
+    optimal_fit_errors = []
     new_surf_points = []
     projection_vectors = []
     idx_of_border = []
 
+    # create empty dataframe to keep track of results
     fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
 
     if show_progress:
-        tk = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
+        iterator = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
     else:
-        tk = range(pointcloud.N())
+        iterator = range(pointcloud.N())
 
     # Iterate over all provided target points
-    for idx in tk:
+    for idx in iterator:
 
-        profile_coords = [start_pts[idx] + k * v_step[idx] for k in range(n_samples)]
-        fit_data.loc[idx, 'profiles'] = rgi(profile_coords)
+        coordinates = [start_points[idx] + k * vector_step[idx] for k in range(n_samples)]
+        fit_data.loc[idx, 'profiles'] = interpolator(coordinates)
 
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border.append(
-                edge_func(np.array(fit_data.loc[idx, 'profiles']))
-                )
+            idx_of_border.append(edge_detection_function(np.array(fit_data.loc[idx, 'profiles'])))
             perror = 0
             popt = 0
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
             popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                           selected_edge_func=edge_func)
+                                           selected_edge_func=edge_detection_function)
             idx_of_border.append(popt[0])
 
-        opt_fit_errors.append(perror)
-        opt_fit_params.append(popt)
+        optimal_fit_errors.append(perror)
+        optimal_fit_parameters.append(popt)
 
         # get new surface point
-        new_surf_point = (start_pts[idx] + idx_of_border[idx] * v_step[idx]) * scale
+        new_surf_point = (start_points[idx] + idx_of_border[idx] * vector_step[idx]) * scale
         new_surf_points.append(new_surf_point)
-        projection_vectors.append(idx_of_border[idx] * (-1) * v_step[idx])
+        projection_vectors.append(idx_of_border[idx] * (-1) * vector_step[idx])
 
     fit_data['idx_of_border'] = idx_of_border
-    fit_data[fit_params] = opt_fit_params
-    fit_data[fit_errors] = opt_fit_errors
+    fit_data[fit_parameters] = optimal_fit_parameters
+    fit_data[fit_errors] = optimal_fit_errors
     fit_data['surface_points'] = new_surf_points
     fit_data['projection_vector'] = projection_vectors
 
@@ -242,7 +243,7 @@ def _fancy_edge_fit(profile: np.ndarray,
         DESCRIPTION.
 
     """
-    params = _func_args_to_list(selected_edge_func)[1:]
+    params = _function_args_to_list(selected_edge_func)[1:]
     try:
         if selected_edge_func == _sigmoid:
 

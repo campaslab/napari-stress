@@ -14,7 +14,7 @@ def _detect_maxima(profile, center: float = None):
 def _detect_drop(profile, center: float = None):
     return np.argmax(np.abs(np.diff(profile)))
 
-def _func_args_to_list(func: callable) -> list:
+def _function_args_to_list(func: callable) -> list:
 
     sig = inspect.signature(func)
     return list(sig.parameters.keys())
