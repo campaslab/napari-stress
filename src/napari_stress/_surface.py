@@ -59,13 +59,14 @@ def fit_spherical_harmonics(points: PointsData,
     return points.transpose() + center[np.newaxis, :]
 
 
+@frame_by_frame
 def reconstruct_surface(points: PointsData,
                         radius: float = None,
                         sampleSize: int = None,
                         holeFilling: bool = True,
                         bounds: tuple = (),
                         padding: float = 0.05
-                        ):
+                        ) -> SurfaceData:
     pointcloud = vedo.pointcloud.Points(points)
 
     dims = np.max(pointcloud.points(), axis=0) - np.min(pointcloud.points(), axis=0)
