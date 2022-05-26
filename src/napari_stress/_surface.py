@@ -5,9 +5,13 @@ import napari_process_points_and_surfaces as nppas
 from napari.types import LabelsData, SurfaceData, PointsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 
+from ._spherical_harmonics._sh_implementations import shtools_spherical_harmonics_expansion,\
+    stress_spherical_harmonics_expansion
+
 import vedo
 import typing
-import pyshtools
+
+from enum import Enum
 
 @frame_by_frame
 def resample_points(points: PointsData) -> PointsData:
@@ -18,9 +22,15 @@ def resample_points(points: PointsData) -> PointsData:
                                               number_of_points=pointcloud.N())
     return points
 
+class spherical_harmonics_methods(Enum):
+    shtools = shtools_spherical_harmonics_expansion
+    stress = stress_spherical_harmonics_expansion
+
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
-                            max_degree: int = 5) -> PointsData:
+                            max_degree: int = 5,
+                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.shtools
+                            ) -> PointsData:
     """
     Approximate a surface by spherical harmonics expansion
 
@@ -41,30 +51,10 @@ def fit_spherical_harmonics(points: PointsData,
     [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
 
     """
-    # Convert points coordinates relative to center
-    center = points.mean(axis=0)
-    relative_coordinates = points - center[np.newaxis, :]
 
-    # Convert point coordinates to spherical coordinates (in degree!)
-    spherical_coordinates = vedo.cart2spher(relative_coordinates[:, 0],
-                                            relative_coordinates[:, 1],
-                                            relative_coordinates[:, 2])
-    radius = spherical_coordinates[0]
-    latitude = np.rad2deg(spherical_coordinates[1])
-    longitude = np.rad2deg(spherical_coordinates[2])
+    fitted_points = implementation(points, max_degree=max_degree)
 
-    # Find spherical harmonics expansion coefficients until specified degree
-    opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
-                                                    lmax = max_degree)[1]
-    # Sample radius values at specified latitude/longitude
-    spherical_harmonics_coeffcients = pyshtools.SHCoeffs.from_array(opt_fit_params)
-    values = spherical_harmonics_coeffcients.expand(lat=latitude, lon=longitude)
-
-    # Convert points back to cartesian coordinates
-    points = vedo.spher2cart(values,
-                             np.deg2rad(latitude),
-                             np.deg2rad(longitude))
-    return points.transpose() + center[np.newaxis, :]
+    return fitted_points
 
 
 @frame_by_frame
