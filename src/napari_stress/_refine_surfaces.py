@@ -123,7 +123,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                            bounds_error=False,
                                            fill_value=intensity_image.min())
 
-    # Allocate arrays for results
+    # Allocate arrays for results (location of object border, fit parameters,
+    # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
     columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
