@@ -12,8 +12,5 @@ from ._surface import surface_from_label,\
     decimate,\
     fit_spherical_harmonics
 
-from ._spherical_harmonic_fit import spherical_harmonic_fit
-from ._utils.time_slicer import TimelapseConverter, frame_by_frame
-    
-
+#from ._spherical_harmonic_fit import spherical_harmonic_fit
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
