@@ -99,6 +99,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     if isinstance(selected_edge, str):
         edge_detection_function = edge_functions(selected_fit_type.value)
+    else:
+        edge_detection_function = selected_edge.value[selected_fit_type.value]
 
     # Convert to mesh and calculate normals
     pointcloud = vedo.pointcloud.Points(points)
@@ -188,11 +190,32 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     #TODO: Add fit results to point properties
     return np.stack(fit_data['surface_points'].to_numpy())
 
-def _remove_outliers_by_index(df,
-                              on = list,
+def _remove_outliers_by_index(df: pd.DataFrame,
+                              on: list,
                               which: str = 'above',
                               factor: float = 1.5) -> pd.DataFrame:
-    "Filter all rows that qualify as outliers based on column-statistics."
+    """
+    Filter all rows in a dataframe that qualify as outliers based on column-statistics.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+    on : list
+        list of column names that should be taken into account
+    which : str, optional
+        Can be 'above', 'below' or 'both' and determines which outliers to
+        remove - the excessively high or low values or both.
+        The default is 'above'.
+    factor : float, optional
+        Determine how far a datapoint is to be above the interquartile range to
+        be classified as outlier. The default is 1.5.
+
+    Returns
+    -------
+    df : pd.DataFrame
+
+    """
+    # Check if list or single string was passed
     if isinstance(on, str):
         on = [on]
 
@@ -221,9 +244,7 @@ def _remove_outliers_by_index(df,
     return df[indices]
 
 
-
-
-def _fancy_edge_fit(profile: np.ndarray,
+def _fancy_edge_fit(array: np.ndarray,
                     selected_edge_func: edge_functions = edge_functions.interior
                     ) -> float:
     """
@@ -248,29 +269,31 @@ def _fancy_edge_fit(profile: np.ndarray,
         if selected_edge_func == _sigmoid:
 
             # Make sure that intensity goes up along ray so that fit can work
-            if profile[0] > profile[-1]:
-                profile = profile[::-1]
+            if array[0] > array[-1]:
+                array = array[::-1]
 
-            p0 = [len(profile)/2,
-                  max(profile),
-                  np.diff(profile).mean(),
-                  min(profile)]
-            popt, _pcov = curve_fit(
-                selected_edge_func, np.arange(len(profile)), profile, p0
+            parameter_estimate = [len(array)/2,
+                                  max(array),
+                                  np.diff(array).mean(),
+                                  min(array)]
+            optimal_fit_parameters, _covariance = curve_fit(
+                selected_edge_func, np.arange(len(array)), array, parameter_estimate
                 )
 
         elif selected_edge_func == _gaussian:
-            p0 = [len(profile)/2, len(profile)/2, max(profile)]
-            popt, _pcov = curve_fit(
-                selected_edge_func, np.arange(0, len(profile), 1), profile, p0
+            parameter_estimate = [len(array)/2,
+                                  len(array)/2,
+                                  max(array)]
+            optimal_fit_parameters, _covariance = curve_fit(
+                selected_edge_func, np.arange(0, len(array), 1), array, parameter_estimate
                 )
 
         # retrieve errors from covariance matrix
-        perr = np.sqrt(np.diag(_pcov))
+        parameter_error = np.sqrt(np.diag(_covariance))
 
-    # If fit fails:
+    # If fit fails, replace bad values with NaN
     except Exception:
-        popt = np.repeat(np.nan, len(params))
-        perr = np.repeat(np.nan, len(params))
+        optimal_fit_parameters = np.repeat(np.nan, len(params))
+        parameter_error = np.repeat(np.nan, len(params))
 
-    return popt, perr
+    return optimal_fit_parameters, parameter_error
