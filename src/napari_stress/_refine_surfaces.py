@@ -97,7 +97,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         selected_fit_type = fit_types(selected_fit_type)
 
     if isinstance(selected_edge, str):
-        edge_detection_function = edge_functions(selected_fit_type.value)
+        edge_detection_function = edge_functions.__members__[selected_edge].value[selected_fit_type.value]
     else:
         edge_detection_function = selected_edge.value[selected_fit_type.value]
 
