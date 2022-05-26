@@ -2,6 +2,7 @@
 #! We use sph_func to encapsulate data from SPH Basis of functions, regardless of chart
 
 from numpy  import *
+import numpy as np
 from scipy  import *
 import mpmath
 import cmath
@@ -267,24 +268,27 @@ def Avg_of_SPH_Proj_of_Func(func_vals_at_quad_pts, lbdv):
     return Avg_of_SPH_Proj
 
 
-# Returns SPH Coef Mat, given properly ordered vector of SPH Coef
-def Un_Flatten_Coef_Vec(Coef_Vec, basis_deg):
+def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
+    """
+    reshape a coefficient vector into a N+1 x N+1 coefficient matrix.
+    Requires properly ordered vector of SPH Coef
+    """
 
-    coef_mat = zeros(( basis_deg+1, basis_deg+1 ))
+    coefficient_matrix = np.zeros((basis_degree+1, basis_degree+1 ))
 
     row = 0
-    for n in range(basis_deg+1):
+    for n in range(basis_degree+1):
         for m in range(-1*n, n+1):
 
             if m>0:
-                    coef_mat[n-m][n] = Coef_Vec[row]
+                    coefficient_matrix[n-m][n] = coefficient_vector[row]
 
             else: #m <= 0
-                    coef_mat[n][n+m] = Coef_Vec[row]
+                    coefficient_matrix[n][n+m] = coefficient_vector[row]
 
             row = row + 1
 
-    return coef_mat
+    return coefficient_matrix
 
 
 # Gives L_1 Integral on SPHERE pullback:
@@ -319,14 +323,9 @@ def S2_Integral(f_quad_vals, lbdv):
 
     return     S2_Int
 
-
-# To create unique zero matricies:
-def zeros_mat(row_len, col_len):
-    return np.zeros(( row_len, col_len ))
-
 #############################################################################################################################################################
 
-class sph_func(object): #create class for Spherical Harmonics fn in our basis
+class spherical_harmonics_function(object): #create class for Spherical Harmonics fn in our basis
 
     def __init__(self, SPH_Coef, SPH_Deg):
         self.sph_coef = SPH_Coef #Array Representation in SPH Basis
