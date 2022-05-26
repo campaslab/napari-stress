@@ -135,7 +135,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     optimal_fit_parameters = []
     optimal_fit_errors = []
-    new_surf_points = []
+    new_surface_points = []
     projection_vectors = []
     idx_of_border = []
 
@@ -168,14 +168,14 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         optimal_fit_parameters.append(popt)
 
         # get new surface point
-        new_surf_point = (start_points[idx] + idx_of_border[idx] * vector_step[idx]) * scale
-        new_surf_points.append(new_surf_point)
+        new_point = (start_points[idx] + idx_of_border[idx] * vector_step[idx]) * scale
+        new_surface_points.append(new_point)
         projection_vectors.append(idx_of_border[idx] * (-1) * vector_step[idx])
 
     fit_data['idx_of_border'] = idx_of_border
     fit_data[fit_parameters] = optimal_fit_parameters
     fit_data[fit_errors] = optimal_fit_errors
-    fit_data['surface_points'] = new_surf_points
+    fit_data['surface_points'] = new_surface_points
     fit_data['projection_vector'] = projection_vectors
 
     # Filter points to remove points with high fit errors

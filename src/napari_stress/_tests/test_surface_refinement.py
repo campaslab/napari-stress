@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-
 def test_surface_tracing():
     from napari_stress import trace_refinement_of_surface
     from skimage import filters, morphology
