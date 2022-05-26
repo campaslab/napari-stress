@@ -6,7 +6,7 @@ contributions:
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._surface:fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics._expansion:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
 
   widgets:

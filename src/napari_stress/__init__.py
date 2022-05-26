@@ -11,5 +11,5 @@ from ._surface import surface_from_label,\
     resample_points,\
     decimate
 
-from ._spherical_harmonics._spherical_harmonics import fit_spherical_harmonics
+from ._spherical_harmonics._expansion import fit_spherical_harmonics
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
