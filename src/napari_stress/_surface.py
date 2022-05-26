@@ -23,8 +23,8 @@ def resample_points(points: PointsData) -> PointsData:
     return points
 
 class spherical_harmonics_methods(Enum):
-    shtools = shtools_spherical_harmonics_expansion
-    stress = stress_spherical_harmonics_expansion
+    shtools = {'function': shtools_spherical_harmonics_expansion}
+    stress = {'function': stress_spherical_harmonics_expansion}
 
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
@@ -51,8 +51,12 @@ def fit_spherical_harmonics(points: PointsData,
     [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
 
     """
-
-    fitted_points = implementation(points, max_degree=max_degree)
+    # Parse inputs
+    if isinstance(implementation, str):
+        fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
+    else:
+        fit_function = implementation.value['function']
+    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
 
     return fitted_points
 
