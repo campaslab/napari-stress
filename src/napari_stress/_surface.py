@@ -61,23 +61,36 @@ def fit_spherical_harmonics(points: PointsData,
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
-                        radius: float = None,
-                        sampleSize: int = None,
+                        radius: float = 1.0,
                         holeFilling: bool = True,
-                        bounds: tuple = (),
                         padding: float = 0.05
                         ) -> SurfaceData:
+    """
+    Reconstruct a surface from a given pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+    radius : float
+        Radius within which to search for neighboring points.
+    holeFilling : bool, optional
+        The default is True.
+    padding : float, optional
+        Whether or not to thicken the surface by a given margin.
+        The default is 0.05.
+
+    Returns
+    -------
+    SurfaceData
+    """
     pointcloud = vedo.pointcloud.Points(points)
 
-    dims = np.max(pointcloud.points(), axis=0) - np.min(pointcloud.points(), axis=0)
-    surf = pointcloud.reconstructSurface(dims=dims.astype(int),
-                                         radius=radius,
-                                         sampleSize=sampleSize,
-                                         holeFilling=holeFilling,
-                                         bounds=bounds,
-                                         padding=padding)
+    surface = pointcloud.reconstructSurface(radius=radius,
+                                            sampleSize=None,
+                                            holeFilling=holeFilling,
+                                            padding=padding)
 
-    return (surf.points(), np.asarray(surf.faces(), dtype=int))
+    return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
 
 def smooth_sinc(surface: SurfaceData,
