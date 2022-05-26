@@ -78,28 +78,85 @@ def reconstruct_surface(points: PointsData,
 
     return (surf.points(), np.asarray(surf.faces(), dtype=int))
 
-
+@frame_by_frame
 def smooth_sinc(surface: SurfaceData,
-                niter: int = 15,
+                n_iterations: int = 15,
                 passBand: float = 0.1,
                 edgeAngle: float = 15,
                 feature_angle: float = 60,
                 boundary: bool = False) -> SurfaceData:
+    """
+    Adjust mesh point positions using the Windowed Sinc function interpolation kernel.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+        DESCRIPTION.
+    n_iterations : int, optional
+        Number of iteratios. The default is 15.
+    passBand : float, optional
+        Passband of sinc filter. The default is 0.1.
+    edgeAngle : float, optional
+        Edge angle to control smoothing along edges. The default is 15.
+    feature_angle : float, optional
+        Specifies the feature angle for sharp edge identification. The default is 60.
+    boundary : bool, optional
+        The default is False.
+
+    Returns
+    -------
+    SurfaceData
+
+    See also
+    --------
+    https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.smooth
+
+    """
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.smooth(niter=niter, passBand=passBand,
-                edgeAngle=edgeAngle, featureAngle=feature_angle,
+    mesh.smooth(niter=n_iterations,
+                passBand=passBand,
+                edgeAngle=edgeAngle,
+                featureAngle=feature_angle,
                 boundary=boundary)
     return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
 
+@frame_by_frame
 def smoothMLS2D(points: PointsData,
                 f: float = 0.2,
-                radius: float = None) -> PointsData:
+                radius: float = 1.0) -> PointsData:
+    """
+    Smooth points with a Moving Least Squares algorithm variant.
+
+    Parameters
+    ----------
+    points : PointsData
+    f : float, optional
+        Smoothing factor - typical range is [0,2]. The default is 0.2.
+    radius : float, optional
+        Search radius for neighboring points to identify isolated points.
+        Set this value to zero to ignore it. The default is 1.0.
+
+    Returns
+    -------
+    PointsData
+
+    See also
+    --------
+    https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.smoothMLS2D
+
+    """
+
+    if radius == 0:
+        radius = None
 
     pointcloud = vedo.pointcloud.Points(points)
     pointcloud.smoothMLS2D(f=f, radius=radius)
 
-    return pointcloud.points()[pointcloud.info['isvalid']]
+    if radius is None:
+        return pointcloud.points()
+    else:
+        return pointcloud.points()[pointcloud.info['isvalid']]
 
 def surface_from_label(label_image: LabelsData,
                        scale: typing.Union[list, np.ndarray]) -> SurfaceData:
