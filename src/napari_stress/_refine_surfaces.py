@@ -35,7 +35,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 scale_x: float = 1.0,
                                 show_progress: bool = False,
                                 remove_outliers: bool = True,
-                                interquartile_factor: float = 1.5
+                                outlier_tolerance: float = 1.5
                                 )-> PointsData:
     """
     Generate intensity profiles along traces.
