@@ -19,6 +19,3 @@ def test_smoothing():
 
     smoothed_points = smoothMLS2D(points, factor=0.25, radius=0)
     smoothed_points = smoothMLS2D(points, factor=1.0, radius=4)
-
-if __name__ == '__main__':
-    test_smoothing()
