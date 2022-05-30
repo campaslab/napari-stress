@@ -33,13 +33,19 @@ Functionality in this repository is divided in two groups: **Recipes** and **plu
 
 Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
 
-* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/notebooks/recipes/Process_confocal.ipynb)
-* Lightsheet data (*.czi*), 3D + t: coming soon....
+* **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/notebooks/recipes/Process_confocal.ipynb)
 
-### Plugins & functions
+![](./docs/imgs/confocal/workflow.png)
+
+
+* **Lightsheet data** (*.czi*), 3D + t: coming soon....
+
+### Plugins
 
 All functions in this repository are documented separately as Jupyter notebooks [here](./docs/notebooks/demo). 
 
-Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers some convenient way to extent other function's functionality (which are often made for 3D data) to timelapse data using the `frame_by_frame` function and the `TimelapseConverter` class, both of which are described in more detail in [this notebook]([url](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/demo/TimeLapse_processing.ipynb)).
+### Utilities
+
+Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers some convenient way to extent other function's functionality (which are often made for 3D data) to timelapse data using the `frame_by_frame` function and the `TimelapseConverter` class, both of which are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/demo/TimeLapse_processing.ipynb).
 
 
