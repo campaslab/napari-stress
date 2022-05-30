@@ -132,7 +132,8 @@ def smoothMLS2D(points: PointsData,
     ----------
     points : PointsData
     f : float, optional
-        Smoothing factor - typical range is [0,2]. The default is 0.25.
+        Smoothing factor - typical range is [0,2]. Will be ignored if radius is
+        different from 0. The default is 0.25.
     radius : float, optional
         Search radius for neighboring points to identify isolated points.
         Set this value to zero to ignore it. The default is 1.0.
