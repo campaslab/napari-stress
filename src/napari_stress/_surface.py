@@ -147,7 +147,6 @@ def smoothMLS2D(points: PointsData,
     https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.smoothMLS2D
 
     """
-
     if radius == 0:
         radius = None
 
