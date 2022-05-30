@@ -8,6 +8,9 @@ contributions:
     - id: napari-stress.fit_spherical_harmonics
       python_name: napari_stress._surface:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
+    - id: napari-stress.smooth_points_MLS2D
+      python_name: napari_stress._surface:smoothMLS2D
+      title: Smooth pointcloud with 2D moving least squares approach
 
   widgets:
     - command: napari-stress.rescale
@@ -16,3 +19,6 @@ contributions:
     - command: napari-stress.fit_spherical_harmonics
       autogenerate: true
       display_name: Fit spherical harmonics
+    - command: napari-stress.smooth_points_MLS2D
+      autogenerate: true
+      display_name: Smooth point clouds
