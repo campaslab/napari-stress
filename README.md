@@ -44,7 +44,7 @@ Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebo
 
 ### Plugins
 
-All functions in this repository are documented separately as Jupyter notebooks [here](./docs/notebooks/demo). 
+All functions in this repository are documented sesparately as Jupyter notebooks [here](./docs/notebooks/demo). 
 
 ### Utilities
 
@@ -52,6 +52,6 @@ Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + ti
 
 ## Issues
 
-To report bugs, request new features or get in touch, please [open an issue](https://github.com/BiAPoL/napari-stress/issues) or tag `@EL_Pollo_Diablo` on i.
+To report bugs, request new features or get in touch, please [open an issue](https://github.com/BiAPoL/napari-stress/issues) or tag `@EL_Pollo_Diablo` on [image.sc](https://forum.image.sc/).
 
 
