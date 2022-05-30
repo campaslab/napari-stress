@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from napari_stress import rescale
+
 
 def test_rescaling():
+    from napari_stress import rescale
 
     # Test for 4D
     image = np.random.random(size=(2, 100, 100, 100))
