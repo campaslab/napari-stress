@@ -123,7 +123,7 @@ def smooth_sinc(surface: SurfaceData,
 
 @frame_by_frame
 def smoothMLS2D(points: PointsData,
-                f: float = 0.2,
+                factor: float = 0.25,
                 radius: float = 1.0) -> PointsData:
     """
     Smooth points with a Moving Least Squares algorithm variant.
@@ -132,7 +132,7 @@ def smoothMLS2D(points: PointsData,
     ----------
     points : PointsData
     f : float, optional
-        Smoothing factor - typical range is [0,2]. The default is 0.2.
+        Smoothing factor - typical range is [0,2]. The default is 0.25.
     radius : float, optional
         Search radius for neighboring points to identify isolated points.
         Set this value to zero to ignore it. The default is 1.0.
@@ -151,7 +151,7 @@ def smoothMLS2D(points: PointsData,
         radius = None
 
     pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.smoothMLS2D(f=f, radius=radius)
+    pointcloud.smoothMLS2D(f=factor, radius=radius)
 
     if radius is None:
         return pointcloud.points()
