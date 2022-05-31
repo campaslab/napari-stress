@@ -12,14 +12,14 @@ def zero_quad_array(Q_val):
 
 
 # Return list of quad vals at each quad pt, given func
-def Extract_Quad_Pt_Vals_From_Fn(Func, lbdv):
+def get_quadrature_points_from_function(Func, lbdv):
 
 	Extracted_Quad_vals = Func(lbdv.theta_pts, lbdv.phi_pts)
 	return Extracted_Quad_vals
 
 
 # Return list of quad vals at each quad pt, given SPH_Func (CHART A order)
-def Extract_Quad_Pt_Vals_From_SPH_Fn(SPH_Func, lbdv, Chart):
+def get_quadrature_points_from_sh_function(SPH_Func, lbdv, Chart):
 
 	Extracted_Quad_vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
