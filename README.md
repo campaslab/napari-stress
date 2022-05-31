@@ -32,20 +32,26 @@ pip install -e .
 
 Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
 
+### Plugins
+
+All functions in this repository are documented separately for [interactive usage from the napari viewer](./docs/tutorials/point_and_click) as well as [Jupyter notebooks](./docs/tutorials/demo). 
+
+|Function| Links |
+| --- | --- |
+|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="250" height="250"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+
 ### Recipes
 
 Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
 
-* **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/notebooks/recipes/Process_confocal.ipynb)
+* **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/tutorials/recipes/Process_confocal.ipynb)
 
 ![](./docs/imgs/confocal/workflow.png)
 
 
 * **Lightsheet data** (*.czi*), 3D + t: coming soon....
 
-### Plugins
 
-All functions in this repository are documented separately as Jupyter notebooks [here](./docs/notebooks/demo). 
 
 
 ### Utilities
