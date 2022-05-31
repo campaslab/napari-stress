@@ -38,7 +38,6 @@ def _func_args_to_list(func: callable) -> list:
     sig = inspect.signature(func)
     return list(sig.parameters.keys())
 
-# 
 def Least_Squares_Harmonic_Fit(fit_degree: int,
                                points_ellipse_coords: tuple,
                                input_points: PointsData,
