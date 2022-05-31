@@ -12,6 +12,8 @@ from ._surface import surface_from_label,\
     decimate
 
 from ._spherical_harmonics._expansion import fit_spherical_harmonics
+from ._spherical_harmonics._curvature import measure_curvature
+
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
 
 from ._sample_data import get_dropplet_point_cloud

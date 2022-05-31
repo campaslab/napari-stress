@@ -11,6 +11,9 @@ contributions:
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_dropplet_point_cloud
       title: Get dropplet pointcloud sample
+    - id: napari-stress.measure_curvature
+      python_name: napari_stress._spherical_harmonics._curvature:measure_curvature
+      title: Measure spherical-harmonics approximated curvature
     
 
   widgets:
@@ -20,6 +23,9 @@ contributions:
     - command: napari-stress.fit_spherical_harmonics
       autogenerate: true
       display_name: Fit spherical harmonics
+    - command: napari-stress.measure_curvature
+      autogenerate: True
+      display_name: Measure curvature
       
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
