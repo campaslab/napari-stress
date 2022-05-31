@@ -11,6 +11,10 @@ contributions:
     - id: napari-stress.reconstruct_surface
       python_name: napari_stress._surface:reconstruct_surface
       title: Reconstruct a surface from a pointcloud
+    - id: napari-stress.get_pointcloud_sample_data
+      python_name: napari_stress._sample_data:get_dropplet_point_cloud
+      title: Get dropplet pointcloud sample
+    
 
   widgets:
     - command: napari-stress.rescale
@@ -22,3 +26,8 @@ contributions:
     - command: napari-stress.reconstruct_surface
       autogenerate: true
       display_name: Reconstruct surface
+      
+  sample_data:
+    - command: napari-stress.get_pointcloud_sample_data
+      display_name: Dropplet pointcloud
+      key: PC_1
