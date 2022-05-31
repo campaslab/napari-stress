@@ -12,31 +12,7 @@ from .._spherical_harmonics import lbdv_info_SPB as lbdv_i
 from .._spherical_harmonics import euc_k_form_SPB as euc_kf
 from .._spherical_harmonics import manifold_SPB as mnfd
 
-# return least squares harmonic fit to point cloud, given choice of basis and degree:
-def Least_Squares_Harmonic_Fit(fit_degree: int,
-                               points_ellipse_coords: tuple,
-                               input_points: PointsData,
-                               use_true_harmonics: bool = True) -> np.ndarray:
-    """
-    Perform least squares fit of spherical harmonic basis functions.
-    """
 
-    U, V = points_ellipse_coords[0], points_ellipse_coords[1]
-
-    All_Y_mn_pt_in = []
-
-    for n in range(fit_degree + 1):
-        for m in range(-1*n, n+1):
-            Y_mn_coors_in = []
-            Y_mn_coors_in = lbdv_i.Eval_SPH_Basis(m, n, U, V)
-            All_Y_mn_pt_in.append(Y_mn_coors_in)
-
-    All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
-    x1 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 0])[0]
-    x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 1])[0]
-    x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 2])[0]
-
-    return np.vstack([x1, x2, x3]).transpose()
 
 
 def cartesian_to_elliptical_coordinates(points: PointsData

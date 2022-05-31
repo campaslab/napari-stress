@@ -10,8 +10,8 @@ from .._utils.frame_by_frame import frame_by_frame
 
 import pyshtools
 from . import sph_func_SPB as sph_f
-from ._utils import cartesian_to_elliptical_coordinates,\
-    Least_Squares_Harmonic_Fit
+from .._utils.fit_utils import Least_Squares_Harmonic_Fit
+from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
 
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
