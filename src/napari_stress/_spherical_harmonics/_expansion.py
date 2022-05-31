@@ -10,7 +10,7 @@ from .._utils.frame_by_frame import frame_by_frame
 
 import pyshtools
 from . import sph_func_SPB as sph_f
-from ._utils import Conv_3D_pts_to_Elliptical_Coors,\
+from ._utils import cartesian_to_elliptical_coordinates,\
     Least_Squares_Harmonic_Fit
 
 
@@ -75,7 +75,7 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     """
 
     # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-    longitude, latitude = Conv_3D_pts_to_Elliptical_Coors(points)
+    longitude, latitude = cartesian_to_elliptical_coordinates(points)
 
     # This implementation fits a superposition of three sets of spherical harmonics
     # to the data, one for each cardinal direction (x/y/z).
@@ -110,7 +110,7 @@ class spherical_harmonics_methods(Enum):
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int = 5,
-                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.shtools
+                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress
                             ) -> PointsData:
     """
     Approximate a surface by spherical harmonics expansion
