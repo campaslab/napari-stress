@@ -44,7 +44,8 @@ Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebo
 
 ### Plugins
 
-All functions in this repository are documented sesparately as Jupyter notebooks [here](./docs/notebooks/demo). 
+All functions in this repository are documented separately as Jupyter notebooks [here](./docs/notebooks/demo). 
+
 
 ### Utilities
 
