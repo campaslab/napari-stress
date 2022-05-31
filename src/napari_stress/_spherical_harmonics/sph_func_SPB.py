@@ -8,7 +8,7 @@ import mpmath
 import cmath
 from scipy.special import sph_harm
 
-from .lbdv_info_SPB import *
+from .lebedev_info_SPB import *
 from .charts_SPB import*
 
 
