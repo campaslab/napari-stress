@@ -10,3 +10,5 @@ from ._surface import surface_from_label,\
     fit_spherical_harmonics
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
+
+from ._sample_data import get_dropplet_point_cloud
