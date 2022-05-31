@@ -23,13 +23,13 @@ def test_spherical_harmonics():
 
 def test_quadrature(make_napari_viewer):
     points = napari_stress.get_dropplet_point_cloud()[0]
-    
+
     lebedev_points = napari_stress.measure_curvature(points[0])
-    
+
     viewer = make_napari_viewer()
     viewer.add_points(points[0], **points[1])
-    viewer.add_points(lebedev_points, size=0.5, face_color='cyan')
-    
+    viewer.add_points(lebedev_points[0], **lebedev_points[1])
+
 if __name__ == '__main__':
     import napari
     test_quadrature(napari.Viewer)
