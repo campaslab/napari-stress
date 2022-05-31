@@ -248,6 +248,9 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
         PICKLE_DIR = os.path.join(MY_DIR, 'Pickled_LBDV_Files') # directory for pickled files
         LBDV_name = "_Deg_basis"+str(Max_SPH_Deg)+"_Quad_Pts"+str(Num_Quad_Pts) #name for these pickled files
 
+        if not os.path.exists(PICKLE_DIR):
+            os.makedirs(PICKLE_DIR)
+
         ### GENERATE 5810 Quadrature ONCE #######
         #print("generating quad pts") # BJG: only notify if NEW mats are needed (time-consuming)
         self.lbdv_quad_pts = Num_Quad_Pts #Needs to be appropriate number up to 5810
@@ -286,8 +289,6 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
 
 
         else: #If not pickled, we generate and pickle these files:
-            
-            os.makedirs(os.path.dirname(LBDV_Basis_at_Quad_Pts_Mats_filepath))
 
             print("\n"+"Pickling This LBDV data:"+"\n")
 
