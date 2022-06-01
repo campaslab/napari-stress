@@ -1,3 +1,5 @@
+[![tests](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml)
+
 # napari-stress
 
 This plugin provides tools for the analysis of surfaces in Napari, such as utilities to determine and refine the surface-representation of objects using a ray-casting approach and calculate the curvature of surfaces. It re-implements code in Napari that was written for [Gross et al. (2021): STRESS, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1) and has been made open source in [this repository](https://github.com/campaslab/STRESS).
