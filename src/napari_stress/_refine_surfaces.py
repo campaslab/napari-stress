@@ -71,9 +71,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         The default is 0.1.
     scale_z : float
         Voxel size in z
-    scale_dim_2: float
+    scale_y: float
         Voxel size in y
-    scale_dim_3: float
+    scale_x: float
         Voxel size in x
     show_progress : bool, optional
         The default is False.
