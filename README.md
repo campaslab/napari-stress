@@ -1,6 +1,9 @@
 # napari-stress
 
-This plugin allows to segment fluorescence-labelled droplets , determine the surface with a ray-casting approach and calculate the surface curvatures. It re-implements code in Napari that was written for [Gross et al. (2021): STRESS, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1) and has been made public in [this repository](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1).
+This plugin provides tools for the analysis of surfaces in Napari, such as utilities to determine and refine the surface-representation of objects using a ray-casting approach and calculate the curvature of surfaces. It re-implements code in Napari that was written for [Gross et al. (2021): STRESS, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1) and has been made open source in [this repository](https://github.com/campaslab/STRESS).
+
+
+![](./docs/imgs/function_gifs/spherical_harmonics.gif)
 
 ## Installation
 
@@ -27,24 +30,31 @@ pip install -e .
 
 ## Usage
 
-### General timelapse-processing
+Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
 
-Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers some convenient way to extent other function's functionality (which are often made for 3D data) to timelapse data using the `frame_by_frame` function and the `TimelapseConverter` class, both of which are described in more detail in [this notebook]([url](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/demo/TimeLapse_processing.ipynb)).
+### Plugins
+
+All functions in this repository are documented separately for [interactive usage from the napari viewer](./docs/tutorials/point_and_click) as well as [Jupyter notebooks](./docs/tutorials/demo). 
+
+|Function| Links |
+| --- | --- |
+|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="100%"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
 
 ### Recipes
 
-Napari-stress provides jupyter notebooks with complete workflows for different types of input data. Napari-stress currently provides notebooks for the following data/image types:
+Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
 
-* Confocal data (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook]([https://github.com/BiAPoL/napari-stress/blob/split-up-main-widget/docs/notebooks/Process_confocal.ipynb](https://github.com/BiAPoL/napari-stress/blob/add-timelapse-decorator-for-points-and-surfaces/docs/notebooks/Process_confocal.ipynb))
-* Lightsheet data (*.czi*), 3D + t: coming soon....
+* **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/tutorials/recipes/Process_confocal.ipynb)
 
-The resulting surface will look like this:
+![](./docs/imgs/confocal/workflow.png)
 
-||Low curvature radius (r=5)| Medium curvature radius (r=10) | Higher curvature radius (r=20) |
-| --- | --- | --- | --- |
-|Curvature | <img src="./docs/imgs/confocal/2_result_curvature_5radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_10radius0.png" width=100% height=100%> | <img src="./docs/imgs/confocal/2_result_curvature_20radius0.png" width=100% height=100%> |
-|Fit residue|<img src="./docs/imgs/confocal/2_result_fit_residues_5radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_10radius0.png" width=100% height=100%>|<img src="./docs/imgs/confocal/2_result_fit_residues_20radius0.png" width=100% height=100%>|
+### Utilities
 
-Depending on the set curvature radius, the calculation captures the global or the local curvature.
+Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers convenient ways to use functions from other repositories (which are often made for 3D data) on timelapse data with the `frame_by_frame` function and the `TimelapseConverter` class. Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/notebooks/demo/demo_timelapse_processing.ipynb).
+
+
+## Issues
+
+To report bugs, request new features or get in touch, please [open an issue](https://github.com/BiAPoL/napari-stress/issues) or tag `@EL_Pollo_Diablo` on [image.sc](https://forum.image.sc/).
 
 
