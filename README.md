@@ -44,9 +44,11 @@ All functions in this repository are documented separately for [interactive usag
 
 Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
 
-* **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/tutorials/recipes/Process_confocal.ipynb)
-
-![](./docs/imgs/confocal/workflow.png)
+* 
+| Processing scheme | Description |
+| --- | --- |
+|<img src="./docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](./docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
+| <img src="./docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](./docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
 
 ### Utilities
 
