@@ -190,8 +190,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     #TODO: Add fit results to point properties
     return np.stack(fit_data['surface_points'].to_numpy())
 
-def _remove_outliers_by_index(df: pd.DataFrame,
-                              on: list,
+def _remove_outliers_by_index(table: pd.DataFrame,
+                              column_names: list,
                               which: str = 'above',
                               factor: float = 1.5) -> pd.DataFrame:
     """
@@ -199,7 +199,7 @@ def _remove_outliers_by_index(df: pd.DataFrame,
 
     Parameters
     ----------
-    df : pd.DataFrame
+    table : pd.DataFrame
     on : list
         list of column names that should be taken into account
     which : str, optional
@@ -212,36 +212,36 @@ def _remove_outliers_by_index(df: pd.DataFrame,
 
     Returns
     -------
-    df : pd.DataFrame
+    table : pd.DataFrame
 
     """
     # Check if list or single string was passed
-    if isinstance(on, str):
-        on = [on]
+    if isinstance(column_names, str):
+        column_names = [column_names]
 
     # Remove the offset error from the list of relevant errors - fluorescence
     # intensity offset is not meaningful for distinction of good/bad fit
-    if 'offset_err' in on:
-        on.remove('offset_err' )
+    if 'offset_err' in column_names:
+        column_names.remove('offset_err' )
 
 
     # True if values are good, False if outliers
-    df = df.dropna().reset_index()
-    indices = np.ones(len(df), dtype=bool)
+    table = table.dropna().reset_index()
+    indices = np.ones(len(table), dtype=bool)
 
-    for col in on:
-        Q1 = df[col].quantile(0.25)
-        Q3 = df[col].quantile(0.75)
+    for column in column_names:
+        Q1 = table[column].quantile(0.25)
+        Q3 = table[column].quantile(0.75)
         IQR = Q3 - Q1
         if which == 'above':
-            idx = df[col] > (Q3 + factor * IQR)
+            idx = table[column] > (Q3 + factor * IQR)
         elif which == 'below':
-            idx = df[col] < (Q1 - factor * IQR)
+            idx = table[column] < (Q1 - factor * IQR)
         elif which == 'both':
-            idx = (df[col] < (Q1 - factor * IQR)) + (df[col] > (Q3 + factor * IQR))
-        indices[df[idx].index] = False
+            idx = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
+        indices[table[idx].index] = False
 
-    return df[indices]
+    return table[indices]
 
 
 def _fancy_edge_fit(array: np.ndarray,
@@ -249,6 +249,7 @@ def _fancy_edge_fit(array: np.ndarray,
                     ) -> float:
     """
     Fit a line profile with a gaussian normal curve or a sigmoidal function.
+
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
 
     Parameters
