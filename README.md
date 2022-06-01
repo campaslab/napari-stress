@@ -39,6 +39,7 @@ All functions in this repository are documented separately for [interactive usag
 |Function| Links |
 | --- | --- |
 |<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="100%"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="./docs/imgs/viewer_screenshots/surface_tracing1.png" width="100%"> |Surface tracing: [Code](./docs/tutorials/demo/demo_surface_tracing.ipynb) |
 
 ### Recipes
 
