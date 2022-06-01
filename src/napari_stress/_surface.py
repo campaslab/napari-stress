@@ -58,10 +58,6 @@ def fit_spherical_harmonics(points: PointsData,
                              np.deg2rad(longitude))
     return points.transpose() + center[np.newaxis, :]
 
-
-def surface_from_label(labels: LabelsData, label_id: int) -> SurfaceData:
-
-
 @frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """
