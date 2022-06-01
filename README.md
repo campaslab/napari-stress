@@ -1,4 +1,5 @@
 [![tests](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml)
+[![codecov](https://codecov.io/gh/BiAPoL/napari-stress/branch/main/graph/badge.svg?token=ZXQGREJAT9)](https://codecov.io/gh/BiAPoL/napari-stress)
 
 # napari-stress
 
