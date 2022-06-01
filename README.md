@@ -38,7 +38,8 @@ All functions in this repository are documented separately for [interactive usag
 
 |Function| Links |
 | --- | --- |
-|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="250" height="250"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="100%"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="./docs/imgs/viewer_screenshots/surface_tracing1.png" width="100%"> |Surface tracing: [Code](./docs/tutorials/demo/demo_surface_tracing.ipynb) |
 
 ### Recipes
 
@@ -47,12 +48,6 @@ Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebo
 * **Confocal data** (*.tif*), 3D+t: This type of data can be processed with napari-stressed as show in [this notebook](./docs/tutorials/recipes/Process_confocal.ipynb)
 
 ![](./docs/imgs/confocal/workflow.png)
-
-
-* **Lightsheet data** (*.czi*), 3D + t: coming soon....
-
-
-
 
 ### Utilities
 
