@@ -59,6 +59,27 @@ def fit_spherical_harmonics(points: PointsData,
     return points.transpose() + center[np.newaxis, :]
 
 
+def surface_from_label(labels: LabelsData, label_id: int) -> SurfaceData:
+
+
+@frame_by_frame
+def extract_vertex_points(surface: SurfaceData) -> PointsData:
+    """
+    Extract the vertices of a surface as points layer.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+
+    Returns
+    -------
+    PointsData
+
+    """
+    points = surface[0]
+    return points
+
+
 def reconstruct_surface(points: PointsData,
                         radius: float = None,
                         sampleSize: int = None,
@@ -100,22 +121,6 @@ def smoothMLS2D(points: PointsData,
     pointcloud.smoothMLS2D(f=f, radius=radius)
 
     return pointcloud.points()[pointcloud.info['isvalid']]
-
-def surface_from_label(label_image: LabelsData,
-                       scale: typing.Union[list, np.ndarray]) -> SurfaceData:
-
-    if isinstance(scale, list):
-        scale = np.array(scale)
-
-    n_frames = label_image.shape[0]
-
-    surfs = []
-    for t in range(n_frames):
-        surf = nppas.label_to_surface(label_image[t])
-        surfs.append(vedo.mesh.Mesh((surf[0] * scale[None, :], surf[1])))
-
-    return surfs
-
 
 def adjust_surface_density(surface: SurfaceData,
                            density_target: float) -> vedo.mesh.Mesh:

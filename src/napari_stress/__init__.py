@@ -7,7 +7,8 @@ from ._surface import surface_from_label,\
     smooth_sinc,\
     smoothMLS2D,\
     reconstruct_surface,\
-    fit_spherical_harmonics
+    fit_spherical_harmonics,\
+    extract_vertex_points
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
 
