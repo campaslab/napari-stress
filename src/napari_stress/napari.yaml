@@ -8,6 +8,10 @@ contributions:
     - id: napari-stress.fit_spherical_harmonics
       python_name: napari_stress._surface:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
+    - id: napari-stress.get_pointcloud_sample_data
+      python_name: napari_stress._sample_data:get_dropplet_point_cloud
+      title: Get dropplet pointcloud sample
+    
 
   widgets:
     - command: napari-stress.rescale
@@ -16,3 +20,8 @@ contributions:
     - command: napari-stress.fit_spherical_harmonics
       autogenerate: true
       display_name: Fit spherical harmonics
+      
+  sample_data:
+    - command: napari-stress.get_pointcloud_sample_data
+      display_name: Dropplet pointcloud
+      key: PC_1
