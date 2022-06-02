@@ -21,7 +21,6 @@ and has been made open source in [this repository](https://github.com/campaslab/
 Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
 
 ### Recipes
-https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Image_to_surface.md
 
 Receipes are workflows for processing images, points and surface data step-by-step.
 
@@ -37,15 +36,15 @@ All functions in napari-stress are documented separately for [interactive usage 
 
 |Function| Links |
 | --- | --- |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
+|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
 |<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|Reconstruct surface: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_reconstruction.ipynb)|
 
 ### Utilities
 
 Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). 
 Napari-stress offers convenient ways to use functions from other repositories (which are often made for 3D data) on timelapse data with the `frame_by_frame` function and the `TimelapseConverter` class. 
-Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/notebooks/demo/demo_timelapse_processing.ipynb).
+Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_timelapse_processing.ipynb).
 
 ## Installation
 
