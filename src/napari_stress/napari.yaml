@@ -9,7 +9,7 @@ contributions:
       python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
       title: Fit point location on a surface according to a given intensity image
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._surface:fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics._expansion:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
     - id: napari-stress.reconstruct_surface
       python_name: napari_stress._surface:reconstruct_surface
@@ -17,10 +17,7 @@ contributions:
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_dropplet_point_cloud
       title: Get dropplet pointcloud sample
-    - id: napari-stress.extract_vertex_points
-      python_name: napari_stress._surface:extract_vertex_points
-      title: Get points from surface
-
+    
 
   widgets:
     - command: napari-stress.rescale
