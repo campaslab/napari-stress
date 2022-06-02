@@ -45,6 +45,44 @@ def reconstruct_surface(points: PointsData,
     if sampleSize == 0:
         sampleSize = None
 
+    # Find spherical harmonics expansion coefficients until specified degree
+    opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
+                                                    lmax = max_degree)[1]
+    # Sample radius values at specified latitude/longitude
+    spherical_harmonics_coeffcients = pyshtools.SHCoeffs.from_array(opt_fit_params)
+    values = spherical_harmonics_coeffcients.expand(lat=latitude, lon=longitude)
+
+    # Convert points back to cartesian coordinates
+    points = vedo.spher2cart(values,
+                             np.deg2rad(latitude),
+                             np.deg2rad(longitude))
+    return points.transpose() + center[np.newaxis, :]
+
+@frame_by_frame
+def extract_vertex_points(surface: SurfaceData) -> PointsData:
+    """
+    Extract the vertices of a surface as points layer.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+
+    Returns
+    -------
+    PointsData
+
+    """
+    points = surface[0]
+    return points
+
+
+def reconstruct_surface(points: PointsData,
+                        radius: float = None,
+                        sampleSize: int = None,
+                        holeFilling: bool = True,
+                        bounds: tuple = (),
+                        padding: float = 0.05
+                        ):
     pointcloud = vedo.pointcloud.Points(points)
     surf = pointcloud.reconstructSurface(dims=dims,
                                          radius=radius,
@@ -94,16 +132,6 @@ def smoothMLS2D(points: PointsData,
         return pointcloud.points()[pointcloud.info['isvalid']]
     else:
         return pointcloud.points()
-
-@frame_by_frame
-def surface_from_label(label_image: LabelsData,
-                       scale: typing.Union[np.ndarray, list] = np.array([1.0, 1.0, 1.0])
-                       ) -> SurfaceData:
-
-    surf = list(nppas.label_to_surface(label_image))
-    surf[0] = surf[0] * np.asarray(scale)[None, :]
-
-    return surf
 
 @frame_by_frame
 def decimate(surface: SurfaceData,
