@@ -1,7 +1,6 @@
 [![License](https://img.shields.io/pypi/l/napari-stress.svg?color=green)](https://github.com/biapol/napari-stress/raw/master/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-stress.svg?color=green)](https://pypi.org/project/napari-stress)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-stress.svg?color=green)](https://python.org)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/napari-stress/badges/version.svg)](https://anaconda.org/conda-forge/napari-stress)
 [![tests](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/BiAPoL/napari-stress/actions/workflows/test_and_deploy.yml)
 [![codecov](https://codecov.io/gh/BiAPoL/napari-stress/branch/main/graph/badge.svg?token=ZXQGREJAT9)](https://codecov.io/gh/BiAPoL/napari-stress)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
