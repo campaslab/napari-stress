@@ -8,17 +8,6 @@ from napari_stress._utils.frame_by_frame import frame_by_frame
 import vedo
 import typing
 
-from enum import Enum
-
-@frame_by_frame
-def resample_points(points: PointsData) -> PointsData:
-    """Redistributes points in a pointcloud in a homogeneous manner"""
-    pointcloud = vedo.pointcloud.Points(points)
-    surface = pointcloud.reconstructSurface()
-    points = nppas.sample_points_poisson_disk((surface.points(), np.asarray(surface.faces())),
-                                              number_of_points=pointcloud.N())
-    return points
-
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
@@ -69,21 +58,6 @@ def extract_vertex_points(surface: SurfaceData) -> PointsData:
     return surface[0]
 
 @frame_by_frame
-def smooth_laplacian(surface: SurfaceData,
-                     niter: int = 15,
-                     relax_factor: float = 0.1,
-                     edge_angle: float = 15,
-                     feature_angle: float = 60,
-                     boundary: bool = False) -> SurfaceData:
-    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.smoothLaplacian(niter=niter, relaxfact=relax_factor,
-                         edgeAngle=edge_angle,
-                         featureAngle=feature_angle,
-                         boundary=boundary)
-
-    return (mesh.points(), np.asarray(mesh.faces()))
-
-@frame_by_frame
 def smooth_sinc(surface: SurfaceData,
                 niter: int = 15,
                 passBand: float = 0.1,
@@ -109,16 +83,6 @@ def smoothMLS2D(points: PointsData,
         return pointcloud.points()[pointcloud.info['isvalid']]
     else:
         return pointcloud.points()
-
-@frame_by_frame
-def surface_from_label(label_image: LabelsData,
-                       scale: typing.Union[np.ndarray, list] = np.array([1.0, 1.0, 1.0])
-                       ) -> SurfaceData:
-
-    surf = list(nppas.label_to_surface(label_image))
-    surf[0] = surf[0] * np.asarray(scale)[None, :]
-
-    return surf
 
 @frame_by_frame
 def decimate(surface: SurfaceData,
