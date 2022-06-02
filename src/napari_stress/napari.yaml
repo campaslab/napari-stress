@@ -9,7 +9,7 @@ contributions:
       python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
       title: Fit point location on a surface according to a given intensity image
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._surface:fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics._expansion:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
 
     - id: napari-stress.get_pointcloud_sample_data
@@ -24,6 +24,9 @@ contributions:
     - id: napari-stress.smooth_sinc
       python_name: napari_stress._surface:smooth_sinc
       title: Relax vertex positions on surface
+    - id: napari-stress.reconstruct_surface
+      python_name: napari_stress._surface:reconstruct_surface
+      title: Reconstruct a surface from a pointcloud
 
 
   widgets:
@@ -42,14 +45,14 @@ contributions:
     - command: napari-stress.smooth_sinc
       autogenerate: true
       display_name: Smooth surface
-    
-
-      
+    - command: napari-stress.reconstruct_surface
+      autogenerate: true
+      display_name: Reconstruct surface
     - command: napari-stress.extract_vertex_points
       autogenerate: true
       display_name: Surface vertices to points
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
-      display_name: Dropplet pointcloud
+      display_name: Droplet pointcloud
       key: PC_1
