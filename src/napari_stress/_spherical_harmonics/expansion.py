@@ -12,6 +12,7 @@ import pyshtools
 from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
 from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
+from napari_tools_menu import register_function
 
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
@@ -107,6 +108,7 @@ class spherical_harmonics_methods(Enum):
     shtools = {'function': shtools_spherical_harmonics_expansion}
     stress = {'function': stress_spherical_harmonics_expansion}
 
+@register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int = 5,
