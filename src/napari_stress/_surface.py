@@ -22,36 +22,36 @@ def resample_points(points: PointsData) -> PointsData:
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
-                        dims: list = [100, 100, 100],
-                        radius: float = None,
-                        sampleSize: int = None,
-                        holeFilling: bool = True) -> SurfaceData:
+                        radius: float = 1.0,
+                        holeFilling: bool = True,
+                        padding: float = 0.05
+                        ) -> SurfaceData:
     """
-    Reconstruct a surface from a set of points.
+    Reconstruct a surface from a given pointcloud.
 
     Parameters
     ----------
-    points : PointsData (napari.types.PointsData)
+    points : PointsData
+    radius : float
+        Radius within which to search for neighboring points.
+    holeFilling : bool, optional
+        The default is True.
+    padding : float, optional
+        Whether or not to thicken the surface by a given margin.
+        The default is 0.05.
 
     Returns
     -------
-    SurfaceData: napari.types.SurfaceData
-
+    SurfaceData
     """
-    # Catch magicgui default values
-    if radius == 0:
-        radius = None
-
-    if sampleSize == 0:
-        sampleSize = None
-
     pointcloud = vedo.pointcloud.Points(points)
-    surf = pointcloud.reconstructSurface(dims=dims,
-                                         radius=radius,
-                                         sampleSize=sampleSize,
-                                         holeFilling=holeFilling)
 
-    return (surf.points(), np.asarray(surf.faces(), dtype=int))
+    surface = pointcloud.reconstructSurface(radius=radius,
+                                            sampleSize=None,
+                                            holeFilling=holeFilling,
+                                            padding=padding)
+
+    return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
 @frame_by_frame
 def smooth_laplacian(surface: SurfaceData,
