@@ -10,14 +10,18 @@ def test_spherical_harmonics():
     assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
 
 def test_smoothing():
-    from napari_stress import smoothMLS2D
+    from napari_stress import smoothMLS2D, smooth_sinc
     import vedo
 
-    points = vedo.shapes.Sphere(res=30).points() * 10
+    sphere = vedo.shapes.Sphere(res=30)
+    points = sphere.points() * 10
+    faces = np.asarray(sphere.faces())
     points += np.random.uniform(size=points.shape)
 
     smoothed_points = smoothMLS2D(points, factor=0.25, radius=0)
-    smoothed_points = smoothMLS2D(points, factor=1.0, radius=4)
+    smoothed_points = smooth_sinc((points, faces))
+    
+    
 def test_surface_to_points():
     ellipse = vedo.shapes.Ellipsoid()
 
