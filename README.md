@@ -41,25 +41,18 @@ Both are described in more detail in [this notebook](https://github.com/BiAPoL/n
 
 ## Installation
 
-Create a new conda environment with
+Create a new conda environment with the following command. 
+If you have never used conda before, please [read this guide first](https://biapol.github.io/blog/johannes_mueller/anaconda_getting_started/).
 
 ```
-conda create -n napari-stress Python=3.9
+conda create -n napari-stress Python=3.9 napari jupyterlab -c conda-forge
 conda activate napari-stress
 ```
 
-Install a few necessary plugins:
+You can then install napari-stress using pip:
 
 ```
-conda install -c conda-forge napari jupyterlab
-```
-
-To install the plugin, clone the repository and install it:
-
-```
-git clone https://github.com/BiAPoL/napari-stress.git
-cd napari-stress
-pip install -e .
+pip install napari-stress
 ```
 
 ## Issues
