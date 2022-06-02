@@ -6,7 +6,6 @@ from ._surface import adjust_surface_density,\
     smooth_sinc,\
     smoothMLS2D,\
     reconstruct_surface,\
-    resample_points,\
     decimate,\
     extract_vertex_points
 
