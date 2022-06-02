@@ -70,7 +70,7 @@ def measure_curvature(points: PointsData,
     properties['face_color'] = 'curvature'
     properties['size'] = 0.5
 
-    return tuple([lebedev_points, properties, 'points'])
+    return (lebedev_points, properties, 'points')
 
 def _integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
 

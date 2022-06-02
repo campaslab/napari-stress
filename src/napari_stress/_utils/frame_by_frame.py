@@ -182,7 +182,7 @@ class TimelapseConverter:
         result[1] = _properties
         result[2] = dtype
 
-        return result
+        return tuple(result)
 
     def stack_dict(self, dictionaries: list) -> dict:
         _dictionary = {}
