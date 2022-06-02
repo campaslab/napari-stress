@@ -26,7 +26,6 @@ Functionality in this repository is divided in two groups: **Recipes** and **plu
 Receipes are workflows for processing images, points and surface data step-by-step.
 
 | Recipe| Description |
-
 | --- | --- |
 | <img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
 |<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
