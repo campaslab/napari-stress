@@ -59,4 +59,26 @@ pip install napari-stress
 
 To report bugs, request new features or get in touch, please [open an issue](https://github.com/BiAPoL/napari-stress/issues) or tag `@EL_Pollo_Diablo` on [image.sc](https://forum.image.sc/).
 
+## See also
 
+There are other napari plugins with similar / overlapping functionality
+
+* [morphometrics](https://www.napari-hub.org/plugins/morphometrics)
+* [napari-pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
+* [napari-process-points-and-surfaces](https://www.napari-hub.org/plugins/napari-process-points-and-surfaces)
+
+## Contributing
+
+Contributions are very welcome. Tests can be run with [pytest], please ensure
+the coverage at least stays the same before you submit a pull request.
+
+## License
+
+Distributed under the terms of the [BSD-3] license,
+"napari-stress" is free and open source software
+
+## Acknowledgements
+This project was supported by the Deutsche Forschungsgemeinschaft under Germany’s Excellence Strategy – EXC2068 - Cluster of Excellence "Physics of Life" of TU Dresden.
+
+[BSD-3]: http://opensource.org/licenses/BSD-3-Clause
+[pytest]: https://docs.pytest.org/en/7.0.x/
