@@ -53,6 +53,21 @@ def reconstruct_surface(points: PointsData,
 
     return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
+def extract_vertex_points(surface: SurfaceData) -> PointsData:
+    """
+    Return only the vertex points of an input surface.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+
+    Returns
+    -------
+    PointsData
+
+    """
+    return surface[0]
+
 @frame_by_frame
 def smooth_laplacian(surface: SurfaceData,
                      niter: int = 15,

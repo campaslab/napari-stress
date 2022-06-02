@@ -9,7 +9,8 @@ from ._surface import surface_from_label,\
     reconstruct_surface,\
     smooth_laplacian,\
     resample_points,\
-    decimate
+    decimate,\
+    extract_vertex_points
 
 from ._spherical_harmonics._expansion import fit_spherical_harmonics
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
