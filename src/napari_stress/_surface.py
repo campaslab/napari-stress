@@ -42,6 +42,7 @@ def reconstruct_surface(points: PointsData,
 
     return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
+@frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """
     Return only the vertex points of an input surface.
