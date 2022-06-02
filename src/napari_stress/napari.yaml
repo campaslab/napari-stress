@@ -17,7 +17,7 @@ contributions:
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_dropplet_point_cloud
       title: Get dropplet pointcloud sample
-    
+
 
   widgets:
     - command: napari-stress.rescale
@@ -38,5 +38,5 @@ contributions:
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
-      display_name: Dropplet pointcloud
+      display_name: Droplet pointcloud
       key: PC_1
