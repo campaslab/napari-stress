@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import vedo
+import napari_stress
 
 def test_spherical_harmonics():
-    import napari_stress
-    import vedo
-
     ellipse = vedo.shapes.Ellipsoid()
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
 
@@ -19,3 +18,9 @@ def test_smoothing():
 
     smoothed_points = smoothMLS2D(points, factor=0.25, radius=0)
     smoothed_points = smoothMLS2D(points, factor=1.0, radius=4)
+def test_surface_to_points():
+    ellipse = vedo.shapes.Ellipsoid()
+
+    surface = (ellipse.points(), np.asarray(ellipse.faces()))
+    points = napari_stress.extract_vertex_points(surface)
+
