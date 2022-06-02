@@ -8,6 +8,33 @@ This plugin provides tools for the analysis of surfaces in Napari, such as utili
 
 ![](./docs/imgs/function_gifs/spherical_harmonics.gif)
 
+## Usage
+
+Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
+
+### Plugins
+
+All functions in this repository are documented separately for [interactive usage from the napari viewer](./docs/tutorials/point_and_click) as well as [Jupyter notebooks](./docs/tutorials/demo). 
+
+|Function| Links |
+| --- | --- |
+|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="100%"> |Fit spherical harmonics: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="./docs/imgs/viewer_screenshots/surface_tracing1.png" width="100%"> |Surface tracing: [Code](./docs/tutorials/demo/demo_surface_tracing.ipynb) |
+
+### Recipes
+
+Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
+
+* 
+| Processing scheme | Description |
+| --- | --- |
+|<img src="./docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](./docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
+| <img src="./docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](./docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
+
+### Utilities
+
+Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers convenient ways to use functions from other repositories (which are often made for 3D data) on timelapse data with the `frame_by_frame` function and the `TimelapseConverter` class. Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/notebooks/demo/demo_timelapse_processing.ipynb).
+
 ## Installation
 
 Create a new conda environment with
@@ -30,34 +57,6 @@ git clone https://github.com/BiAPoL/napari-stress.git
 cd napari-stress
 pip install -e .
 ```
-
-## Usage
-
-Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
-
-### Plugins
-
-All functions in this repository are documented separately for [interactive usage from the napari viewer](./docs/tutorials/point_and_click) as well as [Jupyter notebooks](./docs/tutorials/demo). 
-
-|Function| Links |
-| --- | --- |
-|<img src="./docs/imgs/function_gifs/spherical_harmonics.gif" width="100%"> |Spherical harmonics expansion: [Interactive](./docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](./docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
-|<img src="./docs/imgs/viewer_screenshots/surface_tracing1.png" width="100%"> |Surface tracing: [Code](./docs/tutorials/demo/demo_surface_tracing.ipynb) |
-
-### Recipes
-
-Napari-stress provides jupyter notebooks with [complete workflows](./docs/notebooks/recipes) for different types of input data and objectives. Napari-stress currently provides notebooks for the following data/image types:
-
-* 
-| Processing scheme | Description |
-| --- | --- |
-|<img src="./docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](./docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
-| <img src="./docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](./docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
-
-### Utilities
-
-Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). Napari-stress offers convenient ways to use functions from other repositories (which are often made for 3D data) on timelapse data with the `frame_by_frame` function and the `TimelapseConverter` class. Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/notebooks/demo/demo_timelapse_processing.ipynb).
-
 
 ## Issues
 
