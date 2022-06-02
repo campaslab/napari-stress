@@ -5,7 +5,15 @@ contributions:
     - id: napari-stress.rescale
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
-
+    - id: napari-stress.trace_refine_surface
+      python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
+      title: Fit point location on a surface according to a given intensity image
+    - id: napari-stress.fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics._expansion:fit_spherical_harmonics
+      title: Approximate point cloud by spherical harmonics expansion
+    - id: napari-stress.reconstruct_surface
+      python_name: napari_stress._surface:reconstruct_surface
+      title: Reconstruct a surface from a pointcloud
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_dropplet_point_cloud
       title: Get dropplet pointcloud sample
@@ -24,16 +32,27 @@ contributions:
       autogenerate: true
       display_name: Rescale image data
 
-    - command: napari-stress.fit_spherical_harmonics
-      autogenerate: true
-      display_name: Fit spherical harmonics
-
     - command: napari-stress.measure_curvature
       autogenerate: True
       display_name: Measure curvature
 
+    - command: napari-stress.trace_refine_surface
+      autogenerate: true
+      display_name: Trace-refine surface points
+
+    - command: napari-stress.fit_spherical_harmonics
+      autogenerate: true
+      display_name: Fit spherical harmonics
+
+    - command: napari-stress.reconstruct_surface
+      autogenerate: true
+      display_name: Reconstruct surface
+      
+    - command: napari-stress.extract_vertex_points
+      autogenerate: true
+      display_name: Surface vertices to points
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
-      display_name: Dropplet pointcloud
+      display_name: Droplet pointcloud
       key: PC_1
