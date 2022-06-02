@@ -33,14 +33,14 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 points: PointsData,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
                                 selected_edge: edge_functions = edge_functions.interior,
-                                trace_length: float = 2.0,
-                                sampling_distance: float = 0.1,
+                                trace_length: float = 10.0,
+                                sampling_distance: float = 0.5,
                                 scale_z: float = 1.0,
                                 scale_y: float = 1.0,
                                 scale_x: float = 1.0,
-                                show_progress: bool = False,
-                                remove_outliers: bool = True,
-                                outlier_tolerance: float = 1.5
+                                show_progress: bool = True,
+                                remove_outliers: bool = False,
+                                outlier_tolerance: float = 4.5
                                 )-> PointsData:
     """
     Generate intensity profiles along traces.
@@ -183,6 +183,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['surface_points'] = new_surface_points
     fit_data['projection_vector'] = projection_vectors
 
+    # NaN rows should be removed either way
+    fit_data = fit_data.dropna().reset_index()
+
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data,
@@ -193,9 +196,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              column_names='idx_of_border',
                                              factor=outlier_tolerance,
                                              which='both')
-
-    #TODO: Add fit results to point properties
-    return np.stack(fit_data['surface_points'].to_numpy())
+    output_points = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
+    return output_points
 
 def _remove_outliers_by_index(table: pd.DataFrame,
                               column_names: list,
@@ -233,7 +235,7 @@ def _remove_outliers_by_index(table: pd.DataFrame,
 
 
     # True if values are good, False if outliers
-    table = table.dropna().reset_index()
+    table = table.dropna().reset_index(drop=True)
     indices = np.ones(len(table), dtype=bool)
 
     for column in column_names:
