@@ -291,13 +291,16 @@ class TimelapseConverter:
 
     def _list_of_points_to_points(self, points: list) -> np.ndarray:
         """Convert list of 3D point data to single 4D point data."""
-
+        n_frames = len(points)
         n_points = sum([len(frame) for frame in points])
-        t = np.concatenate([[idx] * len(frame) for idx, frame in enumerate(points)])
+        if n_frames > 1: # actually a timelapse
+            t = np.concatenate([[idx] * len(frame) for idx, frame in enumerate(points)])
 
-        points_out = np.zeros((n_points, 4))
-        points_out[:, 1:] = np.vstack(points)
-        points_out[:, 0] = t
+            points_out = np.zeros((n_points, 4))
+            points_out[:, 1:] = np.vstack(points)
+            points_out[:, 0] = t
+        else:
+            points_out = np.vstack(points)
 
         return points_out
 
