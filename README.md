@@ -21,7 +21,8 @@ and has been made open source in [this repository](https://github.com/campaslab/
 
 Functionality in this repository is divided in two groups: **Recipes** and **plugins**.
 
-### Receipse
+### Recipes
+
 
 Receipes are workflows for processing images, points and surface data step-by-step.
 
