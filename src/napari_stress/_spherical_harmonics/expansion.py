@@ -144,7 +144,7 @@ def fit_spherical_harmonics(points: PointsData,
     properties, features = {}, {}
     features['error'] = np.linalg.norm(fitted_points - points, axis=1)
     properties['features'] = features
-    properties['face_color'] = 'magma'
+    properties['face_color'] = 'error'
     properties['size'] = 0.5
 
     return (fitted_points, properties, 'points')
