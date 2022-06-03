@@ -60,7 +60,7 @@ def extract_vertex_points(surface: SurfaceData) -> PointsData:
     return surface[0]
 
 
-@register_function(menu="Surfaces > Smooth sinc (vedo, n-STRESS)")
+@register_function(menu="Surfaces > Smoothing (Windowed Sinc, vedo, n-STRESS)")
 @frame_by_frame
 def smooth_sinc(surface: SurfaceData,
                 niter: int = 15,
@@ -104,7 +104,7 @@ def decimate(surface: SurfaceData,
     return (mesh.points(), np.asarray(mesh.faces()))
 
 
-@register_function(menu="Surfaces > Adjust Surface density (vedo, n-STRESS)")
+@register_function(menu="Surfaces > Surface density adjustment (vedo, n-STRESS)")
 @frame_by_frame
 def adjust_surface_density(surface: SurfaceData,
                            density_target: float) -> SurfaceData:
