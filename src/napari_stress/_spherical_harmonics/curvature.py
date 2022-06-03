@@ -10,20 +10,23 @@ from . import lebedev_info_SPB as lebedev_info
 from . import manifold_SPB as mnfd
 from .expansion import spherical_harmonics_methods
 
+import numpy as np
+import napari
 from napari_tools_menu import register_function
 
 import numpy as np
 import warnings
 
-@register_function(menu="Points > Measure curvature (n-STRESS",
+@register_function(menu="Measurement > Surface curvature from points (n-STRESS)",
                    number_of_quadrature_points={'min': 6, 'max': 5180})
 @frame_by_frame
 def measure_curvature(points: PointsData,
                       max_degree: int = 5,
                       implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
                       number_of_quadrature_points: int = 500,
-                      use_minimal_point_set: bool = False
-                      ) -> LayerDataTuple:
+                      use_minimal_point_set: bool = False,
+                      viewer: napari.Viewer = None
+                      ) -> PointsData:
     """
     Measure curvature on pointcloud surface.
 
@@ -79,13 +82,21 @@ def measure_curvature(points: PointsData,
     lebedev_points = np.stack(lebedev_points).squeeze().transpose()
 
     properties, features = {}, {}
-    features['curvature'] = _integrate_on_manifold(lebedev_points, LBDV_Fit, max_degree)
+    features['curvature'] = _integrate_on_manifold(lebedev_points, LBDV_Fit, max_degree).squeeze()
 
     properties['features'] = features
     properties['face_color'] = 'curvature'
     properties['size'] = 0.5
+    properties['name'] = 'Result of measure curvature'
 
-    return (lebedev_points, properties, 'points')
+    if viewer is not None:
+        if properties['name'] not in viewer.layers:
+            viewer.add_points(lebedev_points, **properties)
+        else:
+            layer = viewer.layers[properties['name']]
+            layer.features = properties
+            layer.data = lebedev_points
+    return lebedev_points
 
 
 def _integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
