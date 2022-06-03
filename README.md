@@ -26,9 +26,9 @@ Receipes are workflows for processing images, points and surface data step-by-st
 
 | Recipe| Description |
 | --- | --- |
-| <img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/_surface_to_curvature_imgs/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Surface_to_curvature.md) on how to extract curvature from surfaces|
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
+| <img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/_surface_to_curvature_imgs/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Surface_to_curvature.md) on how to extract curvature from surfaces|
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
 
 
 ### Plugins
@@ -37,9 +37,9 @@ All functions in napari-stress are documented separately for [interactive usage 
 
 |Function| Links |
 | --- | --- |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/blob/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|Reconstruct surface: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_reconstruction.ipynb)|
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|Reconstruct surface: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_reconstruction.ipynb)|
 
 ### Utilities
 
