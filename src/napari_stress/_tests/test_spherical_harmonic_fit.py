@@ -21,16 +21,13 @@ def test_spherical_harmonics():
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
     assert np.array_equal(ellipse.points().shape, points.shape)
 
-def test_quadrature():
+def test_quadrature(make_napari_viewer):
     points = napari_stress.get_dropplet_point_cloud()[0]
 
     lebedev_points = napari_stress.measure_curvature(points[0])
 
     viewer = make_napari_viewer()
-    viewer.add_points(points[0], **points[1])
-
     lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
     lebedev_points = napari_stress.measure_curvature(points[0],
                                                     use_minimal_point_set=True,
                                                     number_of_quadrature_points=50)
-
