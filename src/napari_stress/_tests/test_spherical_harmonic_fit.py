@@ -9,16 +9,16 @@ def test_spherical_harmonics():
 
     # Test pyshtools implementation
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
-                                                   implementation='shtools')
+                                                   implementation='shtools')[0]
     assert np.array_equal(ellipse.points().shape, points.shape)
 
     # Test stress implementation
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
-                                                   implementation='stress')
+                                                   implementation='stress')[0]
     assert np.array_equal(ellipse.points().shape, points.shape)
 
     # Test default implementations
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
+    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)[0]
     assert np.array_equal(ellipse.points().shape, points.shape)
 
 def test_quadrature():
@@ -31,4 +31,4 @@ def test_quadrature():
     
 if __name__ == '__main__':
     import napari
-    test_quadrature()
+    test_spherical_harmonics()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from napari.types import PointsData
+from napari.types import LayerDataTuple, PointsData
 import vedo
 import numpy as np
 
@@ -113,9 +113,9 @@ class spherical_harmonics_methods(Enum):
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int = 5,
                             implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress
-                            ) -> PointsData:
+                            ) -> LayerDataTuple:
     """
-    Approximate a surface by spherical harmonics expansion
+    Approximate a surface by spherical harmonics expansion.
 
     Parameters
     ----------
@@ -140,5 +140,11 @@ def fit_spherical_harmonics(points: PointsData,
     else:
         fit_function = implementation.value['function']
     fitted_points, coefficients = fit_function(points, max_degree=max_degree)
+        
+    properties, features = {}, {}
+    features['error'] = np.linalg.norm(fitted_points - points, axis=1)
+    properties['features'] = features
+    properties['face_color'] = 'magma'
+    properties['size'] = 0.5
 
-    return fitted_points
+    return (fitted_points, properties, 'points')
