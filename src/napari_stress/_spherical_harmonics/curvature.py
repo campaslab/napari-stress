@@ -17,7 +17,7 @@ from napari_tools_menu import register_function
 import numpy as np
 import warnings
 
-@register_function(menu="Points > Measure curvature (n-STRESS",
+@register_function(menu="Measurement > Surface curvature from points (n-STRESS)",
                    number_of_quadrature_points={'min': 6, 'max': 5180})
 @frame_by_frame
 def measure_curvature(points: PointsData,
@@ -26,7 +26,7 @@ def measure_curvature(points: PointsData,
                       number_of_quadrature_points: int = 500,
                       use_minimal_point_set: bool = False,
                       viewer: napari.Viewer = None
-                      ) -> LayerDataTuple:
+                      ) -> PointsData:
     """
     Measure curvature on pointcloud surface.
 
@@ -96,8 +96,7 @@ def measure_curvature(points: PointsData,
             layer = viewer.layers[properties['name']]
             layer.features = properties
             layer.data = lebedev_points
-    else:
-        return (lebedev_points, properties, 'points')
+    return lebedev_points
 
 
 def _integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
