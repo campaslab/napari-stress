@@ -109,7 +109,7 @@ def decimate(surface: SurfaceData,
 @register_function(menu="Surfaces > Surface density adjustment (vedo, n-STRESS)")
 @frame_by_frame
 def adjust_surface_density(surface: SurfaceData,
-                           density_target: float) -> SurfaceData:
+                           density_target: float = 1.0) -> SurfaceData:
     """Adjust the number of vertices of a surface to a defined density"""
     import open3d
 
