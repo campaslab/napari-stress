@@ -75,6 +75,7 @@ def smooth_sinc(surface: SurfaceData,
                 boundary=boundary)
     return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
 
+@register_function(menu="Surfaces > Smoothing (MLS2D, vedo, n-STRESS)")
 @frame_by_frame
 def smoothMLS2D(points: PointsData,
                 factor: float = 0.5,
@@ -88,6 +89,7 @@ def smoothMLS2D(points: PointsData,
     else:
         return pointcloud.points()
 
+@register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
 @frame_by_frame
 def decimate(surface: SurfaceData,
              fraction: float = 0.1) -> SurfaceData:
