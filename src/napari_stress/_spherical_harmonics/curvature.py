@@ -94,7 +94,7 @@ def measure_curvature(points: PointsData,
             viewer.add_points(lebedev_points, **properties)
         else:
             layer = viewer.layers[properties['name']]
-            layer.features = properties
+            layer.features = features
             layer.data = lebedev_points
     return lebedev_points
 
