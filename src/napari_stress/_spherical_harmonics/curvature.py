@@ -12,14 +12,21 @@ from .expansion import spherical_harmonics_methods
 
 import numpy as np
 import napari
+from napari_tools_menu import register_function
 
+import numpy as np
+import warnings
+
+@register_function(menu="Points > Measure curvature (n-STRESS",
+                   number_of_quadrature_points={'min': 6, 'max': 5180})
 @frame_by_frame
 def measure_curvature(points: PointsData,
                       max_degree: int = 5,
                       implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
-                      number_of_quadrature_points: int = 1000,
+                      number_of_quadrature_points: int = 500,
+                      use_minimal_point_set: bool = False,
                       viewer: napari.Viewer = None
-                      ):
+                      ) -> LayerDataTuple:
     """
     Measure curvature on pointcloud surface.
 
@@ -32,7 +39,7 @@ def measure_curvature(points: PointsData,
     implementation : spherical_harmonics_methods, optional
         DESCRIPTION. The default is spherical_harmonics_methods.stress.
     number_of_quadrature_points : int, optional
-        DESCRIPTION. The default is 3000.
+        DESCRIPTION. The default is 1000.
 
     Returns
     -------
@@ -46,12 +53,21 @@ def measure_curvature(points: PointsData,
         fit_function = implementation.value['function']
     fitted_points, coefficients = fit_function(points, max_degree=max_degree)
 
-    # Get possible number of quadrature points
+    # Clip number of quadrature points
     if number_of_quadrature_points > 5810:
         number_of_quadrature_points = 5810
-    else:
+
+    possible_n_points = np.asarray(list(lebedev_info.pts_of_lbdv_lookup.values()))
+    index_correct_n_points = np.argmin(abs(possible_n_points - number_of_quadrature_points))
+    number_of_quadrature_points = possible_n_points[index_correct_n_points]
+
+    if use_minimal_point_set:
         number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)
 
+    # Only a specific amount of points are needed for spherical harmonics of a
+    # given order. Using more points will not give more precise results.
+    if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(max_degree + 1):
+        warnings.warn(r'Note: Only {necessary_n_points} are required for exact results.')
 
     # Create spherical harmonics functions to represent z/y/x
     fit_functions = [
@@ -82,6 +98,7 @@ def measure_curvature(points: PointsData,
             layer.data = lebedev_points
     else:
         return (lebedev_points, properties, 'points')
+
 
 def _integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
 
