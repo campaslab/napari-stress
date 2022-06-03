@@ -15,7 +15,7 @@ import pandas as pd
 
 from enum import Enum
 
-import matplotlib.pyplot as plt
+from napari_tools_menu import register_function
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -28,6 +28,8 @@ class edge_functions(Enum):
     interior = {'fancy': _sigmoid, 'quick': _detect_max_gradient}
     surface = {'fancy': _gaussian, 'quick': _detect_maxima}
 
+
+@register_function(menu="Points > Trace-refine points (n-STRESS)")
 @frame_by_frame
 def trace_refinement_of_surface(intensity_image: ImageData,
                                 points: PointsData,
