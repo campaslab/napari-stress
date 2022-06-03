@@ -28,8 +28,9 @@ def test_quadrature(make_napari_viewer):
 
     viewer = make_napari_viewer()
     viewer.add_points(points[0], **points[1])
-    viewer.add_points(lebedev_points[0], **lebedev_points[1])
+
+    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
 
 if __name__ == '__main__':
     import napari
-    test_spherical_harmonics()
+    test_quadrature(napari.Viewer)
