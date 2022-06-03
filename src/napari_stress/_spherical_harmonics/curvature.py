@@ -15,7 +15,7 @@ from napari_tools_menu import register_function
 import numpy as np
 import warnings
 
-@register_function(menu="Points > Measure curvature (n-STRESS",
+@register_function(menu="Points > Measure curvature (n-STRESS)",
                    number_of_quadrature_points={'min': 6, 'max': 5180})
 @frame_by_frame
 def measure_curvature(points: PointsData,
