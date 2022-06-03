@@ -21,8 +21,8 @@ import warnings
 def measure_curvature(points: PointsData,
                       max_degree: int = 5,
                       implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
-                      number_of_quadrature_points: int = 1000,
-                      use_minimal_point_set: bool = True
+                      number_of_quadrature_points: int = 500,
+                      use_minimal_point_set: bool = False
                       ) -> LayerDataTuple:
     """
     Measure curvature on pointcloud surface.
@@ -53,15 +53,15 @@ def measure_curvature(points: PointsData,
     # Clip number of quadrature points
     if number_of_quadrature_points > 5810:
         number_of_quadrature_points = 5810
-        
+
     possible_n_points = np.asarray(list(lebedev_info.pts_of_lbdv_lookup.values()))
     index_correct_n_points = np.argmin(abs(possible_n_points - number_of_quadrature_points))
     number_of_quadrature_points = possible_n_points[index_correct_n_points]
-    
+
     if use_minimal_point_set:
-        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)    
-        
-    # Only a specific amount of points are needed for spherical harmonics of a 
+        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)
+
+    # Only a specific amount of points are needed for spherical harmonics of a
     # given order. Using more points will not give more precise results.
     if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(max_degree + 1):
         warnings.warn(r'Note: Only {necessary_n_points} are required for exact results.')
