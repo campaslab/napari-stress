@@ -1,4 +1,4 @@
-__version__ = "0.0.12"
+__version__ = "0.0.14"
 
 from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
