@@ -22,7 +22,7 @@ def test_spherical_harmonics():
     assert np.array_equal(ellipse.points().shape, points.shape)
 
 def test_quadrature(make_napari_viewer):
-    points = napari_stress.get_dropplet_point_cloud()[0]
+    points = napari_stress.get_droplet_point_cloud()[0]
 
     lebedev_points = napari_stress.measure_curvature(points[0])
 
