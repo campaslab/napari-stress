@@ -7,7 +7,7 @@ from pathlib import Path
 
 DATA_ROOT  = os.path.join(Path(__file__).parent, 'sample_data')
 
-def get_dropplet_point_cloud() -> LayerDataTuple:
+def get_droplet_point_cloud() -> LayerDataTuple:
     """Generates a sample point cloud of a droplet surface"""
     
     df = pd.read_csv(os.path.join(DATA_ROOT, 'dropplet_point_cloud.csv'), sep=',')
