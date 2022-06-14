@@ -15,7 +15,7 @@ contributions:
       python_name: napari_stress._surface:reconstruct_surface
       title: Reconstruct a surface from a pointcloud
     - id: napari-stress.get_pointcloud_sample_data
-      python_name: napari_stress._sample_data:get_dropplet_point_cloud
+      python_name: napari_stress._sample_data:get_droplet_point_cloud
       title: Get dropplet pointcloud sample
 
     - id: napari-stress.fit_spherical_harmonics

@@ -14,4 +14,4 @@ from ._spherical_harmonics.curvature import measure_curvature
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
 
-from ._sample_data import get_dropplet_point_cloud
+from ._sample_data import get_droplet_point_cloud
