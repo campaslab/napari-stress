@@ -3,7 +3,7 @@ import vedo
 import numpy as np
 import napari_stress
 
-def test_spherical_harmonics():
+def test_spherical_harmonics(make_napari_viewer):
 
     ellipse = vedo.shapes.Ellipsoid()
 
@@ -20,6 +20,9 @@ def test_spherical_harmonics():
     # Test default implementations
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
     assert np.array_equal(ellipse.points().shape, points.shape)
+
+    viewer = make_napari_viewer()
+    points = napari_stress.measure_curvature(ellipse.points(), viewer=viewer)
 
 def test_quadrature(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]
