@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from napari.types import LayerDataTuple, PointsData
+from napari_tools_menu import register_function
+import napari
+
 import vedo
 import numpy as np
 
@@ -12,7 +15,6 @@ import pyshtools
 from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
 from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
-from napari_tools_menu import register_function
 
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
@@ -112,8 +114,9 @@ class spherical_harmonics_methods(Enum):
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int = 5,
-                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress
-                            ) -> LayerDataTuple:
+                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
+                            viewer: napari.Viewer = None
+                            ) -> PointsData:
     """
     Approximate a surface by spherical harmonics expansion.
 
@@ -140,11 +143,19 @@ def fit_spherical_harmonics(points: PointsData,
     else:
         fit_function = implementation.value['function']
     fitted_points, coefficients = fit_function(points, max_degree=max_degree)
-        
+
     properties, features = {}, {}
     features['error'] = np.linalg.norm(fitted_points - points, axis=1)
     properties['features'] = features
     properties['face_color'] = 'error'
+    properties['name'] = 'Result of spherical harmonics expansion'
     properties['size'] = 0.5
 
-    return (fitted_points, properties, 'points')
+    if viewer is not None:
+        if properties['name'] not in viewer.layers:
+            viewer.add_points(fitted_points, **properties)
+        else:
+            layer = viewer.layers[properties['name']]
+            layer.features = features
+            layer.data = fitted_points
+    return fitted_points
