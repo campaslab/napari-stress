@@ -43,6 +43,7 @@ def reconstruct_surface(points: PointsData,
 
     return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
+@register_function(menu="Points > Create points from surface vertices (n-STRESS)")
 @frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """
