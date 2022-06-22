@@ -56,8 +56,12 @@ def fit_spherical_harmonics(points: PointsData,
         fit_function = implementation.value['function']
     fitted_points, coefficients = fit_function(points, max_degree=max_degree)
 
-    properties, features = {}, {}
+    properties, features, metadata = {}, {}, {}
+
     features['error'] = np.linalg.norm(fitted_points - points, axis=1)
+    metadata['spherical_harmonics_coefficients'] = coefficients
+    metadata['spherical_harmonics_implementation'] = implementation
+
     properties['features'] = features
     properties['face_color'] = 'error'
     properties['size'] = 0.5
