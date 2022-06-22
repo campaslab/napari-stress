@@ -14,23 +14,29 @@ from napari.types import LayerDataTuple
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673) -> PointsData:
     ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
-    
+
     output_points = ellipsoid.points()
-    
+
     return output_points
 
 @frame_by_frame
-def fit_ellipsoid_to_pointcloud_vectors(points: PointsData, pvalue: float = 0.673) -> VectorsData:
+def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
+                                        pvalue: float = 0.673,
+                                        normalize: bool = False) -> VectorsData:
     ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
-    
+
     vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
                         ellipsoid.axis2 * ellipsoid.vb,
                         ellipsoid.axis3 * ellipsoid.vc])
+
+    if normalize:
+        vectors = np.linalg.norm(vectors, axis=1)
+
     base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
     vectors = np.stack([base_points, vectors]).transpose((1,0,2))
-    
+
     return vectors
-    
+
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
