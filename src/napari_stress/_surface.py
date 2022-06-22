@@ -8,11 +8,22 @@ from napari_tools_menu import register_function
 
 import vedo
 
-from typing import List
-from napari.types import LayerDataTuple
-
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673) -> PointsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve surface pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+    pvalue : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+
+    Returns
+    -------
+    PointsData
+
+    """
     ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
 
     output_points = ellipsoid.points()
@@ -23,6 +34,22 @@ def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673
 def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
                                         pvalue: float = 0.673,
                                         normalize: bool = False) -> VectorsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve the major axises as vectors.
+
+    Parameters
+    ----------
+    points : PointsData
+    pvalue : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+    normalize : bool, optional
+        Normalize the resulting vectors. The default is False.
+
+    Returns
+    -------
+    VectorsData
+
+    """
     ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
 
     vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
