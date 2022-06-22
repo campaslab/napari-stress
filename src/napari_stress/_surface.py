@@ -8,6 +8,7 @@ from napari_tools_menu import register_function
 
 import vedo
 
+@register_function(menu="Points > Fit ellipsoid major axis to points (vedo, n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673) -> PointsData:
     """
@@ -30,6 +31,7 @@ def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673
 
     return output_points
 
+@register_function(menu="Points > Fit ellipsoid points to points (vedo, n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
                                         pvalue: float = 0.673,
@@ -57,7 +59,7 @@ def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
                         ellipsoid.axis3 * ellipsoid.vc])
 
     if normalize:
-        vectors = np.linalg.norm(vectors, axis=1)
+        vectors = vectors/np.linalg.norm(vectors, axis=0)[None, :]
 
     base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
     vectors = np.stack([base_points, vectors]).transpose((1,0,2))
