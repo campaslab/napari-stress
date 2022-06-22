@@ -11,12 +11,14 @@ from typing import Tuple
 import numpy as np
 import vedo
 import pyshtools
+import warnings
 
 from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
 from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
 from . import manifold_SPB as mnfd
 from . import euclidian_k_form_SPB as euc_kf
+from . import lebedev_info_SPB as lebedev_info
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5
@@ -105,6 +107,64 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     fitted_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
 
     return fitted_points, coefficients
+
+def lebedev_quadrature(coefficients: np.ndarray,
+                       number_of_quadrature_points: int = 500,
+                       use_minimal_point_set: bool = True
+                       ) -> Tuple[PointsData, lebedev_info.lbdv_info]:
+    """
+    Calculate lebedev quadrature points for a given spherical harmonics expansion.
+
+    Parameters
+    ----------
+    coefficients : np.ndarray
+        Spherical harmonics coefficient matrix.
+    number_of_quadrature_points : int, optional
+        Number of quadrature points to retrieve on the passed set of spherical
+        harmonics functions. The default is 500.
+    use_minimal_point_set : bool, optional
+        Depending on the degree a defined minimal set of quadrature points is
+        sufficient to integrate exactly. The default is True.
+
+    Returns
+    -------
+    lebedev_points : PointsData
+    LBDV_Fit : lebedev_info
+        Data container storing points and quick access for other parameters.
+
+    """
+    # Clip number of quadrature points
+    if number_of_quadrature_points > 5810:
+        number_of_quadrature_points = 5810
+
+    # An expansion of degree 3 will have an Nx4x4 coefficient matrix
+    max_degree = coefficients.shape[-1] - 1
+
+    possible_n_points = np.asarray(list(lebedev_info.pts_of_lbdv_lookup.values()))
+    index_correct_n_points = np.argmin(abs(possible_n_points - number_of_quadrature_points))
+    number_of_quadrature_points = possible_n_points[index_correct_n_points]
+
+    if use_minimal_point_set:
+        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)
+
+    # Only a specific amount of points are needed for spherical harmonics of a
+    # given order. Using more points will not give more precise results.
+    if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(max_degree + 1):
+        warnings.warn(r'Note: Only {necessary_n_points} are required for exact results.')
+
+    # Create spherical harmonics functions to represent z/y/x
+    fit_functions = [
+        sph_f.spherical_harmonics_function(x, max_degree) for x in coefficients
+        ]
+
+    # Get {Z/Y/X} Coordinates at lebedev points, so we can leverage our code more efficiently (and uniformly) on surface:
+    LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
+    lebedev_points  = [
+        euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, 'A') for f in fit_functions
+        ]
+    lebedev_points = np.stack(lebedev_points).squeeze().transpose()
+
+    return lebedev_points, LBDV_Fit
 
 def integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
 

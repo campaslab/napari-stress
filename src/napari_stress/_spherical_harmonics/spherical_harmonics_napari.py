@@ -6,7 +6,8 @@ from enum import Enum
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import shtools_spherical_harmonics_expansion,\
     stress_spherical_harmonics_expansion,\
-    integrate_on_manifold
+    integrate_on_manifold,\
+    lebedev_quadrature
 from . import lebedev_info_SPB as lebedev_info
 from . import sph_func_SPB as sph_f
 from . import euclidian_k_form_SPB as euc_kf
@@ -99,33 +100,9 @@ def measure_curvature(points: PointsData,
         fit_function = implementation.value['function']
     fitted_points, coefficients = fit_function(points, max_degree=max_degree)
 
-    # Clip number of quadrature points
-    if number_of_quadrature_points > 5810:
-        number_of_quadrature_points = 5810
-
-    possible_n_points = np.asarray(list(lebedev_info.pts_of_lbdv_lookup.values()))
-    index_correct_n_points = np.argmin(abs(possible_n_points - number_of_quadrature_points))
-    number_of_quadrature_points = possible_n_points[index_correct_n_points]
-
-    if use_minimal_point_set:
-        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)
-
-    # Only a specific amount of points are needed for spherical harmonics of a
-    # given order. Using more points will not give more precise results.
-    if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(max_degree + 1):
-        warnings.warn(r'Note: Only {necessary_n_points} are required for exact results.')
-
-    # Create spherical harmonics functions to represent z/y/x
-    fit_functions = [
-        sph_f.spherical_harmonics_function(x, max_degree) for x in coefficients
-        ]
-
-    # Get {Z/Y/X} Coordinates at lebedev points, so we can leverage our code more efficiently (and uniformly) on surface:
-    LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
-    lebedev_points  = [
-        euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, 'A') for f in fit_functions
-        ]
-    lebedev_points = np.stack(lebedev_points).squeeze().transpose()
+    lebedev_points, LBDV_Fit = lebedev_quadrature(coefficients,
+                                                  number_of_quadrature_points,
+                                                  use_minimal_point_set=use_minimal_point_set)
 
     properties, features = {}, {}
     features['curvature'] = integrate_on_manifold(lebedev_points, LBDV_Fit, max_degree).squeeze()
