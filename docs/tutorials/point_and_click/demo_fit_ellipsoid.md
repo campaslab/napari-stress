@@ -2,7 +2,7 @@
 
 This tutorial shows how to handle ellipse-fitting in napari-stress. To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (`File > Open Sample > napari-stress: Dropplet pointcloud`).
 
-<img src="../../imgs/viewer_screenshots/open_sample_droplet.png" width="45%"> <img src="../../imgs/viewer_screenshots/open_sampl<e_droplet1.png" width="45%">
+<img src="../../imgs/viewer_screenshots/open_sample_droplet.png" width="45%"> <img src="../../imgs/viewer_screenshots/open_sample_droplet1.png" width="45%">
 
 ## Ellipse-fitting: Points
 
@@ -12,7 +12,7 @@ To do the former, select the respective function from the plugins menu (`Plugins
 
 <img src="./imgs/demo_fit_ellipsoid1.png" width="45%">
 
-The `pvalue` parameter controls how many of the points of the input pointcloud will be comprised within the volume of the fitted ellipsoid. Running this widget will give this result:
+The `inside_fraction` parameter controls how many of the points of the input pointcloud will be comprised within the volume of the fitted ellipsoid. Running this widget will give this result:
 
 <img src="./imgs/demo_fit_ellipsoid2.png" width="100%">
 

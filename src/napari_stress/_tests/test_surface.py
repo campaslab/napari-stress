@@ -17,12 +17,12 @@ def test_surface_to_points():
 
 def test_ellipsoid_points():
     pointcloud = np.random.normal(size=(1000, 3)) * 10 * np.array([1,2,3])[None, :]
-    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, pvalue=0.5)
-    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, pvalue=0.5)
-    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, pvalue=0.5, normalize=True)
+    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, inside_fraction=0.5)
+    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, inside_fraction=0.5)
+    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, inside_fraction=0.5, normalize=True)
 
     pointcloud = vedo.shapes.Ellipsoid().points() * 10
-    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, pvalue=0.5)
+    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, inside_fraction=0.5)
 
     # test 4d handling
     Converter = napari_stress.TimelapseConverter()

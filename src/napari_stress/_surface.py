@@ -10,14 +10,15 @@ import vedo
 
 @register_function(menu="Points > Fit ellipsoid major axis to points (vedo, n-STRESS)")
 @frame_by_frame
-def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673) -> PointsData:
+def fit_ellipsoid_to_pointcloud_points(points: PointsData,
+                                       inside_fraction: float = 0.673) -> PointsData:
     """
     Fit an ellipsoid to a pointcloud an retrieve surface pointcloud.
 
     Parameters
     ----------
     points : PointsData
-    pvalue : float, optional
+    inside_fraction : float, optional
         Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
 
     Returns
@@ -25,7 +26,7 @@ def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673
     PointsData
 
     """
-    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
 
     output_points = ellipsoid.points()
 
@@ -34,7 +35,7 @@ def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673
 @register_function(menu="Points > Fit ellipsoid points to points (vedo, n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
-                                        pvalue: float = 0.673,
+                                        inside_fraction: float = 0.673,
                                         normalize: bool = False) -> VectorsData:
     """
     Fit an ellipsoid to a pointcloud an retrieve the major axises as vectors.
@@ -42,7 +43,7 @@ def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
     Parameters
     ----------
     points : PointsData
-    pvalue : float, optional
+    inside_fraction : float, optional
         Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
     normalize : bool, optional
         Normalize the resulting vectors. The default is False.
@@ -52,7 +53,7 @@ def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
     VectorsData
 
     """
-    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
 
     vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
                         ellipsoid.axis2 * ellipsoid.vb,
