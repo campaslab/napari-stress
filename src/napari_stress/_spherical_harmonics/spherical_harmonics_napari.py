@@ -63,6 +63,7 @@ def fit_spherical_harmonics(points: PointsData,
     metadata['spherical_harmonics_implementation'] = implementation
 
     properties['features'] = features
+    properties['metadata'] = metadata
     properties['face_color'] = 'error'
     properties['size'] = 0.5
 
