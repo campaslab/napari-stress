@@ -8,7 +8,8 @@ from ._surface import adjust_surface_density,\
     reconstruct_surface,\
     decimate,\
     extract_vertex_points,\
-    fit_ellipsoid
+    fit_ellipsoid_to_pointcloud_points,\
+    fit_ellipsoid_to_pointcloud_vectors
 
 from ._spherical_harmonics.expansion import fit_spherical_harmonics
 from ._spherical_harmonics.curvature import measure_curvature
