@@ -66,9 +66,12 @@ contributions:
       autogenerate: true
       display_name: Create points from surface vertices
 
-    - command: napari-stress.fit_ellipsoid
+    - command: napari-stress.fit_ellipsoid_points
       autogenerate: true
-      display_name: Fit PCA ellipsoid to pointcloud
+      display_name: Fit ellipsoid to pointcloud (points)
+    - command: napari-stress.fit_ellipsoid_vectors
+      autogenerate: true
+      display_name: Fit ellipsoid to pointcloud (major axis)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
