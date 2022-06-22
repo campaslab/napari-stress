@@ -40,7 +40,7 @@ All functions in napari-stress are documented separately for [interactive usage 
 |<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
 |<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
 |<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|Reconstruct surface: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_reconstruction.ipynb)|
-
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/ellipse_fitting.gif" width="80%">|Fit ellipsoid: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_fit_ellipsoid.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_fit_ellipsoid.ipynb)|
 ### Utilities
 
 Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). 
