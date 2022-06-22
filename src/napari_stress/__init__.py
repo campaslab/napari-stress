@@ -9,8 +9,7 @@ from ._surface import adjust_surface_density,\
     decimate,\
     extract_vertex_points
 
-from ._spherical_harmonics.expansion import fit_spherical_harmonics
-from ._spherical_harmonics.curvature import measure_curvature
+from ._spherical_harmonics.spherical_harmonics_napari import fit_spherical_harmonics, measure_curvature
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
 

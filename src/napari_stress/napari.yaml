@@ -19,11 +19,11 @@ contributions:
       title: Get dropplet pointcloud sample
 
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._spherical_harmonics.expansion:fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
 
     - id: napari-stress.measure_curvature
-      python_name: napari_stress._spherical_harmonics.curvature:measure_curvature
+      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:measure_curvature
       title: Measure spherical-harmonics approximated curvature
 
 
@@ -47,7 +47,7 @@ contributions:
     - command: napari-stress.reconstruct_surface
       autogenerate: true
       display_name: Reconstruct surface
-      
+
     - command: napari-stress.extract_vertex_points
       autogenerate: true
       display_name: Surface vertices to points

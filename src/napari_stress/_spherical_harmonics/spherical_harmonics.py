@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-from napari.types import LayerDataTuple, PointsData
-import vedo
-import numpy as np
+"""
+This file bundles up spherical harmonics functionality to have all "behind-the-
+scenes" functionality in one place. This will allow to have all fron-end-related
+functions (e.g., those functions that are visible to napari) in a separated place.
 
+"""
+
+from napari.types import PointsData
 from typing import Tuple
-from enum import Enum
-
-from .._utils.frame_by_frame import frame_by_frame
-
+import numpy as np
+import vedo
 import pyshtools
+
 from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
 from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
-from napari_tools_menu import register_function
-
+from . import manifold_SPB as mnfd
+from . import euclidian_k_form_SPB as euc_kf
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5
@@ -74,7 +77,6 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     -------
     PointsData
     """
-
     # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
     longitude, latitude = cartesian_to_elliptical_coordinates(points)
 
@@ -104,47 +106,37 @@ def stress_spherical_harmonics_expansion(points: PointsData,
 
     return fitted_points, coefficients
 
-class spherical_harmonics_methods(Enum):
-    shtools = {'function': shtools_spherical_harmonics_expansion}
-    stress = {'function': stress_spherical_harmonics_expansion}
+def integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
 
-@register_function(menu="Points > Fit spherical harmonics (n-STRESS")
-@frame_by_frame
-def fit_spherical_harmonics(points: PointsData,
-                            max_degree: int = 5,
-                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress
-                            ) -> LayerDataTuple:
-    """
-    Approximate a surface by spherical harmonics expansion.
+    # create manifold to calculate H, average H:
+    Manny_Dict = {}
+    Manny_Name_Dict = {} # sph point cloud at lbdv
+    Manny_Name_Dict['coordinates'] = lebedev_points
 
-    Parameters
-    ----------
-    points : PointsData
-    max_degree : int
-        Order up to which spherical harmonics should be included for the approximation.
+    Manny_Dict['Pickle_Manny_Data'] = False
+    Manny_Dict['Maniold_lbdv'] = LBDV_Fit
 
-    Returns
-    -------
-    PointsData
-        Pointcloud on surface of a spherical harmonics expansion at the same
-        latitude/longitude as the input points.
+    Manny_Dict['Manifold_SPH_deg'] = max_degree
+    Manny_Dict['use_manifold_name'] = False # we are NOT using named shapes in these tests
+    Manny_Dict['Maniold_Name_Dict'] = Manny_Name_Dict # sph point cloud at lbdv
 
-    See also
-    --------
-    [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
+    Manny = mnfd.manifold(Manny_Dict)
 
-    """
-    # Parse inputs
-    if isinstance(implementation, str):
-        fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
-    else:
-        fit_function = implementation.value['function']
-    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
-        
-    properties, features = {}, {}
-    features['error'] = np.linalg.norm(fitted_points - points, axis=1)
-    properties['features'] = features
-    properties['face_color'] = 'error'
-    properties['size'] = 0.5
+    # Test orientation:
+    centered_lbdv_pts = lebedev_points - lebedev_points.mean(axis=0)[None, :]
 
-    return (fitted_points, properties, 'points')
+    normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_X_A_Pts, Manny.Normal_Vec_X_B_Pts, LBDV_Fit)
+    normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_Y_A_Pts, Manny.Normal_Vec_Y_B_Pts, LBDV_Fit)
+    normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_Z_A_Pts, Manny.Normal_Vec_Z_B_Pts, LBDV_Fit)
+
+    normals_lbdv_points = np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts]).squeeze().transpose()
+
+    # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
+    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts,  normals_lbdv_points)]
+    num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
+
+    Orientation = 1. # unchanged (we want INWARD)
+    if(num_pos_orr > .5 * len(centered_lbdv_pts)):
+        Orientation = -1.
+
+    return Orientation*euc_kf.Combine_Chart_Quad_Vals(Manny.H_A_pts, Manny.H_B_pts, LBDV_Fit)

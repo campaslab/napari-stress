@@ -31,3 +31,6 @@ def test_quadrature(make_napari_viewer):
     lebedev_points = napari_stress.measure_curvature(points[0],
                                                     use_minimal_point_set=True,
                                                     number_of_quadrature_points=50)
+
+if __name__ == '__main__':
+    test_spherical_harmonics()
