@@ -34,6 +34,9 @@ contributions:
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
 
+    - id: napari-stress.fit_ellipsoid
+      python_name: napari_stress._surface:fit_ellipsoid
+      title: Fit PCA ellipsoid to pointcloud
 
   widgets:
     - command: napari-stress.rescale
@@ -59,6 +62,10 @@ contributions:
     - command: napari-stress.extract_vertex_points
       autogenerate: true
       display_name: Create points from surface vertices
+
+    - command: napari-stress.fit_ellipsoid
+      autogenerate: true
+      display_name: Fit PCA ellipsoid to pointcloud
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data

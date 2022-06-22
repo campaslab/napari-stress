@@ -7,7 +7,8 @@ from ._surface import adjust_surface_density,\
     smoothMLS2D,\
     reconstruct_surface,\
     decimate,\
-    extract_vertex_points
+    extract_vertex_points,\
+    fit_ellipsoid
 
 from ._spherical_harmonics.expansion import fit_spherical_harmonics
 from ._spherical_harmonics.curvature import measure_curvature

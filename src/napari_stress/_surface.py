@@ -9,6 +9,11 @@ from napari_tools_menu import register_function
 import vedo
 import typing
 
+@register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
+@frame_by_frame
+def fit_ellipsoid(points: PointsData, pvalue: float = 0.673) -> PointsData:
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
+    return ellipsoid.points()
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
