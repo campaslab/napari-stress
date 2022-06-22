@@ -2,18 +2,35 @@
 
 import numpy as np
 import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData, PointsData
+from napari.types import LabelsData, SurfaceData, PointsData, VectorsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_function
 
 import vedo
-import typing
 
-@register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
+from typing import List
+from napari.types import LayerDataTuple
+
 @frame_by_frame
-def fit_ellipsoid(points: PointsData, pvalue: float = 0.673) -> PointsData:
+def fit_ellipsoid_to_pointcloud_points(points: PointsData, pvalue: float = 0.673) -> PointsData:
     ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
-    return ellipsoid.points()
+    
+    output_points = ellipsoid.points()
+    
+    return output_points
+
+@frame_by_frame
+def fit_ellipsoid_to_pointcloud_vectors(points: PointsData, pvalue: float = 0.673) -> VectorsData:
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=pvalue)
+    
+    vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
+                        ellipsoid.axis2 * ellipsoid.vb,
+                        ellipsoid.axis3 * ellipsoid.vc])
+    base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
+    vectors = np.stack([base_points, vectors]).transpose((1,0,2))
+    
+    return vectors
+    
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
