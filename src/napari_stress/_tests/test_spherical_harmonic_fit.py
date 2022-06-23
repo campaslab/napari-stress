@@ -46,4 +46,5 @@ def test_quadrature(make_napari_viewer):
                                                     number_of_quadrature_points=50)
 
 if __name__ == '__main__':
-    test_spherical_harmonics()
+    import napari
+    test_quadrature(napari.Viewer)
