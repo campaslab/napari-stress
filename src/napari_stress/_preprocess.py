@@ -8,21 +8,21 @@ from ._utils.frame_by_frame import frame_by_frame
 
 @frame_by_frame
 def rescale(image: ImageData,
-            scale_z: float = 1.0,
+            scale_x: float = 1.0,
             scale_y: float = 1.0,
-            scale_x: float = 1.0) -> ImageData:
+            scale_z: float = 1.0) -> ImageData:
     """
     Rescale an image by a given set of scale factors.
 
     Parameters
     ----------
     image : ImageData
-    scale_z : float, optional
-        factor by which to scale the image along the z axis. The default is 1.0.
+    scale_x : float, optional
+        factor by which to scale the image along the x axis. The default is 1.0.
     scale_y : float, optional
         factor by which to scale the image along the y dimension. The default is 1.0.
-    scale_x : float, optional
-        factor by which to scale the image along the x dimension. The default is 1.0.
+    scale_z : float, optional
+        factor by which to scale the image along the z dimension. The default is 1.0.
 
     Returns
     -------

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDataTuple
+from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDataTuple, VectorsData
 
 from typing import List
 
@@ -61,7 +61,7 @@ class TimelapseConverter:
             PointsData: self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
-            LabelsData: self._image_to_list_of_images
+            LabelsData: self._image_to_list_of_images,
             }
 
     # Supported list data types
@@ -71,7 +71,8 @@ class TimelapseConverter:
             ImageData: self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
             LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
-            List[LayerDataTuple]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples
+            List[LayerDataTuple]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
+            VectorsData: self._list_of_vectors_to_vectors
             }
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
@@ -80,6 +81,7 @@ class TimelapseConverter:
             'surface': SurfaceData,
             'image': ImageData,
             'labels': LabelsData,
+            'vectors': VectorsData
             }
 
         self.supported_data = list(self.list_to_data_conversion_functions.keys())
@@ -147,8 +149,8 @@ class TimelapseConverter:
         """If a function returns a list of LayerDataTuple"""
 
         # Convert data to array with dimensions [frame, results, data]
-        data = np.asarray(tuple_data)
-        layertypes = data[:, -1, -1]
+        data = np.stack(tuple_data)
+        layertypes = data[:,..., -1].squeeze()
 
         converted_tuples = []
         for idx, res_type in enumerate(layertypes):
@@ -213,7 +215,21 @@ class TimelapseConverter:
     def _list_of_images_to_image(self, images: list) -> ImageData:
         """Convert a list of 3D image data to single 4D image data."""
         return np.stack(images)
+    
+    # =============================================================================
+    # Vectors
+    # =============================================================================
 
+    def _list_of_vectors_to_vectors(self, vectors: VectorsData) -> list:
+        base_points = [v[:, 0] for v in vectors]
+        directions = [v[:, 1] for v in vectors]
+        
+        base_points = self._list_of_points_to_points(base_points)
+        directions = self._list_of_points_to_points(directions)
+        
+        vectors = np.stack([base_points, directions]).transpose((1,0,2))
+        return vectors
+        
 
     # =============================================================================
     # Surfaces

@@ -2,12 +2,70 @@
 
 import numpy as np
 import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData, PointsData
+from napari.types import LabelsData, SurfaceData, PointsData, VectorsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_function
 
 import vedo
-import typing
+
+@register_function(menu="Points > Fit ellipsoid major axis to points (vedo, n-STRESS)")
+@frame_by_frame
+def fit_ellipsoid_to_pointcloud_points(points: PointsData,
+                                       inside_fraction: float = 0.673) -> PointsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve surface pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+    inside_fraction : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+
+    Returns
+    -------
+    PointsData
+
+    """
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+
+    output_points = ellipsoid.points()
+
+    return output_points
+
+@register_function(menu="Points > Fit ellipsoid points to points (vedo, n-STRESS)")
+@frame_by_frame
+def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
+                                        inside_fraction: float = 0.673,
+                                        normalize: bool = False) -> VectorsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve the major axises as vectors.
+
+    Parameters
+    ----------
+    points : PointsData
+    inside_fraction : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+    normalize : bool, optional
+        Normalize the resulting vectors. The default is False.
+
+    Returns
+    -------
+    VectorsData
+
+    """
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+
+    vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
+                        ellipsoid.axis2 * ellipsoid.vb,
+                        ellipsoid.axis3 * ellipsoid.vc])
+
+    if normalize:
+        vectors = vectors/np.linalg.norm(vectors, axis=0)[None, :]
+
+    base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
+    vectors = np.stack([base_points, vectors]).transpose((1,0,2))
+
+    return vectors
 
 
 @frame_by_frame
@@ -43,6 +101,7 @@ def reconstruct_surface(points: PointsData,
 
     return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
+@register_function(menu="Points > Create points from surface vertices (n-STRESS)")
 @frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """
