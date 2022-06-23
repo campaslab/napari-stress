@@ -6,14 +6,11 @@ from enum import Enum
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import shtools_spherical_harmonics_expansion,\
     stress_spherical_harmonics_expansion,\
-    integrate_on_manifold,\
-    lebedev_quadrature
-from . import lebedev_info_SPB as lebedev_info
-from . import sph_func_SPB as sph_f
-from . import euclidian_k_form_SPB as euc_kf
+    lebedev_quadrature,\
+    create_manifold,\
+    calculate_mean_curvature_on_manifold
 
 import napari
-import warnings
 from napari_tools_menu import register_function
 
 
@@ -108,11 +105,17 @@ def measure_curvature(points: PointsData,
     lebedev_points, LBDV_Fit = lebedev_quadrature(coefficients,
                                                   number_of_quadrature_points,
                                                   use_minimal_point_set=use_minimal_point_set)
+    curvature = calculate_mean_curvature_on_manifold(lebedev_points,
+                                                     lebedev_fit=LBDV_Fit,
+                                                     max_degree=max_degree)
 
-    properties, features = {}, {}
-    features['curvature'] = integrate_on_manifold(lebedev_points, LBDV_Fit, max_degree).squeeze()
+    properties, features, metadata = {}, {}, {}
+
+    features['curvature'] = curvature
+    metadata['averaged_curvature_H0'] = curvature.mean()
 
     properties['features'] = features
+    properties['metadata'] = metadata
     properties['face_color'] = 'curvature'
     properties['size'] = 0.5
     properties['name'] = 'Result of measure curvature'
