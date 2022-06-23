@@ -166,37 +166,73 @@ def lebedev_quadrature(coefficients: np.ndarray,
 
     return lebedev_points, LBDV_Fit
 
-def integrate_on_manifold(lebedev_points: PointsData, LBDV_Fit, max_degree: int):
+def create_manifold(points: PointsData,
+                    lebedev_fit: lebedev_info.lbdv_info,
+                    max_degree: int) -> mnfd.manifold:
 
     # create manifold to calculate H, average H:
     Manny_Dict = {}
     Manny_Name_Dict = {} # sph point cloud at lbdv
-    Manny_Name_Dict['coordinates'] = lebedev_points
+    Manny_Name_Dict['coordinates'] = points
 
     Manny_Dict['Pickle_Manny_Data'] = False
-    Manny_Dict['Maniold_lbdv'] = LBDV_Fit
+    Manny_Dict['Maniold_lbdv'] = lebedev_fit
 
     Manny_Dict['Manifold_SPH_deg'] = max_degree
     Manny_Dict['use_manifold_name'] = False # we are NOT using named shapes in these tests
     Manny_Dict['Maniold_Name_Dict'] = Manny_Name_Dict # sph point cloud at lbdv
 
-    Manny = mnfd.manifold(Manny_Dict)
+    return mnfd.manifold(Manny_Dict)
+
+def get_normals_on_manifold(manifold: mnfd.manifold,
+                            lebedev_fit: lebedev_info.lbdv_info):
+
+    normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_X_A_Pts,
+                                                       manifold.Normal_Vec_X_B_Pts,
+                                                       lebedev_fit)
+    normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Y_A_Pts,
+                                                       manifold.Normal_Vec_Y_B_Pts,
+                                                       lebedev_fit)
+    normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Z_A_Pts,
+                                                       manifold.Normal_Vec_Z_B_Pts,
+                                                       lebedev_fit)
+
+    normals_lbdv_points = np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts])
+    return normals_lbdv_points.squeeze().transpose()
+
+def calculate_mean_curvature_on_manifold(lebedev_points: PointsData,
+                                         lebedev_fit: lebedev_info.lbdv_info,
+                                         max_degree: int) -> np.ndarray:
+    """
+    Calculate mean curvatures for a set of lebedev points.
+
+    Parameters
+    ----------
+    lebedev_points : PointsData
+    lebedev_fit : lebedev_info.lbdv_info
+        lebedev info object - provides info which point is defined by which chart.
+    max_degree : int
+        Degree of spherical harmonics expansion.
+
+    Returns
+    -------
+    np.ndarray
+        Mean curvature value for every lebedev point.
+
+    """
+    manifold = create_manifold(lebedev_points, lebedev_fit, max_degree)
+    normals = get_normals_on_manifold(manifold, lebedev_fit)
 
     # Test orientation:
-    centered_lbdv_pts = lebedev_points - lebedev_points.mean(axis=0)[None, :]
-
-    normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_X_A_Pts, Manny.Normal_Vec_X_B_Pts, LBDV_Fit)
-    normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_Y_A_Pts, Manny.Normal_Vec_Y_B_Pts, LBDV_Fit)
-    normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(Manny.Normal_Vec_Z_A_Pts, Manny.Normal_Vec_Z_B_Pts, LBDV_Fit)
-
-    normals_lbdv_points = np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts]).squeeze().transpose()
+    points = manifold.get_coordinates()
+    centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
     # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
-    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts,  normals_lbdv_points)]
+    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts,  normals)]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
     Orientation = 1. # unchanged (we want INWARD)
     if(num_pos_orr > .5 * len(centered_lbdv_pts)):
         Orientation = -1.
 
-    return Orientation*euc_kf.Combine_Chart_Quad_Vals(Manny.H_A_pts, Manny.H_B_pts, LBDV_Fit)
+    return Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, lebedev_fit).squeeze()
