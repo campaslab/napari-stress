@@ -26,9 +26,9 @@ This section describes common workflows for processing images, points and surfac
 
 | Workflow| Description |
 | --- | --- |
-| <img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Image_to_surface.md) on how to extract surfaces from intensity image data |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/recipes/_surface_to_curvature_imgs/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Surface_to_curvature.md) on how to extract curvature from surfaces|
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/recipes/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
+| <img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/workflows/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Image_to_surface.md) on how to extract surfaces from intensity image data |
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/workflows/_surface_to_curvature_imgs/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Surface_to_curvature.md) on how to extract curvature from surfaces|
+|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
 
 
 ### Plugins
