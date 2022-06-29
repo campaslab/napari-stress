@@ -8,14 +8,14 @@ def test_frontend_spherical_harmonics():
     ellipse = vedo.shapes.Ellipsoid()
 
     # Test pyshtools implementation
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
-                                                   implementation='shtools')[0]
-    assert np.array_equal(ellipse.points().shape, points.shape)
+    points1 = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
+                                                   implementation='shtools')
+    assert np.array_equal(ellipse.points().shape, points1[0].shape)
 
     # Test stress implementation
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
-                                                   implementation='stress')[0]
-    assert np.array_equal(ellipse.points().shape, points.shape)
+    points2 = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3,
+                                                   implementation='stress')
+    assert np.array_equal(ellipse.points().shape, points2[0].shape)
 
     # Test default implementations
     points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)[0]
@@ -34,6 +34,19 @@ def test_spherical_harmonics():
                                                          use_minimal_point_set=False)  # with pickle
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress)  # without pickle
 
+def test_interoperatibility():
+
+    from napari_stress._spherical_harmonics import spherical_harmonics as sh
+    from napari_stress._spherical_harmonics.sph_func_SPB import convert_coeffcient_matrix_to_pyshtools_format
+
+    points = napari_stress.get_droplet_point_cloud()[0][0][:, 1:]
+
+    pts_pysh, coeffs_pysh = sh.shtools_spherical_harmonics_expansion(points, max_degree=5)
+    pts_stress, coeffs_stress = sh.stress_spherical_harmonics_expansion(points, max_degree=5)
+
+    coeffs_converted = convert_coeffcient_matrix_to_pyshtools_format(coeffs_stress[0])
+
+
 def test_quadrature(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]
 
@@ -47,4 +60,4 @@ def test_quadrature(make_napari_viewer):
 
 if __name__ == '__main__':
     import napari
-    test_quadrature(napari.Viewer)
+    test_interoperatibility()
