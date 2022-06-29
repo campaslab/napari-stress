@@ -34,16 +34,16 @@ def test_spherical_harmonics():
                                                          use_minimal_point_set=False)  # with pickle
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress)  # without pickle
 
-def test_quadrature():
+def test_quadrature(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]
 
     lebedev_points = napari_stress.measure_curvature(points[0])
 
-    # viewer = make_napari_viewer()
-    # lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
-    # lebedev_points = napari_stress.measure_curvature(points[0],
-    #                                                 use_minimal_point_set=True,
-    #                                                 number_of_quadrature_points=50)
+    viewer = make_napari_viewer()
+    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
+    lebedev_points = napari_stress.measure_curvature(points[0],
+                                                    use_minimal_point_set=True,
+                                                    number_of_quadrature_points=50)
 
 if __name__ == '__main__':
     import napari
