@@ -164,7 +164,7 @@ def smooth_sinc(surface: SurfaceData,
                 boundary=boundary)
     return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
 
-@register_function(menu="Surfaces > Smoothing (MLS2D, vedo, n-STRESS)")
+@register_function(menu="Points > Smoothing (MLS2D, vedo, n-STRESS)")
 @frame_by_frame
 def smoothMLS2D(points: PointsData,
                 factor: float = 0.25,
