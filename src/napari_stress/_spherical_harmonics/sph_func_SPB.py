@@ -1,7 +1,7 @@
 # From https://github.com/campaslab/STRESS
 #! We use spherical_harmonics_function to encapsulate data from SPH Basis of functions, regardless of chart
 
-from numpy  import *
+from numpy import *
 import numpy as np
 from scipy  import *
 import mpmath
@@ -288,6 +288,21 @@ def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
             row = row + 1
 
     return coefficient_matrix
+
+def convert_coeffcient_matrix_to_pyshtools_format(coefficients: np.ndarray
+                                                  )-> np.ndarray:
+    """
+    Convert a stress-coefficient matrix (deg+1 x deg+1) to pyshtools format.
+
+    The pyshtools format follows a (2, deg+1, deg+1) shape codex, whereas the
+    first dimension refers to the cosine/sine parts of the expansion.
+    """
+    upper = np.triu(coefficients)
+    lower = np.tril(coefficients)
+
+    coefficients = np.stack([upper.transpose(), lower])
+
+    return coefficients
 
 
 # Gives L_1 Integral on SPHERE pullback:
