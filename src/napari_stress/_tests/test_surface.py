@@ -2,13 +2,7 @@
 import numpy as np
 import napari_stress
 import vedo
-
-def test_spherical_harmonics():
-
-    ellipse = vedo.shapes.Ellipsoid()
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
-
-    assert np.array_equal(ellipse.points().shape, points[:, 1:].shape)
+import napari
 
 def test_smoothing():
     from napari_stress import smoothMLS2D, smooth_sinc
@@ -34,3 +28,26 @@ def test_surface_to_points():
     surface = (ellipse.points(), np.asarray(ellipse.faces()))
     points = napari_stress.extract_vertex_points(surface)
 
+def test_ellipsoid_points():
+    pointcloud = np.random.normal(size=(1000, 3)) * 10 * np.array([1,2,3])[None, :]
+    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, inside_fraction=0.5)
+    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, inside_fraction=0.5)
+    axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud, inside_fraction=0.5, normalize=True)
+
+    pointcloud = vedo.shapes.Ellipsoid().points() * 10
+    ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(pointcloud, inside_fraction=0.5)
+
+    # test 4d handling
+    Converter = napari_stress.TimelapseConverter()
+    pointcloud_4d = Converter.list_of_data_to_data([pointcloud, pointcloud + 1], napari.types.PointsData)
+    vectors_4d = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud_4d)
+
+    # directions_4d = np.zeros_like(pointcloud_4d)
+    # directions_4d[:, 0] = pointcloud_4d[:, 0]
+    # directions_4d[directions_4d[:,0] == 0, 1:] = pointcloud - pointcloud.mean(axis=0)[None, :]
+    # directions_4d[directions_4d[:,0] == 1, 1:] = pointcloud - (pointcloud + 1).mean(axis=0)[None, :]
+
+
+
+if __name__ == '__main__':
+    test_ellipsoid_points()
