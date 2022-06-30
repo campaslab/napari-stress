@@ -291,15 +291,15 @@ def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
 
     return coefficient_matrix
 
-def convert_coefficients_pyshtools_to_stress(coefficients: pyshtools.SHCoeffs
+def convert_coefficients_pyshtools_to_stress(coefficients_pysh: pyshtools.SHCoeffs
                                              ) -> np.ndarray:
     """
     Convert a pyshtools-coefficient matrix to stress format.
-    
+
     In stress format, the upper (np.triu) part of the coefficient matrix
     corresponds to the real part and the lower section (np.tril) correspond
     to the imaginary part. The diagonal parts are identical in both.
-    
+
     Parameters
     ----------
     coefficients : pyshtools.SHCoeffs
@@ -308,19 +308,22 @@ def convert_coefficients_pyshtools_to_stress(coefficients: pyshtools.SHCoeffs
     stress_coefficients : np.ndarray
 
     """
-    coefficients = coefficients.to_array()
-    real = coefficients[0].transpose()
-    imag = coefficients[1]
-    
-    stress_coefficients = np.zeros_like(real)
-    stress_coefficients[np.triu(real != 0)] = real[np.triu(real) != 0]
-    stress_coefficients[np.tril(imag != 0)] = imag[np.tril(imag) != 0]
-    stress_coefficients[0, 0] = np.max([real[0,0], imag[0, 0]])
-    
-    return stress_coefficients
-        
+    coefficients = coefficients_pysh.to_array()
 
-def convert_coeffcients_stress_to_pyshtools(coefficients: np.ndarray
+    # Separate matrix into real/imag part. Note that pysh format leaves a
+    # blank column for degree l=0 for the imaginary coefficients
+    real = coefficients[0].transpose()
+    imag = coefficients[1, 1:, 1:]
+    imag_mask = np.tril(np.ones_like(imag)) == 1
+
+    # create stress-compliant coefficient matrix
+    stress_coefficients = real
+    stress_coefficients[stress_coefficients == np.tril(stress_coefficients, -1)] = imag[imag_mask]
+
+    return stress_coefficients
+
+
+def convert_coeffcients_stress_to_pyshtools(coefficients_stress: np.ndarray
                                             )-> pyshtools.SHCoeffs:
     """
     Convert a stress-coefficient matrix (deg+1 x deg+1) to pyshtools format.
@@ -328,13 +331,15 @@ def convert_coeffcients_stress_to_pyshtools(coefficients: np.ndarray
     The pyshtools format follows a (2, deg+1, deg+1) shape codex, whereas the
     first dimension refers to the cosine/sine parts of the expansion.
     """
-    real = np.triu(coefficients)
-    imag = np.tril(coefficients)
+    real = np.triu(coefficients_stress)
+    imag = np.tril(coefficients_stress, -1)
 
-    coefficients = np.stack([real.transpose(), imag])
-    coefficients = pyshtools.SHCoeffs.from_array(coefficients)
+    coefficients_pysh = np.zeros([2] + list(coefficients_stress.shape))
+    coefficients_pysh[0] = real.transpose()
+    coefficients_pysh[1, 1:, 1:] = imag[1:, :-1]
 
-    return coefficients
+    return pyshtools.SHCoeffs.from_array(coefficients_pysh,
+                                         lmax=coefficients_stress.shape[0]-1)
 
 
 # Gives L_1 Integral on SPHERE pullback:
