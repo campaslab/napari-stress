@@ -37,7 +37,8 @@ def test_spherical_harmonics():
 def test_interoperatibility():
 
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
-    from napari_stress._spherical_harmonics.sph_func_SPB import convert_coeffcient_matrix_to_pyshtools_format
+    from napari_stress._spherical_harmonics.sph_func_SPB import convert_coeffcients_stress_to_pyshtools,\
+        convert_coefficients_pyshtools_to_stress
     from pyshtools import SHCoeffs
 
     points = napari_stress.get_droplet_point_cloud()[0][0][:, 1:]
@@ -45,10 +46,13 @@ def test_interoperatibility():
     pts_pysh, coeffs_pysh = sh.shtools_spherical_harmonics_expansion(points, max_degree=5)
     pts_stress, coeffs_stress = sh.stress_spherical_harmonics_expansion(points, max_degree=5)
 
-    coeffs_x = SHCoeffs.from_array(convert_coeffcient_matrix_to_pyshtools_format(coeffs_stress[0]))
-    coeffs_y = SHCoeffs.from_array(convert_coeffcient_matrix_to_pyshtools_format(coeffs_stress[1]))
-    coeffs_z = SHCoeffs.from_array(convert_coeffcient_matrix_to_pyshtools_format(coeffs_stress[2]))
-
+    coeffs_pysh_x = convert_coeffcients_stress_to_pyshtools(coeffs_stress[0])
+    coeffs_pysh_y = convert_coeffcients_stress_to_pyshtools(coeffs_stress[1])
+    coeffs_pysh_z = convert_coeffcients_stress_to_pyshtools(coeffs_stress[2])
+    
+    coeffs_str_x = convert_coefficients_pyshtools_to_stress(coeffs_pysh_x)
+    coeffs_str_y = convert_coefficients_pyshtools_to_stress(coeffs_pysh_y)
+    coeffs_str_z = convert_coefficients_pyshtools_to_stress(coeffs_pysh_z)
 
 def test_quadrature(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]

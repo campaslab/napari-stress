@@ -11,6 +11,8 @@ from scipy.special import sph_harm
 from .lebedev_info_SPB import *
 from .charts_SPB import*
 
+import pyshtools
+
 
 # Diagonal of Mass matrix is 1, non-diagonal is 1/2 (due to |Re(Y^m_l)|=|Im(Y^m_l)|)
 def Mass_Mat_Exact(m_coef,n_coef):
@@ -289,18 +291,48 @@ def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
 
     return coefficient_matrix
 
-def convert_coeffcient_matrix_to_pyshtools_format(coefficients: np.ndarray
-                                                  )-> np.ndarray:
+def convert_coefficients_pyshtools_to_stress(coefficients: pyshtools.SHCoeffs
+                                             ) -> np.ndarray:
+    """
+    Convert a pyshtools-coefficient matrix to stress format.
+    
+    In stress format, the upper (np.triu) part of the coefficient matrix
+    corresponds to the real part and the lower section (np.tril) correspond
+    to the imaginary part. The diagonal parts are identical in both.
+    
+    Parameters
+    ----------
+    coefficients : pyshtools.SHCoeffs
+    Returns
+    -------
+    stress_coefficients : np.ndarray
+
+    """
+    coefficients = coefficients.to_array()
+    real = coefficients[0].transpose()
+    imag = coefficients[1]
+    
+    stress_coefficients = np.zeros_like(real)
+    stress_coefficients[np.triu(real != 0)] = real[np.triu(real) != 0]
+    stress_coefficients[np.tril(imag != 0)] = imag[np.tril(imag) != 0]
+    stress_coefficients[0, 0] = np.max([real[0,0], imag[0, 0]])
+    
+    return stress_coefficients
+        
+
+def convert_coeffcients_stress_to_pyshtools(coefficients: np.ndarray
+                                            )-> pyshtools.SHCoeffs:
     """
     Convert a stress-coefficient matrix (deg+1 x deg+1) to pyshtools format.
 
     The pyshtools format follows a (2, deg+1, deg+1) shape codex, whereas the
     first dimension refers to the cosine/sine parts of the expansion.
     """
-    upper = np.triu(coefficients)
-    lower = np.tril(coefficients)
+    real = np.triu(coefficients)
+    imag = np.tril(coefficients)
 
-    coefficients = np.stack([upper.transpose(), lower])
+    coefficients = np.stack([real.transpose(), imag])
+    coefficients = pyshtools.SHCoeffs.from_array(coefficients)
 
     return coefficients
 
