@@ -38,11 +38,13 @@ def test_interoperatibility():
 
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
     from napari_stress._spherical_harmonics.sph_func_SPB import convert_coeffcients_stress_to_pyshtools,\
-        convert_coefficients_pyshtools_to_stress
+        convert_coefficients_pyshtools_to_stress,\
+        spherical_harmonics_function
 
+    deg = 10
     # get stress expansion of pointcloud
     points = napari_stress.get_droplet_point_cloud()[0][0][:, 1:]
-    pts_stress, coeffs_stress = sh.stress_spherical_harmonics_expansion(points, max_degree=10)
+    pts_stress, coeffs_stress = sh.stress_spherical_harmonics_expansion(points, max_degree=deg)
 
     # convert the x/y/z expansions to pysh format
     coeffs_pysh_x = convert_coeffcients_stress_to_pyshtools(coeffs_stress[0])
@@ -57,6 +59,33 @@ def test_interoperatibility():
     # check if coeffs are still the same
     _coeffs_stress = np.stack([coeffs_str_x, coeffs_str_y, coeffs_str_z])
     assert all((_coeffs_stress - coeffs_stress).flatten() == 0)
+
+    # Let's check whether these two give the same values when evaluated at the
+    # same coordinates
+
+    theta = np.linspace(0, 2*np.pi, 50)
+    phi = np.linspace(0, 2*np.pi, 100)
+    THETA, PHI = np.meshgrid(theta, phi)
+    # Stress:
+    SH_stress_x = spherical_harmonics_function(_coeffs_stress[0], SPH_Deg=deg)
+    stress_x = SH_stress_x.Eval_SPH(THETA, PHI)
+
+    SH_stress_y = spherical_harmonics_function(_coeffs_stress[1], SPH_Deg=deg)
+    stress_y = SH_stress_y.Eval_SPH(THETA, PHI)
+
+    SH_stress_z = spherical_harmonics_function(_coeffs_stress[2], SPH_Deg=deg)
+    stress_z = SH_stress_z.Eval_SPH(THETA, PHI)
+
+    stress_pts = np.stack([stress_z.flatten(), stress_y.flatten(), stress_x.flatten()]).transpose()
+
+
+    # Pyshtools:
+    pysh_x = coeffs_pysh_x.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    pysh_y = coeffs_pysh_y.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    pysh_z = coeffs_pysh_z.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
+
+
 
 def test_quadrature(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]
