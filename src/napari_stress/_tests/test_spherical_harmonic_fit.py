@@ -60,30 +60,30 @@ def test_interoperatibility():
     _coeffs_stress = np.stack([coeffs_str_x, coeffs_str_y, coeffs_str_z])
     assert all((_coeffs_stress - coeffs_stress).flatten() == 0)
 
-    # Let's check whether these two give the same values when evaluated at the
-    # same coordinates
+    # # Let's check whether these two give the same values when evaluated at the
+    # # same coordinates
 
-    theta = np.linspace(0, 2*np.pi, 50)
-    phi = np.linspace(0, 2*np.pi, 100)
-    THETA, PHI = np.meshgrid(theta, phi)
-    # Stress:
-    SH_stress_x = spherical_harmonics_function(_coeffs_stress[0], SPH_Deg=deg)
-    stress_x = SH_stress_x.Eval_SPH(THETA, PHI)
+    # theta = np.linspace(0, 2*np.pi, 50)
+    # phi = np.linspace(0, 2*np.pi, 100)
+    # THETA, PHI = np.meshgrid(theta, phi)
+    # # Stress:
+    # SH_stress_x = spherical_harmonics_function(_coeffs_stress[0], SPH_Deg=deg)
+    # stress_x = SH_stress_x.Eval_SPH(THETA, PHI)
 
-    SH_stress_y = spherical_harmonics_function(_coeffs_stress[1], SPH_Deg=deg)
-    stress_y = SH_stress_y.Eval_SPH(THETA, PHI)
+    # SH_stress_y = spherical_harmonics_function(_coeffs_stress[1], SPH_Deg=deg)
+    # stress_y = SH_stress_y.Eval_SPH(THETA, PHI)
 
-    SH_stress_z = spherical_harmonics_function(_coeffs_stress[2], SPH_Deg=deg)
-    stress_z = SH_stress_z.Eval_SPH(THETA, PHI)
+    # SH_stress_z = spherical_harmonics_function(_coeffs_stress[2], SPH_Deg=deg)
+    # stress_z = SH_stress_z.Eval_SPH(THETA, PHI)
 
-    stress_pts = np.stack([stress_z.flatten(), stress_y.flatten(), stress_x.flatten()]).transpose()
+    # stress_pts = np.stack([stress_z.flatten(), stress_y.flatten(), stress_x.flatten()]).transpose()
 
 
-    # Pyshtools:
-    pysh_x = coeffs_pysh_x.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
-    pysh_y = coeffs_pysh_y.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
-    pysh_z = coeffs_pysh_z.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
-    pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
+    # # Pyshtools:
+    # pysh_x = coeffs_pysh_x.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    # pysh_y = coeffs_pysh_y.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    # pysh_z = coeffs_pysh_z.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
+    # pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
 
 
 
