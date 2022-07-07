@@ -27,7 +27,19 @@ class spherical_harmonics_toolbox(QWidget):
         self._setup_curvature_histogram()
         self.update_curvature_histogram()
 
+        self.things_to_update_in_tab = {
+            0: self.update_curvature_histogram,
+            1: self.update_power_spectrum,
+            2: self.update_gauss_bonnet
+            }
+        
         self._setup_callbacks()
+        
+    def update_plots(self):
+        """Update things in the currently selected tab"""
+        selected_tab = self.toolBox.currentIndex()
+        print(f'Updating tab {selected_tab}: {str(self.things_to_update_in_tab[selected_tab])}')
+        self.things_to_update_in_tab[selected_tab]()
 
     def _setup_callbacks(self):
         self.viewer.dims.events.current_step.disconnect(self.histogram_curvature._draw)
@@ -43,7 +55,7 @@ class spherical_harmonics_toolbox(QWidget):
 
         self.histogram_curvature = NapariMPLWidget(self.viewer)
         self.histogram_curvature.axes = self.histogram_curvature.canvas.figure.subplots()
-        self.histogram_curvature.n_layers_input = 1
+        # self.histogram_curvature.n_selected_layers = 0
 
         self.toolBox.setCurrentIndex(0)
         self.toolBox.currentWidget().layout().removeWidget(self.placeholder_curv)
@@ -75,5 +87,4 @@ class spherical_harmonics_toolbox(QWidget):
         self.histogram_curvature.axes.set_xlabel('Curvature H')
         self.histogram_curvature.axes.set_ylabel('Occurrences [#]')
 
-        self.histogram_curvature.canvas.figure.tight_layout()
         self.histogram_curvature.canvas.draw()
