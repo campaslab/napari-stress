@@ -3,6 +3,8 @@ import vedo
 import numpy as np
 import napari_stress
 
+from pytestqt import qtbot
+
 def test_frontend_spherical_harmonics():
 
     ellipse = vedo.shapes.Ellipsoid()
@@ -104,12 +106,18 @@ def test_quadrature(make_napari_viewer):
     lebedev_points = napari_stress.measure_curvature(points[0])
 
     viewer = make_napari_viewer()
-    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
-    lebedev_points = napari_stress.measure_curvature(points[0],
-                                                    use_minimal_point_set=True,
-                                                    number_of_quadrature_points=50)
+    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer, run_analysis_toolbox=False)
+    lebedev_points = napari_stress.measure_curvature(points[0], use_minimal_point_set=True, number_of_quadrature_points=50)
+
+    viewer.add_points(points[0], **points[1])
+    napari_stress.measure_curvature(points[0][:, 1:], viewer=viewer, run_analysis_toolbox=True)
+
+    for item in list(viewer.window._dock_widgets.keys()):
+        viewer.window._dock_widgets[item].deletelater()
+    qtbot.wait(50)
 
 if __name__ == '__main__':
     import napari
     test_interoperatibility()
     test_frontend_analysis_toolbox(napari.Viewer)
+    test_quadrature(napari.Viewer)
