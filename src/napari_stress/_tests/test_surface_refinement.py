@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-def test_surface_tracing(make_napari_viewer):
+def test_surface_tracing():
     from napari_stress import trace_refinement_of_surface
     from skimage import filters, morphology, io, measure
     from vedo import shapes
@@ -70,6 +70,7 @@ def test_surface_tracing(make_napari_viewer):
                                                 selected_fit_type=fit_type,
                                                 selected_edge='surface',
                                                 remove_outliers=False)
+
 
 if __name__ == '__main__':
     import napari
