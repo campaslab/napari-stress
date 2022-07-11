@@ -31,7 +31,12 @@ def test_frontend_analysis_toolbox(make_napari_viewer):
     points = napari_stress.get_droplet_point_cloud()[0]
     viewer.add_points(points[0], **points[1])
 
-    measure_curvature(points[0][:, 1:], viewer=viewer, run_analysis_toolbox=True)
+    measure_curvature(points[0][:, 1:], viewer=viewer, run_analysis_toolbox=False)
+    layer = viewer.layers[-1]
+    
+    widget = spherical_harmonics_toolbox(viewer, layer)
+    widget.update_plots()
+    viewer.window.add_dock_widget(widget)
 
 
 def test_spherical_harmonics():
@@ -99,25 +104,9 @@ def test_interoperatibility():
     # pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
 
 
-
-def test_quadrature(make_napari_viewer):
-    points = napari_stress.get_droplet_point_cloud()[0]
-
-    lebedev_points = napari_stress.measure_curvature(points[0])
-
-    viewer = make_napari_viewer()
-    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer, run_analysis_toolbox=False)
-    lebedev_points = napari_stress.measure_curvature(points[0], use_minimal_point_set=True, number_of_quadrature_points=50)
-
-    viewer.add_points(points[0], **points[1])
-    napari_stress.measure_curvature(points[0][:, 1:], viewer=viewer, run_analysis_toolbox=True)
-
-    for item in list(viewer.window._dock_widgets.keys()):
-        viewer.window._dock_widgets[item].deletelater()
-    qtbot.wait(50)
-
 if __name__ == '__main__':
     import napari
-    test_interoperatibility()
+    test_frontend_spherical_harmonics()
     test_frontend_analysis_toolbox(napari.Viewer)
-    test_quadrature(napari.Viewer)
+    test_interoperatibility()
+    test_spherical_harmonics()
