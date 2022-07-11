@@ -28,9 +28,7 @@ class spherical_harmonics_toolbox(QWidget):
         self.update_curvature_histogram()
 
         self.things_to_update_in_tab = {
-            0: self.update_curvature_histogram,
-            1: self.update_power_spectrum,
-            2: self.update_gauss_bonnet
+            0: self.update_curvature_histogram
             }
         
         self._setup_callbacks()
