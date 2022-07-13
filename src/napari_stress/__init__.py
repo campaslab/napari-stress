@@ -14,6 +14,9 @@ from ._surface import adjust_surface_density,\
 from ._spherical_harmonics.spherical_harmonics_napari import fit_spherical_harmonics,\
     measure_curvature
 
+from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature,\
+    calculate_mean_curvature_on_manifold
+
 from ._spherical_harmonics.toolbox import spherical_harmonics_toolbox
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
