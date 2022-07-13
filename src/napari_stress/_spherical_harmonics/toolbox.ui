@@ -37,7 +37,7 @@
         <x>0</x>
         <y>0</y>
         <width>458</width>
-        <height>571</height>
+        <height>597</height>
        </rect>
       </property>
       <attribute name="label">
@@ -67,8 +67,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>458</width>
-        <height>571</height>
+        <width>98</width>
+        <height>218</height>
        </rect>
       </property>
       <attribute name="label">
@@ -92,8 +92,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>458</width>
-        <height>571</height>
+        <width>160</width>
+        <height>38</height>
        </rect>
       </property>
       <attribute name="label">
@@ -132,13 +132,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="button_run_measurement">
-     <property name="text">
-      <string>Measure</string>
-     </property>
     </widget>
    </item>
   </layout>
