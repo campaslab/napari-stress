@@ -30,9 +30,9 @@ class spherical_harmonics_toolbox(QWidget):
         self.things_to_update_in_tab = {
             0: self.update_curvature_histogram
             }
-        
+
         self._setup_callbacks()
-        
+
     def update_plots(self):
         """Update things in the currently selected tab"""
         selected_tab = self.toolBox.currentIndex()
@@ -53,7 +53,8 @@ class spherical_harmonics_toolbox(QWidget):
 
         self.histogram_curvature = NapariMPLWidget(self.viewer)
         self.histogram_curvature.axes = self.histogram_curvature.canvas.figure.subplots()
-        # self.histogram_curvature.n_selected_layers = 0
+        self.histogram_curvature.n_layers_input = 0
+
 
         self.toolBox.setCurrentIndex(0)
         self.toolBox.currentWidget().layout().removeWidget(self.placeholder_curv)
