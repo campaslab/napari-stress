@@ -18,7 +18,7 @@ and has been made open source in [this repository](https://github.com/campaslab/
 
 ## Usage
 
-Functionality in this repository is divided in two groups: **Workflows** and **plugins**.
+Functionality in this repository is divided in two groups: **Workflows** and **functions**.
 
 ### Workflows
 
@@ -31,7 +31,7 @@ This section describes common workflows for processing images, points and surfac
 |<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
 
 
-### Plugins
+### Functions
 
 All functions in napari-stress are documented separately for [interactive usage from the napari viewer](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click) as well as [Jupyter notebooks](https://github.com/BiAPoL/napari-stress/main/docs/tutorials/demo). 
 
