@@ -13,4 +13,7 @@ from ._surface import adjust_surface_density,\
 
 from ._utils.frame_by_frame import TimelapseConverter, frame_by_frame
 
+from ._spherical_harmonics.spherical_harmonics_napari import fit_spherical_harmonics
+from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature
+
 from ._sample_data import get_droplet_point_cloud

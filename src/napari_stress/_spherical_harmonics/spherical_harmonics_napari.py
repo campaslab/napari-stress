@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from napari.types import LayerDataTuple, PointsData
+from napari.layers import Points
 import numpy as np
 from enum import Enum
 
@@ -66,59 +67,56 @@ def fit_spherical_harmonics(points: PointsData,
 
     return (fitted_points, properties, 'points')
 
-@register_function(menu="Measurement > Surface curvature from points (n-STRESS)",
+@register_function(menu="Points > Perform lebedev quadrature (n-STRESS)",
                    number_of_quadrature_points={'min': 6, 'max': 5180})
-@frame_by_frame
-def measure_curvature(points: PointsData,
-                      max_degree: int = 5,
-                      implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
-                      number_of_quadrature_points: int = 500,
-                      use_minimal_point_set: bool = False,
-                      viewer: napari.Viewer = None
-                      ) -> PointsData:
+def perform_lebedev_quadrature(points: Points,
+                               number_of_quadrature_points: int = 500,
+                               use_minimal_point_set: bool = False,
+                               viewer: napari.Viewer = None
+                               ) -> LayerDataTuple:
     """
-    Measure curvature on pointcloud surface.
+    Perform lebedev quadrature and manifold creaiton on spherical-harmonics expansion.
 
     Parameters
     ----------
-    points : PointsData
-        DESCRIPTION.
-    max_degree : int, optional
-        DESCRIPTION. The default is 5.
-    implementation : spherical_harmonics_methods, optional
-        DESCRIPTION. The default is spherical_harmonics_methods.stress.
+    points : Points
     number_of_quadrature_points : int, optional
-        DESCRIPTION. The default is 1000.
+        Number of quadrature points to represent the surface. The default is 500.
+    use_minimal_point_set : bool, optional
+        Whether or not to use the minimally required number of quadrature
+        points instead of the number given by `number_of_quadrature_points`.
+        Depends on the chosen `max_degree` of the previous spherical harmonics
+        expansion.The default is False.
+    viewer : napari.Viewer, optional
+
 
     Returns
     -------
-    PointsData
-        DESCRIPTION.
+    LayerDataTuple
 
     """
-    if isinstance(implementation, str):
-        fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
-    else:
-        fit_function = implementation.value['function']
-    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
+    metadata = points.metadata
+    features = points.features
 
-    lebedev_points, LBDV_Fit = lebedev_quadrature(coefficients,
+    if not 'spherical_harmonics_coefficients' in metadata.keys():
+        raise ValueError('Missing spherical harmonics coefficients. Use spherical harmonics expansion first')
+
+    max_degree = metadata['spherical_harmonics_coefficients'].shape[-1] - 1
+
+    lebedev_points, LBDV_Fit = lebedev_quadrature(metadata['spherical_harmonics_coefficients'],
                                                   number_of_quadrature_points,
                                                   use_minimal_point_set=use_minimal_point_set)
-    curvature = calculate_mean_curvature_on_manifold(lebedev_points,
-                                                     lebedev_fit=LBDV_Fit,
-                                                     max_degree=max_degree)
 
-    properties, features, metadata = {}, {}, {}
+    # create manifold object for this quadrature
+    manifold = create_manifold(lebedev_points, lebedev_fit=LBDV_Fit, max_degree=max_degree)
+    metadata['manifold'] = manifold
 
-    features['curvature'] = curvature
-    metadata['averaged_curvature_H0'] = curvature.mean()
-
+    properties = {}
     properties['features'] = features
     properties['metadata'] = metadata
     properties['face_color'] = 'curvature'
     properties['size'] = 0.5
-    properties['name'] = 'Result of measure curvature'
+    properties['name'] = 'Result of lebedev quadrature'
 
     if viewer is not None:
         if properties['name'] not in viewer.layers:
@@ -126,5 +124,6 @@ def measure_curvature(points: PointsData,
         else:
             layer = viewer.layers[properties['name']]
             layer.features = features
+            layer.metadata = metadata
             layer.data = lebedev_points
-    return lebedev_points
+    return (lebedev_points, properties, 'points')
