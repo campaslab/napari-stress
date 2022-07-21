@@ -21,9 +21,9 @@ contributions:
     - id: napari-stress.fit_spherical_harmonics
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
-    - id: napari-stress.measure_curvature
-      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:measure_curvature
-      title: Measure spherical-harmonics approximated curvature
+    - id: napari-stress.lebedev_quadrature
+      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
+      title: Perform lebedev quadrature after spherical harmonics expansion
 
     - id: napari-stress.extract_vertex_points
       python_name: napari_stress._surface:extract_vertex_points
@@ -41,9 +41,9 @@ contributions:
       autogenerate: true
       display_name: Rescale image data
 
-    - command: napari-stress.measure_curvature
+    - command: napari-stress.lebedev_quadrature
       autogenerate: True
-      display_name: Measure curvature
+      display_name: Lebedev quadrature
 
     - command: napari-stress.trace_refine_surface
       autogenerate: true
