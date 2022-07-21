@@ -3,7 +3,8 @@ import vedo
 import numpy as np
 import napari_stress
 
-def test_frontend_spherical_harmonics():
+def test_frontend_spherical_harmonics(make_napari_viewer):
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
 
     ellipse = vedo.shapes.Ellipsoid()
 
@@ -18,8 +19,18 @@ def test_frontend_spherical_harmonics():
     assert np.array_equal(ellipse.points().shape, points2[0].shape)
 
     # Test default implementations
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)[0]
-    assert np.array_equal(ellipse.points().shape, points.shape)
+    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
+    assert np.array_equal(ellipse.points().shape, points[0].shape)
+
+    # Test implementation with viewer
+    viewer = make_napari_viewer()
+    points_layer = viewer.add_points(points[0], **points[1])
+    assert 'spherical_harmonics_coefficients' in points_layer.metadata
+
+    # Test quadrature
+    lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)
+    results_layer = viewer.layers[-1]
+    assert 'manifold' in results_layer.metadata
 
 def test_spherical_harmonics():
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
@@ -84,20 +95,3 @@ def test_interoperatibility():
     # pysh_y = coeffs_pysh_y.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
     # pysh_z = coeffs_pysh_z.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
     # pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
-
-
-
-def test_quadrature(make_napari_viewer):
-    points = napari_stress.get_droplet_point_cloud()[0]
-
-    lebedev_points = napari_stress.measure_curvature(points[0])
-
-    viewer = make_napari_viewer()
-    lebedev_points = napari_stress.measure_curvature(points[0], viewer=viewer)
-    lebedev_points = napari_stress.measure_curvature(points[0],
-                                                    use_minimal_point_set=True,
-                                                    number_of_quadrature_points=50)
-
-if __name__ == '__main__':
-    import napari
-    test_interoperatibility()
