@@ -2,7 +2,7 @@ import numpy as np
 import inspect
 from napari.types import  PointsData
 
-from .._spherical_harmonics import lebedev_info_SPB as lebedev_info
+from .._stress import lebedev_info_SPB as lebedev_info
 
 def _sigmoid(array: np.ndarray, center:float, amplitude:float, slope:float, offset:float):
     """

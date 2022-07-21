@@ -48,7 +48,7 @@ def test_spherical_harmonics():
 def test_interoperatibility():
 
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
-    from napari_stress._spherical_harmonics.sph_func_SPB import convert_coeffcients_stress_to_pyshtools,\
+    from napari_stress._stress.sph_func_SPB import convert_coeffcients_stress_to_pyshtools,\
         convert_coefficients_pyshtools_to_stress,\
         spherical_harmonics_function
 

@@ -2,7 +2,7 @@
 #!!! We Define K_Forms in Euclidean Space to improve convergence
 
 import numpy as np
-from .._spherical_harmonics import sph_func_SPB as sph_f
+from . import sph_func_SPB as sph_f
 
 
 

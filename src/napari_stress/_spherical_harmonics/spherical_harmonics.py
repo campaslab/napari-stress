@@ -13,12 +13,12 @@ import vedo
 import pyshtools
 import warnings
 
-from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
 from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
-from . import manifold_SPB as mnfd
-from . import euclidian_k_form_SPB as euc_kf
-from . import lebedev_info_SPB as lebedev_info
+from .._stress import sph_func_SPB as sph_f
+from .._stress import manifold_SPB as mnfd
+from .._stress import euclidian_k_form_SPB as euc_kf
+from .._stress import lebedev_info_SPB as lebedev_info
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5
