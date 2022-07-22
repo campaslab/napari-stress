@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDataTuple, VectorsData
+from napari.layers import Layer
 
 from typing import List
 
@@ -66,6 +67,7 @@ class TimelapseConverter:
 
     # Supported list data types
         self.list_to_data_conversion_functions = {
+            Layer: self.list_of_layers_to_layer,
             PointsData: self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
@@ -140,6 +142,21 @@ class TimelapseConverter:
         return conversion_function(data)
 
     # =============================================================================
+    # Layers
+    # =============================================================================
+
+    def list_of_layers_to_layer(self, layer_list: list) -> Layer:
+        """Convert a list of layers to single layer"""
+        list_of_layerdatatuples = [layer.as_layerdatatuple() for layer in layer_list]
+        layerdatatuple = self.list_of_layerdatatuple_to_layerdatatuple()
+
+        converted_layer = Layer.create(layerdatatuple[0],
+                                       meta = layerdatatuple[1],
+                                       layer_type = layerdatatuple[2])
+
+        return converted_layer
+
+    # =============================================================================
     # LayerDataTuple(s)
     # =============================================================================
 
@@ -173,7 +190,7 @@ class TimelapseConverter:
         # Convert data to array with dimensions [frame, data]
         data = np.stack(tuple_data)
         properties = data[:, 1]
-        _properties = self.stack_dict(properties)
+        _properties = self.list_of_dictionaries_to_dictionary(properties)
 
         # Reminder: Each list entry is tuple (data, properties, type)
         results = [None] * len(data)  # allocate list for results
@@ -186,7 +203,7 @@ class TimelapseConverter:
 
         return tuple(result)
 
-    def stack_dict(self, dictionaries: list) -> dict:
+    def list_of_dictionaries_to_dictionary(self, dictionaries: list) -> dict:
         _dictionary = {}
         for key in dictionaries[-1].keys():
             if isinstance(dictionaries[-1][key], dict):
@@ -215,7 +232,7 @@ class TimelapseConverter:
     def _list_of_images_to_image(self, images: list) -> ImageData:
         """Convert a list of 3D image data to single 4D image data."""
         return np.stack(images)
-    
+
     # =============================================================================
     # Vectors
     # =============================================================================
@@ -223,13 +240,13 @@ class TimelapseConverter:
     def _list_of_vectors_to_vectors(self, vectors: VectorsData) -> list:
         base_points = [v[:, 0] for v in vectors]
         directions = [v[:, 1] for v in vectors]
-        
+
         base_points = self._list_of_points_to_points(base_points)
         directions = self._list_of_points_to_points(directions)
-        
+
         vectors = np.stack([base_points, directions]).transpose((1,0,2))
         return vectors
-        
+
 
     # =============================================================================
     # Surfaces
