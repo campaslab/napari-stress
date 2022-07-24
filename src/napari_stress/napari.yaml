@@ -6,34 +6,69 @@ contributions:
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
 
+    - id: napari-stress.trace_refine_surface
+      python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
+      title: Fit point location on a surface according to a given intensity image
+    - id: napari-stress.reconstruct_surface
+      python_name: napari_stress._surface:reconstruct_surface
+      title: Reconstruct a surface from a pointcloud
+
     - id: napari-stress.get_pointcloud_sample_data
-      python_name: napari_stress._sample_data:get_dropplet_point_cloud
+      python_name: napari_stress._sample_data:get_droplet_point_cloud
       title: Get dropplet pointcloud sample
 
+    # Spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._spherical_harmonics.expansion:fit_spherical_harmonics
+      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:fit_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
+    - id: napari-stress.lebedev_quadrature
+      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
+      title: Perform lebedev quadrature after spherical harmonics expansion
 
-    - id: napari-stress.measure_curvature
-      python_name: napari_stress._spherical_harmonics.curvature:measure_curvature
-      title: Measure spherical-harmonics approximated curvature
+    - id: napari-stress.extract_vertex_points
+      python_name: napari_stress._surface:extract_vertex_points
+      title: Extract surface vertices as points data
 
+    - id: napari-stress.fit_ellipsoid_points
+      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
+      title: Fit PCA ellipsoid to pointcloud and return points
+    - id: napari-stress.fit_ellipsoid_vectors
+      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
+      title: Fit PCA ellipsoid to pointcloud and return major axis
 
   widgets:
     - command: napari-stress.rescale
       autogenerate: true
       display_name: Rescale image data
 
+    - command: napari-stress.lebedev_quadrature
+      autogenerate: True
+      display_name: Lebedev quadrature
+
+    - command: napari-stress.trace_refine_surface
+      autogenerate: true
+      display_name: Trace-refine surface points
+
     - command: napari-stress.fit_spherical_harmonics
       autogenerate: true
       display_name: Fit spherical harmonics
 
-    - command: napari-stress.measure_curvature
-      autogenerate: True
-      display_name: Measure curvature
+    - command: napari-stress.reconstruct_surface
+      autogenerate: true
+      display_name: Create surface from points
 
+    - command: napari-stress.extract_vertex_points
+      autogenerate: true
+      display_name: Create points from surface vertices
+
+    - command: napari-stress.fit_ellipsoid_points
+      autogenerate: true
+      display_name: Fit ellipsoid to pointcloud (points)
+    - command: napari-stress.fit_ellipsoid_vectors
+      autogenerate: true
+      display_name: Fit ellipsoid to pointcloud (major axis)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
-      display_name: Dropplet pointcloud
+      display_name: Droplet pointcloud
       key: PC_1

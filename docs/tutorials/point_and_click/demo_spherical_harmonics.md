@@ -6,7 +6,7 @@ This tutorial will explain how to perform a spherical harmonics surface expansio
 
 You can then approximate this pointcloud with a [spherical harmonics](https://en.wikipedia.org/wiki/Spherical_harmonics) expansion. In brief, this fits a set of basis functions to the input pointcloud and returns an analytical representation of the points on the surface. This then allows to sample any number of points on the approximated surface and derive further characteristic surface parameters.
 
-Select the `Fit spherical harmonics` from the plugin menu:
+Select the spherical harmonics expansion from the tools menu (`Tools > Points > Fit spherical harmonics (n-STRESS)`):
 
 <img src="../../imgs/viewer_screenshots/fit_spherical_harmonics.png" width="45%">
 
@@ -18,11 +18,11 @@ The `max_degree` controls the accuracy of the approximation. A higher-degree exp
 
 ## Results
 
-Applying a spherical harmonics expansion of `max_degree = 5` will lead to the following result:
+Applying a spherical harmonics expansion of `max_degree = 5` will lead to the following result. The colorcoding of the fitted points corresponds to the fit remainder of the spherical harmonics expansion.
 
 <img src="../../imgs/viewer_screenshots/fit_spherical_harmonics2.png">
 
-Lowering the value to `max_degree = 0` will lead to only the first *mode* of spherical harmonics being used, which corresponds to fitting a sphere to the pointcloud:
+Lowering the value to `max_degree = 1` will lead to only the first *mode* of spherical harmonics being used, which corresponds to fitting a sphere to the pointcloud:
 
 <img src="../../imgs/viewer_screenshots/fit_spherical_harmonics3.png">
 

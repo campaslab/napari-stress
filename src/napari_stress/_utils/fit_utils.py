@@ -2,40 +2,37 @@ import numpy as np
 import inspect
 from napari.types import  PointsData
 
-from .._spherical_harmonics import lebedev_info_SPB as lebedev_info
+from .._stress import lebedev_info_SPB as lebedev_info
 
-def _sigmoid(x, center:float, amplitude:float, slope:float, offset:float):
+def _sigmoid(array: np.ndarray, center:float, amplitude:float, slope:float, offset:float):
     """
     Sigmoidal fit function
     https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
     """
-    return amplitude / (1 + np.exp(-slope*(x-center))) + offset
+    return amplitude / (1 + np.exp(-slope*(array-center))) + offset
 
-def _gaussian(x, center:float, sigma:float, amplitude:float):
+def _gaussian(array: np.ndarray, center:float, sigma:float, amplitude:float):
     """
     Gaussian normal fit function
     https://en.wikipedia.org/wiki/Normal_distribution
     """
-    return amplitude/np.sqrt((2*np.pi*sigma**2)) * np.exp(-(x - center)**2 / (2*sigma**2))
+    return amplitude/np.sqrt((2*np.pi*sigma**2)) * np.exp(-(array - center)**2 / (2*sigma**2))
 
-def _detect_maxima(profile, center: float = None):
+def _detect_maxima(array: np.ndarray, center: float = None):
     """
     Function to find the maximum's index of data with a single peak.
     """
-    return np.argmax(profile)
+    return np.argmax(array)
 
-def _detect_max_gradient(profile, center: float = None):
+def _detect_max_gradient(array: np.ndarray, center: float = None):
     """
     Function to find the location of the steepest gradient for sigmoidal data
     """
-    return np.argmax(np.diff(profile))
+    return np.argmax(np.diff(array))
 
-def _func_args_to_list(func: callable) -> list:
-    """
-    Function to return a functions' keywords as a list of strings
-    """
+def _function_args_to_list(function: callable) -> list:
 
-    sig = inspect.signature(func)
+    sig = inspect.signature(function)
     return list(sig.parameters.keys())
 
 def Least_Squares_Harmonic_Fit(fit_degree: int,

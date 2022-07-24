@@ -2,75 +2,124 @@
 
 import numpy as np
 import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData, PointsData
+from napari.types import LabelsData, SurfaceData, PointsData, VectorsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_function
 
 import vedo
-import typing
 
-from enum import Enum
-
+@register_function(menu="Points > Fit ellipsoid major axis to points (vedo, n-STRESS)")
 @frame_by_frame
-def resample_points(points: PointsData) -> PointsData:
-    """Redistributes points in a pointcloud in a homogeneous manner"""
-    pointcloud = vedo.pointcloud.Points(points)
-    surface = pointcloud.reconstructSurface()
-    points = nppas.sample_points_poisson_disk((surface.points(), np.asarray(surface.faces())),
-                                              number_of_points=pointcloud.N())
-    return points
+def fit_ellipsoid_to_pointcloud_points(points: PointsData,
+                                       inside_fraction: float = 0.673) -> PointsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve surface pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+    inside_fraction : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+
+    Returns
+    -------
+    PointsData
+
+    """
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+
+    output_points = ellipsoid.points()
+
+    return output_points
+
+@register_function(menu="Points > Fit ellipsoid points to points (vedo, n-STRESS)")
+@frame_by_frame
+def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
+                                        inside_fraction: float = 0.673,
+                                        normalize: bool = False) -> VectorsData:
+    """
+    Fit an ellipsoid to a pointcloud an retrieve the major axises as vectors.
+
+    Parameters
+    ----------
+    points : PointsData
+    inside_fraction : float, optional
+        Fraction of points to be inside the fitted ellipsoid. The default is 0.673.
+    normalize : bool, optional
+        Normalize the resulting vectors. The default is False.
+
+    Returns
+    -------
+    VectorsData
+
+    """
+    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+
+    vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
+                        ellipsoid.axis2 * ellipsoid.vb,
+                        ellipsoid.axis3 * ellipsoid.vc])
+
+    if normalize:
+        vectors = vectors/np.linalg.norm(vectors, axis=0)[None, :]
+
+    base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
+    vectors = np.stack([base_points, vectors]).transpose((1,0,2))
+
+    return vectors
 
 
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
-                        dims: list = [100, 100, 100],
-                        radius: float = None,
-                        sampleSize: int = None,
-                        holeFilling: bool = True) -> SurfaceData:
+                        radius: float = 1.0,
+                        holeFilling: bool = True,
+                        padding: float = 0.05
+                        ) -> SurfaceData:
     """
-    Reconstruct a surface from a set of points.
+    Reconstruct a surface from a given pointcloud.
 
     Parameters
     ----------
-    points : PointsData (napari.types.PointsData)
+    points : PointsData
+    radius : float
+        Radius within which to search for neighboring points.
+    holeFilling : bool, optional
+        The default is True.
+    padding : float, optional
+        Whether or not to thicken the surface by a given margin.
+        The default is 0.05.
 
     Returns
     -------
-    SurfaceData: napari.types.SurfaceData
+    SurfaceData
+    """
+    pointcloud = vedo.pointcloud.Points(points)
+
+    surface = pointcloud.reconstructSurface(radius=radius,
+                                            sampleSize=None,
+                                            holeFilling=holeFilling,
+                                            padding=padding)
+
+    return (surface.points(), np.asarray(surface.faces(), dtype=int))
+
+@register_function(menu="Points > Create points from surface vertices (n-STRESS)")
+@frame_by_frame
+def extract_vertex_points(surface: SurfaceData) -> PointsData:
+    """
+    Return only the vertex points of an input surface.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+
+    Returns
+    -------
+    PointsData
 
     """
-    # Catch magicgui default values
-    if radius == 0:
-        radius = None
-
-    if sampleSize == 0:
-        sampleSize = None
-
-    pointcloud = vedo.pointcloud.Points(points)
-    surf = pointcloud.reconstructSurface(dims=dims,
-                                         radius=radius,
-                                         sampleSize=sampleSize,
-                                         holeFilling=holeFilling)
-
-    return (surf.points(), np.asarray(surf.faces(), dtype=int))
-
-@frame_by_frame
-def smooth_laplacian(surface: SurfaceData,
-                     niter: int = 15,
-                     relax_factor: float = 0.1,
-                     edge_angle: float = 15,
-                     feature_angle: float = 60,
-                     boundary: bool = False) -> SurfaceData:
-    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.smoothLaplacian(niter=niter, relaxfact=relax_factor,
-                         edgeAngle=edge_angle,
-                         featureAngle=feature_angle,
-                         boundary=boundary)
-
-    return (mesh.points(), np.asarray(mesh.faces()))
+    return surface[0]
 
 
-@register_function(menu="Surfaces > Smooth sinc (vedo, n-STRESS)")
+@register_function(menu="Surfaces > Smoothing (Windowed Sinc, vedo, n-STRESS)")
 @frame_by_frame
 def smooth_sinc(surface: SurfaceData,
                 niter: int = 15,
@@ -85,6 +134,7 @@ def smooth_sinc(surface: SurfaceData,
                 boundary=boundary)
     return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
 
+@register_function(menu="Surfaces > Smoothing (MLS2D, vedo, n-STRESS)")
 @frame_by_frame
 def smoothMLS2D(points: PointsData,
                 factor: float = 0.5,
@@ -98,16 +148,7 @@ def smoothMLS2D(points: PointsData,
     else:
         return pointcloud.points()
 
-@frame_by_frame
-def surface_from_label(label_image: LabelsData,
-                       scale: typing.Union[np.ndarray, list] = np.array([1.0, 1.0, 1.0])
-                       ) -> SurfaceData:
-
-    surf = list(nppas.label_to_surface(label_image))
-    surf[0] = surf[0] * np.asarray(scale)[None, :]
-
-    return surf
-
+@register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
 @frame_by_frame
 def decimate(surface: SurfaceData,
              fraction: float = 0.1) -> SurfaceData:
@@ -124,10 +165,10 @@ def decimate(surface: SurfaceData,
     return (mesh.points(), np.asarray(mesh.faces()))
 
 
-@register_function(menu="Surfaces > Adjust Surface density (vedo, n-STRESS)")
+@register_function(menu="Surfaces > Surface density adjustment (vedo, n-STRESS)")
 @frame_by_frame
 def adjust_surface_density(surface: SurfaceData,
-                           density_target: float) -> SurfaceData:
+                           density_target: float = 1.0) -> SurfaceData:
     """Adjust the number of vertices of a surface to a defined density"""
     import open3d
 
