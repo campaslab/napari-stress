@@ -2,21 +2,21 @@
 
 from napari.types import PointsData
 from .._stress import manifold_SPB as mnfd
+from .._stress import euclidian_k_form_SPB as euc_kf
+from .._spherical_harmonics import get_normals_on_manifold
+from .._stress import lebedev_info
+
 
 import numpy as np
 
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
-                                         max_degree: int) -> np.ndarray:
+                                         max_degree: int) -> dict:
     """
-    Calculate mean curvatures for a set of lebedev points.
+    Calculate mean curvatures for a given manifold.
 
     Parameters
     ----------
-    lebedev_points : PointsData
-    lebedev_fit : lebedev_info.lbdv_info
-        lebedev info object - provides info which point is defined by which chart.
-    max_degree : int
-        Degree of spherical harmonics expansion.
+    manifold: mnfd.manifold
 
     Returns
     -------
@@ -24,7 +24,7 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
         Mean curvature value for every lebedev point.
 
     """
-    normals = get_normals_on_manifold(manifold, lebedev_fit)
+    normals = get_normals_on_manifold(manifold)
 
     # Test orientation:
     points = manifold.get_coordinates()
@@ -38,4 +38,30 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
     if(num_pos_orr > .5 * len(centered_lbdv_pts)):
         Orientation = -1.
 
-    return Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, lebedev_fit).squeeze()
+    mean_curvatures = Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, manifold['lebedev_info']).squeeze()
+    H0_arithmetic = averaged_mean_curvature(mean_curvatures)
+    H0_surface_integral = surface_integrated_mean_curvature(mean_curvatures,
+                                                            manifold)
+
+    # aggregate results in dictionary
+    features = {'Mean_curvature_at_lebedev_points': mean_curvatures}
+    metadata = {'H0_arithmetic_average': H0_arithmetic,
+               'H0_surface_integral': H0_surface_integral}
+
+    return features, metadata
+
+def averaged_mean_curvature(curvatures: np.ndarray) -> float:
+    """Calculate arithmetic average of mean curvature."""
+    return curvatures.flatten().mean()
+
+def surface_integrated_mean_curvature(mean_curvatures: np.ndarray,
+                                      manifold: mnfd.manifold):
+    """Calculate mean curvature by integrating surface area."""
+    Integral_on_surface = euc_kf.Integral_on_Manny(mean_curvatures,
+                                                   manifold,
+                                                   manifold.lebedev_info)
+    Integral_on_sphere = euc_kf.Integral_on_Manny(np.ones_like(mean_curvatures).asytpe(float),
+                                                  manifold,
+                                                  manifold.lebedev_info)
+
+    return Integral_on_surface/Integral_on_sphere
