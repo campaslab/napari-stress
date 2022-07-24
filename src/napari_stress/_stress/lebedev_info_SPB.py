@@ -251,6 +251,9 @@ class lbdv_info(object): #Generates (ONCE) and stores Lebedev Info
         if not os.path.exists(PICKLE_DIR):
             os.makedirs(PICKLE_DIR)
 
+        self.max_degree = Max_SPH_Deg
+        self.number_of_quadrature_points = Num_Quad_Pts
+
         ### GENERATE 5810 Quadrature ONCE #######
         #print("generating quad pts") # BJG: only notify if NEW mats are needed (time-consuming)
         self.lbdv_quad_pts = Num_Quad_Pts #Needs to be appropriate number up to 5810
