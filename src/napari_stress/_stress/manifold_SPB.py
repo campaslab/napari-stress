@@ -448,7 +448,7 @@ class manifold(object): #This now represents geo of S^2, will later be adapted t
 
         lbdv = Manifold_Constr_Dict['Maniold_lbdv']
         self.lebedev_info = Manifold_Constr_Dict['Maniold_lbdv']
-        self.num_quad_pts = self.lbdv.lbdv_quad_pts
+        self.num_quad_pts = self.lebedev_info.lbdv_quad_pts
         self.Man_SPH_Deg = Manifold_Constr_Dict['Manifold_SPH_deg']
 
         self.Use_Man_Name = Manifold_Constr_Dict['use_manifold_name']

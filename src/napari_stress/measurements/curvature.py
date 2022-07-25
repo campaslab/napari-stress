@@ -3,12 +3,14 @@
 from napari.types import PointsData
 from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
-from .._spherical_harmonics import get_normals_on_manifold
-from .._stress import lebedev_info
+from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
+
+from .measure import naparify_measurement
 
 
 import numpy as np
 
+@naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
                                          max_degree: int) -> dict:
     """

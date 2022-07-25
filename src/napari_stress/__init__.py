@@ -1,5 +1,7 @@
 __version__ = "0.0.15"
 
+from . import measurements
+
 from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
 from ._surface import adjust_surface_density,\
