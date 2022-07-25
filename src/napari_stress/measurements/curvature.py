@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import napari
 from napari.types import PointsData
 from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
@@ -12,7 +13,7 @@ import numpy as np
 
 @naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
-                                         max_degree: int) -> dict:
+                                         viewer: napari.Viewer = None) -> dict:
     """
     Calculate mean curvatures for a given manifold.
 
@@ -40,7 +41,7 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
     if(num_pos_orr > .5 * len(centered_lbdv_pts)):
         Orientation = -1.
 
-    mean_curvatures = Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, manifold['lebedev_info']).squeeze()
+    mean_curvatures = Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, manifold.lebedev_info).squeeze()
     H0_arithmetic = averaged_mean_curvature(mean_curvatures)
     H0_surface_integral = surface_integrated_mean_curvature(mean_curvatures,
                                                             manifold)
@@ -62,7 +63,7 @@ def surface_integrated_mean_curvature(mean_curvatures: np.ndarray,
     Integral_on_surface = euc_kf.Integral_on_Manny(mean_curvatures,
                                                    manifold,
                                                    manifold.lebedev_info)
-    Integral_on_sphere = euc_kf.Integral_on_Manny(np.ones_like(mean_curvatures).asytpe(float),
+    Integral_on_sphere = euc_kf.Integral_on_Manny(np.ones_like(mean_curvatures).astype(float),
                                                   manifold,
                                                   manifold.lebedev_info)
 
