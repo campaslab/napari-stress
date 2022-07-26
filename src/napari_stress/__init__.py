@@ -19,3 +19,5 @@ from ._spherical_harmonics.spherical_harmonics_napari import fit_spherical_harmo
 from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature
 
 from ._sample_data import get_droplet_point_cloud
+
+_METADATAKEY_MANIFOLD = 'manifold'
