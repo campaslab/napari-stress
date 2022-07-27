@@ -25,6 +25,11 @@ contributions:
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
 
+    # Spherical harmonics measurements
+    - id: napari-stress.measure_curvature
+      python_name: napari_stress.measurements:calculate_mean_curvature_on_manifold
+      title: Measure curvature on manifold
+
     - id: napari-stress.extract_vertex_points
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
@@ -41,17 +46,22 @@ contributions:
       autogenerate: true
       display_name: Rescale image data
 
+    # Spherical harmonics
+    - command: napari-stress.fit_spherical_harmonics
+      autogenerate: true
+      display_name: Fit spherical harmonics
     - command: napari-stress.lebedev_quadrature
       autogenerate: True
       display_name: Lebedev quadrature
 
+    # Measurement
+    - command: napari-stress.measure_curvature
+      autogenerate: true
+      display_name: Measure curvature
+
     - command: napari-stress.trace_refine_surface
       autogenerate: true
       display_name: Trace-refine surface points
-
-    - command: napari-stress.fit_spherical_harmonics
-      autogenerate: true
-      display_name: Fit spherical harmonics
 
     - command: napari-stress.reconstruct_surface
       autogenerate: true
