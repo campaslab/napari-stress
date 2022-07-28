@@ -12,8 +12,7 @@ from .utils import naparify_measurement
 import numpy as np
 
 @naparify_measurement
-def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
-                                         viewer: napari.Viewer = None) -> dict:
+def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     """
     Calculate mean curvatures for a given manifold.
 
@@ -51,7 +50,7 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold,
     metadata = {'H0_arithmetic_average': H0_arithmetic,
                'H0_surface_integral': H0_surface_integral}
 
-    return features, metadata
+    return None, features, metadata
 
 def averaged_mean_curvature(curvatures: np.ndarray) -> float:
     """Calculate arithmetic average of mean curvature."""

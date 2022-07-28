@@ -33,6 +33,8 @@ def naparify_measurement(function):
 
         wrapper_sig = inspect.signature(wrapper)
 
+        annotation_was_converted = False
+
         for key in sig.parameters.keys():
             value = bound.arguments[key]
             original_annotation = sig.parameters[key].annotation
@@ -40,12 +42,27 @@ def naparify_measurement(function):
 
             print('Old:', original_annotation, 'New:', new_annotation)
             if original_annotation is not new_annotation:
-                value = convert(value, original_annotation)
-                bound.arguments[key] = value
+                converted_value = convert(value, original_annotation)
+                bound.arguments[key] = converted_value
 
-            result = function(*bound.args, **bound.kwargs)
+                if not value is converted_value:
+                    annotation_was_converted = True
 
+        result = function(*bound.args, **bound.kwargs)
+
+        # depending on what was received (layer or manifold),
+        # append result to input layer or return raw return value
+        if not annotation_was_converted:
             return result
+        else:
+            if isinstance(value, napari.layers.Layer):
+                features, metadata = result[1], result[2]
+                for key in features.keys():
+                    value.features[key] = features[key]
+                for key in metadata.keys():
+                    value.metadata[key] = metadata[key]
+            return None
+
 
 
     # If we find a manifold parameter in the passed data, we replace its
@@ -55,12 +72,12 @@ def naparify_measurement(function):
     sig = inspect.signature(wrapper)
     parameters = []
     for name, value in sig.parameters.items():
-        print(name, str(value.annotation))
+
+        # replace manifold parameter annotation with napari.layers.Points
         if value.annotation is manifold:
-            # replace parameter annotation with napari.layers.Points
             parameters.append(inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation="napari.layers.Points"))
         else:
             parameters.append(value)
 
-    wrapper.__signature__ = inspect.Signature(parameters, return_annotation=napari.types.LayerDataTuple)
+    wrapper.__signature__ = inspect.Signature(parameters)
     return wrapper
