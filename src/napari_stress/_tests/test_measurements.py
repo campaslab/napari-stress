@@ -58,3 +58,31 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters['manifold'].annotation == 'napari.layers.Points'
+
+def test_compatibility_decorator2(make_napari_viewer):
+    import napari_stress
+    from napari_stress import measurements
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
+    viewer = make_napari_viewer()
+
+    pointcloud = napari_stress.get_droplet_point_cloud()[0]
+    viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
+
+    expansion = napari_stress.fit_spherical_harmonics(viewer.layers[-1].data)
+    viewer.add_points(expansion[0], **expansion[1])
+
+    lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
+    results_layer = viewer.layers[-1]
+    assert 'manifold' in results_layer.metadata
+
+    # pass layer to measurements function
+    measurements.calculate_mean_curvature_on_manifold(results_layer)
+    assert 'H0_arithmetic_average' in results_layer.metadata.keys()
+    assert 'H0_surface_integral' in results_layer.metadata.keys()
+    assert 'Mean_curvature_at_lebedev_points' in results_layer.features.keys()
+
+    # pass manifold to measurement function
+    _, features, metadata = measurements.calculate_mean_curvature_on_manifold(results_layer.metadata['manifold'])
+    assert 'H0_arithmetic_average' in metadata.keys()
+    assert 'H0_surface_integral' in metadata.keys()
+    assert 'Mean_curvature_at_lebedev_points' in features.keys()
