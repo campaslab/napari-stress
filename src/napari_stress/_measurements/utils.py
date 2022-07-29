@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
-import inspect
 import napari
 
 def convert(value, new_annotation):
-    """Check if an object is of a specific type and convert it if it isn't."""
+    """Check if an object is of a specific type and convert if it isn't."""
     from .._stress.manifold_SPB import manifold
     from napari_stress import _METADATAKEY_MANIFOLD
 
@@ -18,6 +17,17 @@ def convert(value, new_annotation):
 
 
 def naparify_measurement(function):
+    """
+    Compatibility decorator for napari-stress measurement functions.
+
+    This decorator does the following things:
+        - It replaces the type annotation for type `manifold` with `napari.layers.Layer`
+          Thus, napari can create a widget from it
+        - If a layer is passed to the function, the `manifold` object is retrieved
+          from the metadata and forwarded to the function
+        - The resulting `features` and `metadata` are appended to the input `Layer`
+          or the resulting `features` and `metadata` are returned.
+    """
 
     @wraps(function)
     def wrapper(*args, **kwargs):
