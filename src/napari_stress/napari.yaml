@@ -27,7 +27,7 @@ contributions:
 
     # Spherical harmonics measurements
     - id: napari-stress.measure_curvature
-      python_name: napari_stress.measurements:calculate_mean_curvature_on_manifold
+      python_name: napari_stress._measurements.curvature:calculate_mean_curvature_on_manifold
       title: Measure curvature on manifold
 
     - id: napari-stress.extract_vertex_points
