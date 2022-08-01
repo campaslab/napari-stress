@@ -184,18 +184,30 @@ def create_manifold(points: PointsData,
 
     return mnfd.manifold(Manny_Dict)
 
-def get_normals_on_manifold(manifold: mnfd.manifold,
-                            lebedev_fit: lebedev_info.lbdv_info):
+def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
+    """
+    Calculate the outwards pointing normal vectors on a manifold.
+
+    Parameters
+    ----------
+    manifold : mnfd.manifold
+
+    Returns
+    -------
+    np.ndarray: (Nx3) - sized normal vectors
+
+    """
+
 
     normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_X_A_Pts,
                                                        manifold.Normal_Vec_X_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
     normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Y_A_Pts,
                                                        manifold.Normal_Vec_Y_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
     normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Z_A_Pts,
                                                        manifold.Normal_Vec_Z_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
 
     normals_lbdv_points = np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts])
     return normals_lbdv_points.squeeze().transpose()
