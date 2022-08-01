@@ -8,8 +8,7 @@ from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import shtools_spherical_harmonics_expansion,\
     stress_spherical_harmonics_expansion,\
     lebedev_quadrature,\
-    create_manifold,\
-    calculate_mean_curvature_on_manifold
+    create_manifold
 
 import napari
 from napari_tools_menu import register_function
