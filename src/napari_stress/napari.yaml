@@ -29,6 +29,9 @@ contributions:
     - id: napari-stress.measure_curvature
       python_name: napari_stress._measurements.curvature:calculate_mean_curvature_on_manifold
       title: Measure curvature on manifold
+    - id: napari-stress.measure_gauss_bonnet
+      python_name: napari_stress._measurements.curvature:gauss_bonnet_test
+      title: Measure Gauss-Bonnet error
 
     - id: napari-stress.extract_vertex_points
       python_name: napari_stress._surface:extract_vertex_points
@@ -58,6 +61,10 @@ contributions:
     - command: napari-stress.measure_curvature
       autogenerate: true
       display_name: Measure curvature
+    - command: napari-stress.gauss_bonnet_test
+      autogenerate: true
+      display_name: Measure Gauss-Bonnet error
+
 
     - command: napari-stress.trace_refine_surface
       autogenerate: true

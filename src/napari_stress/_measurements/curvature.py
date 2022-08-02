@@ -6,9 +6,12 @@ from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from .utils import naparify_measurement
 
+from napari_tools_menu import register_function
+
 
 import numpy as np
 
+@register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
 @naparify_measurement
 def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     """
@@ -35,6 +38,7 @@ def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
                 'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
     return None, None, metadata
 
+@register_function(menu="Measurement > Measure mean curvature manifold (n-STRESS")
 @naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     """
