@@ -1,16 +1,44 @@
 # -*- coding: utf-8 -*-
 
-import napari
-from napari.types import PointsData
 from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from .utils import naparify_measurement
 
+from napari_tools_menu import register_function
+
 
 import numpy as np
 
+@register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
+@naparify_measurement
+def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
+    """
+    Use Gauss-Bonnet theorem to measure resolution on manifold.
+
+    Parameters
+    ----------
+    manifold: mnfd.manifold
+
+
+    See Also
+    --------
+    https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem
+    """
+    K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.K_A_pts,
+                                                manifold.K_B_pts,
+                                                manifold.lebedev_info)
+    Gauss_Bonnet_Err = euc_kf.Integral_on_Manny(K_lbdv_pts,
+                                                manifold,
+                                                manifold.lebedev_info) - 4*np.pi
+    Gauss_Bonnet_Rel_Err = abs(Gauss_Bonnet_Err)/(4*np.pi)
+
+    metadata = {'Gauss_Bonnet_error': Gauss_Bonnet_Err,
+                'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
+    return None, None, metadata
+
+@register_function(menu="Measurement > Measure mean curvature manifold (n-STRESS")
 @naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     """
