@@ -66,11 +66,15 @@ def naparify_measurement(function):
             return result
         else:
             if isinstance(value, napari.layers.Layer):
+
+                # get metadata from layer and append/overwrite data
                 features, metadata = result[1], result[2]
-                for key in features.keys():
-                    value.features[key] = features[key]
-                for key in metadata.keys():
-                    value.metadata[key] = metadata[key]
+                if features is not None:
+                    for key in features.keys():
+                        value.features[key] = features[key]
+                if metadata is not None:
+                    for key in metadata.keys():
+                        value.metadata[key] = metadata[key]
             return None
 
 

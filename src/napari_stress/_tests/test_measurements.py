@@ -41,6 +41,15 @@ def test_curvature(make_napari_viewer):
     assert 'H0_surface_integral' in results_layer.metadata
     assert 'Mean_curvature_at_lebedev_points' in results_layer.features
 
+    # Test gauss-bonnet
+    measurements.gauss_bonnet_test(results_layer)
+    assert 'Gauss_Bonnet_error' in results_layer.metadata
+    assert 'Gauss_Bonnet_relative_error' in results_layer.metadata
+
+    _, _, metadata = measurements.gauss_bonnet_test(results_layer.metadata['manifold'])
+    assert 'Gauss_Bonnet_error' in metadata
+    assert 'Gauss_Bonnet_relative_error' in metadata
+
 
 def test_compatibility_decorator():
     import inspect
