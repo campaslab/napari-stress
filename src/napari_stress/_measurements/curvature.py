@@ -38,7 +38,7 @@ def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
                 'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
     return None, None, metadata
 
-@register_function(menu="Measurement > Measure mean curvature manifold (n-STRESS")
+@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS")
 @naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     """
