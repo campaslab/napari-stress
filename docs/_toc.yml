@@ -1,0 +1,28 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+
+options:
+  numbered: true
+  
+chapters:
+- file: glossary/Readme
+  sections: 
+  - file: glossary/01_spherical_harmonics 
+  - file: glossary/02_analyzing_spherical_harmonics 
+  
+- file: tutorials/demo/Readme
+  sections:
+  - file: tutorials/demo/demo_surface_reconstruction
+  - file: tutorials/demo/demo_surface_tracing
+  - file: tutorials/demo/demo_fit_ellipsoid
+  - file: tutorials/demo/demo_spherical_harmonics
+  - file: tutorials/demo/demo_analyze_spherical_harmonics
+  
+- file: tutorials/point_and_click/Readme
+  sections:
+  - file: tutorials/point_and_click/demo_surface_reconstruction
+  - file: tutorials/point_and_click/demo_fit_ellipsoid
+  - file: tutorials/point_and_click/demo_spherical_harmonics
