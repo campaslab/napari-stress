@@ -1,3 +1,4 @@
+(point_and_click.spherical_harmonics_expansion)=
 # Spherical harmonics expansion
 
 This tutorial will explain how to perform a spherical harmonics surface expansion with napari-stress interactively from the napari viewer. To get started, open your own data or use the provided sample data from napari-stress ([raw data source](https://github.com/campaslab/STRESS)):
