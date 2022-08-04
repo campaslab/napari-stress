@@ -1,0 +1,10 @@
+# In _config.yml
+title: Napari-stress documentation
+author: Johannes Müller
+logo: logo.png
+execute:
+  execute_notebooks: force
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
