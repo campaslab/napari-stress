@@ -200,6 +200,11 @@ const thebe_selector_output = ".output, .cell_output"
      3.3. Spherical harmonics expansion
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../tutorials/point_and_click/demo_measure_curvature.html">
+     3.4. Measure curvature
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -339,6 +344,16 @@ title="Print to PDF"
    1.2.1. Spherical harmonics expansion fit residue
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mean-curvature">
+   1.2.2. Mean curvature
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gauss-bonnet-test">
+   1.2.3. Gauss-Bonnet test
+  </a>
+ </li>
 </ul>
 
     </nav>
@@ -363,6 +378,16 @@ title="Print to PDF"
    1.2.1. Spherical harmonics expansion fit residue
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mean-curvature">
+   1.2.2. Mean curvature
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gauss-bonnet-test">
+   1.2.3. Gauss-Bonnet test
+  </a>
+ </li>
 </ul>
 
                         </nav>
@@ -385,6 +410,23 @@ title="Print to PDF"
 <p>This example shows the result of a spherical harmonics expansion of low degree <span class="math notranslate nohighlight">\(l\)</span> for the approximation of a pointcloud:</p>
 <p><img alt="" src="../_images/fit_spherical_harmonics3.png" /></p>
 <p>The orange points show the input pointcloud consisting of points <span class="math notranslate nohighlight">\(\vec{x}_i\)</span>, the color-coded points show the results of the spherical harmonics expansion with <span class="math notranslate nohighlight">\(l&lt;=1\)</span> - which corresponds to only the basic modes of spherical harmonics being used - which in turn corresponds to a sphere. The color scale of the resulting sphere corresponds to the fit residue of the expansion for every point <span class="math notranslate nohighlight">\(\Delta_i\)</span>.</p>
+</section>
+<section id="mean-curvature">
+<span id="spherical-harmonics-measurements-mean-curvature"></span><h2><span class="section-number">1.2.2. </span>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this headline">#</a></h2>
+<p>An interesting parameter that can be obtained from a spherical harmonics expansion is the <a class="reference external" href="https://en.wikipedia.org/wiki/Mean_curvature">mean curvature</a>. The concept is tightly linked to differntial geometry and allows several calculations. Napari-stress allows to calculate the mean curvature <span class="math notranslate nohighlight">\(H_i\)</span> at every point on the surface of a spherical harmonics expansion as well as calculating the globally averaged curvatures <span class="math notranslate nohighlight">\(H_0\)</span>. The two implemented concepts for global curvatures include:</p>
+<ul class="simple">
+<li><p>The arithmetic average <span class="math notranslate nohighlight">\(H_{0, arithmetic~avg}\)</span>: This is simply the averaged curvature at every point: <span class="math notranslate nohighlight">\(H_{0, arithmetic~avg} = \frac{1}{N}\sum^N_{i=0} H_i\)</span> where <span class="math notranslate nohighlight">\(H_i\)</span> is the curvature at a given point.</p></li>
+<li><p>The surface integrated curvature <span class="math notranslate nohighlight">\(H_{0, surf~int}\)</span>: This is the ratio of the area of the obtained expansion and the surface of a unit sphere <span class="math notranslate nohighlight">\(H_{0, surf~int} = \frac{A_{manifold}}{A_{Sphere}}\)</span></p></li>
+</ul>
+<p>The <a class="reference external" href="https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract">stress paper</a> uses the second definition (<span class="math notranslate nohighlight">\(H_{0, surf~int}\)</span>) for the description of curvatures oon the surface.</p>
+</section>
+<section id="gauss-bonnet-test">
+<span id="spherical-harmonics-measurements-gauss-bonnet"></span><h2><span class="section-number">1.2.3. </span>Gauss-Bonnet test<a class="headerlink" href="#gauss-bonnet-test" title="Permalink to this headline">#</a></h2>
+<p>The Gauss-Bonnet theorem allows to evaluate the quality of the obtained surface expansion quantitatively.</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem">From Wikipedia</a>: <em>In the simplest application, the case of a triangle on a plane, the sum of its angles is 180 degrees. The Gauss–Bonnet theorem extends this to more complicated shapes and curved surfaces, connecting the local and global geometries.</em></p>
+<p>In other words, the Gauss-Bonnet test gives you the possibility to measure whether the obtained surface expansion retains the required mathematical properties for such objects. This will be the case for simple shapes. However, trying to acquire a spherical harmonics expansion for highly irregular surfaces may well lead to high relative errors. Napari-stress offers the <em>absolute</em> <span class="math notranslate nohighlight">\(\Delta_{Gauss-Bonnet, abs}\)</span> and the <em>relative</em> <span class="math notranslate nohighlight">\(\Delta_{Gauss-Bonnet, rel}\)</span> value of this criterion; The relative error compares the absolute measured value to the respective result of an ideal sphere:</p>
+<p><span class="math notranslate nohighlight">\(\Delta_{Gauss-Bonnet, rel} = \frac{\Delta_{Gauss-Bonnet, abs}}{4\pi}\)</span></p>
+<p>To differentiate between a “good” and a “bad” surface expansion, the <a class="reference external" href="https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.full">stress paper</a> suggests a threshold value of <span class="math notranslate nohighlight">\(1\cdot10^{-2}\)</span> for the relative error.</p>
 </section>
 </section>
 
