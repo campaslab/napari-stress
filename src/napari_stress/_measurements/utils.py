@@ -2,16 +2,26 @@
 from functools import wraps
 import napari
 
+
 def convert(value, new_annotation):
     """Check if an object is of a specific type and convert if it isn't."""
-    from .._stress.manifold_SPB import manifold
-    from napari_stress import _METADATAKEY_MANIFOLD
+    from ..types import Curvature, H0_surface_integral, Manifold
+    from ..types import _METADATAKEY_MANIFOLD,\
+        _METADATAKEY_MEAN_CURVATURE,\
+        _METADATAKEY_H0_SURFACE_INTEGRAL
 
-    if isinstance(value, new_annotation):
+    if type(value).__name__ == new_annotation.__name__:
         return value
 
-    if isinstance(value, napari.layers.Layer) and new_annotation is manifold:
+    if isinstance(value, napari.layers.Layer) and new_annotation.__name__ == Manifold.__name__:
         return value.metadata[_METADATAKEY_MANIFOLD]
+
+    if isinstance(value, napari.layers.Layer) and new_annotation.__name__ == Curvature.__name__:
+        return value.features[_METADATAKEY_MEAN_CURVATURE]
+
+    if isinstance(value, napari.layers.Layer) and new_annotation.__name__ == H0_surface_integral.__name__:
+        return value.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL]
+
     raise ValueError(f'Unsupported conversion {type(value)} -> {new_annotation}')
 
 
@@ -44,6 +54,7 @@ def naparify_measurement(function):
         wrapper_sig = inspect.signature(wrapper)
 
         annotation_was_converted = False
+        layer = None
 
         for key in sig.parameters.keys():
             value = bound.arguments[key]
@@ -57,6 +68,7 @@ def naparify_measurement(function):
 
                 if not value is converted_value:
                     annotation_was_converted = True
+                    layer = value
 
         result = function(*bound.args, **bound.kwargs)
 
@@ -65,31 +77,34 @@ def naparify_measurement(function):
         if not annotation_was_converted:
             return result
         else:
-            if isinstance(value, napari.layers.Layer):
+            if isinstance(layer, napari.layers.Layer):
 
                 # get metadata from layer and append/overwrite data
                 features, metadata = result[1], result[2]
                 if features is not None:
                     for key in features.keys():
-                        value.features[key] = features[key]
+                        layer.features[key] = features[key]
                 if metadata is not None:
                     for key in metadata.keys():
-                        value.metadata[key] = metadata[key]
+                        layer.metadata[key] = metadata[key]
             return None
-
-
 
     # If we find a manifold parameter in the passed data, we replace its
     # annotation with napari.layers.Points
     import inspect
-    from .._stress.manifold_SPB import manifold
+    from .. import types
+
     sig = inspect.signature(wrapper)
     parameters = []
+    napari_stress_types = tuple(x[1].__name__ for x in inspect.getmembers(types, inspect.isfunction))
+
     for name, value in sig.parameters.items():
 
         # replace manifold parameter annotation with napari.layers.Points
-        if value.annotation is manifold:
-            parameters.append(inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation="napari.layers.Points"))
+        if value.annotation.__name__ in napari_stress_types:
+            parameters.append(
+                inspect.Parameter(name, inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation="napari.layers.Points")
+                )
         else:
             parameters.append(value)
 
