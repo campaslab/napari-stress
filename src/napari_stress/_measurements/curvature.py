@@ -17,7 +17,7 @@ from napari_tools_menu import register_function
 
 import numpy as np
 
-@register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
+@register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS)")
 @naparify_measurement
 def gauss_bonnet_test(manifold: manifold) -> (np.ndarray, dict, dict):
     """
@@ -44,7 +44,7 @@ def gauss_bonnet_test(manifold: manifold) -> (np.ndarray, dict, dict):
                 'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
     return None, None, metadata
 
-@register_function(menu="Measurement > Measure mean curvature manifold (n-STRESS")
+@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS)")
 @naparify_measurement
 def calculate_mean_curvature_on_manifold(manifold: manifold) -> (np.ndarray, dict, dict):
     """
