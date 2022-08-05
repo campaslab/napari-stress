@@ -6,14 +6,20 @@ from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from .utils import naparify_measurement
 
-from napari_tools_menu import register_function
+from ..types import manifold
+from ..types import (
+    _METADATAKEY_MEAN_CURVATURE,
+    _METADATAKEY_H0_SURFACE_INTEGRAL,
+    _METADATAKEY_H0_ARITHMETIC_AVERAGE
+    )
 
+from napari_tools_menu import register_function
 
 import numpy as np
 
 @register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
 @naparify_measurement
-def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
+def gauss_bonnet_test(manifold: manifold) -> (np.ndarray, dict, dict):
     """
     Use Gauss-Bonnet theorem to measure resolution on manifold.
 
