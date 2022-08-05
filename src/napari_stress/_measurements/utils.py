@@ -10,9 +10,6 @@ def convert(value, new_annotation):
         _METADATAKEY_MEAN_CURVATURE,\
         _METADATAKEY_H0_SURFACE_INTEGRAL
 
-    if type(value).__name__ == new_annotation.__name__:
-        return value
-
     if isinstance(value, napari.layers.Layer) and new_annotation.__name__ == Manifold.__name__:
         return value.metadata[_METADATAKEY_MANIFOLD]
 
@@ -21,6 +18,13 @@ def convert(value, new_annotation):
 
     if isinstance(value, napari.layers.Layer) and new_annotation.__name__ == H0_surface_integral.__name__:
         return value.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL]
+
+    # retrieve base class behind NewType
+    if hasattr(new_annotation, '__call__') and hasattr(new_annotation, '__supertype__'):
+        new_annotation = new_annotation.__supertype__
+
+    if isinstance(value, new_annotation):
+        return value
 
     raise ValueError(f'Unsupported conversion {type(value)} -> {new_annotation}')
 
@@ -61,7 +65,7 @@ def naparify_measurement(function):
             original_annotation = sig.parameters[key].annotation
             new_annotation = wrapper_sig.parameters[key].annotation
 
-            print('Old:', original_annotation, 'New:', new_annotation)
+            #print('Old:', original_annotation, 'New:', new_annotation)
             if original_annotation is not new_annotation:
                 converted_value = convert(value, original_annotation)
                 bound.arguments[key] = converted_value
