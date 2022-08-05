@@ -29,7 +29,7 @@ def test_curvature(make_napari_viewer):
 
     assert 'H0_arithmetic_average' in metadata
     assert 'H0_surface_integral' in metadata
-    assert 'Mean_curvature_at_lebedev_points' in features
+    assert 'Mean_curvature' in features
 
     # from napari
     widget = magicgui(measurements.calculate_mean_curvature_on_manifold)
@@ -39,7 +39,7 @@ def test_curvature(make_napari_viewer):
 
     assert 'H0_arithmetic_average' in results_layer.metadata
     assert 'H0_surface_integral' in results_layer.metadata
-    assert 'Mean_curvature_at_lebedev_points' in results_layer.features
+    assert 'Mean_curvature' in results_layer.features
 
     # Test gauss-bonnet
     measurements.gauss_bonnet_test(results_layer)
@@ -88,10 +88,10 @@ def test_compatibility_decorator2(make_napari_viewer):
     measurements.calculate_mean_curvature_on_manifold(results_layer)
     assert 'H0_arithmetic_average' in results_layer.metadata.keys()
     assert 'H0_surface_integral' in results_layer.metadata.keys()
-    assert 'Mean_curvature_at_lebedev_points' in results_layer.features.keys()
+    assert 'Mean_curvature' in results_layer.features.keys()
 
     # pass manifold to measurement function
     _, features, metadata = measurements.calculate_mean_curvature_on_manifold(results_layer.metadata['manifold'])
     assert 'H0_arithmetic_average' in metadata.keys()
     assert 'H0_surface_integral' in metadata.keys()
-    assert 'Mean_curvature_at_lebedev_points' in features.keys()
+    assert 'Mean_curvature' in features.keys()
