@@ -44,9 +44,9 @@ def gauss_bonnet_test(manifold: manifold) -> (np.ndarray, dict, dict):
                 'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
     return None, None, metadata
 
-@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS")
+@register_function(menu="Measurement > Measure mean curvature manifold (n-STRESS")
 @naparify_measurement
-def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
+def calculate_mean_curvature_on_manifold(manifold: manifold) -> (np.ndarray, dict, dict):
     """
     Calculate mean curvatures for a given manifold.
 
@@ -80,9 +80,9 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray
                                                             manifold)
 
     # aggregate results in dictionary
-    features = {'Mean_curvature_at_lebedev_points': mean_curvatures}
-    metadata = {'H0_arithmetic_average': H0_arithmetic,
-               'H0_surface_integral': H0_surface_integral}
+    features = {_METADATAKEY_MEAN_CURVATURE: mean_curvatures}
+    metadata = {_METADATAKEY_H0_ARITHMETIC_AVERAGE: H0_arithmetic,
+               _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_integral}
 
     return None, features, metadata
 
