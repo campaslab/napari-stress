@@ -32,6 +32,9 @@ contributions:
     - id: napari-stress.measure_gauss_bonnet
       python_name: napari_stress._measurements.curvature:gauss_bonnet_test
       title: Measure Gauss-Bonnet error
+    - id: napari-stress.measure_anisotropic_stress
+      python_name: napari_stress._measurements.anisotropic_stress:anisotropic_stress
+      title: Measure anisotropic stress
 
     - id: napari-stress.extract_vertex_points
       python_name: napari_stress._surface:extract_vertex_points
@@ -64,6 +67,9 @@ contributions:
     - command: napari-stress.gauss_bonnet_test
       autogenerate: true
       display_name: Measure Gauss-Bonnet error
+    - command: napari-stress.measure_anisotropic_stress
+      autogenerate: true
+      display_name: Measure anisotropic stress
 
 
     - command: napari-stress.trace_refine_surface
