@@ -20,4 +20,4 @@ from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature, create
 
 from ._sample_data import get_droplet_point_cloud
 
-_METADATAKEY_MANIFOLD = 'manifold'
+from . import types
