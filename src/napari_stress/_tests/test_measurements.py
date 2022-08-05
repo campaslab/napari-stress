@@ -41,6 +41,10 @@ def test_curvature(make_napari_viewer):
     assert 'H0_surface_integral' in results_layer.metadata
     assert 'Mean_curvature_at_lebedev_points' in results_layer.features
 
+    # anisotropic stresses
+    measurements.anisotropic_stress(results_layer, results_layer, gamma=1.0)
+    assert 'anisotropic_stress' in results_layer.features.keys()
+
     # Test gauss-bonnet
     measurements.gauss_bonnet_test(results_layer)
     assert 'Gauss_Bonnet_error' in results_layer.metadata
