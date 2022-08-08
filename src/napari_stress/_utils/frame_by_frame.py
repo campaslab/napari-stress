@@ -62,6 +62,7 @@ class TimelapseConverter:
             SurfaceData: self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
             LabelsData: self._image_to_list_of_images,
+            VectorsData: self._vectors_to_list_of_vectors
             }
 
     # Supported list data types
@@ -215,21 +216,34 @@ class TimelapseConverter:
     def _list_of_images_to_image(self, images: list) -> ImageData:
         """Convert a list of 3D image data to single 4D image data."""
         return np.stack(images)
-    
+
     # =============================================================================
     # Vectors
     # =============================================================================
 
-    def _list_of_vectors_to_vectors(self, vectors: VectorsData) -> list:
+    def _vectors_to_list_of_vectors(self, vectors: VectorsData) -> list:
+        base_points = vectors[:, 0]
+        vectors = vectors[:, 1]
+
+        # the vectors and points should abide to the same dimensions
+        point_list = self._points_to_list_of_points(base_points)
+        vector_list = self._points_to_list_of_points(vectors)
+
+        output_vectors = [
+            np.stack([pt, vec]).transpose((1, 0, 2)) for pt, vec in zip (point_list, vector_list)
+            ]
+        return output_vectors
+
+    def _list_of_vectors_to_vectors(self, vectors: list) -> VectorsData:
         base_points = [v[:, 0] for v in vectors]
         directions = [v[:, 1] for v in vectors]
-        
+
         base_points = self._list_of_points_to_points(base_points)
         directions = self._list_of_points_to_points(directions)
-        
+
         vectors = np.stack([base_points, directions]).transpose((1,0,2))
         return vectors
-        
+
 
     # =============================================================================
     # Surfaces
