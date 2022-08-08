@@ -37,12 +37,22 @@ contributions:
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
 
+    # Ellipsoids
     - id: napari-stress.fit_ellipsoid_points
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
       title: Fit PCA ellipsoid to pointcloud and return points
+
     - id: napari-stress.fit_ellipsoid_vectors
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
+
+    - id: napari-stress.fit_lsq_ellipsoid
+      python_name: napari_stress.approximation:least_squares_ellipsoid
+      title: Fit least squares ellipsoid
+
+    - id: napari-stress.expand_ellipsoid
+      python_name: napari_stress.approximation:expand_points_on_ellipse
+      title: Expand points on ellipsoid
 
   widgets:
     - command: napari-stress.rescale
@@ -78,12 +88,20 @@ contributions:
       autogenerate: true
       display_name: Create points from surface vertices
 
+    # Ellipsoid
     - command: napari-stress.fit_ellipsoid_points
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (points)
     - command: napari-stress.fit_ellipsoid_vectors
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
+    - command: napari-stress.fit_lsq_ellipsoid
+      autogenerate: true
+      display_name: Fit least squares ellipsoid
+    - command: napari-stress.expand_ellipsoid
+      autogenerate: true
+      display_name: Expand points on ellipsoid
+
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data

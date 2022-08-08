@@ -1,31 +1,29 @@
-# Spherical harmonics expansion
+# Ellipse fitting
 
 This tutorial shows how to handle ellipse-fitting in napari-stress. To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (`File > Open Sample > napari-stress: Dropplet pointcloud`).
 
 ![](../../imgs/viewer_screenshots/open_sample_droplet.png)
 ![](../../imgs/viewer_screenshots/open_sample_droplet1.png)
 
-## Ellipse-fitting: Points
+## Napari-stress implementation
+This section describes the implementation taken from the [stress repository](https://github.com/campaslab/STRESS). It provides a least-squares approach to obtain an ellipsoid which is represented by its major axes. A pointcloud can be obtained by combining the input points and the ellipsoid object. First, fit an ellipse by selecting `Tools > Points > Fit ellipsoid to pointcloud (n-STRESS)` and click on `Run`. The resulting image should look like this:
 
-The implemented function provides two separate functions. One can be used to return the ellipsoid as a pointcloud (with points on the surface of the fitted ellipsoid) and another that returns the major and minor axis of the ellipsoid as a [vectors layer](https://napari.org/howtos/layers/vectors.html) in napari.
+![](./imgs/demo_fit_ellipsoid5.png)
 
-To do the former, select the respective function from the plugins menu (`Plugins > napari-stress > Fit ellipsoid to pointcloud (points)`):
+If you want to retrieve a pointcloud on the surface of the fitted ellipsoid, you can calculate the corresponding point locations of the input pointcloud on the surface of the fitted ellipsoid with `Tools > Points > Points > Expand point locations on ellipsoid (n-STRESS)`:
+
+![](./imgs/demo_fit_ellipsoid6.png)
+
+
+## Vedo implementation
+This section describes the implementation taken from the [vedo repository](https://vedo.embl.es/). It uses a [pca-algorithm](https://en.wikipedia.org/wiki/Principal_component_analysis) to calculate the minor/major axes. Use it via `Tools > Points > Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)`. As an additional parameter, it requires you to set which percentage of the input points should be contained by the surface of the fitted ellipse, which is controlled by the `inside fraction` parameter. 
 
 ![](./imgs/demo_fit_ellipsoid1.png)
 
-The `inside_fraction` parameter controls how many of the points of the input pointcloud will be comprised within the volume of the fitted ellipsoid. Running this widget will give this result:
-
-![](./imgs/demo_fit_ellipsoid2.png)
-
-## Ellipse-fitting: Vectors
-
-Sometimes it may be of higher interest to retrieve not points on a surface, but rather other descriptive parameters of the ellipsoid, such as the major and minor axis. This can be done with the sister-plugin of the above-described function (`Plugins > napari-stress > Fit ellipsoid to pointcloud (vectors)`):
-
-![](./imgs/demo_fit_ellipsoid3.png)
-
-The options are the same as above, including an additional option to normalize the returned vectors to a length of 1. This returns the following output:
+Similar to the napari-stress implementation, this returns a vectors layer:
 
 ![](./imgs/demo_fit_ellipsoid4.png)
 
+Again, you can use the expansion widget (`Tools > Points > Points > Expand point locations on ellipsoid (n-STRESS)`) to create a pointcloud from this:
 
-
+![](./imgs/demo_fit_ellipsoid2.png)
