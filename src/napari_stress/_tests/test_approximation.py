@@ -57,3 +57,12 @@ def test_lsq_ellipsoid2():
                                                              rotated_points)
 
     assert np.allclose(rotated_points, expanded_points)
+
+def test_pairwise_distance():
+    from napari_stress import approximation, get_droplet_point_cloud
+    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
+
+    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
+    fitted_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+
+    distances = approximation.pairwise_point_distances(pointcloud, fitted_points)

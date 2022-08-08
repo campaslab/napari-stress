@@ -54,6 +54,10 @@ contributions:
       python_name: napari_stress.approximation:expand_points_on_ellipse
       title: Expand points on ellipsoid
 
+    - id: napari-stress.pairwise_distance
+      python_name: napari_stress.approximation:pairwise_point_distances
+      title: Pairwise point distance
+
   widgets:
     - command: napari-stress.rescale
       autogenerate: true
@@ -101,6 +105,9 @@ contributions:
     - command: napari-stress.expand_ellipsoid
       autogenerate: true
       display_name: Expand points on ellipsoid
+    - command: napari-stress.pairwise_distance
+      autogenerate: true
+      display_name: Pairwise point distance
 
 
   sample_data:
