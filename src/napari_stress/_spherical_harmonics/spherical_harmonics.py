@@ -14,7 +14,6 @@ import pyshtools
 import warnings
 
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
-from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
 from .._stress import sph_func_SPB as sph_f
 from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
@@ -79,8 +78,11 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     -------
     PointsData
     """
+    from .. import _approximation as approximation
+    from .._utils.coordinate_conversion import cartesian_to_elliptical
     # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-    longitude, latitude = cartesian_to_elliptical_coordinates(points)
+    ellipsoid = approximation.least_squares_ellipsoid(points)
+    longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
 
     # This implementation fits a superposition of three sets of spherical harmonics
     # to the data, one for each cardinal direction (x/y/z).

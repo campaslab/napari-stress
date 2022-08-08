@@ -12,8 +12,10 @@ def test_lsq_ellipsoid():
 def test_lsq_ellipsoid2():
     import vedo
     from napari_stress import approximation
-    from napari_stress._approximation.utils import (_center_from_ellipsoid,
-                                                    _axes_lengths_from_ellipsoid)
+    from napari_stress._utils.coordinate_conversion import (
+        _center_from_ellipsoid,
+        _axes_lengths_from_ellipsoid
+        )
 
     from scipy.spatial.transform import Rotation as R
 

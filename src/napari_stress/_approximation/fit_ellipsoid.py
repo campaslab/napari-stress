@@ -21,7 +21,7 @@ def least_squares_ellipsoid(points: PointsData
     -------
     VectorsData: Major/minor axis of the ellipsoid
     """
-    from .utils import polynomial_to_parameters3D
+    from .._utils.coordinate_conversion import polynomial_to_parameters3D
     #finds best fit ellipsoid. Found at http://www.juddzone.com/ALGORITHMS/least_squares_3D_ellipsoid.html
     #least squares fit to a 3D-ellipsoid
     #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz  = 1
@@ -91,7 +91,7 @@ def expand_points_on_ellipse(fitted_ellipsoid: VectorsData,
     PointsData
 
     """
-    from .utils import (
+    from .._utils.coordinate_conversion import (
         cartesian_to_elliptical,
         elliptical_to_cartesian
         )
