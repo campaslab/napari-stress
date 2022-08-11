@@ -43,6 +43,11 @@ contributions:
     - id: napari-stress.fit_ellipsoid_vectors
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
+      
+    # Plotting
+    - id: napari-stress.features_histogram
+      python_name: napari_stress:FeaturesHistogramWidget
+      title: Features Histogram
 
   widgets:
     - command: napari-stress.rescale
@@ -84,6 +89,10 @@ contributions:
     - command: napari-stress.fit_ellipsoid_vectors
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
+      
+    # Plotting
+    - command: napari-stress.features_histogram
+      display_name: Features Histogram
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data

@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  4 16:42:04 2022
+Created on Thu Aug 11 15:09:42 2022
 
 @author: mazo260d
 """
 
 import napari
-from napari_stress._spherical_harmonics.spherical_harmonics_napari import fit_spherical_harmonics
-# from napari_stress._spherical_harmomics.toolbox import spherical_harmonics_toolbox
 from magicgui import magicgui
-import pandas as pd
 import numpy as np
-from napari_matplotlib import HistogramWidget 
+from napari_matplotlib import HistogramWidget
 from napari_matplotlib.util import Interval
 from magicgui.widgets import ComboBox
 from typing import List, Optional, Tuple
@@ -113,7 +110,7 @@ class FeaturesHistogramWidget(HistogramWidget):
         data = [data_x, bins]
 
         x_axis_name = self.x_axis_key.replace("_", " ")
-        y_axis_name = '# of occurrences'#self.y_axis_key.replace("_", " ")
+        y_axis_name = 'Occurrences [#]'
 
         return data, x_axis_name, y_axis_name
 
@@ -140,83 +137,17 @@ class FeaturesHistogramWidget(HistogramWidget):
             return
 
         
-        self.axes.hist(data[0], bins=data[1])#, label=layer.name)
+        
+        N, bins, patches = self.axes.hist(data[0], bins=data[1],
+                       edgecolor='white',
+                       linewidth=0.3, label=self.layers[0].name)
+        # Set histogram style:
+        colormapping = self.layers[0].face_colormap
+        bins_norm = (bins - bins.min())/(bins.max() - bins.min())
+        colors = colormapping.map(bins_norm)
+        for idx, patch in enumerate(patches):
+            patch.set_facecolor(colors[idx])
+
 
         self.axes.set_xlabel(x_axis_name)
         self.axes.set_ylabel(y_axis_name)
-
-# from napari_matplotlib.base import NapariMPLWidget
-# from napari_matplotlib.util import Interval
-# import numpy as np
-
-# _COLORS = {"r": "tab:red", "g": "tab:green", "b": "tab:blue"}
-
-
-# class HistogramWidget(NapariMPLWidget):
-#     """
-#     Display a histogram of the currently selected layer.
-#     """
-
-#     n_layers_input = Interval(1, 1)
-#     input_layer_types = (napari.layers.Image,
-#                          napari.layers.Points,)
-#     # Include also Surface and Labels
-#     # Decide where to specify the property to be taken: data, roperties, feature or metadata
-#     # for now, using feature
-
-#     def __init__(self, napari_viewer: napari.viewer.Viewer):
-#         super().__init__(napari_viewer)
-#         self.axes = self.canvas.figure.subplots()
-#         self.update_layers(None)
-
-#     def clear(self) -> None:
-#         self.axes.clear()
-
-#     def draw(self) -> None:
-#         """
-#         Clear the axes and histogram the currently selected layer/slice.
-#         """
-#         layer = self.layers[0]
-#         values = layer.features['error']
-#         bins = np.linspace(np.min(values), np.max(values), 100)
-
-#         if layer.data.ndim - layer.rgb == 3:
-#             # 3D data, can be single channel or RGB
-#             data = layer.data[self.current_z]
-#             self.axes.set_title(f"z={self.current_z}")
-#         else:
-#             data = layer.data
-
-#         if layer.rgb:
-#             # Histogram RGB channels independently
-#             for i, c in enumerate("rgb"):
-#                 self.axes.hist(
-#                     data[..., i].ravel(),
-#                     bins=bins,
-#                     label=c,
-#                     histtype="step",
-#                     color=_COLORS[c],
-#                 )
-#         else:
-#             self.axes.hist(data.ravel(), bins=bins, label=layer.name)
-
-#         self.axes.legend()
-
-
-viewer = napari.Viewer()
-
-df = pd.read_csv('../sample_data/dropplet_point_cloud.csv')
-
-# Add points data to napari
-viewer.add_points(df.iloc[:,1:].values, size=1, visible=False)
-# Loads spherical harmonics widget
-widget_fit_harmonics = magicgui(fit_spherical_harmonics)
-viewer.window.add_dock_widget(widget_fit_harmonics)
-# Run spherical harmonics widget with default parameters
-widget_fit_harmonics()
-viewer.dims.ndisplay=3 # Show data in 3D
-
-widget_toolbox = FeaturesHistogramWidget(viewer)
-viewer.window.add_dock_widget(widget_toolbox)
-
-
