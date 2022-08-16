@@ -1,19 +1,17 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug 11 15:09:42 2022
-
-@author: mazo260d
-"""
-
 import napari
 from magicgui import magicgui
 import numpy as np
+import pandas as pd
 from napari_matplotlib import HistogramWidget
 from napari_matplotlib.util import Interval
 from magicgui.widgets import ComboBox
 from typing import List, Optional, Tuple
+from qtpy.QtWidgets import QFileDialog
+
 
 class FeaturesHistogramWidget(HistogramWidget):
+    """Plot widget to display histogram of selected layer features."""
+
     n_layers_input = Interval(1, 1)
     # All layers that have a .features attributes
     input_layer_types = (
@@ -32,12 +30,16 @@ class FeaturesHistogramWidget(HistogramWidget):
             n_bins={"value": 50, "widget_type": "SpinBox"},
             call_button="Update",
         )
-
+        self._export_button = magicgui(
+            self.export,
+            call_button='Export plot as csv'
+            )
         self.layout().addWidget(self._key_selection_widget.native)
+        self.layout().addWidget(self._export_button.native)
 
     @property
     def x_axis_key(self) -> Optional[str]:
-        """Key to access x axis data from the FeaturesTable"""
+        """Key to access x axis data from the FeaturesTable."""
         return self._x_axis_key
 
     @x_axis_key.setter
@@ -47,7 +49,7 @@ class FeaturesHistogramWidget(HistogramWidget):
 
     @property
     def n_bins(self) -> Optional[str]:
-        """Key to access y axis data from the FeaturesTable"""
+        """Key to access y axis data from the FeaturesTable."""
         return self._n_bins
 
     # @n_bins.setter
@@ -56,7 +58,7 @@ class FeaturesHistogramWidget(HistogramWidget):
     #     self._draw()
 
     def _set_axis_keys(self, x_axis_key: str, n_bins: int) -> None:
-        """Set both axis keys and then redraw the plot"""
+        """Set both axis keys and then redraw the plot."""
         self._x_axis_key = x_axis_key
         self._n_bins = n_bins
         self._draw()
@@ -66,6 +68,7 @@ class FeaturesHistogramWidget(HistogramWidget):
     ) -> List[str]:
         """
         Get the valid axis keys from the layer FeatureTable.
+
         Returns
         -------
         axis_keys : List[str]
@@ -79,6 +82,7 @@ class FeaturesHistogramWidget(HistogramWidget):
 
     def _get_data(self) -> Tuple[List[np.ndarray], str, int]:
         """Get the plot data.
+
         Returns
         -------
         data : List[np.ndarray]
@@ -115,9 +119,9 @@ class FeaturesHistogramWidget(HistogramWidget):
         return data, x_axis_name, y_axis_name
 
     def _on_update_layers(self) -> None:
-        """
-        This is called when the layer selection changes by
+        """This is called when the layer selection changes by
         ``self.update_layers()``.
+
         """
         if hasattr(self, "_key_selection_widget"):
             self._key_selection_widget.reset_choices()
@@ -125,22 +129,19 @@ class FeaturesHistogramWidget(HistogramWidget):
         # reset the axis keys
         self._x_axis_key = None
         self._n_bins = None
-    
+
     def draw(self) -> None:
-        """
-        Clear the axes and histogram the currently selected layer/slice.
-        """
+        """Clear the axes and histogram the currently selected layer/slice."""
         data, x_axis_name, y_axis_name = self._get_data()
 
         if len(data) == 0:
             # don't plot if there isn't data
             return
 
-        
-        
         N, bins, patches = self.axes.hist(data[0], bins=data[1],
-                       edgecolor='white',
-                       linewidth=0.3, label=self.layers[0].name)
+                                          edgecolor='white',
+                                          linewidth=0.3,
+                                          label=self.layers[0].name)
         # Set histogram style:
         colormapping = self.layers[0].face_colormap
         bins_norm = (bins - bins.min())/(bins.max() - bins.min())
@@ -148,6 +149,18 @@ class FeaturesHistogramWidget(HistogramWidget):
         for idx, patch in enumerate(patches):
             patch.set_facecolor(colors[idx])
 
-
         self.axes.set_xlabel(x_axis_name)
         self.axes.set_ylabel(y_axis_name)
+
+    def export(self) -> None:
+        """Export plotted data as csv."""
+        if not self.axes.has_data():
+            print('No data plotted')
+            return
+        df_to_save = pd.DataFrame({self.axes.get_xlabel(): self.bins_norm[:-1],
+                                   self.axes.get_ylabel(): self.N})
+        fname = QFileDialog.getSaveFileName(self, 'Save plotted data',
+                                            'c:\\',
+                                            "Csv files (*.csv)")
+        df_to_save.to_csv(fname[0])
+        return
