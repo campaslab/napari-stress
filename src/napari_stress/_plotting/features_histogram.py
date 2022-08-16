@@ -157,6 +157,8 @@ class FeaturesHistogramWidget(HistogramWidget):
         if not self.axes.has_data():
             print('No data plotted')
             return
+        # Not including last bin because len(bins) = len(N) + 1
+        # https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html
         df_to_save = pd.DataFrame({self.axes.get_xlabel(): self.bins_norm[:-1],
                                    self.axes.get_ylabel(): self.N})
         fname = QFileDialog.getSaveFileName(self, 'Save plotted data',
