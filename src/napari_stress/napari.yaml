@@ -47,7 +47,7 @@ contributions:
     # Plotting
     - id: napari-stress.features_histogram
       python_name: napari_stress:FeaturesHistogramWidget
-      title: Features Histogram
+      title: Visualize features (histogram)
 
   widgets:
     - command: napari-stress.rescale
