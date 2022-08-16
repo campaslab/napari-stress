@@ -30,7 +30,7 @@ class FeaturesHistogramWidget(HistogramWidget):
             self._set_axis_keys,
             x_axis_key={"choices": self._get_valid_axis_keys},
             n_bins={"value": 50, "widget_type": "SpinBox"},
-            call_button="plot",
+            call_button="Update",
         )
 
         self.layout().addWidget(self._key_selection_widget.native)
