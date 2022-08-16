@@ -92,7 +92,7 @@ contributions:
       
     # Plotting
     - command: napari-stress.features_histogram
-      display_name: Features Histogram
+      display_name: Visualize features (histogram)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
