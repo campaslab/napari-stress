@@ -20,6 +20,6 @@ from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature, create
 
 from ._sample_data import get_droplet_point_cloud
 
-from ._visualization.features_histogram import FeaturesHistogramWidget
+from ._plotting.features_histogram import FeaturesHistogramWidget
 
 _METADATAKEY_MANIFOLD = 'manifold'

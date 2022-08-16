@@ -138,14 +138,14 @@ class FeaturesHistogramWidget(HistogramWidget):
             # don't plot if there isn't data
             return
 
-        N, bins, patches = self.axes.hist(data[0], bins=data[1],
-                                          edgecolor='white',
-                                          linewidth=0.3,
-                                          label=self.layers[0].name)
+        self.N, bins, patches = self.axes.hist(data[0], bins=data[1],
+                                               edgecolor='white',
+                                               linewidth=0.3,
+                                               label=self.layers[0].name)
         # Set histogram style:
         colormapping = self.layers[0].face_colormap
-        bins_norm = (bins - bins.min())/(bins.max() - bins.min())
-        colors = colormapping.map(bins_norm)
+        self.bins_norm = (bins - bins.min())/(bins.max() - bins.min())
+        colors = colormapping.map(self.bins_norm)
         for idx, patch in enumerate(patches):
             patch.set_facecolor(colors[idx])
 
