@@ -1,6 +1,7 @@
 __version__ = "0.0.15"
 
 from . import _measurements as measurements
+from . import _approximation as approximation
 
 from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
