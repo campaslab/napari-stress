@@ -45,6 +45,11 @@ contributions:
     - id: napari-stress.fit_ellipsoid_vectors
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
+      
+    # Plotting
+    - id: napari-stress.features_histogram
+      python_name: napari_stress:FeaturesHistogramWidget
+      title: Visualize features (histogram)
 
     - id: napari-stress.fit_lsq_ellipsoid
       python_name: napari_stress.approximation:least_squares_ellipsoid
@@ -109,6 +114,9 @@ contributions:
       autogenerate: true
       display_name: Pairwise point distance
 
+    # Plotting
+    - command: napari-stress.features_histogram
+      display_name: Visualize features (histogram)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
