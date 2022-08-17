@@ -37,9 +37,11 @@ contributions:
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
 
+    # Ellipsoids
     - id: napari-stress.fit_ellipsoid_points
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
       title: Fit PCA ellipsoid to pointcloud and return points
+
     - id: napari-stress.fit_ellipsoid_vectors
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
@@ -47,7 +49,19 @@ contributions:
     # Plotting
     - id: napari-stress.features_histogram
       python_name: napari_stress:FeaturesHistogramWidget
-      title: Features Histogram
+      title: Visualize features (histogram)
+
+    - id: napari-stress.fit_lsq_ellipsoid
+      python_name: napari_stress.approximation:least_squares_ellipsoid
+      title: Fit least squares ellipsoid
+
+    - id: napari-stress.expand_ellipsoid
+      python_name: napari_stress.approximation:expand_points_on_ellipse
+      title: Expand points on ellipsoid
+
+    - id: napari-stress.pairwise_distance
+      python_name: napari_stress.approximation:pairwise_point_distances
+      title: Pairwise point distance
 
   widgets:
     - command: napari-stress.rescale
@@ -83,16 +97,26 @@ contributions:
       autogenerate: true
       display_name: Create points from surface vertices
 
+    # Ellipsoid
     - command: napari-stress.fit_ellipsoid_points
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (points)
     - command: napari-stress.fit_ellipsoid_vectors
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
-      
+    - command: napari-stress.fit_lsq_ellipsoid
+      autogenerate: true
+      display_name: Fit least squares ellipsoid
+    - command: napari-stress.expand_ellipsoid
+      autogenerate: true
+      display_name: Expand points on ellipsoid
+    - command: napari-stress.pairwise_distance
+      autogenerate: true
+      display_name: Pairwise point distance
+
     # Plotting
     - command: napari-stress.features_histogram
-      display_name: Features Histogram
+      display_name: Visualize features (histogram)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data

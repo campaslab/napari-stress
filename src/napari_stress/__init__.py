@@ -1,6 +1,7 @@
 __version__ = "0.0.15"
 
 from . import _measurements as measurements
+from . import _approximation as approximation
 
 from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
@@ -20,6 +21,6 @@ from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature, create
 
 from ._sample_data import get_droplet_point_cloud
 
-from ._visualization.features_histogram import FeaturesHistogramWidget
+from ._plotting.features_histogram import FeaturesHistogramWidget
 
 _METADATAKEY_MANIFOLD = 'manifold'
