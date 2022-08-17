@@ -27,4 +27,4 @@ chapters:
   - file: tutorials/point_and_click/demo_fit_ellipsoid
   - file: tutorials/point_and_click/demo_spherical_harmonics
   - file: tutorials/point_and_click/demo_measure_curvature
-  - file: tutorials/point_and_click/demo_visualize_features.md
+  - file: tutorials/point_and_click/demo_visualize_features
