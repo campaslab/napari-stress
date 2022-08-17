@@ -26,3 +26,7 @@ In the dropdown, you'll see all available measurements for the selected layer - 
 ![](./imgs/demo_visualize_features3.png)
 
 To plot a different feature, select it from the dropdown and click `Update` to apply.
+
+## Export data
+
+Lastly, you can export the displayed (histogram) data as a `.csv` file using the `Export plot as csv` button.
