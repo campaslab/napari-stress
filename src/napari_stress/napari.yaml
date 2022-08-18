@@ -32,6 +32,9 @@ contributions:
     - id: napari-stress.measure_gauss_bonnet
       python_name: napari_stress._measurements.curvature:gauss_bonnet_test
       title: Measure Gauss-Bonnet error
+    - id: napari-stress.curvature_on_ellipsoid
+      python_name: napari_stress.approximation:curvature_on_ellipsoid
+      title: Measure curvature on ellipsoid
 
     - id: napari-stress.extract_vertex_points
       python_name: napari_stress._surface:extract_vertex_points
@@ -45,7 +48,7 @@ contributions:
     - id: napari-stress.fit_ellipsoid_vectors
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
-      
+
     # Plotting
     - id: napari-stress.features_histogram
       python_name: napari_stress:FeaturesHistogramWidget
@@ -83,6 +86,9 @@ contributions:
     - command: napari-stress.gauss_bonnet_test
       autogenerate: true
       display_name: Measure Gauss-Bonnet error
+    - command: napari-stress.curvature_on_ellipsoid
+      autogenerate: true
+      display_name: Mean curvature on ellipsoid
 
 
     - command: napari-stress.trace_refine_surface
