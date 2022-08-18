@@ -7,9 +7,76 @@ from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 from .utils import naparify_measurement
 
 from napari_tools_menu import register_function
-
-
 import numpy as np
+
+from napari.types import PointsData, VectorsData
+import napari
+
+from .._utils import coordinate_conversion as conversion
+from ..types import (_METADATAKEY_MEAN_CURVATURE,
+                     _METADATAKEY_H0_ELLIPSOID)
+
+@register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
+def curvature_on_ellipsoid(ellipsoid: VectorsData,
+                           sample_points: PointsData,
+                           viewer: napari.Viewer = None) -> (np.ndarray, dict, dict):
+    """
+    Calculate curvature at sample points on the surface of an ellipse.
+
+    Parameters
+    ----------
+    ellipsoid : VectorsData
+    sample_points : PointsData
+        points on the ellipse surface. Can be generated from a pointcloud using
+        the `approximation.expand_points_on_ellipse` function
+
+    Returns
+    -------
+    sample_points : np.ndarray
+        Points at which curvature is measured
+    features: dict
+        dictionary containing mean curvature values at sample points
+    metadata: dict
+        dictionary containing global mean curvature H0 of ellipsoid
+
+    See Also
+    --------
+    https://mathworld.wolfram.com/Ellipsoid.html
+
+    """
+    lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
+    a0 = lengths[0]
+    a1 = lengths[1]
+    a2 = lengths[2]
+    U, V = conversion.cartesian_to_elliptical(ellipsoid, sample_points)
+
+    # calculate point-wise mean curvature H_i
+    num_H_ellps = a0*a1*a2* ( 3.*(a0**2 + a1**2) + 2.*(a2**2) + (a0**2 + a1**2 -2.*a2**2)*np.cos(2.*V) - 2.*(a0**2 - a1**2)*np.cos(2.*U)*np.sin(V)**2 )
+    den_H_ellps = 8.*( (a0*a1*np.cos(V))**2 + ( a2*np.sin(V) )**2 * ( (a1*np.cos(U))**2 + (a0*np.sin(U))**2 ) )**1.5
+    H_ellps_pts = (num_H_ellps/den_H_ellps).squeeze()
+
+    # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
+    H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
+
+    # add to viewer if it doesn't exist.
+    properties, features, metadata = {}, {}, {}
+    features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
+    metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
+
+    properties['features'] = features
+    properties['face_color'] = _METADATAKEY_MEAN_CURVATURE
+    properties['size'] = 0.5
+    properties['name'] = 'Result of mean curvature on ellipsoid'
+
+    if viewer is not None:
+        if properties['name'] not in viewer.layers:
+            viewer.add_points(sample_points, **properties)
+        else:
+            layer = viewer.layers[properties['name']]
+            layer.features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
+            layer.metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
+
+    return sample_points, features, metadata
 
 @register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
 @naparify_measurement

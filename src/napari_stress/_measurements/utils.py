@@ -5,7 +5,7 @@ import napari
 def convert(value, new_annotation):
     """Check if an object is of a specific type and convert if it isn't."""
     from .._stress.manifold_SPB import manifold
-    from napari_stress import _METADATAKEY_MANIFOLD
+    from ..types import _METADATAKEY_MANIFOLD
 
     if isinstance(value, new_annotation):
         return value
