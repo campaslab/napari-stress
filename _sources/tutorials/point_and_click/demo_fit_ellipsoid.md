@@ -27,3 +27,11 @@ Similar to the napari-stress implementation, this returns a vectors layer:
 Again, you can use the expansion widget (`Tools > Points > Points > Expand point locations on ellipsoid (n-STRESS)`) to create a pointcloud from this:
 
 ![](./imgs/demo_fit_ellipsoid2.png)
+
+## Mean curvature
+
+Lastly, you can measure mean curvature on the surface of this ellipse. To do so, use the `Tools > Measurement > Mean curvature on ellipsoid (n-STRESS)` plugin from the tools menu. As input, you should select the fitted ellipsoid as well as a set of points on the surface of the ellipsoid. You can use the previously obtained points (`Expand point locations on ellipsoid (n-STRESS)`) as input. The result will be the following:
+
+![](./imgs/demo_fit_ellipsoid7.png)
+
+You can also use the built-in [feature visualization widget](point_and_click:visualize_features) to show, for instance, a hiostogram of the curvature on the surface.

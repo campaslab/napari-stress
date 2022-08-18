@@ -1,8 +1,10 @@
+(point_and_click.visualize_features)=
 # Visualize measurements
 
 Napari-stress offers functionality to visualize measured data interactively in the napari viewer. This tutorial provides guidance on how to use these. 
 
 * [Visualizing features](#visualize-features)
+* [Export data](#export-data)
 
 ## Sample data
 
@@ -27,6 +29,6 @@ In the dropdown, you'll see all available measurements for the selected layer - 
 
 To plot a different feature, select it from the dropdown and click `Update` to apply.
 
-## Export data
+## Export data <a class="anchor" id="export-data"></a>
 
 Lastly, you can export the displayed (histogram) data as a `.csv` file using the `Export plot as csv` button.
