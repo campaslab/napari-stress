@@ -60,6 +60,24 @@ def test_lsq_ellipsoid2():
 
     assert np.allclose(rotated_points, expanded_points)
 
+def test_curvature_on_ellipsoid(make_napari_viewer):
+    import napari_stress
+    from napari_stress import approximation, measurements
+
+    pointcloud = napari_stress.get_droplet_point_cloud()[0][0][:, 1:]
+    ellipsoid_stress = approximation.least_squares_ellipsoid(pointcloud)
+    fitted_points_stress = approximation.expand_points_on_ellipse(ellipsoid_stress, pointcloud)
+    data, features, metadata = measurements.curvature_on_ellipsoid(ellipsoid_stress, fitted_points_stress)
+
+    viewer = make_napari_viewer()
+    viewer.add_points(fitted_points_stress)
+    viewer.add_vectors(ellipsoid_stress)
+    data, features, metadata = measurements.curvature_on_ellipsoid(ellipsoid_stress,
+                                                                   fitted_points_stress,
+                                                                   viewer=viewer)
+    assert 'Result of mean curvature on ellipsoid' in viewer.layers
+
+
 def test_pairwise_distance():
     from napari_stress import approximation, get_droplet_point_cloud
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
