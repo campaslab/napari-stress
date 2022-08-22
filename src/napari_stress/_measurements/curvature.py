@@ -83,6 +83,7 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
     metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
 
     properties['features'] = features
+    properties['metadata'] = metadata
     properties['face_color'] = _METADATAKEY_MEAN_CURVATURE
     properties['size'] = 0.5
     properties['name'] = 'Result of mean curvature on ellipsoid'
