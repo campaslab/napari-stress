@@ -1,26 +1,17 @@
 # -*- coding: utf-8 -*-
 from napari.types import VectorsData, PointsData
-
-from ..types import (_METADATAKEY_H_E123_ELLIPSOID,
-                     _METADATAKEY_MEAN_CURVATURE,
-                     _METADATAKEY_H0_SURFACE_INTEGRAL,
-                     _METADATAKEY_ANISO_STRESS_TISSUE,
-                     _METADATAKEY_ANISO_STRESS_CELL,
-                     _METADATAKEY_STRESS_TENSOR_CART,
-                     _METADATAKEY_STRESS_TENSOR_ELLI)
+from napari.layers import LayerDataTuple
+import numpy as np
 
 from .._stress.manifold_SPB import manifold
 from .utils import naparify_measurement
 
-import numpy as np
-
 @naparify_measurement
 def tissue_and_cell_scale_stress(pointcloud: PointsData,
-                                 ellipsoid: VectorsData,
                                  quadrature_points_on_ellipsoid: manifold,
                                  quadrature_points_on_droplet: manifold,
                                  gamma: float = 26.0,
-                                 ) -> (np.ndarray, dict, dict):
+                                 ) -> LayerDataTuple:
     """
     Calculate anisotropic cell/tissue-scale stresses.
 
@@ -59,6 +50,13 @@ def tissue_and_cell_scale_stress(pointcloud: PointsData,
 
     """
     from .. import measurements, approximation
+    from ..types import (_METADATAKEY_H_E123_ELLIPSOID,
+                         _METADATAKEY_MEAN_CURVATURE,
+                         _METADATAKEY_H0_SURFACE_INTEGRAL,
+                         _METADATAKEY_ANISO_STRESS_TISSUE,
+                         _METADATAKEY_ANISO_STRESS_CELL,
+                         _METADATAKEY_STRESS_TENSOR_CART,
+                         _METADATAKEY_STRESS_TENSOR_ELLI)
 
     # fit elliposid and get point on ellipsoid surface
     ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
