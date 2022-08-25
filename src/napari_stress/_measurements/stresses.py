@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from napari.types import VectorsData, PointsData
-from napari.layers import LayerDataTuple
+from napari.types import VectorsData, PointsData, LayerDataTuple
+from napari.layers import Layer
 import numpy as np
 
 from .._stress.manifold_SPB import manifold
 from .utils import naparify_measurement
 
-@naparify_measurement
+from typing import Tuple
+
 def tissue_and_cell_scale_stress(pointcloud: PointsData,
                                  quadrature_points_on_ellipsoid: manifold,
                                  quadrature_points_on_droplet: manifold,
@@ -56,16 +57,26 @@ def tissue_and_cell_scale_stress(pointcloud: PointsData,
                          _METADATAKEY_ANISO_STRESS_TISSUE,
                          _METADATAKEY_ANISO_STRESS_CELL,
                          _METADATAKEY_STRESS_TENSOR_CART,
-                         _METADATAKEY_STRESS_TENSOR_ELLI)
+                         _METADATAKEY_STRESS_TENSOR_ELLI,
+                         _METADATAKEY_MANIFOLD)
+    # check input types
+    layer = None
+    if isinstance(quadrature_points_on_droplet, Layer):
+        layer = quadrature_points_on_droplet
+        quadrature_points_on_droplet = quadrature_points_on_droplet.metadata[_METADATAKEY_MANIFOLD]
+
+    if isinstance(quadrature_points_on_ellipsoid, Layer):
+        quadrature_points_on_ellipsoid = quadrature_points_on_ellipsoid.metadata[_METADATAKEY_MANIFOLD]
 
     # fit elliposid and get point on ellipsoid surface
     ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
     ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
 
     # collect features: H_E123 (stress along ellipsoid axis)
-    _, _, metadata = measurements.curvature_on_ellipsoid(ellipsoid,
+    curvatures_ellipsoid = measurements.curvature_on_ellipsoid(ellipsoid,
                                                           ellipsoid_points)
-    H_ellipsoid_major_medial_minor = metadata[_METADATAKEY_H_E123_ELLIPSOID]
+
+    H_ellipsoid_major_medial_minor = curvatures_ellipsoid[]
 
     # collect features: H0_ellipsoid from spherical harmonics expansion on ellipsoid
     _, _features, _metadata = measurements.calculate_mean_curvature_on_manifold(
@@ -76,27 +87,17 @@ def tissue_and_cell_scale_stress(pointcloud: PointsData,
     # =========================================================================
     # Tissue scale
     # =========================================================================
-    # use H0_Ellpsoid to calculate tissue stress projections:
-    sigma_11_e = 2 * gamma * (H_ellipsoid_major_medial_minor[0] - H0_ellipsoid)
-    sigma_22_e = 2 * gamma * (H_ellipsoid_major_medial_minor[1] - H0_ellipsoid)
-    sigma_33_e = 2 * gamma * (H_ellipsoid_major_medial_minor[2] - H0_ellipsoid)
+    # get rotation matrix: the normalized major/minor axis vectors used as
+    # column vectors compose the orientation matrix of the ellipsoid
+    orientation_matrix = ellipsoid[:, 1].T
+    orientation_matrix = orientation_matrix / np.linalg.norm(orientation_matrix, axis=0)
 
-    # tissue stress tensor (elliptical coordinates)
-    Tissue_Stress_Tensor_elliptical = np.zeros((3,3))
-    Tissue_Stress_Tensor_elliptical[0,0] = sigma_11_e
-    Tissue_Stress_Tensor_elliptical[1,1] = sigma_22_e
-    Tissue_Stress_Tensor_elliptical[2,2] = sigma_33_e
+    Stress_Tensor_ell, Stress_Tensor_cart = tissue_stress_tensor(
+        cardinal_curvatures=H_ellipsoid_major_medial_minor,
+        H0_ellipsoid=H0_ellipsoid,
+        orientation_matrix=orientation_matrix,
+        gamma=gamma)
 
-    # get rotation matrix:
-    # the normalized major/minor axis vectors used as column vectors compose
-    # the orientation matrix of the ellipsoid
-    Rotation_matrix = ellipsoid[:, 1].T
-    Rotation_matrix = Rotation_matrix / np.linalg.norm(Rotation_matrix, axis=0)
-
-    # cartesian tissue stress tensor:
-    Tissue_Stress_Tensor_cartesian = np.dot(
-        np.dot(Rotation_matrix.T ,Tissue_Stress_Tensor_elliptical),
-        Rotation_matrix)
 
     # =========================================================================
     # Cell scale
@@ -130,13 +131,63 @@ def tissue_and_cell_scale_stress(pointcloud: PointsData,
     anisotropic_stress_cell = anisotropic_stress - anisotropic_stress_tissue
 
     features, metadata = {}, {}
-
     features[_METADATAKEY_ANISO_STRESS_TISSUE] = anisotropic_stress_tissue
     features[_METADATAKEY_ANISO_STRESS_CELL] = anisotropic_stress_cell
     metadata[_METADATAKEY_STRESS_TENSOR_ELLI] = Tissue_Stress_Tensor_elliptical
     metadata[_METADATAKEY_STRESS_TENSOR_CART] = Tissue_Stress_Tensor_cartesian
 
+    if layer is not None:
+        for key in features.keys():
+            layer.features[key] = features[key]
+        for key in metadata.keys():
+            layer.metadata[key] = metadata[key]
+
     return _, features, metadata
+
+
+def tissue_stress_tensor(cardinal_curvatures: np.ndarray,
+                         H0_ellipsoid: float,
+                         orientation_matrix: np.ndarray,
+                         gamma: float) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate tissue stress tensor(s).
+
+    Parameters
+    ----------
+    cardinal_curvatures : np.ndarray
+        mean curvatures at cardinal points on ellipsoid, e.g., at the inter-
+        section of the ellipsoid major axes and the allipsoid surface
+    H0_ellipsoid : float
+        averaged mean curvature of the ellipsoid.
+    orientation_matrix : np.ndarray
+    gamma : float
+        droplet interfacial tension in mN/m
+
+    Returns
+    -------
+    Tissue_Stress_Tensor_elliptical : np.ndarray
+        3x3 orientation matrix with stresses along ellipsoid axes
+    Tissue_Stress_Tensor_cartesian : TYPE
+        3x3 orientation matrix with stresses along cartesian axes
+
+    """
+    # use H0_Ellpsoid to calculate tissue stress projections:
+    sigma_11_e = 2 * gamma * (cardinal_curvatures[0] - H0_ellipsoid)
+    sigma_22_e = 2 * gamma * (cardinal_curvatures[1] - H0_ellipsoid)
+    sigma_33_e = 2 * gamma * (cardinal_curvatures[2] - H0_ellipsoid)
+
+    # tissue stress tensor (elliptical coordinates)
+    Tissue_Stress_Tensor_elliptical = np.zeros((3,3))
+    Tissue_Stress_Tensor_elliptical[0,0] = sigma_11_e
+    Tissue_Stress_Tensor_elliptical[1,1] = sigma_22_e
+    Tissue_Stress_Tensor_elliptical[2,2] = sigma_33_e
+
+    # cartesian tissue stress tensor:
+    Tissue_Stress_Tensor_cartesian = np.dot(
+        np.dot(cardinal_curvatures.T ,Tissue_Stress_Tensor_elliptical),
+        cardinal_curvatures)
+
+    return Tissue_Stress_Tensor_elliptical, Tissue_Stress_Tensor_cartesian
 
 
 def _cumulative_density_analysis(data: np.ndarray, alpha: float = 0.05):
