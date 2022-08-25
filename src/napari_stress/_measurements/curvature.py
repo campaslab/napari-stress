@@ -15,7 +15,11 @@ import napari
 from .._utils import coordinate_conversion as conversion
 from ..types import (_METADATAKEY_MEAN_CURVATURE,
                      _METADATAKEY_H0_ELLIPSOID,
-                     _METADATAKEY_H0_E123_ELLIPSOID)
+                     _METADATAKEY_H_E123_ELLIPSOID,
+                     _METADATAKEY_H0_SURFACE_INTEGRAL,
+                     _METADATAKEY_H0_ARITHMETIC,
+                     _METADATAKEY_GAUSS_BONNET_REL,
+                     _METADATAKEY_GAUSS_BONNET_ABS)
 
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 def curvature_on_ellipsoid(ellipsoid: VectorsData,
@@ -76,9 +80,10 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
     properties, features, metadata = {}, {}, {}
     features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
     metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
-    metadata[_METADATAKEY_H0_E123_ELLIPSOID] = H0_ellipsoid_major_minor
+    metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
 
     properties['features'] = features
+    properties['metadata'] = metadata
     properties['face_color'] = _METADATAKEY_MEAN_CURVATURE
     properties['size'] = 0.5
     properties['name'] = 'Result of mean curvature on ellipsoid'
@@ -90,6 +95,7 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
             layer = viewer.layers[properties['name']]
             layer.features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
             layer.metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
+            layer.metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
 
     return sample_points, features, metadata
 
@@ -116,8 +122,8 @@ def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
                                                 manifold.lebedev_info) - 4*np.pi
     Gauss_Bonnet_Rel_Err = abs(Gauss_Bonnet_Err)/(4*np.pi)
 
-    metadata = {'Gauss_Bonnet_error': Gauss_Bonnet_Err,
-                'Gauss_Bonnet_relative_error': Gauss_Bonnet_Rel_Err}
+    metadata = {_METADATAKEY_GAUSS_BONNET_ABS: Gauss_Bonnet_Err,
+                _METADATAKEY_GAUSS_BONNET_REL: Gauss_Bonnet_Rel_Err}
     return None, None, metadata
 
 @register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS")
@@ -155,9 +161,9 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (dict, dict
                                                             manifold)
 
     # aggregate results in dictionary
-    features = {'Mean_curvature_at_lebedev_points': mean_curvatures}
-    metadata = {'H0_arithmetic_average': H0_arithmetic,
-               'H0_surface_integral': H0_surface_integral}
+    features = {_METADATAKEY_MEAN_CURVATURE: mean_curvatures}
+    metadata = {_METADATAKEY_H0_ARITHMETIC: H0_arithmetic,
+               _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_integral}
 
     return features, metadata
 

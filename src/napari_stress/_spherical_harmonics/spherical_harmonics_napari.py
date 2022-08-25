@@ -95,7 +95,6 @@ def perform_lebedev_quadrature(points: Points,
 
     """
     metadata = points.metadata
-    features = points.features
 
     if not 'spherical_harmonics_coefficients' in metadata.keys():
         raise ValueError('Missing spherical harmonics coefficients. Use spherical harmonics expansion first')
@@ -110,10 +109,9 @@ def perform_lebedev_quadrature(points: Points,
     manifold = create_manifold(lebedev_points, lebedev_fit=LBDV_Fit, max_degree=max_degree)
     metadata['manifold'] = manifold
 
-    properties = {}
+    properties, features = {}, {}
     properties['features'] = features
     properties['metadata'] = metadata
-    properties['face_color'] = 'curvature'
     properties['size'] = 0.5
     properties['name'] = 'Result of lebedev quadrature'
 
