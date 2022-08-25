@@ -1,48 +1,42 @@
 # -*- coding: utf-8 -*-
-from napari.types import VectorsData, PointsData, LayerDataTuple
-from napari.layers import Layer
 import numpy as np
-
-from .._stress.manifold_SPB import manifold
-from .utils import naparify_measurement
 
 from typing import Tuple
 
-def tissue_and_cell_scale_stress(pointcloud: PointsData,
-                                 quadrature_points_on_ellipsoid: manifold,
-                                 quadrature_points_on_droplet: manifold,
-                                 gamma: float = 26.0,
-                                 ) -> LayerDataTuple:
+def anisotropic_stress(mean_curvature_droplet: np.ndarray,
+                       H0_droplet: float,
+                       mean_curvature_ellipsoid: np.ndarray,
+                       H0_ellipsoid: float,
+                       gamma: float = 26.0,
+                       ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Calculate anisotropic cell/tissue-scale stresses.
+    Calculate anisotropic stress from mean and averaged curvatures.
 
     Parameters
     ----------
-    pointcloud: PointsData
-        Input point cloud on droplet surface
-    quadrature_points_on_ellipsoid: manifold
-        Result of spherical harmonics expansion and subsequent lebedev
-        quadrature of points on the surface of a fitted ellipsoid
-    quadrature_points_on_droplet: manifold
-        Result of spherical harmonics expansion and subsequent lebedev
-        quadrature of points on the surface of the input pointcloud
-    gamma: Interfacial surface tension of droplet in mN/m. The default is
-        26mN/m. See also [1]
-    alpha: Lower percentile to be excluded for calculation of total anisotropic
-        stresses. Default is 0.05 (=5%)
+    mean_curvature_droplet : np.ndarray
+        mean curvature at every point on the surface of a droplet
+    H0_droplet : float
+        surface-integrated surface curvature on droplet
+    mean_curvature_ellipsoid : np.ndarray
+        mean curvature at every point on the surface of an ellipsoid that was
+        fitted to a droplet. The droplet positions must correspond to the
+        point locations on the droplet surface in terms of latitude and
+        longitude
+    H0_ellipsoid : float
+        surface-integrated surface curvature on ellipsoid
+    gamma : float, optional
+        interfacial surface tension in mN/m. The default is 26.0. See also [1].
 
     Returns
     -------
-    np.ndarray:
-        None
-    dict:
-        Dictionaries with keys `anisotropic_stress_tissue` and
-        `anisotropic_stress_cell` holding the anisotropic stresses for every
-        point on the droplet surface
-    dict:
-        Dictionary with keys `Tissue_stress_tensor_elliptical` and
-        `Tissue_stress_tensor_cartesian` holding the anisotropic stress along
-        the major/minor axes of the droplet and the cardinal image directions.
+    stress : np.ndarray
+        raw anisotropic stress on every point on the droplet surface
+    stress_tissue : np.ndarray
+        tissue-scale anisotropic stress on the droplet surface
+    stress_droplet : np.ndarray
+        cell-scale anisotropic stress on the droplet surface
+
 
     See Also
     --------
@@ -50,100 +44,12 @@ def tissue_and_cell_scale_stress(pointcloud: PointsData,
     within living embryonic tissues." Nature methods 11.2 (2014): 183-189.
 
     """
-    from .. import measurements, approximation
-    from ..types import (_METADATAKEY_H_E123_ELLIPSOID,
-                         _METADATAKEY_MEAN_CURVATURE,
-                         _METADATAKEY_H0_SURFACE_INTEGRAL,
-                         _METADATAKEY_ANISO_STRESS_TISSUE,
-                         _METADATAKEY_ANISO_STRESS_CELL,
-                         _METADATAKEY_STRESS_TENSOR_CART,
-                         _METADATAKEY_STRESS_TENSOR_ELLI,
-                         _METADATAKEY_MANIFOLD)
-    # check input types
-    layer = None
-    if isinstance(quadrature_points_on_droplet, Layer):
-        layer = quadrature_points_on_droplet
-        quadrature_points_on_droplet = quadrature_points_on_droplet.metadata[_METADATAKEY_MANIFOLD]
-
-    if isinstance(quadrature_points_on_ellipsoid, Layer):
-        quadrature_points_on_ellipsoid = quadrature_points_on_ellipsoid.metadata[_METADATAKEY_MANIFOLD]
-
-    # fit elliposid and get point on ellipsoid surface
-    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
-    ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
-
-    # collect features: H_E123 (stress along ellipsoid axis)
-    curvatures_ellipsoid = measurements.curvature_on_ellipsoid(ellipsoid,
-                                                          ellipsoid_points)
-
-    H_ellipsoid_major_medial_minor = curvatures_ellipsoid[]
-
-    # collect features: H0_ellipsoid from spherical harmonics expansion on ellipsoid
-    _, _features, _metadata = measurements.calculate_mean_curvature_on_manifold(
-        quadrature_points_on_ellipsoid)
-
-    H0_ellipsoid = _metadata[_METADATAKEY_H0_SURFACE_INTEGRAL]
-
-    # =========================================================================
-    # Tissue scale
-    # =========================================================================
-    # get rotation matrix: the normalized major/minor axis vectors used as
-    # column vectors compose the orientation matrix of the ellipsoid
-    orientation_matrix = ellipsoid[:, 1].T
-    orientation_matrix = orientation_matrix / np.linalg.norm(orientation_matrix, axis=0)
-
-    Stress_Tensor_ell, Stress_Tensor_cart = tissue_stress_tensor(
-        cardinal_curvatures=H_ellipsoid_major_medial_minor,
-        H0_ellipsoid=H0_ellipsoid,
-        orientation_matrix=orientation_matrix,
-        gamma=gamma)
+    stress = 2 * gamma * (mean_curvature_droplet - H0_droplet)
+    stress_tissue = 2 * gamma * (mean_curvature_ellipsoid - H0_ellipsoid)
+    stress_droplet = stress - stress_tissue
 
 
-    # =========================================================================
-    # Cell scale
-    # =========================================================================
-    # get quadrature points on ellipsoid surface that correspond to spherical
-    # harmonics expansion of droplet
-    quadrature_points_on_ellipsoid = approximation.expand_points_on_ellipse(
-        ellipsoid,
-        quadrature_points_on_droplet.get_coordinates())
-    _, features, metadata = measurements.curvature_on_ellipsoid(
-        ellipsoid, quadrature_points_on_ellipsoid)
-
-    mean_curvature_ellipsoid_lebedev_points = features[
-        _METADATAKEY_MEAN_CURVATURE]
-
-    # get mean curvature on doplet expansion
-    _, features, metadata = measurements.calculate_mean_curvature_on_manifold(
-        quadrature_points_on_droplet)
-
-    mean_curvature_spherical_harmonics = features[_METADATAKEY_MEAN_CURVATURE]
-    H0_spherical_harmonics = metadata[_METADATAKEY_H0_SURFACE_INTEGRAL]
-
-    anisotropic_stress = 2 * gamma * (
-        mean_curvature_spherical_harmonics - H0_spherical_harmonics
-        )
-
-    anisotropic_stress_tissue = 2 * gamma * (
-        mean_curvature_ellipsoid_lebedev_points - H0_ellipsoid
-        )
-
-    anisotropic_stress_cell = anisotropic_stress - anisotropic_stress_tissue
-
-    features, metadata = {}, {}
-    features[_METADATAKEY_ANISO_STRESS_TISSUE] = anisotropic_stress_tissue
-    features[_METADATAKEY_ANISO_STRESS_CELL] = anisotropic_stress_cell
-    metadata[_METADATAKEY_STRESS_TENSOR_ELLI] = Tissue_Stress_Tensor_elliptical
-    metadata[_METADATAKEY_STRESS_TENSOR_CART] = Tissue_Stress_Tensor_cartesian
-
-    if layer is not None:
-        for key in features.keys():
-            layer.features[key] = features[key]
-        for key in metadata.keys():
-            layer.metadata[key] = metadata[key]
-
-    return _, features, metadata
-
+    return stress, stress_tissue, stress_droplet
 
 def tissue_stress_tensor(cardinal_curvatures: np.ndarray,
                          H0_ellipsoid: float,
@@ -171,6 +77,8 @@ def tissue_stress_tensor(cardinal_curvatures: np.ndarray,
         3x3 orientation matrix with stresses along cartesian axes
 
     """
+    cardinal_curvatures = np.asarray(cardinal_curvatures)
+
     # use H0_Ellpsoid to calculate tissue stress projections:
     sigma_11_e = 2 * gamma * (cardinal_curvatures[0] - H0_ellipsoid)
     sigma_22_e = 2 * gamma * (cardinal_curvatures[1] - H0_ellipsoid)
@@ -184,8 +92,8 @@ def tissue_stress_tensor(cardinal_curvatures: np.ndarray,
 
     # cartesian tissue stress tensor:
     Tissue_Stress_Tensor_cartesian = np.dot(
-        np.dot(cardinal_curvatures.T ,Tissue_Stress_Tensor_elliptical),
-        cardinal_curvatures)
+        np.dot(orientation_matrix.T ,Tissue_Stress_Tensor_elliptical),
+        orientation_matrix)
 
     return Tissue_Stress_Tensor_elliptical, Tissue_Stress_Tensor_cartesian
 
