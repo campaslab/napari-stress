@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
-
-from .utils import naparify_measurement
 
 from napari_tools_menu import register_function
 import numpy as np
 
-from napari.types import PointsData, VectorsData
-import napari
+from napari.types import PointsData, VectorsData, LayerDataTuple
+from napari.layers import Layer
+from napari import Viewer
 
 from .._utils import coordinate_conversion as conversion
 from ..types import (_METADATAKEY_MEAN_CURVATURE,
@@ -19,12 +17,14 @@ from ..types import (_METADATAKEY_MEAN_CURVATURE,
                      _METADATAKEY_H0_SURFACE_INTEGRAL,
                      _METADATAKEY_H0_ARITHMETIC,
                      _METADATAKEY_GAUSS_BONNET_REL,
-                     _METADATAKEY_GAUSS_BONNET_ABS)
+                     _METADATAKEY_GAUSS_BONNET_ABS,
+                     manifold)
+
+from typing import Tuple
 
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 def curvature_on_ellipsoid(ellipsoid: VectorsData,
-                           sample_points: PointsData,
-                           viewer: napari.Viewer = None) -> (np.ndarray, dict, dict):
+                           sample_points: PointsData) -> LayerDataTuple:
     """
     Calculate curvature at sample points on the surface of an ellipse.
 
@@ -37,12 +37,12 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
 
     Returns
     -------
-    sample_points : np.ndarray
-        Points at which curvature is measured
-    features: dict
-        dictionary containing mean curvature values at sample points
-    metadata: dict
-        dictionary containing global mean curvature H0 of ellipsoid
+    LayerDataTuple
+        LayerDataTuple of structured `(data, properties, 'points')`. The results
+        of this function are stored in:
+            * LayerDataTuple['features']['mean_curvature']
+            * LayerDataTuple['metadata']['H_ellipsoid_major_medial_minor']
+            * LayerDataTuple['metadata']['H0_ellipsoid']
 
     See Also
     --------
@@ -88,46 +88,50 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
     properties['size'] = 0.5
     properties['name'] = 'Result of mean curvature on ellipsoid'
 
-    if viewer is not None:
-        if properties['name'] not in viewer.layers:
-            viewer.add_points(sample_points, **properties)
-        else:
-            layer = viewer.layers[properties['name']]
-            layer.features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
-            layer.metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
-            layer.metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
-
-    return sample_points, features, metadata
+    return (sample_points, properties, 'points')
 
 @register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
-@naparify_measurement
-def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
+def gauss_bonnet_test(input_manifold: manifold, viewer: Viewer = None) -> Tuple[float, float]:
     """
     Use Gauss-Bonnet theorem to measure resolution on manifold.
 
     Parameters
     ----------
-    manifold: mnfd.manifold
+    input_manifold: manifold
 
+    Returns
+    -------
+    Gauss_Bonnet_Err: float
+        Absolute error of Gauss-Bonnet-test
+    Gauss_Bonnet_Rel_Err: float
+        Relative error of Gauss-Bonnet test (absolute error divided by 4*pi)
 
     See Also
     --------
     https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem
     """
-    K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.K_A_pts,
-                                                manifold.K_B_pts,
-                                                manifold.lebedev_info)
+    layer = None
+    if isinstance(input_manifold, Layer):
+        layer = input_manifold
+        input_manifold = input_manifold.metadata[manifold.__name__]
+
+    K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(input_manifold.K_A_pts,
+                                                input_manifold.K_B_pts,
+                                                input_manifold.lebedev_info)
     Gauss_Bonnet_Err = euc_kf.Integral_on_Manny(K_lbdv_pts,
-                                                manifold,
-                                                manifold.lebedev_info) - 4*np.pi
+                                                input_manifold,
+                                                input_manifold.lebedev_info) - 4*np.pi
     Gauss_Bonnet_Rel_Err = abs(Gauss_Bonnet_Err)/(4*np.pi)
 
-    metadata = {_METADATAKEY_GAUSS_BONNET_ABS: Gauss_Bonnet_Err,
-                _METADATAKEY_GAUSS_BONNET_REL: Gauss_Bonnet_Rel_Err}
-    return None, None, metadata
+    if layer is not None:
+        layer.metadata[_METADATAKEY_GAUSS_BONNET_ABS] = Gauss_Bonnet_Err
+        layer.metadata[_METADATAKEY_GAUSS_BONNET_REL] = Gauss_Bonnet_Rel_Err
 
-@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS")
-def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (dict, dict):
+    return Gauss_Bonnet_Err, Gauss_Bonnet_Rel_Err
+
+@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS)")
+def calculate_mean_curvature_on_manifold(input_manifold: manifold
+                                         ) -> Tuple[np.ndarray, float, float]:
     """
     Calculate mean curvatures for a given manifold.
 
@@ -137,14 +141,24 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (dict, dict
 
     Returns
     -------
-    np.ndarray
-        Mean curvature value for every lebedev point.
+    mean_curvatures: np.ndarray
+        Mean curvature value for every quadrature point
+    H0_arithmetic: float
+        Average mean curvature calculated as mean of all quadrature points
+    H0_surface_integral: float
+        Average mean curvature calculated as surface-integral of manifold
+        divided by unit sphere surface
 
     """
-    normals = get_normals_on_manifold(manifold)
+    layer = None
+    if isinstance(input_manifold, Layer):
+        layer = input_manifold
+        input_manifold = input_manifold.metadata[manifold.__name__]
+
+    normals = get_normals_on_manifold(input_manifold)
 
     # Test orientation:
-    points = manifold.get_coordinates()
+    points = input_manifold.get_coordinates()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
     # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
@@ -155,24 +169,27 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (dict, dict
     if(num_pos_orr > .5 * len(centered_lbdv_pts)):
         Orientation = -1.
 
-    mean_curvatures = Orientation*euc_kf.Combine_Chart_Quad_Vals(manifold.H_A_pts, manifold.H_B_pts, manifold.lebedev_info).squeeze()
+    mean_curvatures = Orientation*euc_kf.Combine_Chart_Quad_Vals(
+        input_manifold.H_A_pts,
+        input_manifold.H_B_pts,
+        input_manifold.lebedev_info).squeeze()
     H0_arithmetic = averaged_mean_curvature(mean_curvatures)
     H0_surface_integral = surface_integrated_mean_curvature(mean_curvatures,
-                                                            manifold)
+                                                            input_manifold)
 
-    # aggregate results in dictionary
-    features = {_METADATAKEY_MEAN_CURVATURE: mean_curvatures}
-    metadata = {_METADATAKEY_H0_ARITHMETIC: H0_arithmetic,
-               _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_integral}
+    if layer is not None:
+        layer.features[_METADATAKEY_MEAN_CURVATURE] = mean_curvatures
+        layer.metadata[_METADATAKEY_H0_ARITHMETIC] = H0_arithmetic
+        layer.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL] = H0_surface_integral
 
-    return features, metadata
+    return mean_curvatures, H0_arithmetic, H0_surface_integral
 
 def averaged_mean_curvature(curvatures: np.ndarray) -> float:
     """Calculate arithmetic average of mean curvature."""
     return curvatures.flatten().mean()
 
 def surface_integrated_mean_curvature(mean_curvatures: np.ndarray,
-                                      manifold: mnfd.manifold):
+                                      manifold: manifold):
     """Calculate mean curvature by integrating surface area."""
     Integral_on_surface = euc_kf.Integral_on_Manny(mean_curvatures,
                                                    manifold,

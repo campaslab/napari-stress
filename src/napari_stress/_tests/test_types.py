@@ -16,10 +16,10 @@ def test_custom_types(make_napari_viewer):
             layer = argument
             argument = argument.metadata[manifold.__name__]
 
-        features, metadata = measurements.calculate_mean_curvature_on_manifold(argument)
+        results = measurements.calculate_mean_curvature_on_manifold(argument)
         if layer is not None:
-            layer.features[_METADATAKEY_MEAN_CURVATURE] = features[_METADATAKEY_MEAN_CURVATURE]
-        return features, metadata
+            layer.features[_METADATAKEY_MEAN_CURVATURE] = results[0]
+        return results
 
     # create ayer with manifold
     viewer = make_napari_viewer()
@@ -34,10 +34,9 @@ def test_custom_types(make_napari_viewer):
 
     widget = magicgui.magicgui(test_function)
     viewer.window.add_dock_widget(widget)
-    features, metadata = widget(viewer.layers[-1])
+    results = widget(viewer.layers[-1])
 
     assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features.keys()
-    assert _METADATAKEY_MEAN_CURVATURE in features.keys()
 
 
 if __name__ == '__main__':
