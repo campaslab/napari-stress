@@ -17,9 +17,6 @@ _METADATAKEY_H_E123_ELLIPSOID = 'H_ellipsoid_major_medial_minor'
 _METADATAKEY_GAUSS_BONNET_ABS = 'Gauss_Bonnet_error'
 _METADATAKEY_GAUSS_BONNET_REL = 'Gauss_Bonnet_relative_error'
 
-manifold = NewType("manifold", manifold)
-
-
 def _get_layers_features(gui: CategoricalWidget) -> List[layers.Layer]:
     """Retrieve layers matching gui.annotation, from the Viewer the gui is in.
 
