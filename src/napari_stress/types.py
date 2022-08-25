@@ -6,7 +6,7 @@ from napari import layers
 from napari.utils._magicgui import find_viewer_ancestor
 from magicgui import register_type
 
-from _stress.manifold_SPB import manifold
+from ._stress.manifold_SPB import manifold
 
 import numpy as np
 
@@ -56,4 +56,3 @@ register_type(
     manifold,
     choices = get_layers_features
 )
-

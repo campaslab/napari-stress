@@ -4,7 +4,7 @@ import numpy as np
 import magicgui
 
 def test_custom_types(make_napari_viewer):
-    from napari_stress.types import manifold
+    from napari_stress.types import manifold, _METADATAKEY_MEAN_CURVATURE
     from napari_stress import (measurements, get_droplet_point_cloud,
                                fit_spherical_harmonics)
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
@@ -18,7 +18,7 @@ def test_custom_types(make_napari_viewer):
 
         features, metadata = measurements.calculate_mean_curvature_on_manifold(argument)
         if layer is not None:
-            layer.features['new_result'] = features['mean_curvature']
+            layer.features[_METADATAKEY_MEAN_CURVATURE] = features[_METADATAKEY_MEAN_CURVATURE]
         return features, metadata
 
     # create ayer with manifold
@@ -34,7 +34,10 @@ def test_custom_types(make_napari_viewer):
 
     widget = magicgui.magicgui(test_function)
     viewer.window.add_dock_widget(widget)
-    widget()
+    features, metadata = widget(viewer.layers[-1])
+
+    assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features.keys()
+    assert _METADATAKEY_MEAN_CURVATURE in features.keys()
 
 
 if __name__ == '__main__':
