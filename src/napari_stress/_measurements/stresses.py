@@ -98,46 +98,46 @@ def tissue_stress_tensor(cardinal_curvatures: np.ndarray,
     return Tissue_Stress_Tensor_elliptical, Tissue_Stress_Tensor_cartesian
 
 
-def _cumulative_density_analysis(data: np.ndarray, alpha: float = 0.05):
-    """
-    Analyze distribution of given data.
+# def _cumulative_density_analysis(data: np.ndarray, alpha: float = 0.05):
+#     """
+#     Analyze distribution of given data.
 
-    Parameters
-    ----------
-    data : np.ndarray
-    alpha : float
-        percentile in the data to bve excluded from analysis
+#     Parameters
+#     ----------
+#     data : np.ndarray
+#     alpha : float
+#         percentile in the data to bve excluded from analysis
 
-    Returns
-    -------
-    results: dict
-        Dictionary with keys `lower_boundary`, `upper_boundary`,
-        `excluded_data_points` and `distribution_histogram`.
-        The `excluded_data_points` are 1 where stresses were above the given
-        alpha threshold and -1 where stresses were below the given alpha
-        threshold.
+#     Returns
+#     -------
+#     results: dict
+#         Dictionary with keys `lower_boundary`, `upper_boundary`,
+#         `excluded_data_points` and `distribution_histogram`.
+#         The `excluded_data_points` are 1 where stresses were above the given
+#         alpha threshold and -1 where stresses were below the given alpha
+#         threshold.
 
-    """
-    from scipy import stats
+#     """
+#     from scipy import stats
 
-    data = np.sort(data.flatten())
+#     data = np.sort(data.flatten())
 
-    # from: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.rv_histogram.html
-    hist_Data_Field = np.histogram(data, bins='auto', density=True)
-    hist_dist = stats.rv_histogram(hist_Data_Field)
+#     # from: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.rv_histogram.html
+#     hist_Data_Field = np.histogram(data, bins='auto', density=True)
+#     hist_dist = stats.rv_histogram(hist_Data_Field)
 
-    min_val_excl_Data_Field = hist_dist.ppf(alpha)
-    max_val_excl_Data_Field = hist_dist.ppf(1. - alpha)
+#     min_val_excl_Data_Field = hist_dist.ppf(alpha)
+#     max_val_excl_Data_Field = hist_dist.ppf(1. - alpha)
 
-    # 0: where within .5- \delta of median, -1, where CDF<\delta, 1 where CDF>1-\delta
-    curv_pts_excluded_Data_Field = np.zeros_like(data)
-    curv_pts_excluded_Data_Field = np.where(data < min_val_excl_Data_Field, -1, curv_pts_excluded_Data_Field)
-    curv_pts_excluded_Data_Field = np.where(data > max_val_excl_Data_Field, 1, curv_pts_excluded_Data_Field)
+#     # 0: where within .5- \delta of median, -1, where CDF<\delta, 1 where CDF>1-\delta
+#     curv_pts_excluded_Data_Field = np.zeros_like(data)
+#     curv_pts_excluded_Data_Field = np.where(data < min_val_excl_Data_Field, -1, curv_pts_excluded_Data_Field)
+#     curv_pts_excluded_Data_Field = np.where(data > max_val_excl_Data_Field, 1, curv_pts_excluded_Data_Field)
 
-    results = {}
-    results['lower_boundary'] = min_val_excl_Data_Field
-    results['upper_boundary'] = max_val_excl_Data_Field
-    results['excluded_data_points'] = curv_pts_excluded_Data_Field
-    results['distribution_histogram'] = hist_dist
+#     results = {}
+#     results['lower_boundary'] = min_val_excl_Data_Field
+#     results['upper_boundary'] = max_val_excl_Data_Field
+#     results['excluded_data_points'] = curv_pts_excluded_Data_Field
+#     results['distribution_histogram'] = hist_dist
 
-    return results
+#     return results
