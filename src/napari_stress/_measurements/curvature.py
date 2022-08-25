@@ -121,8 +121,7 @@ def gauss_bonnet_test(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
     return None, None, metadata
 
 @register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS")
-@naparify_measurement
-def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray, dict, dict):
+def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (dict, dict):
     """
     Calculate mean curvatures for a given manifold.
 
@@ -160,7 +159,7 @@ def calculate_mean_curvature_on_manifold(manifold: mnfd.manifold) -> (np.ndarray
     metadata = {'H0_arithmetic_average': H0_arithmetic,
                'H0_surface_integral': H0_surface_integral}
 
-    return None, features, metadata
+    return features, metadata
 
 def averaged_mean_curvature(curvatures: np.ndarray) -> float:
     """Calculate arithmetic average of mean curvature."""
