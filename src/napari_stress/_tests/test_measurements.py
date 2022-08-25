@@ -49,6 +49,38 @@ def test_curvature(make_napari_viewer):
     assert types._METADATAKEY_GAUSS_BONNET_ABS in metadata
     assert types._METADATAKEY_GAUSS_BONNET_REL in metadata
 
+def test_stresses():
+    from napari_stress import lebedev_quadrature
+    from napari_stress import (measurements, approximation,
+                               get_droplet_point_cloud,
+                               create_manifold, types)
+    from napari_stress._spherical_harmonics.spherical_harmonics import stress_spherical_harmonics_expansion
+
+    max_degree = 5
+
+    # do sh expansion
+    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
+    _, coefficients = stress_spherical_harmonics_expansion(pointcloud, max_degree=max_degree)
+    quadrature_points, lbdv_info = lebedev_quadrature(coefficients)
+    manifold = create_manifold(quadrature_points, lbdv_info, max_degree=max_degree)
+
+    # do ellipsoidal expansion
+    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
+    ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+
+    _, ellipsoid_coefficients = stress_spherical_harmonics_expansion(ellipsoid_points, max_degree=max_degree)
+    ellipsoid_quadrature_points, lbdv_info = lebedev_quadrature(ellipsoid_coefficients)
+    ellipsoid_manifold = create_manifold(ellipsoid_quadrature_points, lbdv_info, max_degree=max_degree)
+
+    _, features, metadata = measurements.tissue_and_cell_scale_stress(pointcloud=pointcloud,
+                                                                      ellipsoid=ellipsoid,
+                                                                      quadrature_points_on_ellipsoid=ellipsoid_manifold,
+                                                                      quadrature_points_on_droplet=manifold)
+
+    assert types._METADATAKEY_STRESS_TENSOR_ELLI in metadata.keys()
+    assert types._METADATAKEY_STRESS_TENSOR_CART in metadata.keys()
+    assert types._METADATAKEY_ANISO_STRESS_CELL in features.keys()
+    assert types._METADATAKEY_ANISO_STRESS_TISSUE in features.keys()
 
 def test_compatibility_decorator():
     import inspect
@@ -99,3 +131,6 @@ def test_compatibility_decorator2(make_napari_viewer):
     assert types._METADATAKEY_H0_ARITHMETIC in metadata.keys()
     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in metadata.keys()
     assert types._METADATAKEY_MEAN_CURVATURE in features.keys()
+
+if __name__ == '__main__':
+    test_stresses()

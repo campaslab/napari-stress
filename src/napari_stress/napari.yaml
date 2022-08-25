@@ -13,6 +13,10 @@ contributions:
       python_name: napari_stress._surface:reconstruct_surface
       title: Reconstruct a surface from a pointcloud
 
+    - id: napari-stress.extract_vertex_points
+      python_name: napari_stress._surface:extract_vertex_points
+      title: Extract surface vertices as points data
+
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_droplet_point_cloud
       title: Get dropplet pointcloud sample
@@ -36,9 +40,10 @@ contributions:
       python_name: napari_stress.approximation:curvature_on_ellipsoid
       title: Measure curvature on ellipsoid
 
-    - id: napari-stress.extract_vertex_points
-      python_name: napari_stress._surface:extract_vertex_points
-      title: Extract surface vertices as points data
+    # stress measurements
+    - id: napari-stress.measure_anisotropic_stresses
+      python_name: napari_stress.measurements:tissue_and_cell_scale_stress
+      title: Tissue and cell-scale stresses
 
     # Ellipsoids
     - id: napari-stress.fit_ellipsoid_points
@@ -90,6 +95,10 @@ contributions:
       autogenerate: true
       display_name: Mean curvature on ellipsoid
 
+    # Measurement: stresses
+    - command: napari-stress.measure_anisotropic_stresses
+      autogenerate: true
+      display_name: Tissue and cell-scale stresses
 
     - command: napari-stress.trace_refine_surface
       autogenerate: true
