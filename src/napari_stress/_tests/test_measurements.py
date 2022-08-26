@@ -82,6 +82,7 @@ def test_stresses():
     measurements.anisotropic_stress(H_i, H0,
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
+    measurements.maximal_tissue_anisotropy(ellipsoid)
 
 
 def test_compatibility_decorator():
