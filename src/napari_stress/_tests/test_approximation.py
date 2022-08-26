@@ -71,19 +71,12 @@ def test_curvature_on_ellipsoid(make_napari_viewer):
     viewer = make_napari_viewer()
     viewer.add_points(fitted_points_stress)
     viewer.add_vectors(ellipsoid_stress)
-    data, features, metadata = measurements.curvature_on_ellipsoid(ellipsoid_stress,
-                                                                   fitted_points_stress,
-                                                                   viewer=viewer)
-    assert 'Result of mean curvature on ellipsoid' in viewer.layers
-    result_layer = viewer.layers['Result of mean curvature on ellipsoid']
+    results = measurements.curvature_on_ellipsoid(ellipsoid_stress,
+                                                  fitted_points_stress)
 
-    assert types._METADATAKEY_H_E123_ELLIPSOID in result_layer.metadata.keys()
-    assert types._METADATAKEY_H0_ELLIPSOID in result_layer.metadata.keys()
-    assert types._METADATAKEY_MEAN_CURVATURE in result_layer.features.keys()
-
-    assert types._METADATAKEY_H_E123_ELLIPSOID in result_layer.metadata.keys()
-    assert types._METADATAKEY_H0_ELLIPSOID in result_layer.metadata.keys()
-    assert types._METADATAKEY_MEAN_CURVATURE in result_layer.features.keys()
+    assert types._METADATAKEY_H_E123_ELLIPSOID in results[1]['metadata'].keys()
+    assert types._METADATAKEY_H0_ELLIPSOID in results[1]['metadata'].keys()
+    assert types._METADATAKEY_MEAN_CURVATURE in results[1]['features'].keys()
 
 
 def test_pairwise_distance():
@@ -94,3 +87,7 @@ def test_pairwise_distance():
     fitted_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
 
     distances = approximation.pairwise_point_distances(pointcloud, fitted_points)
+
+if __name__ == '__main__':
+    import napari
+    test_curvature_on_ellipsoid(napari.Viewer)
