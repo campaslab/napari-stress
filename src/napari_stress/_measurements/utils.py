@@ -7,7 +7,7 @@ def convert(value, new_annotation):
     from .._stress.manifold_SPB import manifold
     from ..types import _METADATAKEY_MANIFOLD
 
-    if isinstance(value, new_annotation):
+    if type(value).__name__ == new_annotation.__name__:
         return value
 
     if isinstance(value, napari.layers.Layer) and new_annotation is manifold:
@@ -50,7 +50,6 @@ def naparify_measurement(function):
             original_annotation = sig.parameters[key].annotation
             new_annotation = wrapper_sig.parameters[key].annotation
 
-            print('Old:', original_annotation, 'New:', new_annotation)
             if original_annotation is not new_annotation:
                 converted_value = convert(value, original_annotation)
                 bound.arguments[key] = converted_value
