@@ -47,6 +47,7 @@ def test_stresses():
                                get_droplet_point_cloud,
                                create_manifold, types)
     from napari_stress._spherical_harmonics.spherical_harmonics import stress_spherical_harmonics_expansion
+    import napari_process_points_and_surfaces as nppas
 
     max_degree = 5
     gamma = 26.0
@@ -54,7 +55,8 @@ def test_stresses():
     # do sh expansion
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
     _, coefficients = stress_spherical_harmonics_expansion(pointcloud, max_degree=max_degree)
-    quadrature_points, lbdv_info = lebedev_quadrature(coefficients)
+    quadrature_points, lbdv_info = lebedev_quadrature(coefficients, number_of_quadrature_points=200,
+                                                      use_minimal_point_set=False)
     manifold = create_manifold(quadrature_points, lbdv_info, max_degree=max_degree)
     H_i, _, H0 = measurements.calculate_mean_curvature_on_manifold(manifold)
 
@@ -64,7 +66,8 @@ def test_stresses():
     curvature_ellipsoid = measurements.curvature_on_ellipsoid(ellipsoid, ellipsoid_points)
 
     _, ellipsoid_coefficients = stress_spherical_harmonics_expansion(ellipsoid_points, max_degree=max_degree)
-    ellipsoid_quadrature_points, lbdv_info = lebedev_quadrature(ellipsoid_coefficients)
+    ellipsoid_quadrature_points, lbdv_info = lebedev_quadrature(ellipsoid_coefficients, number_of_quadrature_points=200,
+                                                      use_minimal_point_set=False)
     ellipsoid_manifold = create_manifold(ellipsoid_quadrature_points, lbdv_info, max_degree=max_degree)
     H_i_ellipsoid, _, H0_ellipsoid = measurements.calculate_mean_curvature_on_manifold(ellipsoid_manifold)
 
@@ -79,10 +82,18 @@ def test_stresses():
         orientation_matrix,
         gamma=gamma)
 
-    measurements.anisotropic_stress(H_i, H0,
-                                    H_i_ellipsoid, H0_ellipsoid,
-                                    gamma)
+    stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
+        H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
 
+    surface = nppas.surface_from_point_cloud_ball_pivoting(quadrature_points)
+    surface = list(nppas.fill_holes(surface))
+
+    surface_total = surface + [stress]
+    surface_tissue = surface + [stress_tissue]
+    surface_droplet = surface + [stress_cell]
+
+    # geodesic
+    measurements.geodesic_analysis(surface_total, surface_tissue, surface_droplet)
 
 def test_compatibility_decorator():
     import inspect
@@ -127,3 +138,6 @@ def test_compatibility_decorator():
 #     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata.keys()
 #     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata.keys()
 #     assert types._METADATAKEY_MEAN_CURVATURE in results_layer.features.keys()
+
+if __name__ == '__main__':
+    test_stresses()
