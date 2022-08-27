@@ -96,6 +96,11 @@ def test_stresses():
 
     stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
+    
+    measurements.anisotropic_stress(H_i, H0,
+                                    H_i_ellipsoid, H0_ellipsoid,
+                                    gamma)
+    measurements.maximal_tissue_anisotropy(ellipsoid)
 
     surface = nppas.surface_from_point_cloud_ball_pivoting(quadrature_points)
     surface = list(nppas.fill_holes(surface))
