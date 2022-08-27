@@ -63,18 +63,8 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
     # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
-    # calculate maximum/minimum mean curvatures from largest to shortest axis
-    order = np.argsort(lengths)[::-1]
-    lengths_sorted = lengths[order]
-    a0 = lengths_sorted[0]
-    a1 = lengths_sorted[1]
-    a2 = lengths_sorted[2]
-
-    H_ellps_e_1 = a0/(2.*a1**2) +  a0/(2.*a2**2)
-    H_ellps_e_2 = a1/(2.*a0**2) +  a1/(2.*a2**2)
-    H_ellps_e_3 = a2/(2.*a0**2) +  a2/(2.*a1**2)
-
-    H0_ellipsoid_major_minor = [H_ellps_e_1, H_ellps_e_2, H_ellps_e_3]
+    H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(
+        ellipsoid)
 
     # add to viewer if it doesn't exist.
     properties, features, metadata = {}, {}, {}
@@ -89,6 +79,39 @@ def curvature_on_ellipsoid(ellipsoid: VectorsData,
     properties['name'] = 'Result of mean curvature on ellipsoid'
 
     return (sample_points, properties, 'points')
+
+def mean_curvature_on_ellipse_cardinal_points(ellipsoid: VectorsData
+                                              ) -> list:
+    """
+    Calculate mean points on major axes tip points of ellipsoid.
+
+    Parameters
+    ----------
+    ellipsoid : VectorsData
+
+    Returns
+    -------
+    list
+        List with mean curvature at major/medial/minor axis of ellipsoid.
+
+    """
+    lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
+    a0 = lengths[0]
+    a1 = lengths[1]
+    a2 = lengths[2]
+
+    # calculate maximum/minimum mean curvatures from largest to shortest axis
+    order = np.argsort(lengths)[::-1]
+    lengths_sorted = lengths[order]
+    a0 = lengths_sorted[0]
+    a1 = lengths_sorted[1]
+    a2 = lengths_sorted[2]
+
+    H_ellps_e_1 = a0/(2.*a1**2) +  a0/(2.*a2**2)
+    H_ellps_e_2 = a1/(2.*a0**2) +  a1/(2.*a2**2)
+    H_ellps_e_3 = a2/(2.*a0**2) +  a2/(2.*a1**2)
+
+    return [H_ellps_e_1, H_ellps_e_2, H_ellps_e_3]
 
 @register_function(menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS")
 def gauss_bonnet_test(input_manifold: manifold, viewer: Viewer = None) -> Tuple[float, float]:
