@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+
 from qtpy.QtWidgets import QWidget
 from pathlib import Path
 import os
@@ -87,13 +89,13 @@ def comprehensive_analysis(pointcloud: PointsData,
                            n_quadrature_points: int = 110,
                            gamma: float = 26.0) -> List[LayerDataTuple]:
     from .. import approximation
-    from ..measurements import (calculate_mean_curvature_on_manifold,
-                                curvature_on_ellipsoid,
-                                anisotropic_stress,
-                                maximal_tissue_anisotropy,
-                                tissue_stress_tensor)
+    from .. import measurements
+
     from ..types import (_METADATAKEY_MEAN_CURVATURE,
-                         _METADATAKEY_H_E123_ELLIPSOID)
+                         _METADATAKEY_H_E123_ELLIPSOID,
+                         _METADATAKEY_ANISO_STRESS_TISSUE,
+                         _METADATAKEY_ANISO_STRESS_CELL,
+                         _METADATAKEY_ANISO_STRESS_TOTAL)
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
@@ -133,18 +135,33 @@ def comprehensive_analysis(pointcloud: PointsData,
         ellipsoid, quadrature_points)
 
     # =========================================================================
+    # Evaluate fit quality
+    # =========================================================================
+    # Spherical harmonics
+    residue_spherical_harmonics = approximation.pairwise_point_distances(
+        pointcloud, fitted_pointcloud)
+    residue_spherical_harmonics_norm = np.linalg.norm(
+        residue_spherical_harmonics[:, 1], axis=1)
+
+    # Ellipsoid
+    residue_ellipsoid = approximation.pairwise_point_distances(
+        pointcloud, ellipsoid_points)
+    residue_ellipsoid_norm = np.linalg.norm(
+        residue_ellipsoid[:, 1], axis=1)
+
+    # =========================================================================
     # (mean) curvature on droplet and ellipsoid
     # =========================================================================
     # Droplet
-    curvature_droplet = calculate_mean_curvature_on_manifold(manifold)
+    curvature_droplet = measurements.calculate_mean_curvature_on_manifold(manifold)
     mean_curvature_droplet = curvature_droplet[0]
     H0_arithmetic_droplet = curvature_droplet[1]
     H0_surface_droplet = curvature_droplet[2]
 
     # Ellipsoid
-    curvature_ellipsoid = curvature_on_ellipsoid(
+    curvature_ellipsoid = measurements.curvature_on_ellipsoid(
         ellipsoid, quadrature_points_ellipsoid)[1]
-    curvature_ellipsoid_sh = calculate_mean_curvature_on_manifold(manifold_ellipsoid)
+    curvature_ellipsoid_sh = measurements.calculate_mean_curvature_on_manifold(manifold_ellipsoid)
 
     features = curvature_ellipsoid['features']
     metadata = curvature_ellipsoid['metadata']
@@ -156,16 +173,18 @@ def comprehensive_analysis(pointcloud: PointsData,
     # =========================================================================
     # Stresses
     # =========================================================================
-    stress, stress_tissue, stress_droplet = anisotropic_stress(
-        mean_curvature_drople=mean_curvature_droplet,
+    stress, stress_tissue, stress_droplet = measurements.anisotropic_stress(
+        mean_curvature_droplet=mean_curvature_droplet,
         H0_droplet=H0_surface_droplet,
         mean_curvature_ellipsoid=mean_curvature_ellipsoid,
         H0_ellipsoid=H0_surface_ellipsoid,
         gamma=gamma)
 
-    max_min_anisotropy = maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
+    max_min_anisotropy = measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
 
-    tissue_stress_tensor(H_major_minor)
+    result = measurements.tissue_stress_tensor(ellipsoid, H0_surface_ellipsoid, gamma=gamma)
+    stress_tensor_ellipsoidal = result[0]
+    stress_tensor_cartesian = result[1]
 
     # =========================================================================
     # Create views as layerdatatuples
@@ -174,6 +193,9 @@ def comprehensive_analysis(pointcloud: PointsData,
     size = 0.5
     # spherical harmonics expansion
     properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree}',
+                  'features': {'fit_residue': residue_spherical_harmonics_norm},
+                  'face_colormap': 'inferno',
+                  'face_color': 'fit_residue',
                   'size': size}
     layer_spherical_harmonics = (fitted_pointcloud, properties, 'points')
 
@@ -182,12 +204,43 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     # ellipsoid expansion
     properties = {'name': 'Result of expand points on ellipsoid',
+                  'features': {'fit_residue': residue_ellipsoid_norm},
+                  'face_colormap': 'inferno',
+                  'face_color': 'fit_residue',
                   'size': size}
     layer_fitted_ellipsoid_points = (ellipsoid_points, properties, 'points')
     properties = {'name': 'Result of least squares ellipsoid',
                   'edge_width': size}
     layer_fitted_ellipsoid = (ellipsoid, properties, 'vectors')
 
+    # Curvatures and stresses: Show on droplet surface
+    properties = {'name': 'Result of lebedev quadrature (droplet)',
+                  'features': {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
+                               _METADATAKEY_ANISO_STRESS_CELL: stress_droplet,
+                               _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue,
+                               _METADATAKEY_ANISO_STRESS_TOTAL: stress},
+                  'face_colormap': 'twilight',
+                  'face_color': _METADATAKEY_ANISO_STRESS_CELL,
+                  'size': size}
+    layer_quadrature = (quadrature_points, properties, 'points')
+
+
+    # # Fit residues
+    # properties = {'name': 'Spherical harmonics fit residues',
+    #               'edge_width': size,
+    #               'features': {'fit_residue': residue_spherical_harmonics_norm},
+    #               'edge_color': 'fit_residue',
+    #               'edge_colormap': 'twilight'}
+    # layer_spherical_harmonics_residues = (residue_spherical_harmonics, properties, 'vectors')
+
+    # properties = {'name': 'Ellipsoid fit residues',
+    #               'edge_width': size,
+    #               'features': {'fit_residue': residue_ellipsoid_norm},
+    #               'edge_color': 'fit_residue',
+    #               'edge_colormap': 'twilight'}
+    # layer_ellipsoid_residues = (residue_ellipsoid, properties, 'vectors')
+
     return [layer_spherical_harmonics,
             layer_fitted_ellipsoid_points,
-            layer_fitted_ellipsoid]
+            layer_fitted_ellipsoid,
+            layer_quadrature]
