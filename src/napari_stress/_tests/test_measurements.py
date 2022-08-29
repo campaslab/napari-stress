@@ -74,7 +74,7 @@ def test_stresses():
 
     # tissue stress tensor
     ellptical, cartesian = measurements.tissue_stress_tensor(
-        curvature_ellipsoid[1]['metadata'][types._METADATAKEY_H_E123_ELLIPSOID],
+        ellipsoid,
         H0_ellipsoid,
         orientation_matrix,
         gamma=gamma)
