@@ -87,7 +87,6 @@ def maximal_tissue_anisotropy(ellipsoid: VectorsData,
 
 def tissue_stress_tensor(ellipsoid: VectorsData,
                          H0_ellipsoid: float,
-                         orientation_matrix: np.ndarray,
                          gamma: float) -> Tuple[np.ndarray, np.ndarray]:
     """
     Calculate tissue stress tensor(s).
@@ -112,7 +111,10 @@ def tissue_stress_tensor(ellipsoid: VectorsData,
 
     """
     from .._measurements import mean_curvature_on_ellipse_cardinal_points
+    from .._utils.coordinate_conversion import _orientation_from_ellipsoid
+
     cardinal_curvatures = mean_curvature_on_ellipse_cardinal_points(ellipsoid)
+    orientation_matrix = _orientation_from_ellipsoid(ellipsoid)
 
     # use H0_Ellpsoid to calculate tissue stress projections:
     sigma_11_e = 2 * gamma * (cardinal_curvatures[0] - H0_ellipsoid)
