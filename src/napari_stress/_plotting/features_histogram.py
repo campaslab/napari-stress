@@ -37,6 +37,8 @@ class FeaturesHistogramWidget(HistogramWidget):
         self.layout().addWidget(self._key_selection_widget.native)
         self.layout().addWidget(self._export_button.native)
 
+        self.viewer = napari_viewer
+
     @property
     def x_axis_key(self) -> Optional[str]:
         """Key to access x axis data from the FeaturesTable."""
@@ -62,6 +64,9 @@ class FeaturesHistogramWidget(HistogramWidget):
         self._x_axis_key = x_axis_key
         self._n_bins = n_bins
         self._draw()
+
+        self.viewer.layers[self.layers[0].name].refresh_colors(True)
+        self.viewer.layers[self.layers[0].name].face_color = x_axis_key
 
     def _get_valid_axis_keys(
         self, combo_widget: Optional[ComboBox] = None
