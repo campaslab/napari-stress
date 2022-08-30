@@ -1,5 +1,6 @@
 import numpy as np
-from napari.types import LayerData, PointsData, SurfaceData, ImageData
+from napari.types import LayerData, PointsData, SurfaceData, ImageData, VectorsData, LayerDataTuple
+from napari.layers import Layer
 
 def test_fit_functions():
     from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_max_gradient
@@ -31,6 +32,26 @@ def test_decorator_points():
 
     for pts, _pts in zip(points_list, points_list_conv):
         assert np.array_equal(points_list, points_list_conv)
+
+def test_decorator_points_layerdatatuple():
+    from napari_stress import TimelapseConverter, get_droplet_point_cloud
+
+    Converter = TimelapseConverter()
+    list_of_ldtuples = []
+    for i in range(10):
+        points = list(get_droplet_point_cloud()[0])
+        features = {'feature1': np.random.random(len(points[0]))}
+        metadata = {'data1': f'test_{i}'}
+
+        points[0] = points[0][:, 1:]
+        points[1]['features'] = features
+        points[1]['metadata'] = metadata
+        list_of_ldtuples.append(points)
+
+    ldtuple_4d = Converter.list_of_data_to_data(list_of_ldtuples, layertype=LayerDataTuple)
+
+    assert 'data1' in ldtuple_4d[1]['metadata'].keys()
+    assert ldtuple_4d[0][-1, 0] == 9
 
 
 def test_decorator_surfaces():
@@ -70,6 +91,3 @@ def test_decorator_images():
     image_list_conv = Converter.list_of_data_to_data(image_array, ImageData)
     for img, _img in zip(image_list, image_list_conv):
         assert np.array_equiv(img, _img)
-
-if __name__ =='__main__':
-    test_decorator_surfaces()
