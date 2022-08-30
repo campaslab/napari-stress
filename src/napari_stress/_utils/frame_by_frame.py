@@ -302,7 +302,20 @@ class TimelapseConverter:
     # Vectors
     # =============================================================================
 
-    def _list_of_vectors_to_vectors(self, vectors: VectorsData) -> list:
+    def _vectors_to_list_of_vectors(self, vectors: VectorsData) -> list:
+        base_points = vectors[:, 0]
+        vectors = vectors[:, 1]
+
+        # the vectors and points should abide to the same dimensions
+        point_list = self._points_to_list_of_points(base_points)
+        vector_list = self._points_to_list_of_points(vectors)
+
+        output_vectors = [
+            np.stack([pt, vec]).transpose((1, 0, 2)) for pt, vec in zip (point_list, vector_list)
+            ]
+        return output_vectors
+
+    def _list_of_vectors_to_vectors(self, vectors: list) -> VectorsData:
         base_points = [v[:, 0] for v in vectors]
         directions = [v[:, 1] for v in vectors]
 

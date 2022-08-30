@@ -13,12 +13,11 @@ import vedo
 import pyshtools
 import warnings
 
-from . import sph_func_SPB as sph_f
 from .._utils.fit_utils import Least_Squares_Harmonic_Fit
-from .._utils.coordinate_conversion import cartesian_to_elliptical_coordinates
-from . import manifold_SPB as mnfd
-from . import euclidian_k_form_SPB as euc_kf
-from . import lebedev_info_SPB as lebedev_info
+from .._stress import sph_func_SPB as sph_f
+from .._stress import manifold_SPB as mnfd
+from .._stress import euclidian_k_form_SPB as euc_kf
+from .._stress import lebedev_info_SPB as lebedev_info
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5
@@ -79,8 +78,11 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     -------
     PointsData
     """
+    from .. import _approximation as approximation
+    from .._utils.coordinate_conversion import cartesian_to_elliptical
     # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-    longitude, latitude = cartesian_to_elliptical_coordinates(points)
+    ellipsoid = approximation.least_squares_ellipsoid(points)
+    longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
 
     # This implementation fits a superposition of three sets of spherical harmonics
     # to the data, one for each cardinal direction (x/y/z).
@@ -184,18 +186,30 @@ def create_manifold(points: PointsData,
 
     return mnfd.manifold(Manny_Dict)
 
-def get_normals_on_manifold(manifold: mnfd.manifold,
-                            lebedev_fit: lebedev_info.lbdv_info):
+def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
+    """
+    Calculate the outwards pointing normal vectors on a manifold.
+
+    Parameters
+    ----------
+    manifold : mnfd.manifold
+
+    Returns
+    -------
+    np.ndarray: (Nx3) - sized normal vectors
+
+    """
+
 
     normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_X_A_Pts,
                                                        manifold.Normal_Vec_X_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
     normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Y_A_Pts,
                                                        manifold.Normal_Vec_Y_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
     normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(manifold.Normal_Vec_Z_A_Pts,
                                                        manifold.Normal_Vec_Z_B_Pts,
-                                                       lebedev_fit)
+                                                       manifold.lebedev_info)
 
     normals_lbdv_points = np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts])
     return normals_lbdv_points.squeeze().transpose()

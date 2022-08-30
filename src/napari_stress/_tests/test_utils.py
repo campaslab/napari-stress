@@ -100,5 +100,25 @@ def test_decorator_images():
     for img, _img in zip(image_list, image_list_conv):
         assert np.array_equiv(img, _img)
 
-if __name__ == '__main__':
+def test_frame_by_frame_vectors():
+
+    from napari_stress import TimelapseConverter
+    Converter = TimelapseConverter()
+
+    # make some points
+    points = np.random.random((1000, 4))
+    vectors = np.random.random((1000, 4))
+
+    points[:, 0] = np.arange(0, 5, 1).repeat(200)
+    vectors[:, 0] = np.arange(0, 5, 1).repeat(200)
+
+    vectors_4d = np.stack((points, vectors)).transpose((1,0,2))
+
+    vectors_list = Converter.data_to_list_of_data(vectors_4d, VectorsData)
+    vectors_data = Converter.list_of_data_to_data(vectors_list, VectorsData)
+
+    assert np.array_equal(vectors_data, vectors_4d)
+
+
+if __name__ =='__main__':
     test_decorator_points_layers()
