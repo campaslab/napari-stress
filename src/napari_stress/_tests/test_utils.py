@@ -53,6 +53,14 @@ def test_decorator_points_layerdatatuple():
     assert 'data1' in ldtuple_4d[1]['metadata'].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
+def test_decorator_points_layers():
+
+    from napari_stress import TimelapseConverter, get_droplet_point_cloud_4d
+
+    Converter = TimelapseConverter()
+    ldt = get_droplet_point_cloud_4d()[0]
+    layer_4d = Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldt[2])
+    Converter.data_to_list_of_data(layer_4d, layertype=Layer)
 
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame
@@ -91,3 +99,6 @@ def test_decorator_images():
     image_list_conv = Converter.list_of_data_to_data(image_array, ImageData)
     for img, _img in zip(image_list, image_list_conv):
         assert np.array_equiv(img, _img)
+
+if __name__ == '__main__':
+    test_decorator_points_layers()
