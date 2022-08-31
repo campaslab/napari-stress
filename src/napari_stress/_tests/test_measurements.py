@@ -13,6 +13,18 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
     widget._run()
 
+def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
+    from napari_stress import (get_droplet_point_cloud_4d, measurements)
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud_4d()[0]
+    viewer.add_points(pointcloud[0], **pointcloud[1])
+
+    widget = measurements.stress_analysis_toolbox(viewer)
+    viewer.window.add_dock_widget(widget)
+
+    widget._run()
+
 
 def test_curvature(make_napari_viewer):
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
