@@ -1,6 +1,6 @@
 import numpy as np
 from napari.types import LayerData, PointsData, SurfaceData, ImageData, VectorsData, LayerDataTuple
-from napari.layers import Layer
+from napari.layers import Layer, Points
 
 def test_fit_functions():
     from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_max_gradient
@@ -59,8 +59,18 @@ def test_decorator_points_layers():
 
     Converter = TimelapseConverter()
     ldt = get_droplet_point_cloud_4d()[0]
+    n_frames = int(ldt[0][:, 0].max()) + 1
+
+    # create some dummy metadata
+    metadata = {'key1': [f'data_{i}' for i in range(n_frames)]}
+    ldt[1]['metadata'] = metadata
+
+    # create some dummy features
+    features = np.random.random(len(ldt[0]))
+    ldt[1]['features'] = features
+
     layer_4d = Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldt[2])
-    Converter.data_to_list_of_data(layer_4d, layertype=Layer)
+    list_of_layers = Converter.data_to_list_of_data(layer_4d, layertype=Points)
 
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame

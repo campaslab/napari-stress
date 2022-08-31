@@ -30,7 +30,22 @@ def test_frontend_spherical_harmonics(make_napari_viewer):
     # Test quadrature
     lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)
     results_layer = viewer.layers[-1]
-    assert 'manifold' in results_layer.metadata
+    assert 'manifold' in lebedev_points[1]['metadata']
+
+def test_front_spherical_harmonics_4d(make_napari_viewer):
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
+    from napari_stress import get_droplet_point_cloud_4d
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud_4d()[0]
+
+    points = napari_stress.fit_spherical_harmonics(pointcloud[0])
+    viewer.add_points(points[0], **points[1])
+
+    # Test quadrature
+    points_layer = viewer.layers[-1]
+    lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)
+    assert 'manifold' in lebedev_points[1]['metadata']
 
 def test_spherical_harmonics():
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
@@ -95,3 +110,7 @@ def test_interoperatibility():
     # pysh_y = coeffs_pysh_y.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
     # pysh_z = coeffs_pysh_z.expand(lon = list(np.rad2deg(THETA.flatten())), lat=list(np.rad2deg(PHI.flatten())))
     # pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
+
+if __name__ == '__main__':
+    import napari
+    test_front_spherical_harmonics_4d(napari.Viewer)
