@@ -2,7 +2,7 @@
 import numpy as np
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
-    from napari_stress import get_droplet_point_cloud, measurements
+    from napari_stress import (get_droplet_point_cloud, measurements)
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud()[0]
@@ -91,7 +91,7 @@ def test_stresses():
 
     stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
-    
+
     measurements.anisotropic_stress(H_i, H0,
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
@@ -153,4 +153,4 @@ def test_compatibility_decorator():
 
 if __name__ == '__main__':
     import napari
-    test_comprehenive_stress_toolbox(napari.Viewer)
+    test_comprehensive_stress_toolbox_4d(napari.Viewer)
