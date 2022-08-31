@@ -68,6 +68,7 @@ def fit_spherical_harmonics(points: PointsData,
 
 @register_function(menu="Points > Perform lebedev quadrature (n-STRESS)",
                    number_of_quadrature_points={'min': 6, 'max': 5180})
+@frame_by_frame
 def perform_lebedev_quadrature(points: Points,
                                number_of_quadrature_points: int = 500,
                                use_minimal_point_set: bool = False,
@@ -115,12 +116,12 @@ def perform_lebedev_quadrature(points: Points,
     properties['size'] = 0.5
     properties['name'] = 'Result of lebedev quadrature'
 
-    if viewer is not None:
-        if properties['name'] not in viewer.layers:
-            viewer.add_points(lebedev_points, **properties)
-        else:
-            layer = viewer.layers[properties['name']]
-            layer.features = features
-            layer.metadata = metadata
-            layer.data = lebedev_points
+    # if viewer is not None:
+    #     if properties['name'] not in viewer.layers:
+    #         viewer.add_points(lebedev_points, **properties)
+    #     else:
+    #         layer = viewer.layers[properties['name']]
+    #         layer.features = features
+    #         layer.metadata = metadata
+    #         layer.data = lebedev_points
     return (lebedev_points, properties, 'points')
