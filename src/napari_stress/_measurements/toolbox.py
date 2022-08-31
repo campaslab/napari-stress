@@ -21,6 +21,8 @@ from .._spherical_harmonics.spherical_harmonics import (
     lebedev_quadrature,
     create_manifold)
 
+from .._utils.frame_by_frame import frame_by_frame
+
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -71,7 +73,7 @@ class stress_analysis_toolbox(QWidget):
     def _run(self):
         """Call analysis function."""
         results = comprehensive_analysis(
-            pointcloud=self.layer_select.value.data,
+            self.layer_select.value.data,
             max_degree=self.spinBox_max_degree.value(),
             n_quadrature_points=int(self.comboBox_quadpoints.currentData()),
             gamma=self.doubleSpinBox_gamma.value()
@@ -83,7 +85,7 @@ class stress_analysis_toolbox(QWidget):
                                   layer_type=layer[2])
             self.viewer.add_layer(_layer)
 
-
+@frame_by_frame
 def comprehensive_analysis(pointcloud: PointsData,
                            max_degree: int=5,
                            n_quadrature_points: int = 110,
