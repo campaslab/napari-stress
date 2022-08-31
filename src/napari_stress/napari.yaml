@@ -19,7 +19,10 @@ contributions:
 
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_droplet_point_cloud
-      title: Get dropplet pointcloud sample
+      title: droplet pointcloud sample
+    - id: napari-stress.get_pointcloud_sample_data_4d
+      python_name: napari_stress._sample_data:get_droplet_point_cloud_4d
+      title: 4d dropplet pointcloud sample
 
     # Spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
@@ -143,3 +146,6 @@ contributions:
     - command: napari-stress.get_pointcloud_sample_data
       display_name: Droplet pointcloud
       key: PC_1
+    - command: napari-stress.get_pointcloud_sample_data_4d
+      display_name: 4d Droplet pointcloud
+      key: PC_2
