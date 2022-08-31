@@ -151,7 +151,7 @@ class TimelapseConverter:
 
         # Convert data to array with dimensions [frame, results, data]
         data = np.stack(tuple_data)
-        layertypes = data[:,..., -1].squeeze()
+        layertypes = data[:,..., -1].squeeze()[0]
 
         converted_tuples = []
         for idx, res_type in enumerate(layertypes):
