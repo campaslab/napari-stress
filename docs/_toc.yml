@@ -24,6 +24,7 @@ chapters:
   
 - file: tutorials/point_and_click/Readme
   sections:
+  - file: tutorials/point_and_click/demo_stress_toolbox
   - file: tutorials/point_and_click/demo_surface_reconstruction
   - file: tutorials/point_and_click/demo_fit_ellipsoid
   - file: tutorials/point_and_click/demo_spherical_harmonics

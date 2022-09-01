@@ -1,3 +1,4 @@
+(point_and_click.fit_ellipsoid)=
 # Ellipse fitting
 
 This tutorial shows how to handle ellipse-fitting in napari-stress. To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (`File > Open Sample > napari-stress: Dropplet pointcloud`).
@@ -5,6 +6,7 @@ This tutorial shows how to handle ellipse-fitting in napari-stress. To get start
 ![](../../imgs/viewer_screenshots/open_sample_droplet.png)
 ![](../../imgs/viewer_screenshots/open_sample_droplet1.png)
 
+(point_and_click.fit_ellipsoid.least_squares)=
 ## Napari-stress implementation
 This section describes the implementation taken from the [stress repository](https://github.com/campaslab/STRESS). It provides a least-squares approach to obtain an ellipsoid which is represented by its major axes. A pointcloud can be obtained by combining the input points and the ellipsoid object. First, fit an ellipse by selecting `Tools > Points > Fit ellipsoid to pointcloud (n-STRESS)` and click on `Run`. The resulting image should look like this:
 
