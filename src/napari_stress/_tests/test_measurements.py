@@ -30,6 +30,7 @@ def test_curvature(make_napari_viewer):
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
     from napari_stress import measurements, get_droplet_point_cloud, fit_spherical_harmonics, types
     from magicgui import magicgui
+    from napari.layers import Layer
 
     # We'll first create a spherical harmonics expansion and a lebedev
     # quadrature from scratch
@@ -42,7 +43,10 @@ def test_curvature(make_napari_viewer):
     viewer.add_points(expansion[0], **expansion[1])
 
     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
+    l = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(l)
     results_layer = viewer.layers[-1]
+
     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
 
     # from code

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDataTuple, VectorsData
+from napari.layers import Points, Layer
 
 from typing import List
 
 from functools import wraps
 import inspect
 
+import pandas as pd
 import tqdm
 
 def frame_by_frame(function, progress_bar: bool = False):
@@ -62,18 +64,21 @@ class TimelapseConverter:
             SurfaceData: self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
             LabelsData: self._image_to_list_of_images,
-            VectorsData: self._vectors_to_list_of_vectors
+            VectorsData: self._vectors_to_list_of_vectors,
+            Points: self._layer_to_list_of_layers
             }
 
     # Supported list data types
         self.list_to_data_conversion_functions = {
+            Layer: self._list_of_layers_to_layer,
             PointsData: self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
             LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
             List[LayerDataTuple]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
-            VectorsData: self._list_of_vectors_to_vectors
+            VectorsData: self._list_of_vectors_to_vectors,
+            Points: self._list_of_layers_to_layer
             }
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
@@ -108,7 +113,7 @@ class TimelapseConverter:
         list: List of 3D objects of type `layertype`
 
         """
-        if not layertype in self.supported_data:
+        if not layertype in list(self.data_to_list_conversion_functions.keys()):
             raise TypeError(f'{layertype} data to list conversion currently not supported.')
 
         conversion_function = self.data_to_list_conversion_functions[layertype]
@@ -141,8 +146,70 @@ class TimelapseConverter:
         return conversion_function(data)
 
     # =============================================================================
+    # Layers
+    # =============================================================================
+
+    def _list_of_layers_to_layer(self, layer_list: list) -> Layer:
+        """Convert a list of layers to single layer."""
+        list_of_layerdatatuples = [layer.as_layerdatatuple() for layer in layer_list]
+        layerdatatuple = self.list_of_layerdatatuple_to_layerdatatuple(list_of_layerdatatuples)
+
+        converted_layer = Layer.create(layerdatatuple[0],
+                                       meta = layerdatatuple[1],
+                                       layer_type = layerdatatuple[2])
+
+        return converted_layer
+
+    def _layer_to_list_of_layer(self, layer: Layer) -> list:
+        """Convert layer to list of layers."""
+        ldtuple = layer.as_layer_data_tuple()
+        list_of_ldtuples = self._ldtuple_to_list_of_ldtuple(ldtuple)
+
+        list_of_layers = [Layer.create(ldt[0], ldt[1], ldt[2]) for ldt in list_of_ldtuples]
+        return list_of_layers
+
+    # =============================================================================
     # LayerDataTuple(s)
     # =============================================================================
+
+    def _ldtuple_to_list_of_ldtuple(self, tuple_data: list) -> LayerDataTuple:
+        """Convert single 4D layerdatatuple to list of layerdatatuples."""
+        layertype = self.tuple_aliases[tuple_data[-1]]
+
+        list_of_data = self.data_to_list_of_data(tuple_data[0],
+                                                 layertype=layertype)
+
+        if len(list_of_data) == 1:
+            list_of_features = [tuple_data[1]['features']]
+            list_of_metadata = [tuple_data[1]['metadata']]
+
+        else:
+            # unstack features
+            if 'features' in tuple_data[1].keys():
+                # group features by time-stamp
+                features = tuple_data[1]['features']
+                list_of_features = [
+                    x for _, x in features.groupby(tuple_data[0][:, 0])
+                    ]
+
+            # unstack metadata
+            if 'metadata' in tuple_data[1].keys():
+                metadata = tuple_data[1]['metadata']
+                list_of_metadata = [
+                    {key : value[i] for key, value in metadata.items()}
+                    for i in range(len(list_of_data))
+                    ]
+
+        list_of_props = [{'features': features, 'metadata': metadata}
+                         for features, metadata in zip(
+                                 list_of_features, list_of_metadata
+                                 )]
+
+        list_of_ldtuples = [(data, props, layertype)
+                            for data, props in zip(list_of_data, list_of_props)]
+
+        return list_of_ldtuples
+
 
     def _list_of_multiple_ldtuples_to_multiple_ldt_tuples(self,
                                                           tuple_data: list,
@@ -178,7 +245,33 @@ class TimelapseConverter:
         # Convert data to array with dimensions [frame, data]
         data = np.stack(tuple_data)
         properties = data[:, 1]
-        _properties = self.stack_dict(properties)
+
+        # If data was only 3D
+        _properties = {}
+        if len(data) == 1:
+            _properties['features'] = data[0][1]['features']
+            _properties['metadata'] = data[0][1]['metadata']
+        else:
+            # Stack features
+            if 'features' in properties[0].keys():
+                features = self._list_of_dictionaries_to_dictionary([frame['features'] for frame in properties])
+                _properties['features'] = features
+                [frame.pop('features') for frame in properties]
+
+            # Stack metadata
+            if 'metadata' in properties[0].keys():
+                metadata_list = [frame['metadata'] for frame in properties]
+                new_metadata = {}
+                for key in metadata_list[0].keys():
+                    new_metadata[key] = [frame[key] for frame in metadata_list]
+
+                _properties['metadata'] = new_metadata
+                [frame.pop('metadata') for frame in properties]
+
+        # Stack the other properties
+        layer_props = self._list_of_dictionaries_to_dictionary(properties)
+        for key in layer_props.keys():
+            _properties[key] = layer_props[key]
 
         # Reminder: Each list entry is tuple (data, properties, type)
         results = [None] * len(data)  # allocate list for results
@@ -191,11 +284,12 @@ class TimelapseConverter:
 
         return tuple(result)
 
-    def stack_dict(self, dictionaries: list) -> dict:
+    def _list_of_dictionaries_to_dictionary(self, dictionaries: list) -> dict:
         _dictionary = {}
         for key in dictionaries[-1].keys():
             if isinstance(dictionaries[-1][key], dict):
-                _dictionary[key] = self.stack_dict([frame[key] for frame in dictionaries])
+                _dictionary[key] = self._list_of_dictionaries_to_dictionary(
+                    [frame[key] for frame in dictionaries])
                 continue
             elif isinstance(dictionaries[-1][key], str):
                 _dictionary[key] = dictionaries[-1][key]
@@ -206,6 +300,21 @@ class TimelapseConverter:
             else:
                 _dictionary[key] = dictionaries[-1][key]
         return _dictionary
+
+    # =========================================================================
+    # Layers
+    # =========================================================================
+
+    def _layer_to_list_of_layers(self, layer: Layer) -> list:
+        ldtuple = layer.as_layer_data_tuple()
+        list_of_layerdatatuples = self._ldtuple_to_list_of_ldtuple(ldtuple)
+
+        layers = []
+
+        for ldt in list_of_layerdatatuples:
+            layers.append(Layer.create(data=ldt[0], meta=ldt[1],
+                                       layer_type=ldtuple[-1]))
+        return layers
 
     # =============================================================================
     # Images
