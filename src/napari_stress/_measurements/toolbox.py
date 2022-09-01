@@ -102,7 +102,8 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_GAUSS_BONNET_REL,
                          _METADATAKEY_STRESS_TENSOR_CART,
                          _METADATAKEY_STRESS_TENSOR_ELLI,
-                         _METADATAKKEY_MAX_TISSUE_ANISOTROPY)
+                         _METADATAKKEY_MAX_TISSUE_ANISOTROPY,
+                         _METADATAKEY_FIT_RESIDUE)
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
@@ -213,10 +214,15 @@ def comprehensive_analysis(pointcloud: PointsData,
                   'size': size}
 
     # ellipsoid expansion
+    features = {_METADATAKEY_FIT_RESIDUE: residue_ellipsoid_norm,
+                _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
+    metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
+                _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal}
     properties = {'name': 'Result of expand points on ellipsoid',
-                  'features': {'fit_residue': residue_ellipsoid_norm},
+                  'features': features,
+                  'metadata': metadata,
                   'face_colormap': 'inferno',
-                  'face_color': 'fit_residue',
+                  'face_color': _METADATAKEY_FIT_RESIDUE,
                   'size': size}
     layer_fitted_ellipsoid_points = (ellipsoid_points, properties, 'points')
     properties = {'name': 'Result of least squares ellipsoid',
@@ -226,12 +232,9 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Curvatures and stresses: Show on droplet surface (points)
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
                  _METADATAKEY_ANISO_STRESS_CELL: stress_droplet,
-                 _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue,
                  _METADATAKEY_ANISO_STRESS_TOTAL: stress}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
                 _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
-                _METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
-                _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal,
                 _METADATAKKEY_MAX_TISSUE_ANISOTROPY: max_min_anisotropy}
 
     properties = {'name': 'Result of lebedev quadrature (droplet)',
