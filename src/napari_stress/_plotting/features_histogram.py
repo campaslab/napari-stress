@@ -6,7 +6,9 @@ from napari_matplotlib import HistogramWidget
 from napari_matplotlib.util import Interval
 from magicgui.widgets import ComboBox
 from typing import List, Optional, Tuple
-from qtpy.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QFileDialog, QHBoxLayout, QPushButton
+
+from scipy import stats
 
 
 class FeaturesHistogramWidget(HistogramWidget):
@@ -34,10 +36,30 @@ class FeaturesHistogramWidget(HistogramWidget):
             self.export,
             call_button='Export plot as csv'
             )
+
+        # buttons to switch between histogram/CDF
+        self.enable_histogram = QPushButton('Histogram')
+        self.enable_histogram.setCheckable(True)
+        self.enable_histogram.setChecked(True)
+        self.enable_cdf = QPushButton('CDF')
+        self.enable_cdf.setCheckable(True)
+        self.enable_histogram.clicked.connect(self._draw)
+        self.enable_cdf.clicked.connect(self._draw)
+
+        container = QHBoxLayout()
+        container.addWidget(self.enable_histogram)
+        container.addWidget(self.enable_cdf)
+        self.layout().addLayout(container)
+
         self.layout().addWidget(self._key_selection_widget.native)
         self.layout().addWidget(self._export_button.native)
 
         self.viewer = napari_viewer
+
+        # create a second y-axis in the plot
+        self.axes2 = self.axes.twinx()
+        self.hist_plot = None
+        self.cdf_plot = None
 
     @property
     def x_axis_key(self) -> Optional[str]:
@@ -143,19 +165,36 @@ class FeaturesHistogramWidget(HistogramWidget):
             # don't plot if there isn't data
             return
 
-        self.N, bins, patches = self.axes.hist(data[0], bins=data[1],
-                                               edgecolor='white',
-                                               linewidth=0.3,
-                                               label=self.layers[0].name)
-        # Set histogram style:
+        self.N, bins = np.histogram(data[0], data[1])
+
         colormapping = self.layers[0].face_colormap
         self.bins_norm = (bins - bins.min())/(bins.max() - bins.min())
         colors = colormapping.map(self.bins_norm)
-        for idx, patch in enumerate(patches):
-            patch.set_facecolor(colors[idx])
+
+        if self.enable_histogram.isChecked():
+            self.N, bins, patches = self.axes.hist(data[0], bins=data[1],
+                                           edgecolor='white',linewidth=0.3,
+                                           label=self.layers[0].name)
+            # Set histogram style:
+
+            for idx, patch in enumerate(patches):
+                patch.set_facecolor(colors[idx])
+        else:
+            self.axes.clear()
+
+        if self.enable_cdf.isChecked():
+            cdf_histogram = stats.rv_histogram((self.N, bins))
+            self.axes2.step(bins, cdf_histogram.cdf(data[1]), color='black',
+                            where='mid', zorder=1)
+            self.axes2.scatter(bins, cdf_histogram.cdf(data[1]), c=colors, zorder=2)
+        else:
+            self.axes2.clear()
 
         self.axes.set_xlabel(x_axis_name)
         self.axes.set_ylabel(y_axis_name)
+        self.axes2.set_ylabel('Cumulative density')
+
+        self.canvas.draw()
 
     def export(self) -> None:
         """Export plotted data as csv."""

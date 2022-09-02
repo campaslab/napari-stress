@@ -20,3 +20,11 @@ def test_plotting(make_napari_viewer):
     plot_widget._key_selection_widget()
     # Check if plot has data
     assert plot_widget.axes.has_data()
+
+    plot_widget.enable_cdf.setChecked(True)
+    plot_widget._key_selection_widget()
+
+
+if __name__ == '__main__':
+    import napari
+    test_plotting(napari.Viewer)
