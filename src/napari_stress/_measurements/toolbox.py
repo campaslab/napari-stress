@@ -91,6 +91,41 @@ def comprehensive_analysis(pointcloud: PointsData,
                            max_degree: int=5,
                            n_quadrature_points: int = 110,
                            gamma: float = 26.0) -> List[LayerDataTuple]:
+    """
+    Run a comprehensive stress analysis on a given pointcloud.
+
+    Parameters
+    ----------
+    pointcloud : PointsData
+    max_degree : int, optional
+        Maximal used degree of the spherical harmonics expansion.
+        The default is 5.
+    n_quadrature_points : int, optional
+        Number of used quadrature points. The default is 110.
+    gamma : float, optional
+        Interfacial surface tension in mN/m. The default is 26.0 mN/m.
+
+    Returns
+    -------
+    List[LayerDataTuple]
+        List of `LayerDataTuple` objects. The order of elements in the list is
+        as follows:
+            * `layer_spherical_harmonics`: Points layer containing result of
+            the spherical harmonics expansion of the pointcloud.
+            * `layer_fitted_ellipsoid_points`: Points layer with points on the
+            surface of the fitted least-squares ellipsoid.
+            * `layer_fitted_ellipsoid`: Vectors layers with major axes of the
+            fitted ellipsoid.
+            * `layer_quadrature_ellipsoid`: Points layer with quadrature points
+            projected on the surface of the ellipsoid.
+            * `layer_quadrature`: Points layer with quadrature points on the
+            surface of the spherical harmonics expansion.
+
+    See Also
+    --------
+
+    [0]
+    """
     from .. import approximation
     from .. import measurements
 
@@ -222,12 +257,15 @@ def comprehensive_analysis(pointcloud: PointsData,
                   'face_color': _METADATAKEY_FIT_RESIDUE,
                   'size': size}
     layer_fitted_ellipsoid_points = (ellipsoid_points, properties, 'points')
+
+    # Ellipsoid major axes
     properties = {'name': 'Result of least squares ellipsoid',
                   'edge_width': size}
     layer_fitted_ellipsoid = (ellipsoid, properties, 'vectors')
 
     # Quadrature points on ellipsoid
-    features = {_METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
+    features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_ellipsoid,
+                _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
     metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
                 _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal}
     properties = {'name': 'Result of lebedev quadrature on ellipsoid',
