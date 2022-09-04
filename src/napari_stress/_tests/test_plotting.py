@@ -24,6 +24,9 @@ def test_plotting(make_napari_viewer):
     plot_widget.enable_cdf.setChecked(True)
     plot_widget._key_selection_widget()
 
+    # check the data highlighting
+    plot_widget._draw_highlight_rectangle(0,1,0,1)
+
 
 if __name__ == '__main__':
     import napari

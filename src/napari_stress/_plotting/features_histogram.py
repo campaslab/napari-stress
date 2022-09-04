@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 from napari_matplotlib import HistogramWidget
 from napari_matplotlib.util import Interval
+from matplotlib.widgets  import RectangleSelector
+from matplotlib.patches import Rectangle
 from magicgui.widgets import ComboBox
 from typing import List, Optional, Tuple
 from qtpy.QtWidgets import QFileDialog, QHBoxLayout, QPushButton
-
 from scipy import stats
 
 
@@ -57,9 +58,25 @@ class FeaturesHistogramWidget(HistogramWidget):
         self.viewer = napari_viewer
 
         # create a second y-axis in the plot
-        self.axes2 = self.axes.twinx()
-        self.hist_plot = None
-        self.cdf_plot = None
+        self.axes2 = self.axes.twinx()  # for cdf
+        self.axes3 = self.axes.twinx()  # for selector rectangle
+        self.axes3.get_xaxis().set_visible(False)
+        self.axes3.get_yaxis().set_visible(False)
+
+        # hook up rectangle selector
+        self.rectangle_selector = RectangleSelector(
+            self.axes3,
+            self._on_area_select,
+            drawtype="box",
+            useblit=True,
+            rectprops=dict(edgecolor="white", fill=False),
+            minspanx=5,
+            minspany=5,
+            spancoords="pixels",
+            interactive=False,
+        )
+        self.highlight_rectangle = None
+        self.highlight_layer = None
 
     @property
     def x_axis_key(self) -> Optional[str]:
@@ -157,6 +174,45 @@ class FeaturesHistogramWidget(HistogramWidget):
         self._x_axis_key = None
         self._n_bins = None
 
+    def _on_area_select(self, eclick, erelease):
+        """Triggered when user clicks within axes"""
+        # get click event coordinates
+        x1, _ = eclick.xdata, eclick.ydata
+        x2, _ = erelease.xdata, erelease.ydata
+
+        y1 = 0
+        y2 = self.axes.get_ylim()[1]
+        self._draw_highlight_rectangle(x1, x2, y1, y2)
+
+    def _draw_highlight_rectangle(self, x1, x2, y1, y2):
+
+        # put highlight rectangle in histogram plot
+        if self.highlight_rectangle is None:
+            self.highlight_rectangle = Rectangle(
+                (min(x1,x2),min(y1,y2)), np.abs(x1-x2), np.abs(y1-y2),
+                alpha=0.35, facecolor='white')
+            self.axes3.add_patch(self.highlight_rectangle)
+
+        else:
+            self.highlight_rectangle.set_x(x1)
+            self.highlight_rectangle.set_width(np.abs(x1-x2))
+
+        self.canvas.draw()
+
+        # highlight selected points in viewer
+        shown_range = self.layers[0].features[self.x_axis_key]
+        left = min(x1,x2)
+        right = max(x1, x2)
+        shown_range = np.asarray((shown_range > left) * (shown_range < right))
+        # print(f'Selected {sum(shown_range)} out of {len(shown_range)}')
+
+        # self.viewer.layers[self.layers[0].name].features['shown_range'] = shown_range
+        self.viewer.layers[self.layers[0].name].refresh_colors(True)
+
+        colors_highlight = np.ones((self.layers[0].data.shape[0], 4))
+        colors_highlight[np.argwhere(shown_range == False), :3] = 0
+        self.viewer.layers[self.layers[0].name].edge_color = colors_highlight
+
     def draw(self) -> None:
         """Clear the axes and histogram the currently selected layer/slice."""
         data, x_axis_name, y_axis_name = self._get_data()
@@ -172,11 +228,12 @@ class FeaturesHistogramWidget(HistogramWidget):
         colors = colormapping.map(self.bins_norm)
 
         if self.enable_histogram.isChecked():
-            self.N, bins, patches = self.axes.hist(data[0], bins=data[1],
-                                           edgecolor='white',linewidth=0.3,
-                                           label=self.layers[0].name)
+            self.N, bins, patches = self.axes.hist(data[0],
+                                                   bins=data[1],
+                                                   edgecolor='white',
+                                                   linewidth=0.3,
+                                                   label=self.layers[0].name)
             # Set histogram style:
-
             for idx, patch in enumerate(patches):
                 patch.set_facecolor(colors[idx])
         else:
@@ -185,8 +242,7 @@ class FeaturesHistogramWidget(HistogramWidget):
         if self.enable_cdf.isChecked():
             cdf_histogram = stats.rv_histogram((self.N, bins))
             self.axes2.step(bins, cdf_histogram.cdf(data[1]), color='black',
-                            where='mid', zorder=1)
-            self.axes2.scatter(bins, cdf_histogram.cdf(data[1]), c=colors, zorder=2)
+                            where='pre', zorder=1)
         else:
             self.axes2.clear()
 
