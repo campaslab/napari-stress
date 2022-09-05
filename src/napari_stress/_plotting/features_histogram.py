@@ -316,7 +316,7 @@ class FeaturesHistogramWidget(HistogramWidget):
         self.axes2.set_ylabel('Cumulative density')
 
         # make sure that rectangle axes has correct x-range
-        self.axes3.set_xlim(0, bins[-1])
+        self.axes3.set_xlim(bins[0], bins[-1])
 
         self.canvas.draw()
 
