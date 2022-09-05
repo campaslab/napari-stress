@@ -8,7 +8,10 @@ from matplotlib.widgets  import RectangleSelector
 from matplotlib.patches import Rectangle
 from magicgui.widgets import ComboBox
 from typing import List, Optional, Tuple
-from qtpy.QtWidgets import QFileDialog, QHBoxLayout, QPushButton
+from qtpy.QtWidgets import (QFileDialog, QHBoxLayout,
+                            QPushButton, QDoubleSpinBox,
+                            QSpacerItem, QSizePolicy, QGridLayout,
+                            QLabel)
 from scipy import stats
 
 
@@ -37,6 +40,29 @@ class FeaturesHistogramWidget(HistogramWidget):
             self.export,
             call_button='Export plot as csv'
             )
+
+        # controllers for rectangle selector
+        self.left_edit = QDoubleSpinBox()
+        self.left_edit.setMaximum(1)
+        self.left_edit.setMinimum(0)
+        self.left_edit.setDecimals(2)
+        self.left_edit.setSingleStep(0.01)
+        self.right_edit = QDoubleSpinBox()
+        self.right_edit.setMaximum(1)
+        self.right_edit.setMinimum(0)
+        self.right_edit.setDecimals(2)
+        self.right_edit.setSingleStep(0.01)
+        container_edits = QGridLayout()
+        container_edits.addItem(QSpacerItem(100, 0, QSizePolicy.Expanding), 0, 0)
+        container_edits.addItem(QSpacerItem(100, 0, QSizePolicy.Expanding), 1, 0)
+        container_edits.addWidget(QLabel('Upper percentile'), 0, 1)
+        container_edits.addWidget(QLabel('Lower percentile'), 1, 1)
+        container_edits.addWidget(self.left_edit, 1, 2)
+        container_edits.addWidget(self.right_edit, 0, 2)
+        self.layout().addLayout(container_edits)
+
+        self.left_edit.valueChanged.connect(self._on_percentile_select)
+        self.right_edit.valueChanged.connect(self._on_percentile_select)
 
         # buttons to switch between histogram/CDF
         self.enable_histogram = QPushButton('Histogram')
@@ -77,6 +103,7 @@ class FeaturesHistogramWidget(HistogramWidget):
         )
         self.highlight_rectangle = None
         self.highlight_layer = None
+        self.cdf_histogram = None
 
     @property
     def x_axis_key(self) -> Optional[str]:
@@ -184,12 +211,51 @@ class FeaturesHistogramWidget(HistogramWidget):
         y2 = self.axes.get_ylim()[1]
         self._draw_highlight_rectangle(x1, x2, y1, y2)
 
-    def _draw_highlight_rectangle(self, x1, x2, y1, y2):
+        if self.cdf_histogram is not None:
+            percentile_left = self.cdf_histogram.cdf(min(x1, x2))
+            percentile_right = self.cdf_histogram.cdf(max(x1, x2))
+            self.left_edit.setValue(percentile_left)
+            self.right_edit.setValue(percentile_right)
 
+    def _on_percentile_select(self):
+        """If values in percentile comboboxes are changed."""
+        percentile_left = self.left_edit.value()
+        percentile_right = self.right_edit.value()
+
+        if percentile_left > percentile_right:
+            percentile_left = percentile_right
+            self.left_edit.setValue(percentile_left)
+
+        left = self.cdf_histogram.ppf(percentile_left)
+        right = self.cdf_histogram.ppf(percentile_right)
+        self._draw_highlight_rectangle(left, right, 0, self.axes.get_ylim()[1])
+
+
+
+    def _draw_highlight_rectangle(self, x1, x2, y1=0, y2=1):
+        """
+        Draw the rectangle the highlights points in the viewer.
+
+        Parameters
+        ----------
+        x1 : float
+            left border
+        x2 : float
+            right border
+        y1 : float
+            lower border
+        y2 : float
+            upper border
+
+        Returns
+        -------
+        None.
+
+        """
         # put highlight rectangle in histogram plot
         if self.highlight_rectangle is None:
             self.highlight_rectangle = Rectangle(
-                (min(x1,x2),min(y1,y2)), np.abs(x1-x2), np.abs(y1-y2),
+                (min(x1,x2), 0), np.abs(x1-x2), np.abs(y1-y2),
                 alpha=0.35, facecolor='white')
             self.axes3.add_patch(self.highlight_rectangle)
 
@@ -199,16 +265,14 @@ class FeaturesHistogramWidget(HistogramWidget):
 
         self.canvas.draw()
 
-        # highlight selected points in viewer
-        shown_range = self.layers[0].features[self.x_axis_key]
-        left = min(x1,x2)
+        # Get points that correspond to selected points in plot
+        left = min(x1, x2)
         right = max(x1, x2)
+        shown_range = self.layers[0].features[self.x_axis_key]
         shown_range = np.asarray((shown_range > left) * (shown_range < right))
-        # print(f'Selected {sum(shown_range)} out of {len(shown_range)}')
-
-        # self.viewer.layers[self.layers[0].name].features['shown_range'] = shown_range
         self.viewer.layers[self.layers[0].name].refresh_colors(True)
 
+        # highlight in viewer
         colors_highlight = np.ones((self.layers[0].data.shape[0], 4))
         colors_highlight[np.argwhere(shown_range == False), :3] = 0
         self.viewer.layers[self.layers[0].name].edge_color = colors_highlight
@@ -240,15 +304,19 @@ class FeaturesHistogramWidget(HistogramWidget):
             self.axes.clear()
 
         if self.enable_cdf.isChecked():
-            cdf_histogram = stats.rv_histogram((self.N, bins))
-            self.axes2.step(bins, cdf_histogram.cdf(data[1]), color='black',
+            self.cdf_histogram = stats.rv_histogram((self.N, bins))
+            self.axes2.step(bins, self.cdf_histogram.cdf(data[1]), color='black',
                             where='pre', zorder=1)
         else:
             self.axes2.clear()
 
+        # set ax labels
         self.axes.set_xlabel(x_axis_name)
         self.axes.set_ylabel(y_axis_name)
         self.axes2.set_ylabel('Cumulative density')
+
+        # make sure that rectangle axes has correct x-range
+        self.axes3.set_xlim(0, bins[-1])
 
         self.canvas.draw()
 
