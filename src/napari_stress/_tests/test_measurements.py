@@ -71,15 +71,10 @@ def test_stresses():
     ellipsoid_manifold = create_manifold(ellipsoid_quadrature_points, lbdv_info, max_degree=max_degree)
     H_i_ellipsoid, _, H0_ellipsoid = measurements.calculate_mean_curvature_on_manifold(ellipsoid_manifold)
 
-    orientation_matrix = ellipsoid[:, 1].T
-    orientation_matrix = orientation_matrix / np.linalg.norm(orientation_matrix, axis=0)
-    orientation_matrix
-
     # tissue stress tensor
     ellptical, cartesian = measurements.tissue_stress_tensor(
-        curvature_ellipsoid[1]['metadata'][types._METADATAKEY_H_E123_ELLIPSOID],
+        ellipsoid,
         H0_ellipsoid,
-        orientation_matrix,
         gamma=gamma)
 
     stress, stress_tissue, stress_cell = measurements.anisotropic_stress(

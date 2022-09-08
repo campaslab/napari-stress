@@ -23,9 +23,20 @@ Create a spherical harmonics expansion with `Tools > Points > Fit spherical harm
 
 ![](./imgs/demo_visualize_features2.png)
 
-In the dropdown, you'll see all available measurements for the selected layer - in this case, the feature to be visualized (the `x axis key`) is called `error` and corresponds to the fit residue of the spherical harmonics expansion. By changing the number of bins (`n bins`) and clicking on `Update` you can change the number of bins of the histogram and apply the changes:
+In the dropdown labelled `x axis key`, you'll see all available measurements for the selected layer - in this case, the feature to be visualized is called `error` and corresponds to the fit residue of the spherical harmonics expansion. By changing the number of bins (`n bins`) and clicking on `Update` you can change the number of bins of the histogram and apply the changes:
 
 ![](./imgs/demo_visualize_features3.png)
+
+You can additionally show the [cumulative distribution function ](https://en.wikipedia.org/wiki/Cumulative_distribution_function) (CDF) by clicking on the `CDF` button:
+
+![](./imgs/demo_visualize_features4.png)
+
+Lastly, to explore the histogram/CDF distributions interactively, you can select parts of the histogram by drawing a rectangular selection on the plot:
+
+![](./imgs/demo_visualize_features5.png)
+
+Note that the points pertaining to features in the respective range are highlighted in the viewer. You can also change the range of the selection by using the `Upper percentile` and `Lower percentile` spinboxes.
+
 
 To plot a different feature, select it from the dropdown and click `Update` to apply.
 
