@@ -1,4 +1,4 @@
-def test_plotting(make_napari_viewer):
+def test_plotting(make_napari_viewer, tmp_dir):
     from napari_stress import FeaturesHistogramWidget
     from napari_stress import get_droplet_point_cloud
     from napari_stress._spherical_harmonics.spherical_harmonics_napari \
@@ -26,6 +26,9 @@ def test_plotting(make_napari_viewer):
 
     # check the data highlighting
     plot_widget._draw_highlight_rectangle(0,1,0,1)
+
+    plot_widget.left_edit.setValue(0.05)
+    plot_widget.right_edit.setValue(0.95)
 
 
 if __name__ == '__main__':
