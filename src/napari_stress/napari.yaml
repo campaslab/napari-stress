@@ -47,6 +47,9 @@ contributions:
     - id: napari-stress.measure_anisotropic_stresses
       python_name: napari_stress._measurements.stresses:tissue_and_cell_scale_stress
       title: Measure tissue and cell-scale stresses
+    - id: napari-stress.stress_analysis_toolbox
+      python_name: napari_stress._measurements.toolbox:stress_analysis_toolbox
+      title: Stress analysis toolbox
 
     # Ellipsoids
     - id: napari-stress.fit_ellipsoid_points
@@ -102,6 +105,9 @@ contributions:
     - command: napari-stress.measure_anisotropic_stresses
       autogenerate: true
       display_name: Measure tissue and cell-scale stresses
+    - command: napari-stress.stress_analysis_toolbox
+      autogenerate: false
+      display_name: Stress analysis toolbox
 
     - command: napari-stress.trace_refine_surface
       autogenerate: true
