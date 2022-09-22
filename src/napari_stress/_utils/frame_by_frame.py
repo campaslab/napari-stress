@@ -249,8 +249,10 @@ class TimelapseConverter:
         # If data was only 3D
         _properties = {}
         if len(data) == 1:
-            _properties['features'] = data[0][1]['features']
-            _properties['metadata'] = data[0][1]['metadata']
+            if 'features' in properties[0].keys():
+                _properties['features'] = data[0][1]['features']
+            if 'metadata' in properties[0].keys():
+                _properties['metadata'] = data[0][1]['metadata']
         else:
             # Stack features
             if 'features' in properties[0].keys():
