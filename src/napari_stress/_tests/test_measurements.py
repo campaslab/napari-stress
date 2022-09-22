@@ -1,6 +1,30 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_comprehenive_stress_toolbox(make_napari_viewer):
+    from napari_stress import (get_droplet_point_cloud, measurements)
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud()[0]
+    viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
+
+    widget = measurements.stress_analysis_toolbox(viewer)
+    viewer.window.add_dock_widget(widget)
+
+    widget._run()
+
+def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
+    from napari_stress import (get_droplet_point_cloud_4d, measurements)
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud_4d()[0]
+    viewer.add_points(pointcloud[0], **pointcloud[1])
+
+    widget = measurements.stress_analysis_toolbox(viewer)
+    viewer.window.add_dock_widget(widget)
+
+    widget._run()
+
 
 def test_curvature(make_napari_viewer):
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
@@ -58,7 +82,8 @@ def test_stresses():
     # do sh expansion
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
     _, coefficients = stress_spherical_harmonics_expansion(pointcloud, max_degree=max_degree)
-    quadrature_points, lbdv_info = lebedev_quadrature(coefficients)
+    quadrature_points, lbdv_info = lebedev_quadrature(coefficients, number_of_quadrature_points=200,
+                                                      use_minimal_point_set=False)
     manifold = create_manifold(quadrature_points, lbdv_info, max_degree=max_degree)
     H_i, _, H0 = measurements.calculate_mean_curvature_on_manifold(manifold)
 
@@ -68,7 +93,8 @@ def test_stresses():
     curvature_ellipsoid = measurements.curvature_on_ellipsoid(ellipsoid, ellipsoid_points)
 
     _, ellipsoid_coefficients = stress_spherical_harmonics_expansion(ellipsoid_points, max_degree=max_degree)
-    ellipsoid_quadrature_points, lbdv_info = lebedev_quadrature(ellipsoid_coefficients)
+    ellipsoid_quadrature_points, lbdv_info = lebedev_quadrature(ellipsoid_coefficients, number_of_quadrature_points=200,
+                                                      use_minimal_point_set=False)
     ellipsoid_manifold = create_manifold(ellipsoid_quadrature_points, lbdv_info, max_degree=max_degree)
     H_i_ellipsoid, _, H0_ellipsoid = measurements.calculate_mean_curvature_on_manifold(ellipsoid_manifold)
 
@@ -78,10 +104,14 @@ def test_stresses():
         H0_ellipsoid,
         gamma=gamma)
 
+    stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
+        H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
+
     measurements.anisotropic_stress(H_i, H0,
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
+
 
 
 def test_compatibility_decorator():
@@ -102,28 +132,3 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
-
-# def test_compatibility_decorator2(make_napari_viewer):
-#     import napari_stress
-#     from napari_stress import measurements
-#     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
-
-#     from napari_stress import types
-
-#     viewer = make_napari_viewer()
-
-#     pointcloud = napari_stress.get_droplet_point_cloud()[0]
-#     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
-
-#     expansion = napari_stress.fit_spherical_harmonics(viewer.layers[-1].data)
-#     viewer.add_points(expansion[0], **expansion[1])
-
-#     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
-#     results_layer = viewer.layers[-1]
-#     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
-
-#     # pass layer to measurements function
-#     measurements.calculate_mean_curvature_on_manifold(results_layer)
-#     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata.keys()
-#     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata.keys()
-#     assert types._METADATAKEY_MEAN_CURVATURE in results_layer.features.keys()

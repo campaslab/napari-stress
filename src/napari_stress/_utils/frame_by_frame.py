@@ -218,7 +218,11 @@ class TimelapseConverter:
 
         # Convert data to array with dimensions [frame, results, data]
         data = np.stack(tuple_data)
-        layertypes = data[:,..., -1].squeeze()
+
+        if len(data) == 1:
+            layertypes = data[:,..., -1].squeeze()
+        else:
+            layertypes = data[:,..., -1].squeeze()[0]
 
         converted_tuples = []
         for idx, res_type in enumerate(layertypes):
@@ -245,8 +249,10 @@ class TimelapseConverter:
         # If data was only 3D
         _properties = {}
         if len(data) == 1:
-            _properties['features'] = data[0][1]['features']
-            _properties['metadata'] = data[0][1]['metadata']
+            if 'features' in properties[0].keys():
+                _properties['features'] = data[0][1]['features']
+            if 'metadata' in properties[0].keys():
+                _properties['metadata'] = data[0][1]['metadata']
         else:
             # Stack features
             if 'features' in properties[0].keys():
