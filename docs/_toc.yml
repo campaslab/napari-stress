@@ -6,13 +6,13 @@ root: intro
 
 options:
   numbered: true
-  
+
 chapters:
 - file: glossary/Readme
-  sections: 
-  - file: glossary/01_spherical_harmonics 
-  - file: glossary/02_analyzing_spherical_harmonics 
-  
+  sections:
+  - file: glossary/01_spherical_harmonics
+  - file: glossary/02_analyzing_spherical_harmonics
+
 - file: tutorials/demo/Readme
   sections:
   - file: tutorials/demo/demo_surface_reconstruction
@@ -21,7 +21,8 @@ chapters:
   - file: tutorials/demo/demo_spherical_harmonics
   - file: tutorials/demo/demo_analyze_spherical_harmonics
   - file: tutorials/demo/demo_anisotropic_stresses
-  
+  - file: tutorials/demo/demo_stress_toolbox
+
 - file: tutorials/point_and_click/Readme
   sections:
   - file: tutorials/point_and_click/demo_surface_reconstruction
@@ -29,3 +30,4 @@ chapters:
   - file: tutorials/point_and_click/demo_spherical_harmonics
   - file: tutorials/point_and_click/demo_measure_curvature
   - file: tutorials/point_and_click/demo_visualize_features
+  - file: tutorials/point_and_click/demo_stress_toolbox_interactive

@@ -1,11 +1,36 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_comprehenive_stress_toolbox(make_napari_viewer):
+    from napari_stress import (get_droplet_point_cloud, measurements)
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud()[0]
+    viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
+
+    widget = measurements.stress_analysis_toolbox(viewer)
+    viewer.window.add_dock_widget(widget)
+
+    widget._run()
+
+def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
+    from napari_stress import (get_droplet_point_cloud_4d, measurements)
+
+    viewer = make_napari_viewer()
+    pointcloud = get_droplet_point_cloud_4d()[0]
+    viewer.add_points(pointcloud[0], **pointcloud[1])
+
+    widget = measurements.stress_analysis_toolbox(viewer)
+    viewer.window.add_dock_widget(widget)
+
+    widget._run()
+
 
 def test_curvature(make_napari_viewer):
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
     from napari_stress import measurements, get_droplet_point_cloud, fit_spherical_harmonics, types
     from magicgui import magicgui
+    from napari.layers import Layer
 
     # We'll first create a spherical harmonics expansion and a lebedev
     # quadrature from scratch
@@ -18,7 +43,10 @@ def test_curvature(make_napari_viewer):
     viewer.add_points(expansion[0], **expansion[1])
 
     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
+    l = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(l)
     results_layer = viewer.layers[-1]
+
     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
 
     # from code
@@ -80,6 +108,11 @@ def test_stresses():
     stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
 
+    measurements.anisotropic_stress(H_i, H0,
+                                    H_i_ellipsoid, H0_ellipsoid,
+                                    gamma)
+    measurements.maximal_tissue_anisotropy(ellipsoid)
+
     surface = nppas.surface_from_point_cloud_ball_pivoting(quadrature_points)
     surface = list(nppas.fill_holes(surface))
 
@@ -89,6 +122,7 @@ def test_stresses():
 
     # geodesic
     measurements.geodesic_analysis(surface_total, surface_tissue, surface_droplet)
+
 
 def test_compatibility_decorator():
     import inspect
@@ -108,31 +142,3 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
-
-# def test_compatibility_decorator2(make_napari_viewer):
-#     import napari_stress
-#     from napari_stress import measurements
-#     from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
-
-#     from napari_stress import types
-
-#     viewer = make_napari_viewer()
-
-#     pointcloud = napari_stress.get_droplet_point_cloud()[0]
-#     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
-
-#     expansion = napari_stress.fit_spherical_harmonics(viewer.layers[-1].data)
-#     viewer.add_points(expansion[0], **expansion[1])
-
-#     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
-#     results_layer = viewer.layers[-1]
-#     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
-
-#     # pass layer to measurements function
-#     measurements.calculate_mean_curvature_on_manifold(results_layer)
-#     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata.keys()
-#     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata.keys()
-#     assert types._METADATAKEY_MEAN_CURVATURE in results_layer.features.keys()
-
-if __name__ == '__main__':
-    test_stresses()
