@@ -2,6 +2,7 @@ include LICENSE
 include README.md
 
 include src/napari_stress/sample_data/*.csv
+include src/napari_stress/_measurements/*.ui
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
