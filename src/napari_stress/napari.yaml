@@ -6,8 +6,9 @@ contributions:
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
 
+    # Reconstruction
     - id: napari-stress.trace_refine_surface
-      python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
+      python_name: napari_stress.reconstruction:trace_refinement_of_surface
       title: Fit point location on a surface according to a given intensity image
     - id: napari-stress.reconstruct_surface
       python_name: napari_stress._surface:reconstruct_surface
