@@ -2,7 +2,7 @@
 import numpy as np
 
 def test_surface_tracing(make_napari_viewer):
-    from napari_stress import trace_refinement_of_surface
+    from napari_stress import reconstruction
     from skimage import filters, morphology, io, measure
     from vedo import shapes
 
@@ -21,7 +21,7 @@ def test_surface_tracing(make_napari_viewer):
 
     # Test different fit methods (fancy/quick)
     fit_type = 'quick'
-    traced_points = trace_refinement_of_surface(blurry_sphere, surf_points,
+    traced_points = reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
                                                 trace_length=20,
                                                 sampling_distance=1.0,
                                                 selected_fit_type=fit_type,
@@ -32,7 +32,7 @@ def test_surface_tracing(make_napari_viewer):
     assert np.allclose(true_radius, mean_radii, atol=1)
 
     fit_type = 'fancy'
-    traced_points = trace_refinement_of_surface(blurry_sphere, surf_points,
+    traced_points = reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
                                                 trace_length=10,
                                                 selected_fit_type=fit_type,
                                                 remove_outliers=False)
@@ -43,7 +43,7 @@ def test_surface_tracing(make_napari_viewer):
 
     # Test outlier identification
     surf_points[0] += [0, 0, 10]
-    traced_points = trace_refinement_of_surface(blurry_sphere, surf_points,
+    traced_points = reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
                                                 trace_length=10,
                                                 selected_fit_type=fit_type,
                                                 remove_outliers=True)
@@ -56,7 +56,7 @@ def test_surface_tracing(make_napari_viewer):
     surf_points += (surf_points * true_radius + 2) + 50
 
     fit_type = 'fancy'
-    traced_points = trace_refinement_of_surface(blurry_ring, surf_points,
+    traced_points = reconstruction.trace_refinement_of_surface(blurry_ring, surf_points,
                                                 trace_length=10,
                                                 sampling_distance=0.1,
                                                 selected_fit_type=fit_type,
@@ -64,7 +64,7 @@ def test_surface_tracing(make_napari_viewer):
                                                 remove_outliers=False)
 
     fit_type = 'quick'
-    traced_points = trace_refinement_of_surface(blurry_ring, surf_points,
+    traced_points = reconstruction.trace_refinement_of_surface(blurry_ring, surf_points,
                                                 trace_length=10,
                                                 sampling_distance=0.1,
                                                 selected_fit_type=fit_type,

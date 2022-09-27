@@ -2,8 +2,8 @@ __version__ = "0.0.21"
 
 from . import _measurements as measurements
 from . import _approximation as approximation
+from . import _reconstruction as reconstruction
 
-from ._refine_surfaces import trace_refinement_of_surface
 from ._preprocess import rescale
 from ._surface import adjust_surface_density,\
     smooth_sinc,\
