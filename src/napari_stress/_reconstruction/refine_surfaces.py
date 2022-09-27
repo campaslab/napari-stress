@@ -3,8 +3,8 @@
 import vedo
 from napari.types import SurfaceData, ImageData, PointsData
 
-from ._utils.fit_utils import _sigmoid, _gaussian, _function_args_to_list, _detect_max_gradient, _detect_maxima
-from ._utils.frame_by_frame import frame_by_frame
+from .._utils.fit_utils import _sigmoid, _gaussian, _function_args_to_list, _detect_max_gradient, _detect_maxima
+from .._utils.frame_by_frame import frame_by_frame
 
 from scipy.interpolate import RegularGridInterpolator
 from scipy.optimize import curve_fit
