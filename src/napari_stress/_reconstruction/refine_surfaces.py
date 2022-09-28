@@ -135,7 +135,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
-    columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
+    columns = ['surface_points'] + ['idx_of_border'] +\
         fit_parameters + fit_errors + ['profiles']
 
     if len(fit_parameters) == 1:
@@ -167,13 +167,14 @@ def trace_refinement_of_surface(intensity_image: ImageData,
             idx_of_border = popt[0]
 
         new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
-        projection_vector = idx_of_border * (-1) * vector_step[idx]
+
         fit_data.loc[idx, fit_errors] = perror
         fit_data.loc[idx, fit_parameters] = popt
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
         fit_data.loc[idx, 'surface_points'] = new_point
-        fit_data.loc[idx, 'projection_vector'] = projection_vector
 
+    fit_data['start_points'] = list(start_points)
+    fit_data['vectors'] = list(vectors)
     # NaN rows should be removed either way
     fit_data = fit_data.dropna().reset_index()
 
@@ -188,22 +189,26 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              factor=outlier_tolerance,
                                              which='both')
 
+    # reformat to layerdatatuple: points
+    properties = {'name': 'Refined_points',
+                  'size': 1}
+    data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
+    layer_points = (data, properties, 'points')
+
     # reformat to layerdatatuple: normal vectors
-    pts = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
-    vecs = np.stack(fit_data['projection_vector'].to_numpy()).astype(float)
-    data = np.stack([pts, vecs]).transpose((1,0,2))
+    start_points = np.stack(fit_data['start_points'].to_numpy()).squeeze()
+    vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
+    data = np.stack([start_points, vectors]).transpose((1,0,2))
+
     feature_names = fit_parameters + fit_errors + ['idx_of_border']
-    features = fit_data[feature_names]
+    features = fit_data[feature_names].to_dict('list')
     metadata = {'intensity_profiles': fit_data['profiles']}
     properties = {'name': 'Normals',
                   'features': features,
                   'metadata': metadata}
     layer_normals = (data, properties, 'vectors')
 
-    properties = {'name': 'Refined_points',
-                  'size': 1}
-    data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
-    layer_points = (data, properties, 'points')
+
     return (layer_points, layer_normals)
 
 def _remove_outliers_by_index(table: pd.DataFrame,

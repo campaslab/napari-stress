@@ -6,6 +6,8 @@ def test_surface_tracing(make_napari_viewer):
     from skimage import filters, morphology, io, measure
     from vedo import shapes
 
+    viewer = make_napari_viewer()
+
     true_radius = 30
 
     # Make a blurry sphere first
@@ -28,9 +30,11 @@ def test_surface_tracing(make_napari_viewer):
                                                 remove_outliers=False)
     traced_points = results[0][0]
     traced_normals = results[1][0]
+    viewer.add_points(results[0][0], **results[0][1])
+    viewer.add_vectors(results[1][0], **results[1][1])
+
     radial_vectors = np.array([50, 50, 50])[None, :] - traced_points
     mean_radii = np.linalg.norm(radial_vectors, axis=1).mean()
-
     assert np.allclose(true_radius, mean_radii, atol=1)
 
     fit_type = 'fancy'
