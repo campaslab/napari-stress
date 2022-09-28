@@ -191,7 +191,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # reformat to layerdatatuple: points
     properties = {'name': 'Refined_points',
-                  'size': 1}
+                  'size': 1,
+                  'face_color': 'cyan'}
     data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
     layer_points = (data, properties, 'points')
 
