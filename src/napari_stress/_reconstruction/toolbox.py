@@ -12,7 +12,7 @@ from qtpy.QtCore import QEvent, QObject
 from qtpy import uic
 from magicgui.widgets import create_widget
 
-from napari.layers import Image, Labels, Layer
+from napari.layers import Image, Layer, Surface
 from napari.types import PointsData, LayerDataTuple, ImageData, LabelsData
 
 from typing import List
@@ -37,7 +37,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
         # add input dropdowns to plugin
         self.image_layer_select = create_widget(annotation=Image, label="Image_layer")
-        self.labels_layer_select = create_widget(annotation=Labels, label="Labels_layer")
+        self.surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
         self.layout().addWidget(self.image_layer_select.native, 0, 1)
         self.layout().addWidget(self.labels_layer_select.native, 1, 1)
         self.installEventFilter(self)
@@ -61,7 +61,7 @@ class droplet_reconstruction_toolbox(QWidget):
         """Call analysis function."""
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
-            self.labels_layer_select.value.data,
+            self.surface_layer_select.value.data,
             n_smoothing_iterations=self.spinBox_n_smoothing.value(),
             n_points=self.spinBox_n_vertices.value()
             )
@@ -74,7 +74,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
 @frame_by_frame
 def reconstruct_droplet(image: ImageData,
-                        binary: LabelsData,
+                        surface: LabelsData,
                         n_smoothing_iterations: int = 10,
                         n_points: int = 256,
                         fit_type: str = 'fancy',
@@ -85,8 +85,7 @@ def reconstruct_droplet(image: ImageData,
     import napari_process_points_and_surfaces as nppas
     from napari_stress import reconstruction
 
-    # Convert to surface
-    surface = nppas.largest_label_to_surface(binary)
+    # Smooth surface
     surface_smoothed = nppas.filter_smooth_laplacian(
         surface, number_of_iterations=n_smoothing_iterations)
 
