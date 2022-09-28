@@ -25,6 +25,11 @@ contributions:
       python_name: napari_stress._sample_data:get_droplet_point_cloud_4d
       title: 4d dropplet pointcloud sample
 
+    # Reconstruction
+    - id: napari-stress.droplet_reconstruction_toolbox
+      python_name: napari_stress._reconstruction.toolbox:droplet_reconstruction_toolbox
+      title: Droplet reconstruction toolbox
+
     # Spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:fit_spherical_harmonics
@@ -82,6 +87,11 @@ contributions:
     - command: napari-stress.rescale
       autogenerate: true
       display_name: Rescale image data
+
+    # Reconstruction
+    - command: napari-stress.droplet_reconstruction_toolbox
+      autogenerate: false
+      display_name: Droplet reconstruction toolbox
 
     # Spherical harmonics
     - command: napari-stress.fit_spherical_harmonics

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import vedo
-from napari.types import SurfaceData, ImageData, PointsData
+from napari.types import SurfaceData, ImageData, PointsData, LayerDataTuple
 
 from .._utils.fit_utils import _sigmoid, _gaussian, _function_args_to_list, _detect_max_gradient, _detect_maxima
 from .._utils.frame_by_frame import frame_by_frame
@@ -16,6 +16,7 @@ import pandas as pd
 from enum import Enum
 
 from napari_tools_menu import register_function
+from typing import List
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -43,7 +44,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 show_progress: bool = True,
                                 remove_outliers: bool = False,
                                 outlier_tolerance: float = 4.5
-                                )-> PointsData:
+                                )-> List[LayerDataTuple]:
     """
     Generate intensity profiles along traces.
 
@@ -134,17 +135,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
-    columns = ['surface_points'] + ['idx_of_border'] + ['projection_vector'] +\
+    columns = ['surface_points'] + ['idx_of_border'] +\
         fit_parameters + fit_errors + ['profiles']
 
     if len(fit_parameters) == 1:
-        fit_parameters, fit_errors = fit_parameters[0], fit_errors[0]
-
-    optimal_fit_parameters = []
-    optimal_fit_errors = []
-    new_surface_points = []
-    projection_vectors = []
-    idx_of_border = []
+        fit_parameters, fit_errors = [fit_parameters[0]], [fit_errors[0]]
 
     # create empty dataframe to keep track of results
     fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
@@ -162,29 +157,24 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border.append(edge_detection_function(np.array(fit_data.loc[idx, 'profiles'])))
+            idx_of_border = edge_detection_function(np.array(fit_data.loc[idx, 'profiles']))
             perror = 0
             popt = 0
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
             popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
                                            selected_edge_func=edge_detection_function)
-            idx_of_border.append(popt[0])
+            idx_of_border = popt[0]
 
-        optimal_fit_errors.append(perror)
-        optimal_fit_parameters.append(popt)
+        new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
 
-        # get new surface point
-        new_point = (start_points[idx] + idx_of_border[idx] * vector_step[idx]) * scale
-        new_surface_points.append(new_point)
-        projection_vectors.append(idx_of_border[idx] * (-1) * vector_step[idx])
+        fit_data.loc[idx, fit_errors] = perror
+        fit_data.loc[idx, fit_parameters] = popt
+        fit_data.loc[idx, 'idx_of_border'] = idx_of_border
+        fit_data.loc[idx, 'surface_points'] = new_point
 
-    fit_data['idx_of_border'] = idx_of_border
-    fit_data[fit_parameters] = optimal_fit_parameters
-    fit_data[fit_errors] = optimal_fit_errors
-    fit_data['surface_points'] = new_surface_points
-    fit_data['projection_vector'] = projection_vectors
-
+    fit_data['start_points'] = list(start_points)
+    fit_data['vectors'] = list(vectors)
     # NaN rows should be removed either way
     fit_data = fit_data.dropna().reset_index()
 
@@ -198,8 +188,29 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              column_names='idx_of_border',
                                              factor=outlier_tolerance,
                                              which='both')
-    output_points = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
-    return output_points
+
+    # reformat to layerdatatuple: points
+    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    features = fit_data[feature_names].to_dict('list')
+    properties = {'name': 'Refined_points',
+                  'size': 1,
+                  'face_color': 'cyan',
+                  'features': features}
+    data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
+    layer_points = (data, properties, 'points')
+
+    # reformat to layerdatatuple: normal vectors
+    start_points = np.stack(fit_data['start_points'].to_numpy()).squeeze()
+    vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
+    data = np.stack([start_points, vectors]).transpose((1,0,2))
+
+    metadata = {'intensity_profiles': fit_data['profiles']}
+    properties = {'name': 'Normals',
+                  'metadata': metadata}
+    layer_normals = (data, properties, 'vectors')
+
+
+    return (layer_points, layer_normals)
 
 def _remove_outliers_by_index(table: pd.DataFrame,
                               column_names: list,
