@@ -38,9 +38,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
         # add input dropdowns to plugin
         self.image_layer_select = create_widget(annotation=Image, label="Image_layer")
-        self.surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
         self.layout().addWidget(self.image_layer_select.native, 0, 1)
-        self.layout().addWidget(self.surface_layer_select.native, 1, 1)
         self.installEventFilter(self)
 
         # populate comboboxes with allowed values
@@ -77,16 +75,22 @@ class droplet_reconstruction_toolbox(QWidget):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
         if event.type() == QEvent.ParentChange:
             self.image_layer_select.parent_changed.emit(self.parent())
-            self.surface_layer_select.parent_changed.emit(self.parent())
 
         return super().eventFilter(obj, event)
 
     def _run(self):
         """Call analysis function."""
+
+        current_voxel_size = np.asarray([
+            self.doubleSpinBox_voxelsize_x.value(),
+            self.doubleSpinBox_voxelsize_y.value(),
+            self.doubleSpinBox_voxelsize_z.value()
+            ])
+
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
-            self.surface_layer_select.value.data,
-            scale=self.doubleSpinBox_voxelsize.value(),
+            voxelsize=current_voxel_size,
+            target_voxelsize=self.doubleSpinBox_target_voxelsize.value(),
             n_smoothing_iterations=self.spinBox_n_smoothing.value(),
             n_tracing_iterations=self.spinBox_n_refinement_steps.value(),
             resampling_length=self.doubleSpinBox_sampling_length.value(),
@@ -105,8 +109,8 @@ class droplet_reconstruction_toolbox(QWidget):
 
 @frame_by_frame
 def reconstruct_droplet(image: ImageData,
-                        surface: SurfaceData,
-                        scale: float = 1.0,
+                        voxelsize: np.ndarray = None,
+                        target_voxelsize: float = 1.0,
                         n_smoothing_iterations: int = 10,
                         n_points: int = 256,
                         n_tracing_iterations: int = 1,
@@ -117,8 +121,21 @@ def reconstruct_droplet(image: ImageData,
                         sampling_distance: float = 0.5
                         ) -> List[LayerDataTuple]:
     import napari_process_points_and_surfaces as nppas
+    import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
-    import vedo
+    from .._preprocess import rescale
+
+    # rescale
+    scaling_factors = voxelsize/target_voxelsize
+    rescaled_image = rescale(image,
+                             scale_x=scaling_factors[0],
+                             scale_y=scaling_factors[1],
+                             scale_z=scaling_factors[2])
+
+    # convert to surface
+    binarized_image = nsbatwm.threshold_otsu(rescaled_image)[0]
+    label_image = nsbatwm.connected_component_labeling(binarized_image)
+    surface = nppas.largest_label_to_surface(label_image)
 
     # Smooth surface
     surface_smoothed = nppas.filter_smooth_laplacian(
@@ -133,7 +150,6 @@ def reconstruct_droplet(image: ImageData,
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
-
         resampled_points = _resample_pointcloud(
             points, sampling_length=resampling_length)
 
@@ -145,23 +161,26 @@ def reconstruct_droplet(image: ImageData,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
             remove_outliers=True,
-            scale_x=scale, scale_y=scale, scale_z=scale)
+            scale_x=1, scale_y=1, scale_z=1)
 
         points = traced_points[0]
-
 
     # =========================================================================
     # Returns
     # =========================================================================
 
-    properties = {'name': 'Surface_smoothed'}
-    layer_surface_smoothed = (surface_smoothed, properties, 'surface')
+    properties = {'name': 'Rescaled image'}
+    layer_image_rescaled = (rescaled_image, properties, 'image')
 
-    return [layer_surface_smoothed,
+    properties = {'name': 'Label image'}
+    layer_label_image = (label_image, properties, 'labels')
+
+    return [layer_image_rescaled,
+            layer_label_image,
             layer_points_first_guess,
             traced_points,
             trace_vectors
-            ]#
+            ]
 
 def _fibonacci_sampling(number_of_points: int = 256)->PointsData:
     """
