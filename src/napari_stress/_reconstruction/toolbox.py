@@ -82,9 +82,9 @@ class droplet_reconstruction_toolbox(QWidget):
         """Call analysis function."""
 
         current_voxel_size = np.asarray([
-            self.doubleSpinBox_voxelsize_x.value(),
+            self.doubleSpinBox_voxelsize_z.value(),
             self.doubleSpinBox_voxelsize_y.value(),
-            self.doubleSpinBox_voxelsize_z.value()
+            self.doubleSpinBox_voxelsize_x.value()
             ])
 
         results = reconstruct_droplet(
@@ -128,12 +128,12 @@ def reconstruct_droplet(image: ImageData,
     # rescale
     scaling_factors = voxelsize/target_voxelsize
     rescaled_image = rescale(image,
-                             scale_x=scaling_factors[0],
+                             scale_z=scaling_factors[0],
                              scale_y=scaling_factors[1],
-                             scale_z=scaling_factors[2])
+                             scale_x=scaling_factors[2]).squeeze()
 
     # convert to surface
-    binarized_image = nsbatwm.threshold_otsu(rescaled_image)[0]
+    binarized_image = nsbatwm.threshold_otsu(rescaled_image)
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
 
@@ -154,7 +154,7 @@ def reconstruct_droplet(image: ImageData,
             points, sampling_length=resampling_length)
 
         traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
-            image,
+            rescaled_image,
             resampled_points,
             selected_fit_type=fit_type,
             selected_edge=edge_type,
