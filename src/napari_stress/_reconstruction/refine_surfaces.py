@@ -190,8 +190,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              which='both')
 
     # reformat to layerdatatuple: points
+    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    features = fit_data[feature_names].to_dict('list')
+    metadata = {'intensity_profiles': fit_data['profiles']}
     properties = {'name': 'Refined_points',
                   'size': 1,
+                  'features': features,
+                  'metadata': metadata,
                   'face_color': 'cyan'}
     data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
     layer_points = (data, properties, 'points')
@@ -201,12 +206,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
     data = np.stack([start_points, vectors]).transpose((1,0,2))
 
-    feature_names = fit_parameters + fit_errors + ['idx_of_border']
-    features = fit_data[feature_names].to_dict('list')
-    metadata = {'intensity_profiles': fit_data['profiles']}
-    properties = {'name': 'Normals',
-                  'features': features,
-                  'metadata': metadata}
+    properties = {'name': 'Normals'}
     layer_normals = (data, properties, 'vectors')
 
 
