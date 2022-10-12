@@ -18,12 +18,16 @@ contributions:
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
 
+    # Sample data
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_droplet_point_cloud
       title: droplet pointcloud sample
     - id: napari-stress.get_pointcloud_sample_data_4d
       python_name: napari_stress._sample_data:get_droplet_point_cloud_4d
       title: 4d dropplet pointcloud sample
+    - id: napari-stress.get_droplet_image_sample_4d
+      python_name: napari_stress._sample_data:get_droplet_4d
+      title: 4d droplet pointcloud sample
 
     # Reconstruction
     - id: napari-stress.droplet_reconstruction_toolbox
@@ -160,3 +164,6 @@ contributions:
     - command: napari-stress.get_pointcloud_sample_data_4d
       display_name: 4d Droplet pointcloud
       key: PC_2
+    - command: napari-stress.get_droplet_image_sample_4d
+      display_name: 4d Droplet image
+      key: PC_3
