@@ -24,8 +24,37 @@ The fields `Voxel size [x,y,z]` denote the *current* voxel sizes of the data and
 
 The refinement of the first selection of points consists of two principal steps and is performed several times - the number of iterations can be controlled with the `number of iterations` parameter:
 
-![](./imgs/demo_reconstruction_toolbox3.png) 
+![](./imgs/demo_reconstruction_toolbox3.png)
 
 In each iteration, the following steps are done:
 * Resampling: The cartesian coordinates of the points are interpolated according to latitude and longitude. The resampled points are drawn according to a fibonacci-scheme. Again, you can control the number of points that are sampled with the `Point density` field.
-* Trace-refinement: Normals are cast outwards from the sample point and the intesity in the rescaled image along the vectors is mmeasured. The surface point is then moved along this line to best fit the intensity distribution. For more details, see [this notebook](../demo/demo_surface_tracing.ipynb)
+* Trace-refinement: Normals are cast outwards from the sample point and the intesity in the rescaled image along the vectors is mmeasured. The surface point is then moved along this line to best fit the intensity distribution. For more details, see [this notebook](../demo/demo_surface_tracing.ipynb).
+* Postprocessing: During the trace-refinement, the point poistions are re-fitted along the surface normals.  This fitting yields a number of parameters, according to which points can be classified as outliers. To remove outiers, click the `Remove outliers` checkbox. The `Outlier tolerance` defines how exactly points are declared outliers. The default setting defines a value an outlier if is above or below $1.5 \cdot IQR$, where $IQR$ denotes the [interquartile distance](https://en.wikipedia.org/wiki/Interquartile_range).
+
+## Results
+The droplet reconstruction toolbox yields a number of result layers:
+
+* `Rescaled image`: Image layer of the raw data after rescaling to the above-set voxel size
+
+![](./imgs/demo_reconstruction_toolbox_result1.png)
+
+* `Label image`: Binarized version of the droplet
+
+![](./imgs/demo_reconstruction_toolbox_result2.png)
+
+* `points_first_guess`: Initially sampled points on the droplet surface
+
+![](./imgs/demo_reconstruction_toolbox_result3.png)
+
+* `Refined points`: Points after trace-refinement
+
+![](./imgs/demo_reconstruction_toolbox_result4.png)
+
+* ``Normals`: Normals along which the trace-refinement was conducted
+
+![](./imgs/demo_reconstruction_toolbox_result5.png)
+
+## How to proceed
+
+In order to run the stress analysis, use the `Refined points` as an input for the [stress analysis toolbox](point_and_click:stress_toolbox)
+

@@ -1,3 +1,4 @@
+(point_and_click.stress_toolbox)=
 # Comprehensive stress analysis
 
 To provide a means for easy, comprehensive analysis of reconstructed droplet data, napari-stress provides the `stress analysis toolbox`. As example data, you can use the 4D example dataset of a reconstructed pointcloud (`File > Open Sample > napari-stress > 4d Droplet pointcloud`):
