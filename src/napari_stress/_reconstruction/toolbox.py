@@ -27,7 +27,7 @@ from .._spherical_harmonics.spherical_harmonics import (
 from .._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_dock_widget
 
-@register_dock_widget(menu="Utilities > Droplet reconstruction toolbox (n-STRESS)")
+@register_dock_widget(menu="Surfaces > Droplet reconstruction toolbox (n-STRESS)")
 class droplet_reconstruction_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
