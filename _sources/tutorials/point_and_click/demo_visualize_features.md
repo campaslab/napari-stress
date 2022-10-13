@@ -19,7 +19,7 @@ Create a spherical harmonics expansion with `Tools > Points > Fit spherical harm
 
 ## Visualize features <a class="anchor" id="visualize-features"></a>
 
-`Features` in the napari ecosystem are measurements that are assigned to a single Point (`Points` layer), label (`Labels` layer), or Surface vertex (`Surface` layer). In the context of napari-stress, such measurements include point-wise spherical harmonics expansion errors, curvature, etc. To do so for the created sample data, open the widget for this from `Plugins > napari-stress > Visualize features (histogram)`.
+`Features` in the napari ecosystem are measurements that are assigned to a single Point (`Points` layer), label (`Labels` layer), or Surface vertex (`Surface` layer). In the context of napari-stress, such measurements include point-wise spherical harmonics expansion errors, curvature, etc. To do so for the created sample data, open the widget for this from `Tools > Utilities > Visualize pointcloud features (n-Stress)`.
 
 ![](./imgs/demo_visualize_features2.png)
 

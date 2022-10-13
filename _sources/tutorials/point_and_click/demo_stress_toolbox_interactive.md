@@ -7,7 +7,7 @@ To provide a means for easy, comprehensive analysis of reconstructed droplet dat
 
 ## The stress toolbox
 
-Open the stress toolbox from the plugins menu (`Plugins > napari-stress > Stress analysis toolbox`):
+Open the stress toolbox from the plugins menu (`Tools > Measurement > Measure stresses on droplet pointcloud (n-STRESS)`):
 
 ![](./imgs/demo_stress_toolbox2.png)
 

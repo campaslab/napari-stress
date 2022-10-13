@@ -1,6 +1,6 @@
 # Droplet reconstruction toolbox
 
-In order to save you the trouble of walking through each of the steps manually for the reconstruction of oil droplets, napari-stress provides you the droplet reconstruction toolbox (`Plugins > napari-stress > Droplet reconstruction toolbox`). Let's go through the princiiipal steps of the reconstruction:
+In order to save you the trouble of walking through each of the steps manually for the reconstruction of oil droplets, napari-stress provides you the droplet reconstruction toolbox (`Tools > Surfaces > Droplet reconstruction toolbox`). Let's go through the princiiipal steps of the reconstruction:
 
 ## Principal steps
 The principal steps of the reconstruction procedure and the relevant settings are:
