@@ -13,8 +13,9 @@ from qtpy.QtWidgets import (QFileDialog, QHBoxLayout,
                             QSpacerItem, QSizePolicy, QGridLayout,
                             QLabel)
 from scipy import stats
+from napari_tools_menu import register_dock_widget
 
-
+@register_dock_widget(menu="utilities > Visualize pointcloud features (n-Stress)")
 class FeaturesHistogramWidget(HistogramWidget):
     """Plot widget to display histogram of selected layer features."""
 

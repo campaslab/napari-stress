@@ -22,8 +22,9 @@ from .._spherical_harmonics.spherical_harmonics import (
     create_manifold)
 
 from .._utils.frame_by_frame import frame_by_frame
+from napari_tools_menu import register_dock_widget
 
-
+@register_dock_widget(menu = 'Measurement > Measure stresses on droplet pointcloud (n-STRESS)')
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
