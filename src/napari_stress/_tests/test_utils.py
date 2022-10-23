@@ -80,10 +80,15 @@ def test_decorator_surfaces():
 
     Converter = TimelapseConverter()
 
+    # create a list of surfaces with points/faces/values
     surface_list = [
-        (Sphere().points() * k, np.asarray(Sphere().faces())) for k in np.arange(1.9, 2.1, 0.1)
+        (Sphere().points() * k,
+         np.asarray(Sphere().faces()),
+         k * np.ones(Sphere().N())) for k in np.arange(1.9, 2.1, 0.1)
         ]
     surface_array = Converter.list_of_data_to_data(surface_list, SurfaceData)
+    assert len(surface_array) == 3
+
     surface_list_conv = Converter.data_to_list_of_data(surface_array, SurfaceData)
 
     for surf, _surf in zip(surface_list, surface_list_conv):

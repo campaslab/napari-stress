@@ -370,6 +370,12 @@ class TimelapseConverter:
         points = surface[0]
         faces = np.asarray(surface[1], dtype=int)
 
+        # Check if values were assigned to the surface
+        has_values = False
+        if len(surface) == 3:
+            has_values = True
+            values = surface[2]
+
         while points.shape[1] < 4:
             t = np.zeros(len(points), dtype=points.dtype)
             points = np.insert(points, 0, t, axis=1)
@@ -392,7 +398,14 @@ class TimelapseConverter:
 
             # Get parts of faces array that correspond to this frame
             _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t+1]] - sum(points_per_frame[:t])
-            surfaces[t] = (_points, _faces)
+
+            # Get values that correspond to this frame
+            if has_values:
+                _values = values[points[:, 0] == t]
+            else:
+                _values = np.ones(len(_points))
+
+            surfaces[t] = (_points, _faces, _values)
 
         return surfaces
 
