@@ -7,6 +7,7 @@ import numpy as np
 from pygeodesic import geodesic
 
 from napari.types import SurfaceData, LayerDataTuple, VectorsData
+from napari_tools_menu import register_function
 from typing import List
 import tqdm
 
@@ -75,8 +76,6 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
 
     # return metadata
 
-
-    return autocorrelations
 
 def correlation_on_surface(surface1: SurfaceData,
                            surface2: SurfaceData,
@@ -197,6 +196,39 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 
     # return results
 
+@register_function(menu="Surfaces > Extract Geodesic path between vertices (pygeodesics, n-STRESS)")
+@frame_by_frame
+def geodesic_path(surface: SurfaceData, index_1: int, index_2: int
+                  ) -> VectorsData:
+    """
+    Calculate the geodesic path between two index-defined surface vertices .
+
+    Parameters
+    ----------
+    surface : SurfaceData
+    index_1 : int
+        Index of start vertex
+    index_2 : int
+        Index of destination vertex
+
+    Returns
+    -------
+    VectorsData
+
+    """
+    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    distances, path = geoalg.geodesicDistance(index_1, index_2)
+
+    # convert points to vectors from point to point
+    vectors = []
+    for i in range(len(path)-1):
+        vectors.append(path[i+1] - path[i])
+    vectors = np.asarray(vectors)
+    napari_vectors = np.stack([path[:-1], vectors]).transpose((1,0,2))
+
+    return napari_vectors
+
+@register_function(menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)")
 def local_extrema_analysis(surface: SurfaceData,
                            distance_matrix: np.ndarray = None
                            ) -> List[LayerDataTuple]:
