@@ -206,7 +206,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
     data = np.stack([start_points, vectors]).transpose((1,0,2))
 
-    properties = {'name': 'Normals'}
+    properties = {'name': 'Normals', 'edge_width': 0.25}
     layer_normals = (data, properties, 'vectors')
 
 
