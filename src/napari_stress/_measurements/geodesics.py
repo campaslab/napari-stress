@@ -4,13 +4,12 @@
 
 
 import numpy as np
-from scipy import stats
 from pygeodesic import geodesic
-import pandas as pd
 
-from napari.types import SurfaceData, PointsData, LayerDataTuple
-
+from napari.types import SurfaceData, LayerDataTuple
 import tqdm
+
+from .._utils.frame_by_frame import frame_by_frame
 
 def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
@@ -33,80 +32,14 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
 
     n_points = len(surface[0])
-    distance_matrix = np.triu(np.ones((n_points, n_points)), k=1)
+    distance_matrix = np.zeros((n_points, n_points))
+    points = surface[0]
 
-    # get list of pair indices without permutations (only (1,0), not (0,1)).
-    pairs = np.argwhere(distance_matrix == 1)
-
-    for pair in tqdm.tqdm(pairs, desc='Calculating geodesic distances'):
-        try:
-            distances, _ = geoalg.geodesicDistances([pair[0]], None)
-            distance_matrix[pair[0], :] = distances
-        except Exception:
-            print('hello')
+    for idx, pt in tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances'):
+        distances, _ = geoalg.geodesicDistances([idx], None)
+        distance_matrix[idx, :] = distances
 
     return distance_matrix
-
-
-def geodesic_analysis(anisotropic_stress: SurfaceData,
-                      anisotropic_stress_tissue: SurfaceData,
-                      anisotropic_stress_cell: SurfaceData,
-                      maximal_distance: float = None):
-    """
-    Analyze geodesic distances.
-
-    Parameters
-    ----------
-    anisotropic_stress: np.ndarray
-        total anisotropic stress at every point of droplet surface
-    anisotropic_stress_cell: np.ndarray
-        cell-scale anisotropic stress on droplet surface
-    anisotropic_stress_tissue: np.ndarray
-        tissue-scale anisotropic stress on surface of LSQ ellipsoid
-    maximal_distance: float
-        distance within which surface points should be included in the analysis.
-
-    Returns
-    -------
-    None.
-
-    """
-    GDM = None
-    if maximal_distance is None:
-        # calculate geodesic distances
-        GDM = geodesic_distance_matrix(anisotropic_stress)
-        maximal_distance = int(np.floor(GDM.max()))
-
-    # Compute Overall Stress spatial correlations
-    autocorrelations = correlation_on_surface(anisotropic_stress,
-                                              anisotropic_stress,
-                                              distance_matrix=GDM,
-                                              maximal_distance=maximal_distance)
-
-    # Compute Cellular Stress spatial correlations
-    autocorrelations_cell = correlation_on_surface(anisotropic_stress_cell,
-                                                   anisotropic_stress_cell,
-                                                   distance_matrix=GDM,
-                                                   maximal_distance=maximal_distance)
-
-    # Compute Tissue Stress spatial correlations
-    autocorrelations_tissue = correlation_on_surface(anisotropic_stress_tissue,
-                                                     anisotropic_stress_tissue,
-                                                     distance_matrix=GDM,
-                                                     maximal_distance=maximal_distance)
-
-    #########################################################################
-    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
-    min_max_distances = local_min_max_and_dists(anisotropic_stress, GDM)
-    min_max_distances_cell = local_min_max_and_dists(anisotropic_stress_cell, GDM)
-
-    results = {'autocorrelations': autocorrelations,
-               'autocorrelations_cell': autocorrelations_cell,
-               'autocorrelations_tissue': autocorrelations_tissue,
-               'min_max_distances': min_max_distances,
-               'min_max_distances_cell': min_max_distances_cell}
-
-    return results
 
 
     # # FIND CDF for 2\gamma*(H - H_0) and exclude points with curvature within
@@ -144,7 +77,6 @@ def geodesic_analysis(anisotropic_stress: SurfaceData,
 
     return autocorrelations
 
-# calculate correlations from input vecs (at same pts), and dists mats:
 def correlation_on_surface(surface1: SurfaceData,
                            surface2: SurfaceData,
                            distance_matrix: np.ndarray = None,
@@ -264,8 +196,9 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 
     # return results
 
-def local_min_max_and_dists(surface: SurfaceData,
-                            distance_matrix: np.ndarray = None):
+def local_extrema_analysis(surface: SurfaceData,
+                           distance_matrix: np.ndarray = None
+                           ) -> LayerDataTuple:
     """
     Get local maximum and minimum.
 
@@ -393,11 +326,15 @@ def local_min_max_and_dists(surface: SurfaceData,
         pt_num_of_nearest_max = local_max_inds[ind_in_list_of_nearest_max][0,0]
         delta_feature_nearest_min_max[pt_min_num] = ( feature[pt_num_of_nearest_max] - feature[pt_min_num] )
 
-    result1 = {'local_max_and_min': local_max_and_min,
-               'nearest_min_max_dists': nearest_min_max_dists,
-               'delta_feature_nearest_min_max': delta_feature_nearest_min_max}
-
-    result2 = {'min_max_pair_distances': min_max_pair_distances,
+    features = {'local_max_and_min': local_max_and_min}
+    metadata = {'nearest_min_max_dists': nearest_min_max_dists,
+               'delta_feature_nearest_min_max': delta_feature_nearest_min_max,
+               'min_max_pair_distances': min_max_pair_distances,
                'min_max_pair_anisotropies': min_max_pair_anisotropies}
+    properties = {'features': features,
+                  'metadata': metadata,
+                  'name': 'Maxima and minima',
+                  'face_color': 'local_max_and_min'}
+    output_points = (surface[0], properties, 'points')
 
-    return pd.DataFrame.from_dict(result1), pd.DataFrame.from_dict(result2)
+    return output_points
