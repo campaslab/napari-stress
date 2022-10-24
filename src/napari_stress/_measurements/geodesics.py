@@ -6,7 +6,8 @@
 import numpy as np
 from pygeodesic import geodesic
 
-from napari.types import SurfaceData, LayerDataTuple
+from napari.types import SurfaceData, LayerDataTuple, VectorsData
+from typing import List
 import tqdm
 
 from .._utils.frame_by_frame import frame_by_frame
@@ -198,35 +199,35 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 
 def local_extrema_analysis(surface: SurfaceData,
                            distance_matrix: np.ndarray = None
-                           ) -> LayerDataTuple:
+                           ) -> List[LayerDataTuple]:
     """
-    Get local maximum and minimum.
+    Get local maximum and minimum and analyze their mutual distances.
 
     Parameters
     ----------
-    feature : np.ndarray
-        Feature on surface
-    distance_matrix : np.ndarray
-        DESCRIPTION.
-    surface : tuple
-        DESCRIPTION.
+    surface : SurfaceData
+    distance_matrix : np.ndarray, optional
+        geodesic distance matrix. The default is None.
 
     Returns
     -------
-    min_max_distances : pd.DataFrame
-        DataFrame with length = n_vertices on surface. The columns denote:
-            * `local_maxima_and_minima`: np.ndarray with value +1 if point i is
-            a maximum, -1 if it's a minimum or 0 if it's neither.
-            * `nearest_min_max_distances`: Distance to nearest minimum or maximum
-            * `delta_feature_nearest_min_max`: Difference in passed feature
-            between nearest minimum and maximum
+    List[LayerDataTuple]
+        local extrema: Points LayerDataTuple with extrema type
+        (maximum/minimum) stored in `features[local_max_and_min]`. The metadata
+        contain:
+            `nearest_min_max_dists`: The distances between every extremum and
+            its nearest other kind of extremum (Max-min distances + min-max
+            distances)
+            `nearest_min_max_dists`: Differene in feature value between
+            neighboring extrema
+            `min_max_pair_distances`: Mutual distances between all extrema
+            `min_max_pair_anisotropies`: Difference in feature expression
+            between all pairs of extrema
+        output_geodesics_min_max: Vectors LayerDataTuple with geodesic
+        distances between every minimum and its nearest maximum
+        output_geodesics_max_min: Vectors LayerDataTuple with geodesic
+        distances between every maximum and its nearest minimum
 
-    pair_distances: pd.DataFrame
-        DataFrame with length n_minima/maxima. The columns denote:
-            * `min_max_pair_distances`: Distances between pairs of neighboring
-            maximum/minimum on surface
-            * `min_max_pair_anisotropies`: Anisotropy of passed feature between
-            pairs of neighboring maximum/minimum on surface
     """
     triangles = surface[1]
     feature = surface[2]
@@ -300,6 +301,10 @@ def local_extrema_analysis(surface: SurfaceData,
     min_max_pair_anisotropies = np.array(min_max_pair_anisotropies, dtype=np.dtype('d'))
     min_max_pair_distances = np.array(min_max_pair_distances, dtype=np.dtype('d'))
 
+    pt_num_of_nearest_min = []
+    geodesic_paths_nearest_max_min = []
+    geodesic_paths_nearest_min_max = []
+
     for pt_max in range(num_local_max):
         pt_max_num = local_max_inds[pt_max]
 
@@ -312,6 +317,9 @@ def local_extrema_analysis(surface: SurfaceData,
         pt_num_of_nearest_min = local_min_inds[ind_in_list_of_nearest_min][0,0]
 
         delta_feature_nearest_min_max[pt_max_num] = ( feature[pt_max_num] - feature[pt_num_of_nearest_min] )
+        geodesic_paths_nearest_max_min.append(
+            geodesic_path(surface, pt_max_num, pt_num_of_nearest_min)
+            )
 
     for pt_min in range(num_local_min):
         pt_min_num = local_min_inds[pt_min]
@@ -325,16 +333,34 @@ def local_extrema_analysis(surface: SurfaceData,
         ind_in_list_of_nearest_max = np.argwhere(local_max_dists_to_pt == max_dist_to_local_min)
         pt_num_of_nearest_max = local_max_inds[ind_in_list_of_nearest_max][0,0]
         delta_feature_nearest_min_max[pt_min_num] = ( feature[pt_num_of_nearest_max] - feature[pt_min_num] )
+        geodesic_paths_nearest_min_max.append(
+            geodesic_path(surface, pt_min_num, pt_num_of_nearest_max)
+            )
+
 
     features = {'local_max_and_min': local_max_and_min}
     metadata = {'nearest_min_max_dists': nearest_min_max_dists,
-               'delta_feature_nearest_min_max': delta_feature_nearest_min_max,
+               'nearest_min_max_dists': delta_feature_nearest_min_max,
                'min_max_pair_distances': min_max_pair_distances,
                'min_max_pair_anisotropies': min_max_pair_anisotropies}
     properties = {'features': features,
                   'metadata': metadata,
                   'name': 'Maxima and minima',
+                  'size': 0.5,
                   'face_color': 'local_max_and_min'}
     output_points = (surface[0], properties, 'points')
 
-    return output_points
+    output_geodesics_min_max = (
+        np.concatenate(geodesic_paths_nearest_min_max),
+        {'name': 'Geodesics minima -> nearest maxima',
+         'edge_width': 0.2,
+         'edge_color': 'orange'},
+        'vectors')
+    output_geodesics_max_min = (
+        np.concatenate(geodesic_paths_nearest_max_min),
+        {'name': 'Geodesics maxima -> nearest minima',
+         'edge_width': 0.2,
+         'edge_color': 'blue'},
+        'vectors')
+
+    return [output_points, output_geodesics_max_min, output_geodesics_min_max]

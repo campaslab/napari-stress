@@ -279,9 +279,9 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     #########################################################################
     # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
-    extrema_total_stress = measurements.local_extrema_analysis(
+    extrema_total_stress, max_min_geodesics_total, min_max_geodesics_total = measurements.local_extrema_analysis(
         surface_total_stress, GDM)
-    extrema_cellular_stress = measurements.local_extrema_analysis(
+    extrema_cellular_stress, max_min_geodesics_cell, min_max_geodesics_cell = measurements.local_extrema_analysis(
         surface_cell_stress, GDM)
 
     # =========================================================================
@@ -345,11 +345,14 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     # Geodesics and autocorrelations
     layer_extrema_total_stress = extrema_total_stress
-    layer_extrema_total_stress[1]['size'] = 1
     layer_extrema_total_stress[1]['name'] = 'Extrema total stress'
     layer_extrema_cellular_stress = extrema_cellular_stress
-    layer_extrema_cellular_stress[1]['size'] = 1
     layer_extrema_cellular_stress[1]['name'] = 'Extrema cell stress'
+
+    max_min_geodesics_total[1]['name'] = 'Total stress: ' + max_min_geodesics_total[1]['name']
+    min_max_geodesics_total[1]['name'] = 'Total stress: ' + min_max_geodesics_total[1]['name']
+    max_min_geodesics_cell[1]['name'] = 'Cell stress: ' + max_min_geodesics_cell[1]['name']
+    min_max_geodesics_cell[1]['name'] = 'Cell stress: ' + min_max_geodesics_cell[1]['name']
 
     # # Fit residues
     # properties = {'name': 'Spherical harmonics fit residues',
@@ -372,4 +375,8 @@ def comprehensive_analysis(pointcloud: PointsData,
             layer_quadrature_ellipsoid,
             layer_quadrature,
             layer_extrema_total_stress,
-            layer_extrema_cellular_stress]
+            layer_extrema_cellular_stress,
+            max_min_geodesics_total,
+            min_max_geodesics_total,
+            max_min_geodesics_cell,
+            min_max_geodesics_cell]
