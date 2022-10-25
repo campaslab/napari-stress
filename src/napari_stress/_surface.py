@@ -8,7 +8,7 @@ from napari_tools_menu import register_function
 
 import vedo
 
-#@register_function(menu="Points > Fit ellipsoid major axis to points (vedo, n-STRESS)")
+@register_function(menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(points: PointsData,
                                        inside_fraction: float = 0.673) -> PointsData:
@@ -26,7 +26,8 @@ def fit_ellipsoid_to_pointcloud_points(points: PointsData,
     PointsData
 
     """
-    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+    ellipsoid = vedo.pca_ellipsoid(vedo.pointcloud.Points(points),
+                                   pvalue=inside_fraction)
 
     output_points = ellipsoid.points()
 
@@ -53,7 +54,8 @@ def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
     VectorsData
 
     """
-    ellipsoid = vedo.pcaEllipsoid(vedo.pointcloud.Points(points), pvalue=inside_fraction)
+    ellipsoid = vedo.pca_ellipsoid(vedo.pointcloud.Points(points),
+                                   pvalue=inside_fraction)
 
     vectors = np.stack([ellipsoid.axis1 * ellipsoid.va,
                         ellipsoid.axis2 * ellipsoid.vb,
@@ -67,7 +69,7 @@ def fit_ellipsoid_to_pointcloud_vectors(points: PointsData,
 
     return vectors
 
-
+@register_function(menu="Points > Create surface from points (flying edges, vedo, n-STRESS)")
 @frame_by_frame
 def reconstruct_surface(points: PointsData,
                         radius: float = 1.0,
@@ -94,10 +96,10 @@ def reconstruct_surface(points: PointsData,
     """
     pointcloud = vedo.pointcloud.Points(points)
 
-    surface = pointcloud.reconstructSurface(radius=radius,
-                                            sampleSize=None,
-                                            holeFilling=holeFilling,
-                                            padding=padding)
+    surface = pointcloud.reconstruct_surface(radius=radius,
+                                             sample_size=None,
+                                             hole_filling=holeFilling,
+                                             padding=padding)
 
     return (surface.points(), np.asarray(surface.faces(), dtype=int))
 
