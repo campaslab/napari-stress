@@ -58,7 +58,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-cov PyQt5 pytest-qt pytest-xvfb
           pip install -e .
-
       # this runs the platform-specific tests
       - name: Run tests
         shell: bash -l {0}
