@@ -111,7 +111,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # Convert to mesh and calculate normals
     pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.computeNormalsWithPCA(orientationPoint=pointcloud.centerOfMass())
+    pointcloud.compute_normals_with_pca(
+        orientation_point=pointcloud.centerOfMass()
+        )
 
     # Define start and end points for the surface tracing vectors
     scale = np.asarray([scale_z, scale_y, scale_x])
