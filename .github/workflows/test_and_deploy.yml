@@ -1,19 +1,16 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
 name: tests
 
 on:
   push:
     branches:
       - main
-      - master
+      - npe2
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
     branches:
-      - main
       - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -35,36 +32,10 @@ jobs:
 
       # these libraries enable testing on Qt on linux
       - uses: tlambert03/setup-qt-libs@v1
-
-      - name: Set up conda ${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v2.0.0
-        with:
-          auto-update-conda: true
-          activate-environment: test
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge
-
-      - name: Conda info
-        shell: bash -l {0}
-        run: conda info
-
-      # note: if you need dependencies from conda, considering using
-      # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
-      # and
-      # tox-conda: https://github.com/tox-dev/tox-conda
-      - name: Install dependencies
-        shell: bash -l {0}
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest pytest-cov PyQt5 pytest-qt pytest-xvfb
-          pip install -e .
-
-      # this runs the platform-specific tests
-      - name: Run tests
+      - name: Test
         shell: bash -l {0}
         run: pytest -v --cov=./ --cov-report=xml
-
-      - name: Upload coverage to Codecov
+      - name: Coverage
         uses: codecov/codecov-action@v2
 
   deploy:
@@ -87,7 +58,7 @@ jobs:
       - name: Build and publish
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_API_KEY }}
         run: |
           git tag
           python -m build .
