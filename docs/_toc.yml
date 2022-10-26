@@ -22,6 +22,7 @@ chapters:
   - file: tutorials/demo/demo_analyze_spherical_harmonics
   - file: tutorials/demo/demo_anisotropic_stresses
   - file: tutorials/demo/demo_stress_toolbox
+  - file: tutorials/demo/demo_analyze_everything
 
 - file: tutorials/point_and_click/Readme
   sections:
