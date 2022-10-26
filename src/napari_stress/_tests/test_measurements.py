@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_geodesics():
+    import vedo
+    from napari_stress import measurements
+
+    sphere = vedo.Sphere(r=10)
+    values = np.zeros(sphere.N())
+    values[0] = -1
+    values[-1] = 1
+    surface = (sphere.points(), np.asarray(sphere.faces()), values)
+
+    GDM = measurements.geodesic_distance_matrix(surface)
+
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud, measurements)
 
