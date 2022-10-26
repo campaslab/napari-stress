@@ -129,6 +129,7 @@ def comprehensive_analysis(pointcloud: PointsData,
     """
     from .. import approximation
     from .. import measurements
+    from .. import reconstruction
 
     from ..types import (_METADATAKEY_MEAN_CURVATURE,
                          _METADATAKEY_H_E123_ELLIPSOID,
@@ -233,6 +234,54 @@ def comprehensive_analysis(pointcloud: PointsData,
     result = measurements.tissue_stress_tensor(ellipsoid, H0_surface_ellipsoid, gamma=gamma)
     stress_tensor_ellipsoidal = result[0]
     stress_tensor_cartesian = result[1]
+
+    # =============================================================================
+    # Geodesics
+    # =============================================================================
+
+    # Find the surface triangles for the quadrature points and create
+    # SurfaceData from it
+    surface_droplet = reconstruction.reconstruct_surface_from_quadrature_points(
+        quadrature_points)
+
+    surface_cell_stress = list(surface_droplet) + [stress_droplet]
+    surface_total_stress = list(surface_droplet) + [stress]
+    surface_tissue_stress = list(surface_droplet) + [stress_tissue]
+
+    GDM = None
+    if GDM is None:
+        GDM = measurements.geodesic_distance_matrix(surface_cell_stress)
+
+    if maximal_distance is None:
+        maximal_distance = int(np.floor(GDM.max()))
+
+    # Compute Overall total stress spatial correlations
+    autocorrelations = measurements.correlation_on_surface(
+        surface_total_stress,
+        surface_total_stress,
+        distance_matrix=GDM,
+        maximal_distance=maximal_distance)
+
+    # Compute cellular Stress spatial correlations
+    autocorrelations_cell = measurements.correlation_on_surface(
+        surface_cell_stress,
+        surface_cell_stress,
+        distance_matrix=GDM,
+        maximal_distance=maximal_distance)
+
+    # Compute tissue Stress spatial correlations
+    autocorrelations_tissue = measurements.correlation_on_surface(
+        surface_tissue_stress,
+        surface_tissue_stress,
+        distance_matrix=GDM,
+        maximal_distance=maximal_distance)
+
+    #########################################################################
+    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
+    extrema_total_stress, max_min_geodesics_total, min_max_geodesics_total = measurements.local_extrema_analysis(
+        surface_total_stress, GDM)
+    extrema_cellular_stress, max_min_geodesics_cell, min_max_geodesics_cell = measurements.local_extrema_analysis(
+        surface_cell_stress, GDM)
 
     # =========================================================================
     # Create views as layerdatatuples
