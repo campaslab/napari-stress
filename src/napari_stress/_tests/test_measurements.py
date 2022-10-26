@@ -12,6 +12,7 @@ def test_geodesics():
     surface = (sphere.points(), np.asarray(sphere.faces()), values)
 
     GDM = measurements.geodesic_distance_matrix(surface)
+    geodesic_vectors = measurements.geodesic_path(surface, 1, 2)
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud, measurements)
