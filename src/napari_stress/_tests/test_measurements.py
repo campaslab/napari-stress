@@ -1,6 +1,40 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_geodesics():
+    import vedo
+    from napari_stress import measurements
+
+    sphere = vedo.Sphere(r=10)
+    values = np.zeros(sphere.N())
+    values[0] = -1
+    values[-1] = 1
+    surface = (sphere.points(), np.asarray(sphere.faces()), values)
+
+    GDM = measurements.geodesic_distance_matrix(surface)
+    geodesic_vectors = measurements.geodesic_path(surface, 1, 2)
+    results = measurements.local_extrema_analysis(surface,
+                                                  distance_matrix=GDM)
+
+def test_comprehensive_geodesics():
+
+    from napari_stress import get_droplet_4d
+    from napari_stress import reconstruction, measurements
+
+    example_data = get_droplet_4d()[0][0]
+
+    results = reconstruction.reconstruct_droplet(example_data[:2],
+                                             voxelsize=np.asarray([1.93, 1.0, 1.0]),
+                                             target_voxelsize=1.0,
+                                             resampling_length=1)
+    refined_points = results[3]
+
+    results_stress_analysis = measurements.comprehensive_analysis(refined_points[0],
+                                                              max_degree=5,
+                                                              n_quadrature_points=434)
+    surface = reconstruction.reconstruct_surface_from_quadrature_points(
+        results_stress_analysis[4][0])
+
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud, measurements)
 
@@ -120,8 +154,6 @@ def test_stresses():
     surface_tissue = surface + [stress_tissue]
     surface_droplet = surface + [stress_cell]
 
-    # geodesic
-    measurements.geodesic_analysis(surface_total, surface_tissue, surface_droplet)
 
 
 def test_compatibility_decorator():
@@ -142,3 +174,7 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
+
+if __name__ == '__main__':
+    import napari
+    test_comprehenive_stress_toolbox(napari.Viewer)

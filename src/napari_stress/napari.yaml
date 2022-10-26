@@ -6,8 +6,9 @@ contributions:
       python_name: napari_stress._preprocess:rescale
       title: Rescale image data by given scale factors
 
+    # Reconstruction
     - id: napari-stress.trace_refine_surface
-      python_name: napari_stress._refine_surfaces:trace_refinement_of_surface
+      python_name: napari_stress._reconstruction.refine_surfaces:trace_refinement_of_surface
       title: Fit point location on a surface according to a given intensity image
     - id: napari-stress.reconstruct_surface
       python_name: napari_stress._surface:reconstruct_surface
@@ -17,12 +18,21 @@ contributions:
       python_name: napari_stress._surface:extract_vertex_points
       title: Extract surface vertices as points data
 
+    # Sample data
     - id: napari-stress.get_pointcloud_sample_data
       python_name: napari_stress._sample_data:get_droplet_point_cloud
       title: droplet pointcloud sample
     - id: napari-stress.get_pointcloud_sample_data_4d
       python_name: napari_stress._sample_data:get_droplet_point_cloud_4d
       title: 4d dropplet pointcloud sample
+    - id: napari-stress.get_droplet_image_sample_4d
+      python_name: napari_stress._sample_data:get_droplet_4d
+      title: 4d droplet pointcloud sample
+
+    # Reconstruction
+    - id: napari-stress.droplet_reconstruction_toolbox
+      python_name: napari_stress._reconstruction.toolbox:droplet_reconstruction_toolbox
+      title: Droplet reconstruction toolbox
 
     # Spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
@@ -81,6 +91,11 @@ contributions:
     - command: napari-stress.rescale
       autogenerate: true
       display_name: Rescale image data
+
+    # Reconstruction
+    - command: napari-stress.droplet_reconstruction_toolbox
+      autogenerate: false
+      display_name: Droplet reconstruction toolbox
 
     # Spherical harmonics
     - command: napari-stress.fit_spherical_harmonics
@@ -149,3 +164,6 @@ contributions:
     - command: napari-stress.get_pointcloud_sample_data_4d
       display_name: 4d Droplet pointcloud
       key: PC_2
+    - command: napari-stress.get_droplet_image_sample_4d
+      display_name: 4d Droplet image
+      key: PC_3

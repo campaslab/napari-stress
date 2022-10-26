@@ -4,13 +4,14 @@
 
 
 import numpy as np
-from scipy import stats
 from pygeodesic import geodesic
-import pandas as pd
 
-from napari.types import SurfaceData, PointsData, LayerDataTuple
-
+from napari.types import SurfaceData, LayerDataTuple, VectorsData
+from napari_tools_menu import register_function
+from typing import List
 import tqdm
+
+from .._utils.frame_by_frame import frame_by_frame
 
 def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
@@ -33,83 +34,49 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
 
     n_points = len(surface[0])
-    distance_matrix = np.triu(np.ones((n_points, n_points)), k=1)
+    distance_matrix = np.zeros((n_points, n_points))
+    points = surface[0]
 
-    # get list of pair indices without permutations (only (1,0), not (0,1)).
-    pairs = np.argwhere(distance_matrix == 1)
-
-    for pair in tqdm.tqdm(pairs, desc='Calculating geodesic distances'):
-        try:
-            distances, _ = geoalg.geodesicDistances([pair[0]], None)
-            distance_matrix[pair[0], :] = distances
-        except Exception:
-            print('hello')
+    for idx, pt in tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances'):
+        distances, _ = geoalg.geodesicDistances([idx], None)
+        distance_matrix[idx, :] = distances
 
     return distance_matrix
 
 
-def geodesic_analysis(anisotropic_stress: SurfaceData,
-                      anisotropic_stress_tissue: SurfaceData,
-                      anisotropic_stress_cell: SurfaceData,
-                      maximal_distance: float = None):
-    """
-    Analyze geodesic distances.
+    # # FIND CDF for 2\gamma*(H - H_0) and exclude points with curvature within
+    # # alpha tail of CDF function:
+    # cdf_info = _CDF_Analysis_of_Data(anisotropic_stress, alpha_total)
+    # num_curvs_above_max_AnisStress = np.count_nonzero(cdf_info['excluded_values']== 1)
+    # num_curvs_below_min_AnisStress = np.count_nonzero(cdf_info['excluded_values']== -1)
 
-    Parameters
-    ----------
-    anisotropic_stress: np.ndarray
-        total anisotropic stress at every point of droplet surface
-    anisotropic_stress_cell: np.ndarray
-        cell-scale anisotropic stress on droplet surface
-    anisotropic_stress_tissue: np.ndarray
-        tissue-scale anisotropic stress on surface of LSQ ellipsoid
-    maximal_distance: float
-        distance within which surface points should be included in the analysis.
+    # # FIND CDF for 2\gamma*(H - H_ellps):
+    # cdf_info_cell = _CDF_Analysis_of_Data(anisotropic_stress_cell, alpha_cell)
+    # num_curvs_above_max_AnisCellStress = np.count_nonzero(cdf_info_cell['excluded_values']== 1)
+    # num_curvs_below_min_AnisCellStress = np.count_nonzero(cdf_info_cell['excluded_values']== -1)
 
-    Returns
-    -------
-    None.
+    # # Find CDF for 2\gamma*(H_Local_Max - H_Local_Min) distribution, using ALL pairs:
+    # cdf_info_autocorrelations = _CDF_Analysis_of_Data(autocorrelations['min_max_pair_anisotropies'],
+    #                                                   alpha_min_max_exclusion)
 
-    """
-    GDM = None
-    if maximal_distance is None:
-        # calculate geodesic distances
-        GDM = geodesic_distance_matrix(anisotropic_stress)
-        maximal_distance = int(np.floor(GDM.max()))
+    # # # FIND CDF for 2\gamma*(H_Input - H_0_Input):
+    # # self.min_val_excl_AnisStress_Input_UV, self.max_val_excl_AnisStress_Input_UV, self.curv_pts_excluded_AnisStress_Input_UV, self.hist_dist_AnisStress_Input_UV = _CDF_Analysis_of_Data(self.Anis_Stress_pts_UV_input, Droplet_Input_Dict['alpha_percentile_excl_AnisStress']) # same \alpha as corresponding lbdv field
 
-    # Compute Overall Stress spatial correlations
-    autocorrelations = correlation_on_surface(anisotropic_stress,
-                                              anisotropic_stress,
-                                              distance_matrix=GDM,
-                                              maximal_distance=maximal_distance)
-
-    # Compute Cellular Stress spatial correlations
-    autocorrelations_cell = correlation_on_surface(anisotropic_stress_cell,
-                                                   anisotropic_stress_cell,
-                                                   distance_matrix=GDM,
-                                                   maximal_distance=maximal_distance)
-
-    # Compute Tissue Stress spatial correlations
-    autocorrelations_tissue = correlation_on_surface(anisotropic_stress_tissue,
-                                                     anisotropic_stress_tissue,
-                                                     distance_matrix=GDM,
-                                                     maximal_distance=maximal_distance)
-
-    #########################################################################
-    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
-    min_max_distances = local_min_max_and_dists(anisotropic_stress, GDM)
-    min_max_distances_cell = local_min_max_and_dists(anisotropic_stress_cell, GDM)
-
-    results = {'autocorrelations': autocorrelations,
-               'autocorrelations_cell': autocorrelations_cell,
-               'autocorrelations_tissue': autocorrelations_tissue,
-               'min_max_distances': min_max_distances,
-               'min_max_distances_cell': min_max_distances_cell}
-
-    return results
+    # # # FIND CDF for 2\gamma*(H_Input - H_ellps_{INPUT}):
+    # # self.min_val_excl_AnisCellStress_Input_UV, self.max_val_excl_AnisCellStress_Input_UV, self.curv_pts_excluded_AnisCellStress_Input_UV, self.hist_dist_AnisCellStress_Input_UV = _CDF_Analysis_of_Data(self.Anis_Cell_Stress_pts_UV_input, Droplet_Input_Dict['alpha_percentile_excl_AnisCellStress']) # same \alpha as corresponding lbdv field
 
 
-# calculate correlations from input vecs (at same pts), and dists mats:
+    # # look at which points exluded from 2\gamma*HmHe are also local min/max of 2\gamma*H:
+    # # should be 1 where these align, 0 otherwise
+    # HmHe_exlc_vs_Local_H_min_max_pts = np.multiply(cdf_info_cell['excluded_values'].flatten(),
+    #                                                     min_max_distances['local_maxima_and_minima'].flatten() )
+
+    # num_local_extrema_curvs_in_cutoff_AnisCellStress_align = np.count_nonzero(HmHe_exlc_vs_Local_H_min_max_pts == 1)
+    # num_local_extrema_curvs_in_cutoff_AnisCellStress_anti_align = np.count_nonzero(HmHe_exlc_vs_Local_H_min_max_pts == -1)
+
+    # return metadata
+
+
 def correlation_on_surface(surface1: SurfaceData,
                            surface2: SurfaceData,
                            distance_matrix: np.ndarray = None,
@@ -240,37 +207,70 @@ def local_extrema_on_surface(surface: SurfaceData) -> np.ndarray:
 
 
 
-def local_min_max_and_dists(surface: SurfaceData,
-                            distance_matrix: np.ndarray = None):
+@register_function(menu="Surfaces > Extract Geodesic path between vertices (pygeodesics, n-STRESS)")
+@frame_by_frame
+def geodesic_path(surface: SurfaceData, index_1: int, index_2: int
+                  ) -> VectorsData:
     """
-    Get local maximum and minimum.
+    Calculate the geodesic path between two index-defined surface vertices .
 
     Parameters
     ----------
-    feature : np.ndarray
-        Feature on surface
-    distance_matrix : np.ndarray
-        DESCRIPTION.
-    surface : tuple
-        DESCRIPTION.
+    surface : SurfaceData
+    index_1 : int
+        Index of start vertex
+    index_2 : int
+        Index of destination vertex
 
     Returns
     -------
-    min_max_distances : pd.DataFrame
-        DataFrame with length = n_vertices on surface. The columns denote:
-            * `local_maxima_and_minima`: np.ndarray with value +1 if point i is
-            a maximum, -1 if it's a minimum or 0 if it's neither.
-            * `nearest_min_max_distances`: Distance to nearest minimum or
-            maximum
-            * `delta_feature_nearest_min_max`: Difference in passed feature
-            between nearest minimum and maximum
+    VectorsData
 
-    pair_distances: pd.DataFrame
-        DataFrame with length n_minima/maxima. The columns denote:
-            * `min_max_pair_distances`: Distances between pairs of neighboring
-            maximum/minimum on surface
-            * `min_max_pair_anisotropies`: Anisotropy of passed feature between
-            pairs of neighboring maximum/minimum on surface
+    """
+    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    distances, path = geoalg.geodesicDistance(index_1, index_2)
+
+    # convert points to vectors from point to point
+    vectors = []
+    for i in range(len(path)-1):
+        vectors.append(path[i+1] - path[i])
+    vectors = np.asarray(vectors)
+    napari_vectors = np.stack([path[:-1], vectors]).transpose((1,0,2))
+
+    return napari_vectors
+
+@register_function(menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)")
+def local_extrema_analysis(surface: SurfaceData,
+                           distance_matrix: np.ndarray = None
+                           ) -> List[LayerDataTuple]:
+    """
+    Get local maximum and minimum and analyze their mutual distances.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+    distance_matrix : np.ndarray, optional
+        geodesic distance matrix. The default is None.
+
+    Returns
+    -------
+    List[LayerDataTuple]
+        local extrema: Points LayerDataTuple with extrema type
+        (maximum/minimum) stored in `features[local_max_and_min]`. The metadata
+        contain:
+            `nearest_min_max_dists`: The distances between every extremum and
+            its nearest other kind of extremum (Max-min distances + min-max
+            distances)
+            `nearest_min_max_dists`: Differene in feature value between
+            neighboring extrema
+            `min_max_pair_distances`: Mutual distances between all extrema
+            `min_max_pair_anisotropies`: Difference in feature expression
+            between all pairs of extrema
+        output_geodesics_min_max: Vectors LayerDataTuple with geodesic
+        distances between every minimum and its nearest maximum
+        output_geodesics_max_min: Vectors LayerDataTuple with geodesic
+        distances between every maximum and its nearest minimum
+
     """
     # triangles = surface[1]
     feature = surface[2]
@@ -354,20 +354,22 @@ def local_min_max_and_dists(surface: SurfaceData,
     is_maximum = local_extrema == 1
     distance_to_nearest_extremum = np.zeros_like(local_extrema)
 
-    # STEP 3a:
-    # find pairs of maxima and nearest minima
-    max_min_pairs = []
-    max_min_pair_anisotropy = []
+    pt_num_of_nearest_min = []
+    geodesic_paths_nearest_max_min = []
+    geodesic_paths_nearest_min_max = []
+
+    for pt_max in range(num_local_max):
+        pt_max_num = local_max_inds[pt_max]
 
     for idx in np.argwhere(is_maximum).squeeze():
 
         # get the inter-extremal distances only between point idx and minima
         distances_to_minima = inter_extremal_distances[idx] * is_minimum
 
-        # find index of nearest minimum
-        distances_to_minima[distances_to_minima == 0] = np.nan
-        idx_nearest_miniumum = np.nanargmin(distances_to_minima)
-        delta_feature = feature[idx] - feature[idx_nearest_miniumum]
+        delta_feature_nearest_min_max[pt_max_num] = ( feature[pt_max_num] - feature[pt_num_of_nearest_min] )
+        geodesic_paths_nearest_max_min.append(
+            geodesic_path(surface, pt_max_num, pt_num_of_nearest_min)
+            )
 
         distance_to_nearest_extremum
         max_min_pairs.append((idx, idx_nearest_miniumum))
@@ -382,82 +384,38 @@ def local_min_max_and_dists(surface: SurfaceData,
         # get the inter-extremal distances only between point idx and minima
         distances_to_maxima = inter_extremal_distances[idx] * is_maximum
 
-        # find index of nearest maximum
-        distances_to_maxima[distances_to_maxima == 0] = np.nan
-        idx_nearest_maximum = np.nanargmin(distances_to_maxima)
-        delta_feature = feature[idx] - feature[idx_nearest_maximum]
+        # Calculate 2*(H_min - H_nearest_max):
+        ind_in_list_of_nearest_max = np.argwhere(local_max_dists_to_pt == max_dist_to_local_min)
+        pt_num_of_nearest_max = local_max_inds[ind_in_list_of_nearest_max][0,0]
+        delta_feature_nearest_min_max[pt_min_num] = ( feature[pt_num_of_nearest_max] - feature[pt_min_num] )
+        geodesic_paths_nearest_min_max.append(
+            geodesic_path(surface, pt_min_num, pt_num_of_nearest_max)
+            )
 
-        min_max_pairs.append((idx, idx_nearest_maximum))
-        min_max_pair_anisotropy.append(delta_feature)
 
-    # Step 4: Format results as dataframe
-    df = pd.DataFrame(np.argwhere(local_extrema != 0).squeeze(),
-                      columns=['local_extrema'])
-    df['is_maximum'] = local_extrema[df['local_extrema']] == 1
-    df['is_minimum'] = local_extrema[df['local_extrema']] == -1
+    features = {'local_max_and_min': local_max_and_min}
+    metadata = {'nearest_min_max_dists': nearest_min_max_dists,
+               'nearest_min_max_dists': delta_feature_nearest_min_max,
+               'min_max_pair_distances': min_max_pair_distances,
+               'min_max_pair_anisotropies': min_max_pair_anisotropies}
+    properties = {'features': features,
+                  'metadata': metadata,
+                  'name': 'Maxima and minima',
+                  'size': 0.5,
+                  'face_color': 'local_max_and_min'}
+    output_points = (surface[0], properties, 'points')
 
-    # num_local_max = np.count_nonzero(local_extrema == 1)
-    # num_local_min = np.count_nonzero(local_extrema == -1)
+    output_geodesics_min_max = (
+        np.concatenate(geodesic_paths_nearest_min_max),
+        {'name': 'Geodesics minima -> nearest maxima',
+         'edge_width': 0.2,
+         'edge_color': 'orange'},
+        'vectors')
+    output_geodesics_max_min = (
+        np.concatenate(geodesic_paths_nearest_max_min),
+        {'name': 'Geodesics maxima -> nearest minima',
+         'edge_width': 0.2,
+         'edge_color': 'blue'},
+        'vectors')
 
-    # local_max_inds = np.where( local_max_and_min == 1 )[0]
-    # local_min_inds = np.where( local_max_and_min == -1 )[0]
-
-    # # list of ALL local min/max pairs' distances and difference in input fields:
-    # min_max_pair_anisotropies = []
-    # min_max_pair_distances = []
-
-    # for pt_max in range(num_local_max):
-    #     pt_max_num = local_max_inds[pt_max]
-    #     local_max_field = feature[pt_max_num]
-
-    #     for pt_min in range(num_local_min):
-    #         pt_min_num = local_min_inds[pt_min]
-    #         local_min_field = feature[pt_min_num]
-
-    #         dist_max_min_pt = distance_matrix[pt_min_num, pt_max_num]
-    #         Anisotropy_max_min_pts = local_max_field - local_min_field
-
-    #         min_max_pair_anisotropies.append(Anisotropy_max_min_pts)
-    #         min_max_pair_distances.append(dist_max_min_pt)
-
-    #         max_min_distance_matrix[pt_min_num, pt_max_num] = dist_max_min_pt
-    #         max_min_distance_matrix[pt_max_num, pt_min_num] = dist_max_min_pt
-
-    # min_max_pair_anisotropies = np.array(min_max_pair_anisotropies, dtype=np.dtype('d'))
-    # min_max_pair_distances = np.array(min_max_pair_distances, dtype=np.dtype('d'))
-
-    # for pt_max in range(num_local_max):
-    #     pt_max_num = local_max_inds[pt_max]
-
-    #     local_min_dists_to_pt = distance_matrix[pt_max_num, local_min_inds]
-    #     min_dist_to_local_min = min(local_min_dists_to_pt)
-    #     nearest_min_max_dists[pt_max_num] = min_dist_to_local_min
-
-    #     # Calculate 2*(H_max - H_nearest_min):
-    #     ind_in_list_of_nearest_min = np.argwhere(local_min_dists_to_pt == min_dist_to_local_min)
-    #     pt_num_of_nearest_min = local_min_inds[ind_in_list_of_nearest_min][0,0]
-
-    #     delta_feature_nearest_min_max[pt_max_num] = ( feature[pt_max_num] - feature[pt_num_of_nearest_min] )
-
-    # for pt_min in range(num_local_min):
-    #     pt_min_num = local_min_inds[pt_min]
-
-    #     local_max_dists_to_pt = distance_matrix[pt_min_num, local_max_inds]
-
-    #     max_dist_to_local_min = min(local_max_dists_to_pt)
-    #     nearest_min_max_dists[pt_min_num] = max_dist_to_local_min
-
-    #     # Calculate 2*(H_min - H_nearest_max):
-    #     ind_in_list_of_nearest_max = np.argwhere(local_max_dists_to_pt == max_dist_to_local_min)
-    #     pt_num_of_nearest_max = local_max_inds[ind_in_list_of_nearest_max][0,0]
-    #     delta_feature_nearest_min_max[pt_min_num] = ( feature[pt_num_of_nearest_max] - feature[pt_min_num] )
-
-    result1 = {'local_max_and_min': local_extrema,
-               'nearest_min_max_dists': nearest_min_max_dists,
-               'delta_feature_nearest_min_max': delta_feature_nearest_min_max,
-               'min_max_distance_matrix': max_min_distance_matrix}
-
-    result2 = {'min_max_pair_distances': distances_max_to_min,
-                'min_max_pair_anisotropies': feature_anisotropy_max_to_min}
-
-    return result1, result2
+    return [output_points, output_geodesics_max_min, output_geodesics_min_max]

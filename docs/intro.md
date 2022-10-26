@@ -7,3 +7,5 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 - [Glossary](glossary/Readme.md): Overview about mathematical background and concepts
 - [Usage from code](tutorials/demo/Readme.md): How to use napari-stress from code
 - [Interactive usage](tutorials/point_and_click/Readme.md): How to use napari-stress interactively from the [napari](https://napari.org/stable/) viewer
+
+<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/all_outputs.png" width="100%">
