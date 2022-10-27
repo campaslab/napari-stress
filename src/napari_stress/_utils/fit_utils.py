@@ -37,10 +37,29 @@ def _function_args_to_list(function: callable) -> list:
 
 def Least_Squares_Harmonic_Fit(fit_degree: int,
                                points_ellipse_coords: tuple,
-                               input_points: PointsData,
-                               use_true_harmonics: bool = True) -> np.ndarray:
+                               input_points: np.ndarray,
+                               expansion_type='cartesian') -> np.ndarray:
     """
-    Least squares harmonic fit to point cloud, given choice of basis and degree.
+    Perform least squares harmonic fit on input points.
+
+    Parameters
+    ----------
+
+    fit_degree: int
+    points_ellipse_coords: tuple
+        Input points in elliptical coordinates - required least squares
+        fit to find ellipsoid major/minor axes
+    input_points:
+        Values to be expanded on the surface. Can be cartesian point coordinates
+        (x/y/z) or radii for a radial expansion.
+    expansion_type: str
+        Type of expansion to be performed. Default is 'cartesian'.
+
+    Returns
+    -------
+    coefficients: np.ndarray
+        Numpy array holding spherical harmonics expansion coefficients. The size
+        on the type of expansion (cartesian or radial).
     """
 
     U, V = points_ellipse_coords[0], points_ellipse_coords[1]
@@ -53,9 +72,16 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
             Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
             All_Y_mn_pt_in.append(Y_mn_coors_in)
 
-    All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
-    x1 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 0])[0]
-    x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 1])[0]
-    x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 2])[0]
+    if expansion_type == 'cartesian':
+        All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
+        coefficients_x1 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 0])[0]
+        coefficients_x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 1])[0]
+        coefficients_x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 2])[0]
 
-    return np.vstack([x1, x2, x3]).transpose()
+        return np.vstack([coefficients_x1, coefficients_x2, coefficients_x3]).transpose()
+
+    if expansion_type == 'radial':
+        coefficients_r = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points)[0]
+        return coefficients_r
+        
+
