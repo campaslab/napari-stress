@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from cmath import exp
 from napari.types import LayerDataTuple, PointsData
 from napari.layers import Points
 import numpy as np
@@ -20,11 +21,18 @@ class spherical_harmonics_methods(Enum):
     shtools = {'function': shtools_spherical_harmonics_expansion}
     stress = {'function': stress_spherical_harmonics_expansion}
 
+class expansion_types(Enum):
+    """Available coordinate systems for spherical harmonics expansion."""
+    cartesian = 'cartesian'
+    radial = 'radial'
+
+
 @register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def fit_spherical_harmonics(points: PointsData,
                             max_degree: int = 5,
-                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress
+                            implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
+                            expansion_type: expansion_types = expansion_types.cartesian
                             ) -> LayerDataTuple:
     """
     Approximate a surface by spherical harmonics expansion.
@@ -34,16 +42,24 @@ def fit_spherical_harmonics(points: PointsData,
     points : PointsData
     max_degree : int
         Order up to which spherical harmonics should be included for the approximation.
+    implementation: spherical_harmonics_methods
+        Which implementation to use for spherical harmonics fit (stress or pyshtools). 
+        Default is `spherical_harmonics_methods.stress`
+    expansion_type: expansion_type
+        Which coordinate to use for expansion. Can be `cartesian` or `radial`. For cartesian
+        expansion, x/y/z will be approximated separately with a spherical harmonics expansion
+        or radial for radial approximation.
+
 
     Returns
     -------
-    PointsData
+    LayerDataTuple
         Pointcloud on surface of a spherical harmonics expansion at the same
         latitude/longitude as the input points.
 
     See Also
     --------
-    [1] https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Spherical_Harmonics.png
+    [1] https://en.wikipedia.org/wiki/Spherical_harmonics
 
     """
     # Parse inputs
@@ -51,7 +67,9 @@ def fit_spherical_harmonics(points: PointsData,
         fit_function = spherical_harmonics_methods.__members__[implementation].value['function']
     else:
         fit_function = implementation.value['function']
-    fitted_points, coefficients = fit_function(points, max_degree=max_degree)
+    fitted_points, coefficients = fit_function(points,
+                                               max_degree=max_degree,
+                                               expansion_type=expansion_type.value)
 
     properties, features, metadata = {}, {}, {}
 

@@ -20,7 +20,8 @@ from .._stress import euclidian_k_form_SPB as euc_kf
 from .._stress import lebedev_info_SPB as lebedev_info
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
-                                          max_degree: int = 5
+                                          max_degree: int = 5,
+                                          expansion_type: str ='cartesian'
                                           ) -> Tuple[PointsData, np.ndarray]:
     """
     Approximate a surface by spherical harmonics expansion with pyshtools implementation.
@@ -64,7 +65,9 @@ def shtools_spherical_harmonics_expansion(points: PointsData,
     return points, spherical_harmonics_coeffcients.to_array()
 
 def stress_spherical_harmonics_expansion(points: PointsData,
-                                         max_degree: int = 5) -> Tuple[PointsData, np.ndarray]:
+                                         max_degree: int = 5,
+                                         expansion_type: str ='cartesian'
+                                         ) -> Tuple[PointsData, np.ndarray]:
     """
     Approximate a surface by spherical harmonics expansion with stress implementation.
 
