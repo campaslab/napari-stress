@@ -91,8 +91,8 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     # to the data, one for each cardinal direction (x/y/z).
     optimal_fit_parameters = Least_Squares_Harmonic_Fit(
         fit_degree=max_degree,
-        points_ellipse_coords = (longitude, latitude),
-        input_points = points)
+        sample_locations = (longitude, latitude),
+        values = points)
 
     X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 0], max_degree)
     Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 1], max_degree)
