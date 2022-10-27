@@ -308,7 +308,7 @@ def local_extrema_analysis(surface: SurfaceData,
 
     features = {'local_max_and_min': local_max_and_min}
     metadata = {'nearest_min_max_dists': nearest_min_max_dists,
-               'nearest_min_max_dists': delta_feature_nearest_min_max,
+               'nearest_min_max_anisotropies': delta_feature_nearest_min_max,
                'min_max_pair_distances': min_max_pair_distances,
                'min_max_pair_anisotropies': min_max_pair_anisotropies}
     properties = {'features': features,
