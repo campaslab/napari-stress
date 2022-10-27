@@ -257,7 +257,7 @@ def comprehensive_analysis(pointcloud: PointsData,
         maximal_distance = int(np.floor(GDM.max()))
 
     # Compute Overall total stress spatial correlations
-    autocorrelations = measurements.correlation_on_surface(
+    autocorrelations_total = measurements.correlation_on_surface(
         surface_total_stress,
         surface_total_stress,
         distance_matrix=GDM,
@@ -354,6 +354,13 @@ def comprehensive_analysis(pointcloud: PointsData,
     max_min_geodesics_cell[1]['name'] = 'Cell stress: ' + max_min_geodesics_cell[1]['name']
     min_max_geodesics_cell[1]['name'] = 'Cell stress: ' + min_max_geodesics_cell[1]['name']
 
+    metadata = {'autocorrelations_total': autocorrelations_total,
+                'autocorrelations_cell': autocorrelations_cell,
+                'autocorrelations_tissue': autocorrelations_tissue}
+    properties = {'name': 'stress_autocorrelations',
+                  'metadata':  metadata}
+    layer_surface_autocorrelation = (surface_droplet, properties, 'surface')
+
     # # Fit residues
     # properties = {'name': 'Spherical harmonics fit residues',
     #               'edge_width': size,
@@ -379,4 +386,5 @@ def comprehensive_analysis(pointcloud: PointsData,
             max_min_geodesics_total,
             min_max_geodesics_total,
             max_min_geodesics_cell,
-            min_max_geodesics_cell]
+            min_max_geodesics_cell,
+            layer_surface_autocorrelation]
