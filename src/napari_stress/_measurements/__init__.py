@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .curvature import (calculate_mean_curvature_on_manifold,
+                        average_mean_curvatures_on_manifold,
                         curvature_on_ellipsoid,
                         mean_curvature_on_ellipse_cardinal_points,
                         gauss_bonnet_test)

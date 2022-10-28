@@ -36,14 +36,30 @@ def _function_args_to_list(function: callable) -> list:
     return list(sig.parameters.keys())
 
 def Least_Squares_Harmonic_Fit(fit_degree: int,
-                               points_ellipse_coords: tuple,
-                               input_points: PointsData,
-                               use_true_harmonics: bool = True) -> np.ndarray:
+                               sample_locations: tuple,
+                               values: np.ndarray) -> np.ndarray:
     """
-    Least squares harmonic fit to point cloud, given choice of basis and degree.
+    Perform least squares harmonic fit on input points.
+
+    Parameters
+    ----------
+
+    fit_degree: int
+    sample_locations: tuple
+        Input points in elliptical coordinates - required least squares
+        fit to find ellipsoid major/minor axes
+    values: np.ndarray
+        Values to be expanded on the surface. Can be cartesian point coordinates
+        (x/y/z) or radii for a radial expansion.
+
+    Returns
+    -------
+    coefficients: np.ndarray
+        Numpy array holding spherical harmonics expansion coefficients. The size
+        on the type of expansion (cartesian or radial).
     """
 
-    U, V = points_ellipse_coords[0], points_ellipse_coords[1]
+    U, V = sample_locations[0], sample_locations[1]
 
     All_Y_mn_pt_in = []
 
@@ -52,10 +68,9 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
             Y_mn_coors_in = []
             Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
             All_Y_mn_pt_in.append(Y_mn_coors_in)
+    All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))        
 
-    All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
-    x1 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 0])[0]
-    x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 1])[0]
-    x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, input_points[:, 2])[0]
+    coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
+    return coefficients
+        
 
-    return np.vstack([x1, x2, x3]).transpose()
