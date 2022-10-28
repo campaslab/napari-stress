@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from statistics import mean
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
@@ -206,6 +207,37 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
         layer.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL] = H0_surface_integral
 
     return mean_curvatures, H0_arithmetic, H0_surface_integral
+
+@register_function(menu="Measurement > Measure average mean curvature on manifold (n-STRESS)")
+def average_mean_curvatures_on_manifold(input_manifold: manifold) -> Tuple[float, float]:
+
+    mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
+    
+    # If a layer was passed instead of manifold
+    layer = None
+    if isinstance(input_manifold, Layer):
+        layer = input_manifold
+        input_manifold = input_manifold.metadata[manifold.__name__]
+
+    # Arithmetic average of curvature
+    H0_arithmetic = mean_curvature.flatten().mean()
+
+    # Integrating surface area - this is the one used for downstream analysis
+    Integral_on_surface = euc_kf.Integral_on_Manny(mean_curvature,
+                                                input_manifold,
+                                                input_manifold.lebedev_info)
+    Integral_on_sphere = euc_kf.Integral_on_Manny(np.ones_like(mean_curvature).astype(float),
+                                                  input_manifold,
+                                                  input_manifold.lebedev_info)
+    H0_surface_integral = Integral_on_surface/Integral_on_sphere
+
+    # if a layer was passed instead of manifold - put result in metadata
+    if layer is not None:
+        layer.metadata[_METADATAKEY_H0_ARITHMETIC] = H0_arithmetic
+        layer.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL] = H0_surface_integral
+
+    return H0_arithmetic, H0_surface_integral
+
 
 def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
     """Calculate arithmetic average of mean curvature."""
