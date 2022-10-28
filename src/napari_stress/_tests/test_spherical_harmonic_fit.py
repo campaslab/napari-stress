@@ -52,6 +52,7 @@ def test_spherical_harmonics():
 
     ellipse_points = vedo.shapes.Ellipsoid().points()
 
+    # test cartesian expansion
     pts, coeffs_pysh = sh.shtools_spherical_harmonics_expansion(ellipse_points)
     pts, coeffs_stress = sh.stress_spherical_harmonics_expansion(ellipse_points)
 
@@ -59,6 +60,12 @@ def test_spherical_harmonics():
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress,
                                                          use_minimal_point_set=False)  # with pickle
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress)  # without pickle
+
+    # test radial expansion
+    pts, coeffs_stress = sh.stress_spherical_harmonics_expansion(ellipse_points,
+                                                                expansion_type='radial')
+    assert pts.shape[1] == 3
+    assert pts.shape[0] == len(ellipse_points)
 
 def test_interoperatibility():
 
@@ -112,5 +119,5 @@ def test_interoperatibility():
     # pysh_pts = np.stack([pysh_x, pysh_y, pysh_z]).transpose()
 
 if __name__ == '__main__':
-    import napari
-    test_front_spherical_harmonics_4d(napari.Viewer)
+    #import napari
+    test_spherical_harmonics()

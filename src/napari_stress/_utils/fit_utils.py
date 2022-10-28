@@ -37,8 +37,7 @@ def _function_args_to_list(function: callable) -> list:
 
 def Least_Squares_Harmonic_Fit(fit_degree: int,
                                sample_locations: tuple,
-                               values: np.ndarray,
-                               expansion_type='cartesian') -> np.ndarray:
+                               values: np.ndarray) -> np.ndarray:
     """
     Perform least squares harmonic fit on input points.
 
@@ -52,8 +51,6 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
     values: np.ndarray
         Values to be expanded on the surface. Can be cartesian point coordinates
         (x/y/z) or radii for a radial expansion.
-    expansion_type: str
-        Type of expansion to be performed. Default is 'cartesian'.
 
     Returns
     -------
@@ -71,17 +68,9 @@ def Least_Squares_Harmonic_Fit(fit_degree: int,
             Y_mn_coors_in = []
             Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
             All_Y_mn_pt_in.append(Y_mn_coors_in)
+    All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))        
 
-    if expansion_type == 'cartesian':
-        All_Y_mn_pt_in_mat = np.hstack(( All_Y_mn_pt_in ))
-        coefficients_x1 = np.linalg.lstsq(All_Y_mn_pt_in_mat, values[:, 0])[0]
-        coefficients_x2 = np.linalg.lstsq(All_Y_mn_pt_in_mat, values[:, 1])[0]
-        coefficients_x3 = np.linalg.lstsq(All_Y_mn_pt_in_mat, values[:, 2])[0]
-
-        return np.vstack([coefficients_x1, coefficients_x2, coefficients_x3]).transpose()
-
-    if expansion_type == 'radial':
-        coefficients_r = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
-        return coefficients_r
+    coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
+    return coefficients
         
 

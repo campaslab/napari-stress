@@ -83,33 +83,65 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     """
     from .. import _approximation as approximation
     from .._utils.coordinate_conversion import cartesian_to_elliptical
-    # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-    ellipsoid = approximation.least_squares_ellipsoid(points)
-    longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
 
-    # This implementation fits a superposition of three sets of spherical harmonics
-    # to the data, one for each cardinal direction (x/y/z).
-    optimal_fit_parameters = Least_Squares_Harmonic_Fit(
-        fit_degree=max_degree,
-        sample_locations = (longitude, latitude),
-        values = points)
+    if expansion_type == 'cartesian':
+        # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
+        ellipsoid = approximation.least_squares_ellipsoid(points)
+        longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
 
-    X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 0], max_degree)
-    Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 1], max_degree)
-    Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 2], max_degree)
+        # This implementation fits a superposition of three sets of spherical harmonics
+        # to the data, one for each cardinal direction (x/y/z).
+        optimal_fit_parameters = []
+        for i in range(3):
+            params = Least_Squares_Harmonic_Fit(
+                fit_degree=max_degree,
+                sample_locations = (longitude, latitude),
+                values = points[:, i])
+            optimal_fit_parameters.append(params)
+        optimal_fit_parameters = np.vstack(optimal_fit_parameters).transpose()
 
-    coefficients = np.stack([X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat])
+        X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 0], max_degree)
+        Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 1], max_degree)
+        Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters[:, 2], max_degree)
 
-    # Create SPH_func to represent X, Y, Z:
-    X_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
-    Y_fit_sph = sph_f.spherical_harmonics_function(coefficients[1], max_degree)
-    Z_fit_sph = sph_f.spherical_harmonics_function(coefficients[2], max_degree)
+        coefficients = np.stack([X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat])
 
-    X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
-    Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
-    Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
+        # Create SPH_func to represent X, Y, Z:
+        X_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
+        Y_fit_sph = sph_f.spherical_harmonics_function(coefficients[1], max_degree)
+        Z_fit_sph = sph_f.spherical_harmonics_function(coefficients[2], max_degree)
 
-    fitted_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
+        X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
+        Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
+        Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
+
+        fitted_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
+    
+    if expansion_type == 'radial':
+        # This implementation fits a spherical harmonics expansion
+        # to the data to describe radius as a function of latitude/longitutde
+        center = points.mean(axis=0)
+        points_relative = points - center[None, :]
+        points_spherical = vedo.cart2spher(points_relative[:, 0],
+                                           points_relative[:, 1],
+                                            points_relative[:, 2]).transpose()
+        radii = points_spherical[:, 0]
+        latitude = points_spherical[:, 1]
+        longitude = points_spherical[:, 2]
+
+        optimal_fit_parameters = Least_Squares_Harmonic_Fit(
+            fit_degree=max_degree,
+            sample_locations = (longitude[:, None], latitude[:, None]),
+            values = radii)
+        coefficients = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters, max_degree)
+
+        # expand radii
+        r_fit_sph = sph_f.spherical_harmonics_function(coefficients, max_degree)
+        r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
+
+        fitted_points = vedo.spher2cart(r_fit_sph_UV_pts,
+                                        latitude,
+                                        longitude).transpose() + center[None, :]
 
     return fitted_points, coefficients
 
