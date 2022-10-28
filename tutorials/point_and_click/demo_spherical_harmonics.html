@@ -415,8 +415,13 @@ title="Print to PDF"
 <p>Select the spherical harmonics expansion from the tools menu (<code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Fit</span> <span class="pre">spherical</span> <span class="pre">harmonics</span> <span class="pre">(n-STRESS)</span></code>):</p>
 <p><img alt="" src="../../_images/fit_spherical_harmonics.png" /></p>
 <p>This will bring up a dialogue with the available options:</p>
-<p><img alt="" src="../../_images/fit_spherical_harmonics1.png" /></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">max_degree</span></code> controls the accuracy of the approximation (see <a class="reference internal" href="../../glossary/02_analyzing_spherical_harmonics.html#spherical-harmonics-measurements-fit-residue"><span class="std std-ref">glossary</span></a> for details). A higher-degree expansion will lead to a better approximation of the input pointcloud, but will eventually pick up noise and lead to <a class="reference external" href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>. A lower degree will lead to a smoother surface, but higher remaining errors.</p>
+<p><img alt="" src="../../_images/demo_fit_spherical_harmonics1.png" /></p>
+<p><strong>Parameters</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">max_degree</span></code>: Controls the accuracy of the approximation (see <a class="reference internal" href="../../glossary/02_analyzing_spherical_harmonics.html#spherical-harmonics-measurements-fit-residue"><span class="std std-ref">glossary</span></a> for details). A higher-degree expansion will lead to a better approximation of the input pointcloud, but will eventually pick up noise and lead to <a class="reference external" href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>. A lower degree will lead to a smoother surface, but higher remaining errors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">implementation</span></code>: Which implementation to use. Currently supported backends are STRESS (<em>recommended</em>) and <a class="reference external" href="https://shtools.github.io/SHTOOLS/">pyshtools</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expansion</span> <span class="pre">type</span></code>: Controls whether the points should be approximated in a cartesian (<em>recommended</em>) or radial (=spherical) coordinate system.</p></li>
+</ul>
 <section id="results">
 <h2><span class="section-number">3.3.1. </span>Results<a class="headerlink" href="#results" title="Permalink to this headline">#</a></h2>
 <p>Applying a spherical harmonics expansion of <code class="docutils literal notranslate"><span class="pre">max_degree</span> <span class="pre">=</span> <span class="pre">5</span></code> will lead to the following result. The colorcoding of the fitted points corresponds to the fit remainder of the spherical harmonics expansion.</p>
