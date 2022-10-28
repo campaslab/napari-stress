@@ -53,8 +53,8 @@ def test_spherical_harmonics():
     ellipse_points = vedo.shapes.Ellipsoid().points()
 
     # test cartesian expansion
-    pts, coeffs_pysh = sh.shtools_spherical_harmonics_expansion(ellipse_points)
-    pts, coeffs_stress = sh.stress_spherical_harmonics_expansion(ellipse_points)
+    pts, coeffs_pysh = sh.shtools_spherical_harmonics_expansion(ellipse_points, expansion_type='cartesian')
+    pts, coeffs_stress = sh.stress_spherical_harmonics_expansion(ellipse_points, expansion_type='cartesian')
 
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress)  # with pickle
     lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress,
@@ -63,6 +63,8 @@ def test_spherical_harmonics():
 
     # test radial expansion
     pts, coeffs_stress = sh.stress_spherical_harmonics_expansion(ellipse_points,
+                                                                expansion_type='radial')
+    pts, coeffs_stress = sh.shtools_spherical_harmonics_expansion(ellipse_points,
                                                                 expansion_type='radial')
     assert pts.shape[1] == 3
     assert pts.shape[0] == len(ellipse_points)

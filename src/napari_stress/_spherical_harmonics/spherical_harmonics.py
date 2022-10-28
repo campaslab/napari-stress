@@ -21,7 +21,7 @@ from .._stress import lebedev_info_SPB as lebedev_info
 
 def shtools_spherical_harmonics_expansion(points: PointsData,
                                           max_degree: int = 5,
-                                          expansion_type: str ='cartesian'
+                                          expansion_type: str ='radial'
                                           ) -> Tuple[PointsData, np.ndarray]:
     """
     Approximate a surface by spherical harmonics expansion with pyshtools implementation.
@@ -37,6 +37,7 @@ def shtools_spherical_harmonics_expansion(points: PointsData,
     PointsData
 
     """
+    from .._stress.sph_func_SPB import convert_coefficients_pyshtools_to_stress
     # Convert points coordinates relative to center
     center = points.mean(axis=0)
     relative_coordinates = points - center[np.newaxis, :]
@@ -46,23 +47,41 @@ def shtools_spherical_harmonics_expansion(points: PointsData,
                                             relative_coordinates[:, 1],
                                             relative_coordinates[:, 2])
     radius = spherical_coordinates[0]
-    longitude = np.rad2deg(spherical_coordinates[1])
-    latitude = np.rad2deg(spherical_coordinates[2])
+    latitude = np.rad2deg(spherical_coordinates[1])
+    longitude = np.rad2deg(spherical_coordinates[2])
 
-    # Find spherical harmonics expansion coefficients until specified degree
-    opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
+    if expansion_type == 'radial':
+
+        # Find spherical harmonics expansion coefficients until specified degree
+        opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(radius, latitude, longitude,
+                                                        lmax = max_degree)[1]
+        # Sample radius values at specified latitude/longitude
+        coefficients = pyshtools.SHCoeffs.from_array(opt_fit_params)
+        values = coefficients.expand(lat=latitude, lon=longitude)
+
+        # Convert points back to cartesian coordinates
+        points = vedo.spher2cart(values,
+                                spherical_coordinates[1],
+                                spherical_coordinates[2]).transpose()
+
+        points = points + center[np.newaxis, :]
+        coefficients = convert_coefficients_pyshtools_to_stress(coefficients)
+        return points, coefficients
+
+    elif expansion_type == 'cartesian':
+        
+        optimal_fit_params = []
+        fitted_coordinates = np.zeros_like(points)
+        for i in range(3):
+            params = pyshtools._SHTOOLS.SHExpandLSQ(points[:, i], latitude, longitude,
                                                     lmax = max_degree)[1]
-    # Sample radius values at specified latitude/longitude
-    spherical_harmonics_coeffcients = pyshtools.SHCoeffs.from_array(opt_fit_params)
-    values = spherical_harmonics_coeffcients.expand(lat=latitude, lon=longitude)
+            coefficients = pyshtools.SHCoeffs.from_array(params)
+            fitted_coordinates[:, i] = coefficients.expand(lat=latitude, lon=longitude)
+            optimal_fit_params.append(convert_coefficients_pyshtools_to_stress(coefficients))
+        
+        return fitted_coordinates, np.stack(optimal_fit_params)
+            
 
-    # Convert points back to cartesian coordinates
-    points = vedo.spher2cart(values,
-                             spherical_coordinates[1],
-                             spherical_coordinates[2]).transpose()
-
-    points = points + center[np.newaxis, :]
-    return points, spherical_harmonics_coeffcients.to_array()
 
 def stress_spherical_harmonics_expansion(points: PointsData,
                                          max_degree: int = 5,
