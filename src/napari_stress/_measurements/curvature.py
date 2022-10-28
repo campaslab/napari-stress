@@ -196,7 +196,7 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
         input_manifold.H_A_pts,
         input_manifold.H_B_pts,
         input_manifold.lebedev_info).squeeze()
-    H0_arithmetic = averaged_mean_curvature(mean_curvatures)
+    H0_arithmetic = numerical_averaged_mean_curvature(mean_curvatures)
     H0_surface_integral = surface_integrated_mean_curvature(mean_curvatures,
                                                             input_manifold)
 
@@ -207,7 +207,7 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
 
     return mean_curvatures, H0_arithmetic, H0_surface_integral
 
-def averaged_mean_curvature(curvatures: np.ndarray) -> float:
+def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
     """Calculate arithmetic average of mean curvature."""
     return curvatures.flatten().mean()
 
