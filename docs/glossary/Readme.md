@@ -1,8 +1,5 @@
 (spherical_harmonics.glossary_intro)=
 
-# Glossary
+# Introduction
 
-Welcome to the napari-stress glossary. This chapter will give you an introduction into the used methods, some of the mathematical background and commonly used terminology. Sections that will be convered in this tutorial will be the following:
-
-- [Spherical harmonics expansion](./01_spherical_harmonics.md)
-- [Analyzing a spherical harmonics expansion](./02_analyzing_spherical_harmonics.md)
+Welcome to the napari-stress functions overview. This section will give you an overview about (modular functionality that is covered by napari-stress.
