@@ -368,18 +368,18 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#napari-stress-implementation">
-   3.2.1. Napari-stress implementation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#vedo-implementation">
-   3.2.2. Vedo implementation
+  <a class="reference internal nav-link" href="#finding-the-major-and-minor-axes">
+   3.2.1. Finding the major and minor axes
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#mean-curvature">
-   3.2.3. Mean curvature
+   3.2.2. Mean curvature
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#normal-vectors">
+   3.2.3. Normal vectors
   </a>
  </li>
 </ul>
@@ -402,18 +402,18 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#napari-stress-implementation">
-   3.2.1. Napari-stress implementation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#vedo-implementation">
-   3.2.2. Vedo implementation
+  <a class="reference internal nav-link" href="#finding-the-major-and-minor-axes">
+   3.2.1. Finding the major and minor axes
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#mean-curvature">
-   3.2.3. Mean curvature
+   3.2.2. Mean curvature
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#normal-vectors">
+   3.2.3. Normal vectors
   </a>
  </li>
 </ul>
@@ -428,19 +428,24 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="ellipse-fitting">
 <h1><span class="section-number">3.2. </span>Ellipse fitting<a class="headerlink" href="#ellipse-fitting" title="Permalink to this headline">#</a></h1>
-<p>This tutorial shows how to handle ellipse-fitting in napari-stress. To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (<code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Open</span> <span class="pre">Sample</span> <span class="pre">&gt;</span> <span class="pre">napari-stress:</span> <span class="pre">Dropplet</span> <span class="pre">pointcloud</span></code>).</p>
+<p>This tutorial shows how to handle ellipse-fitting in napari-stress. It covers the following functionality:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#fit-ellipsoid-major-minor-axes"><span class="std std-ref">Finding the major/minor axes of an ellipsoid</span></a></p></li>
+<li><p><a class="reference internal" href="#fit-ellipsoid-mean-curvature"><span class="std std-ref">Measuring mean curvature on ellipsoid</span></a></p></li>
+<li><p><span class="xref myst">Finding normals on ellipsoid</span></p></li>
+</ul>
+<p>To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (<code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Open</span> <span class="pre">Sample</span> <span class="pre">&gt;</span> <span class="pre">napari-stress:</span> <span class="pre">Dropplet</span> <span class="pre">pointcloud</span></code>).</p>
 <p><img alt="" src="../../_images/open_sample_droplet.png" />
 <img alt="" src="../../_images/open_sample_droplet1.png" /></p>
-<section id="napari-stress-implementation">
-<h2><span class="section-number">3.2.1. </span>Napari-stress implementation<a class="headerlink" href="#napari-stress-implementation" title="Permalink to this headline">#</a></h2>
+<section id="finding-the-major-and-minor-axes">
+<span id="fit-ellipsoid-major-minor-axes"></span><h2><span class="section-number">3.2.1. </span>Finding the major and minor axes<a class="headerlink" href="#finding-the-major-and-minor-axes" title="Permalink to this headline">#</a></h2>
+<p><strong>Napari-stress</strong></p>
 <p>This section describes the implementation taken from the <a class="reference external" href="https://github.com/campaslab/STRESS">stress repository</a>. It provides a least-squares approach to obtain an ellipsoid which is represented by its major axes. A pointcloud can be obtained by combining the input points and the ellipsoid object. First, fit an ellipse by selecting <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Fit</span> <span class="pre">ellipsoid</span> <span class="pre">to</span> <span class="pre">pointcloud</span> <span class="pre">(n-STRESS)</span></code> and click on <code class="docutils literal notranslate"><span class="pre">Run</span></code>. The resulting image should look like this:</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid5.png" /></p>
 <p>If you want to retrieve a pointcloud on the surface of the fitted ellipsoid, you can calculate the corresponding point locations of the input pointcloud on the surface of the fitted ellipsoid with <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Expand</span> <span class="pre">point</span> <span class="pre">locations</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code>:</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid6.png" /></p>
-</section>
-<section id="vedo-implementation">
-<h2><span class="section-number">3.2.2. </span>Vedo implementation<a class="headerlink" href="#vedo-implementation" title="Permalink to this headline">#</a></h2>
-<p>This section describes the implementation taken from the <a class="reference external" href="https://vedo.embl.es/">vedo repository</a>. It uses a <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">pca-algorithm</a> to calculate the minor/major axes. Use it via <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Fit</span> <span class="pre">ellipsoid</span> <span class="pre">to</span> <span class="pre">pointcloud</span> <span class="pre">(vedo,</span> <span class="pre">n-STRESS)</span></code>. As an additional parameter, it requires you to set which percentage of the input points should be contained by the surface of the fitted ellipse, which is controlled by the <code class="docutils literal notranslate"><span class="pre">inside</span> <span class="pre">fraction</span></code> parameter.</p>
+<p><strong>Vedo</strong>
+This section describes the implementation taken from the <a class="reference external" href="https://vedo.embl.es/">vedo repository</a>. It uses a <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">pca-algorithm</a> to calculate the minor/major axes. Use it via <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Fit</span> <span class="pre">ellipsoid</span> <span class="pre">to</span> <span class="pre">pointcloud</span> <span class="pre">(vedo,</span> <span class="pre">n-STRESS)</span></code>. As an additional parameter, it requires you to set which percentage of the input points should be contained by the surface of the fitted ellipse, which is controlled by the <code class="docutils literal notranslate"><span class="pre">inside</span> <span class="pre">fraction</span></code> parameter.</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid1.png" /></p>
 <p>Similar to the napari-stress implementation, this returns a vectors layer:</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid4.png" /></p>
@@ -448,10 +453,17 @@ title="Print to PDF"
 <p><img alt="" src="../../_images/demo_fit_ellipsoid2.png" /></p>
 </section>
 <section id="mean-curvature">
-<h2><span class="section-number">3.2.3. </span>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this headline">#</a></h2>
+<span id="fit-ellipsoid-mean-curvature"></span><h2><span class="section-number">3.2.2. </span>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this headline">#</a></h2>
 <p>Lastly, you can measure mean curvature on the surface of this ellipse. To do so, use the <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Measurement</span> <span class="pre">&gt;</span> <span class="pre">Mean</span> <span class="pre">curvature</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code> plugin from the tools menu. As input, you should select the fitted ellipsoid as well as a set of points on the surface of the ellipsoid. You can use the previously obtained points (<code class="docutils literal notranslate"><span class="pre">Expand</span> <span class="pre">point</span> <span class="pre">locations</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code>) as input. The result will be the following:</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid7.png" /></p>
 <p>You can also use the built-in <span class="xref myst">feature visualization widget</span> to show, for instance, a hiostogram of the curvature on the surface.</p>
+<p>(fit_ellipsoid:normal_vectors)</p>
+</section>
+<section id="normal-vectors">
+<h2><span class="section-number">3.2.3. </span>Normal vectors<a class="headerlink" href="#normal-vectors" title="Permalink to this headline">#</a></h2>
+<p>You can calculate the inwards-pointing normal vectors usingnapari-stress. For this, use the <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Points</span> <span class="pre">&gt;</span> <span class="pre">Calculate</span> <span class="pre">normals</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code> function. Simply pass the expanded ellipsoid points as input to get a vectors layer returned:</p>
+<p><img alt="" src="../../_images/demo_fit_ellipsoid8.png" /></p>
+<p><img alt="" src="../../_images/demo_fit_ellipsoid9.png" /></p>
 </section>
 </section>
 
