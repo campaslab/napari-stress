@@ -142,7 +142,8 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_STRESS_TENSOR_CART,
                          _METADATAKEY_STRESS_TENSOR_ELLI,
                          _METADATAKEY_MAX_TISSUE_ANISOTROPY,
-                         _METADATAKEY_FIT_RESIDUE)
+                         _METADATAKEY_FIT_RESIDUE,
+                         _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
@@ -285,6 +286,13 @@ def comprehensive_analysis(pointcloud: PointsData,
         surface_cell_stress, GDM)
 
     # =========================================================================
+    # Ellipsoid deviation analysis
+    # =========================================================================
+    results_deviation = measurements.deviation_from_ellipsoidal_mode(pointcloud,
+        max_degree=max_degree)
+    deviation_heatmap = results_deviation[1]['metadata'][_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB]
+
+    # =========================================================================
     # Create views as layerdatatuples
     # =========================================================================
 
@@ -292,6 +300,7 @@ def comprehensive_analysis(pointcloud: PointsData,
     # spherical harmonics expansion
     properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree}',
                   'features': {'fit_residue': residue_spherical_harmonics_norm},
+                  'metadata': {_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB: deviation_heatmap},
                   'face_colormap': 'inferno',
                   'face_color': 'fit_residue',
                   'size': size}
