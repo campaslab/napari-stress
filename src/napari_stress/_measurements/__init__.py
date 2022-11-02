@@ -8,7 +8,8 @@ from .curvature import (calculate_mean_curvature_on_manifold,
 from .utils import naparify_measurement
 from .deviation_analysis import deviation_from_ellipsoidal_mode
 
-from .temporal_correlation import (temporal_autocorrelation)
+from .temporal_correlation import (temporal_autocorrelation,
+                                   haversine_distances)
 
 from .geodesics import (geodesic_distance_matrix,
                         geodesic_path,

@@ -24,6 +24,14 @@ def test_autocorrelation():
     gradient = np.gradient(measurements.temporal_autocorrelation(df, feature='feature'))
     assert np.all(gradient < 0)
 
+def test_haversine():
+    from napari_stress import measurements
+
+    distance_matrix = measurements.haversine_distances(degree_lebedev=10, n_lebedev_points=434)
+
+    # the biggest possible distance on a unit sphere is pi/2
+    assert np.allclose(distance_matrix.max(), np.pi/2)
+
 def test_geodesics():
     import vedo
     from napari_stress import measurements
