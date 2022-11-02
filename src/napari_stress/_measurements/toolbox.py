@@ -137,6 +137,10 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_ANISO_STRESS_TISSUE,
                          _METADATAKEY_ANISO_STRESS_CELL,
                          _METADATAKEY_ANISO_STRESS_TOTAL,
+                         _METADATAKEY_H0_ARITHMETIC,
+                         _METADATAKEY_H0_SURFACE_INTEGRAL,
+                         _METADATAKEY_S2_VOLUME_INTEGRAL,
+                         _METADATAKEY_H0_VOLUME_INTEGRAL,
                          _METADATAKEY_GAUSS_BONNET_ABS,
                          _METADATAKEY_GAUSS_BONNET_REL,
                          _METADATAKEY_STRESS_TENSOR_CART,
@@ -148,6 +152,7 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Spherical harmonics expansion
     # =====================================================================
 
+    # CARTESIAN
     fitted_pointcloud, coefficients = stress_spherical_harmonics_expansion(
             pointcloud,max_degree=max_degree)
 
@@ -160,6 +165,18 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     # Gauss Bonnet test
     gauss_bonnet_absolute, gauss_bonnet_relative = measurements.gauss_bonnet_test(manifold_droplet)
+
+    # RADIAL
+    fitted_pointcloud_radial, coefficients_radial = stress_spherical_harmonics_expansion(
+            pointcloud,max_degree=max_degree,
+            expansion_type='radial')
+
+    quadrature_points_radial, _ = lebedev_quadrature(
+        coefficients=coefficients,
+        number_of_quadrature_points=n_quadrature_points,
+        use_minimal_point_set=False)
+
+    manifold_droplet_radial = create_manifold(quadrature_points_radial, lebedev_info, max_degree)
 
     # =====================================================================
     # Ellipsoid fit
@@ -206,8 +223,14 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Droplet
     curvature_droplet = measurements.calculate_mean_curvature_on_manifold(manifold_droplet)
     mean_curvature_droplet = curvature_droplet[0]
-    H0_arithmetic_droplet = curvature_droplet[1]
-    H0_surface_droplet = curvature_droplet[2]
+
+    averaged_curvatures = measurements.average_mean_curvatures_on_manifold(manifold_droplet)
+    H0_arithmetic_droplet = averaged_curvatures[0]
+    H0_surface_droplet = averaged_curvatures[1]
+
+    averaged_curvatures_radial = measurements.average_mean_curvatures_on_manifold(manifold_droplet_radial)
+    H0_volume_droplet = averaged_curvatures[2]
+    S2_volume_droplet = averaged_curvatures[3]
 
     # Ellipsoid
     curvature_ellipsoid = measurements.curvature_on_ellipsoid(
@@ -342,7 +365,11 @@ def comprehensive_analysis(pointcloud: PointsData,
                  _METADATAKEY_ANISO_STRESS_CELL: stress_cell,
                  _METADATAKEY_ANISO_STRESS_TOTAL: stress_total}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
-                _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute}
+                _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
+                _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
+                _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
+                _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
+                _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet}
 
     properties = {'name': 'Result of lebedev quadrature (droplet)',
                   'features': features,
