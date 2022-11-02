@@ -60,6 +60,13 @@ def test_lsq_ellipsoid2():
 
     assert np.allclose(rotated_points, expanded_points)
 
+def test_ellipse_normals():
+    from napari_stress import approximation, get_droplet_point_cloud
+    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
+
+    normals = approximation.normals_on_ellipsoid(pointcloud)
+
+
 def test_curvature_on_ellipsoid(make_napari_viewer):
     from napari_stress import approximation, measurements, types, get_droplet_point_cloud
 
@@ -90,4 +97,4 @@ def test_pairwise_distance():
 
 if __name__ == '__main__':
     import napari
-    test_curvature_on_ellipsoid(napari.Viewer)
+    test_ellipse_normals()

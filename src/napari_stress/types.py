@@ -23,6 +23,7 @@ _METADATAKEY_STRESS_TENSOR_ELLI = 'Tissue_stress_tensor_elliptical'
 _METADATAKEY_STRESS_TENSOR_CART = 'Tissue_stress_tensor_cartesian'
 _METADATAKEY_MAX_TISSUE_ANISOTROPY = 'max_issue_stress_anisotropy'
 _METADATAKEY_FIT_RESIDUE = 'fit_residue'
+_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = 'Elipsoid_deviation_contribution_matrix'
 
 def _get_layers_features(gui: CategoricalWidget) -> List[layers.Layer]:
     """Retrieve layers matching gui.annotation, from the Viewer the gui is in.
