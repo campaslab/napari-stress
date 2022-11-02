@@ -327,7 +327,8 @@ def comprehensive_analysis(pointcloud: PointsData,
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_ellipsoid,
                 _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
     metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
-                _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal}
+                _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal,
+                _METADATAKEY_MAX_TISSUE_ANISOTROPY: max_min_anisotropy}
     properties = {'name': 'Result of lebedev quadrature on ellipsoid',
                   'features': features,
                   'metadata': metadata,
@@ -341,8 +342,7 @@ def comprehensive_analysis(pointcloud: PointsData,
                  _METADATAKEY_ANISO_STRESS_CELL: stress_cell,
                  _METADATAKEY_ANISO_STRESS_TOTAL: stress_total}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
-                _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
-                _METADATAKEY_MAX_TISSUE_ANISOTROPY: max_min_anisotropy}
+                _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute}
 
     properties = {'name': 'Result of lebedev quadrature (droplet)',
                   'features': features,
