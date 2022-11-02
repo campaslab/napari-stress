@@ -22,16 +22,62 @@ def least_squares_ellipsoid(points: PointsData
     VectorsData: Major/minor axis of the ellipsoid
     """
     from .._utils.coordinate_conversion import polynomial_to_parameters3D
-    #finds best fit ellipsoid. Found at http://www.juddzone.com/ALGORITHMS/least_squares_3D_ellipsoid.html
-    #least squares fit to a 3D-ellipsoid
-    #  Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz  = 1
-    #
-    # Note that sometimes it is expressed as a solution to
-    #  Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx + 2Hy + 2Iz  = 1
-    # where the last six terms have a factor of 2 in them
-    # This is in anticipation of forming a matrix with the polynomial coefficients.
-    # Those terms with factors of 2 are all off diagonal elements.  These contribute
-    # two terms when multiplied out (symmetric) so would need to be divided by two
+    coefficients = solve_ellipsoid_polynomial(points)    
+
+    # convert results to VectorsData
+    center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=coefficients)
+    direction = R * axes[:, None]
+    origin = np.stack(3 * [center])  # cheap repeat
+    vector = np.stack([origin, direction]).transpose((1,0,2))
+
+    return vector
+
+@register_function(menu="Points > Calculate normals on ellipsoid (n-STRESS)")
+@frame_by_frame
+def normals_on_ellipsoid(points: PointsData) -> VectorsData:
+    """Retrieve normal vector on ellipsoid points."""
+    coefficients = solve_ellipsoid_polynomial(points)
+
+    A = coefficients.flatten()[0]
+    B = coefficients.flatten()[1]	
+    C = coefficients.flatten()[2]	
+    D = coefficients.flatten()[3]	
+    E = coefficients.flatten()[4]	
+    F = coefficients.flatten()[5]	
+    G = coefficients.flatten()[6]	
+    H = coefficients.flatten()[7]	
+    I = coefficients.flatten()[8]		
+
+    xx = points[:, 0][:, None]
+    yy = points[:, 1][:, None]
+    zz = points[:, 2][:, None]
+
+    grad_F_x = 2.*A*xx + D*yy + E*zz + G
+    grad_F_y = 2.*B*yy + D*xx + F*zz + H 
+    grad_F_z = 2.*C*zz + E*xx + F*yy + I
+
+    grad_F_X = np.hstack(( grad_F_x, grad_F_y, grad_F_z )) 
+    Vec_Norms = np.sqrt(np.sum(np.multiply(grad_F_X, grad_F_X), axis = 1)).reshape(len(xx), 1)
+    grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
+	
+    return np.stack([points, grad_F_X_normed]).transpose((1,0,2))
+
+
+def solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
+    """
+    Fit ellipsoid polynomial equation.
+    
+    finds best fit ellipsoid. Found at http://www.juddzone.com/ALGORITHMS/least_squares_3D_ellipsoid.html
+    least squares fit to a 3D-ellipsoid
+     Ax^2 + By^2 + Cz^2 +  Dxy +  Exz +  Fyz +  Gx +  Hy +  Iz  = 1
+    
+    Note that sometimes it is expressed as a solution to
+     Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx + 2Hy + 2Iz  = 1
+    where the last six terms have a factor of 2 in them
+    This is in anticipation of forming a matrix with the polynomial coefficients.
+    Those terms with factors of 2 are all off diagonal elements.  These contribute
+    two terms when multiplied out (symmetric) so would need to be divided by two
+    """    
 
     # change xx from vector of length N to Nx1 matrix so we can use hstack
     x = points[:, 0, np.newaxis]
@@ -60,14 +106,10 @@ def least_squares_ellipsoid(points: PointsData
     #  where J = -1
     eansa = np.append(ABC,-1)
 
-    center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=eansa)
+    return eansa
 
-    # convert results to VectorsData
-    direction = R * axes[:, None]
-    origin = np.stack(3 * [center])  # cheap repeat
-    vector = np.stack([origin, direction]).transpose((1,0,2))
+    
 
-    return vector
 
 @register_function(menu="Points > Expand point locations on ellipsoid (n-STRESS)")
 @frame_by_frame
