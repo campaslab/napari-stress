@@ -135,6 +135,7 @@ def stress_spherical_harmonics_expansion(points: PointsData,
         Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
 
         fitted_points = np.hstack((X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts ))
+        return fitted_points, coefficients
     
     if expansion_type == 'radial':
         # This implementation fits a spherical harmonics expansion
@@ -152,17 +153,22 @@ def stress_spherical_harmonics_expansion(points: PointsData,
             fit_degree=max_degree,
             sample_locations = (longitude[:, None], latitude[:, None]),
             values = radii)
-        coefficients = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters, max_degree)
+
+        # Add a singleton dimension to be consistent with coefficient array shape
+        coefficients = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters, max_degree)[None, :]
 
         # expand radii
-        r_fit_sph = sph_f.spherical_harmonics_function(coefficients, max_degree)
+        r_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
         r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
 
         fitted_points = vedo.spher2cart(r_fit_sph_UV_pts,
                                         latitude,
                                         longitude).transpose() + center[None, :]
+        
 
-    return fitted_points, coefficients
+        return fitted_points, coefficients
+
+    
 
 def lebedev_quadrature(coefficients: np.ndarray,
                        number_of_quadrature_points: int = 500,
@@ -192,6 +198,11 @@ def lebedev_quadrature(coefficients: np.ndarray,
     # Clip number of quadrature points
     if number_of_quadrature_points > 5810:
         number_of_quadrature_points = 5810
+
+    # Coefficient matrix should be [DIM, DEG, DEG]; if DIM=1 this corresponds
+    # to a radial spherical harmonics expansion
+    if len(coefficients.shape) == 2:
+        coefficients = coefficients[None, :]
 
     # An expansion of degree 3 will have an Nx4x4 coefficient matrix
     max_degree = coefficients.shape[-1] - 1
@@ -226,11 +237,23 @@ def create_manifold(points: PointsData,
                     lebedev_fit: lebedev_info.lbdv_info,
                     max_degree: int) -> mnfd.manifold:
 
-    # create manifold to calculate H, average H:
+    # add information to manifold on what type of expansion was used
     Manny_Dict = {}
     Manny_Name_Dict = {} # sph point cloud at lbdv
-    Manny_Name_Dict['coordinates'] = points
 
+    manifold_type = None
+    if len(points.shape) == 1:
+        manifold_type = 'radial'
+        coordinates = np.stack([lebedev_fit.X.squeeze() * points,
+                                lebedev_fit.Y.squeeze() * points,
+                                lebedev_fit.Z.squeeze() * points]).T
+        Manny_Name_Dict['coordinates'] = coordinates
+        
+    elif len(points.shape) == 2:
+        manifold_type = 'cartesian'
+        Manny_Name_Dict['coordinates'] = points
+
+    # create manifold to calculate H, average H:
     Manny_Dict['Pickle_Manny_Data'] = False
     Manny_Dict['Maniold_lbdv'] = lebedev_fit
 
@@ -238,7 +261,7 @@ def create_manifold(points: PointsData,
     Manny_Dict['use_manifold_name'] = False # we are NOT using named shapes in these tests
     Manny_Dict['Maniold_Name_Dict'] = Manny_Name_Dict # sph point cloud at lbdv
 
-    return mnfd.manifold(Manny_Dict)
+    return mnfd.manifold(Manny_Dict, manifold_type=manifold_type)
 
 def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
     """
