@@ -16,6 +16,8 @@ from ..types import (_METADATAKEY_MEAN_CURVATURE,
                      _METADATAKEY_H0_ELLIPSOID,
                      _METADATAKEY_H_E123_ELLIPSOID,
                      _METADATAKEY_H0_SURFACE_INTEGRAL,
+                     _METADATAKEY_S2_VOLUME_INTEGRAL,
+                     _METADATAKEY_H0_VOLUME_INTEGRAL,
                      _METADATAKEY_H0_ARITHMETIC,
                      _METADATAKEY_GAUSS_BONNET_REL,
                      _METADATAKEY_GAUSS_BONNET_ABS,
@@ -167,11 +169,6 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
     -------
     mean_curvatures: np.ndarray
         Mean curvature value for every quadrature point
-    H0_arithmetic: float
-        Average mean curvature calculated as mean of all quadrature points
-    H0_surface_integral: float
-        Average mean curvature calculated as surface-integral of manifold
-        divided by unit sphere surface
 
     """
     layer = None
@@ -197,7 +194,11 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
         input_manifold.H_A_pts,
         input_manifold.H_B_pts,
         input_manifold.lebedev_info).squeeze()
+
+    # Arithmetic average of curvature
     H0_arithmetic = numerical_averaged_mean_curvature(mean_curvatures)
+
+    # Integrating surface area - this is the one used for downstream analysis
     H0_surface_integral = surface_integrated_mean_curvature(mean_curvatures,
                                                             input_manifold)
 
@@ -210,6 +211,27 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
 
 @register_function(menu="Measurement > Measure average mean curvature on manifold (n-STRESS)")
 def average_mean_curvatures_on_manifold(input_manifold: manifold) -> Tuple[float, float]:
+    """
+    Calculate averaged mean curvatures on manifold.
+
+    Args:
+    ----
+        input_manifold (manifold): Manifold object. Can be of type `napari.Layer` 
+            if a `manifold` object is detected in `layer.metadata`
+
+    Returns:
+    -------
+        H0_arithmetic: float
+            arithmetic average of mean curvature
+        H0_surface_integral: float
+            surface-integrated averaged mean curvature
+        H0_volume_integral: float
+            volume-integrated averaged mean curvature. Only calculated if
+            `manifold.manifold_type` is `radial`.
+        S2_volume: float
+            volume-integral of manifold. Only calculated if
+            `manifold.manifold_type` is `radial`. 
+    """
 
     mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
     
@@ -220,23 +242,25 @@ def average_mean_curvatures_on_manifold(input_manifold: manifold) -> Tuple[float
         input_manifold = input_manifold.metadata[manifold.__name__]
 
     # Arithmetic average of curvature
-    H0_arithmetic = mean_curvature.flatten().mean()
+    H0_arithmetic = numerical_averaged_mean_curvature(mean_curvature)
 
     # Integrating surface area - this is the one used for downstream analysis
-    Integral_on_surface = euc_kf.Integral_on_Manny(mean_curvature,
-                                                input_manifold,
-                                                input_manifold.lebedev_info)
-    Integral_on_sphere = euc_kf.Integral_on_Manny(np.ones_like(mean_curvature).astype(float),
-                                                  input_manifold,
-                                                  input_manifold.lebedev_info)
-    H0_surface_integral = Integral_on_surface/Integral_on_sphere
+    H0_surface_integral = surface_integrated_mean_curvature(mean_curvature,
+                                                            input_manifold)
+    
+    S2_volume = None
+    H0_volume_integral = None
+    if input_manifold.manifold_type == 'radial':
+        S2_volume, H0_volume_integral = volume_integrated_mean_curvature(input_manifold)        
 
     # if a layer was passed instead of manifold - put result in metadata
     if layer is not None:
         layer.metadata[_METADATAKEY_H0_ARITHMETIC] = H0_arithmetic
         layer.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL] = H0_surface_integral
+        layer.metadata[_METADATAKEY_H0_VOLUME_INTEGRAL] = H0_volume_integral
+        layer.metadata[_METADATAKEY_S2_VOLUME_INTEGRAL] = S2_volume
 
-    return H0_arithmetic, H0_surface_integral
+    return H0_arithmetic, H0_surface_integral, H0_volume_integral, S2_volume
 
 
 def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
@@ -254,3 +278,15 @@ def surface_integrated_mean_curvature(mean_curvatures: np.ndarray,
                                                   manifold.lebedev_info)
 
     return Integral_on_surface/Integral_on_sphere
+
+def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
+    """Determine volume and averaged mean curvature by integrating over radii."""
+    from .._stress.sph_func_SPB import S2_Integral
+    
+    assert input_manifold.manifold_type == 'radial'
+    radii = input_manifold.raw_coordinates
+    lbdv_info = input_manifold.lebedev_info
+
+    volume = S2_Integral(radii[:, None]**3/3, lbdv_info)
+    H0_from_Vol_Int = ((4.*np.pi)/(3.*volume))**(1./3.) # approx ~1/R, for V ~ (4/3)*pi*R^3
+    return volume, H0_from_Vol_Int

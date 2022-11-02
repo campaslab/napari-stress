@@ -102,6 +102,7 @@ def stress_spherical_harmonics_expansion(points: PointsData,
     """
     from .. import _approximation as approximation
     from .._utils.coordinate_conversion import cartesian_to_elliptical
+    from .._stress.charts_SPB import Cart_To_Coor_A
 
     if expansion_type == 'cartesian':
         # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
@@ -142,12 +143,9 @@ def stress_spherical_harmonics_expansion(points: PointsData,
         # to the data to describe radius as a function of latitude/longitutde
         center = points.mean(axis=0)
         points_relative = points - center[None, :]
-        points_spherical = vedo.cart2spher(points_relative[:, 0],
-                                           points_relative[:, 1],
-                                            points_relative[:, 2]).transpose()
-        radii = points_spherical[:, 0]
-        latitude = points_spherical[:, 1]
-        longitude = points_spherical[:, 2]
+
+        radii = np.sqrt(points_relative[:, 0]**2 + points_relative[:, 1]**2 + points_relative[:, 2]**2)
+        longitude, latitude = Cart_To_Coor_A(points_relative[:, 0], points_relative[:, 1], points_relative[:, 2])
 
         optimal_fit_parameters = Least_Squares_Harmonic_Fit(
             fit_degree=max_degree,
@@ -261,7 +259,7 @@ def create_manifold(points: PointsData,
     Manny_Dict['use_manifold_name'] = False # we are NOT using named shapes in these tests
     Manny_Dict['Maniold_Name_Dict'] = Manny_Name_Dict # sph point cloud at lbdv
 
-    return mnfd.manifold(Manny_Dict, manifold_type=manifold_type)
+    return mnfd.manifold(Manny_Dict, manifold_type=manifold_type, raw_coordinates=points)
 
 def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
     """
