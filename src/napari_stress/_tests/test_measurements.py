@@ -1,6 +1,29 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_autocorrelation():
+    from napari_stress import measurements
+    import numpy as np
+    import pandas as pd
+    
+    n_frames = 10
+    n_measurements = 100
+
+    # create a set of features in multiple timepoints and add a bit more noise
+    # in every frame - the autocorrelaiton should thus decrease monotonously
+    frames = np.repeat(np.arange(n_frames), n_measurements)
+    feature = np.ones(n_measurements)
+    features = []
+    features.append(feature)
+    for i in range(1, n_frames):
+        features.append(features[i-1] + np.random.normal(size=n_measurements, scale=0.3))
+
+    df = pd.DataFrame(np.concatenate(features), columns=['feature'])
+    df['frame'] = frames
+
+    gradient = np.gradient(measurements.temporal_autocorrelation(df, feature='feature'))
+    assert np.all(gradient < 0)
+
 def test_geodesics():
     import vedo
     from napari_stress import measurements
