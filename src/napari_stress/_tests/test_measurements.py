@@ -115,6 +115,67 @@ def test_curvature(make_napari_viewer):
     assert types._METADATAKEY_GAUSS_BONNET_ABS in results_layer.metadata.keys()
     assert types._METADATAKEY_GAUSS_BONNET_REL in results_layer.metadata.keys()
 
+    results = measurements.average_mean_curvatures_on_manifold(
+        results_layer.metadata[types._METADATAKEY_MANIFOLD])
+    results = measurements.average_mean_curvatures_on_manifold(
+        results_layer)
+
+    assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
+    assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata
+    assert types._METADATAKEY_MEAN_CURVATURE in results_layer.features
+    assert types._METADATAKEY_H0_VOLUME_INTEGRAL in results_layer.metadata
+    assert types._METADATAKEY_S2_VOLUME_INTEGRAL in results_layer.metadata
+
+    # There shouldn't be a volume integral unless a radial manifold was used
+    assert results_layer.metadata[types._METADATAKEY_S2_VOLUME_INTEGRAL] is None
+    assert results_layer.metadata[types._METADATAKEY_H0_VOLUME_INTEGRAL] is None
+
+def test_curvature2(make_napari_viewer):
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
+    from napari_stress import measurements, get_droplet_point_cloud, fit_spherical_harmonics, types
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import expansion_types
+    from magicgui import magicgui
+    from napari.layers import Layer
+
+    # We'll first create a spherical harmonics expansion and a lebedev
+    # quadrature from scratch
+    viewer = make_napari_viewer()
+
+    # Same as other test but we'll use a radial expansion
+    pointcloud = get_droplet_point_cloud()[0]
+    viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
+
+    expansion = fit_spherical_harmonics(viewer.layers[-1].data, expansion_type=expansion_types.radial)
+    viewer.add_points(expansion[0], **expansion[1])
+
+    lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
+    l = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(l)
+    results_layer = viewer.layers[-1]
+
+    assert types._METADATAKEY_MANIFOLD in results_layer.metadata
+    # from code
+    H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
+        results_layer.metadata[types._METADATAKEY_MANIFOLD])
+    H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
+        results_layer)
+
+    results = measurements.average_mean_curvatures_on_manifold(
+        results_layer.metadata[types._METADATAKEY_MANIFOLD])
+    results = measurements.average_mean_curvatures_on_manifold(
+        results_layer)
+
+    assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
+    assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata
+    assert types._METADATAKEY_MEAN_CURVATURE in results_layer.features
+    assert types._METADATAKEY_H0_VOLUME_INTEGRAL in results_layer.metadata
+    assert types._METADATAKEY_S2_VOLUME_INTEGRAL in results_layer.metadata
+
+    # There should be a volume integral because a radial manifold was used
+    assert results_layer.metadata[types._METADATAKEY_S2_VOLUME_INTEGRAL] is not None
+    assert results_layer.metadata[types._METADATAKEY_H0_VOLUME_INTEGRAL] is not None
+    
+
 def test_stresses():
     from napari_stress import lebedev_quadrature
     from napari_stress import (measurements, approximation,
@@ -157,8 +218,6 @@ def test_stresses():
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
-
-
 
 def test_compatibility_decorator():
     import inspect
