@@ -36,6 +36,51 @@ def temporal_autocorrelation(df: pd.DataFrame,
 
     return temporal_autocorrelation
 
+def spatio_temporal_autocorrelation(surfaces: SurfaceData,
+                                    volume_integrated_mean_curvature: float,
+                                    max_degree: int,
+                                    maximal_distance: float = None):
+    # Calculate Spatio-Temporal Corrs of total stresses:
+    from .geodesics import correlation_on_surface
+    from .._utils.frame_by_frame import TimelapseConverter
+
+    # Convert 4D surface into list of surfaces
+    Converter = TimelapseConverter()
+    list_of_surfaces = Converter.data_to_list_of_data(surfaces, layertype=SurfaceData)
+    n_frames = len(list_of_surfaces)
+
+    # get distance matrix
+    haversine_distances = haversine_distances(degree_lebedev=max_degree,
+                                              n_lebedev_points=len(list_of_surfaces[0][0]))
+    haversine_distances *= 1.0/volume_integrated_mean_curvature
+    
+
+    # get bins for spatial correlation on surface
+    result = correlation_on_surface(list_of_surfaces[0], list_of_surfaces[0], haversine_distances)
+    distances = len(result['auto_correlations_distances'].flatten())
+    inner_product = np.zeros(( n_frames, n_frames, distances ))
+
+#	if maximal_distance is None:
+#		maximal_distance = int(np.floor(max(dists_lbdv_non0)))
+
+    for i in range(n_frames):
+        for j in range(i, n_frames):
+            result = correlation_on_surface(list_of_surfaces[j - i], list_of_surfaces[j], haversine_distances)
+            inner_product[i, j, :] = results['auto_correlations_average'].flatten()
+
+    # sum vals of cols for each row, gives us a matrix
+    summed_inner_product = np.squeeze(np.sum(inner_product, axis=1)) 
+    num_tau_samples = (np.arange(n_frames)+1)[::-1].reshape(n_frames, 1)
+    
+    avg_summed_inner_product = np.divide(summed_inner_product, num_tau_samples)
+    norm_t_0 = np.sum(summed_inner_product[0, :].flatten() )
+    
+    normed_avg_summed_inner_product = avg_summed_inner_product/norm_t_0
+
+    results = {'summed_spatiotemporal_correlations': summed_inner_product,
+               'avg_summed_spatiotemporal_correlations': avg_summed_inner_product,
+               'normed_avg_summed_spatiotemporal_correlations': normed_avg_summed_inner_product}
+
 def haversine_distances(degree_lebedev: int, n_lebedev_points: int):
     """
     Calculate geodesic (Great Circle) distance matrix on unit sphere, from haversine formula.
