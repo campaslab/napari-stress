@@ -120,7 +120,8 @@ def reconstruct_droplet(image: ImageData,
                         fit_type: str = 'fancy',
                         edge_type: str = 'interior',
                         trace_length: float = 10,
-                        sampling_distance: float = 0.5
+                        sampling_distance: float = 0.5,
+                        verbose=False
                         ) -> List[LayerDataTuple]:
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
@@ -163,7 +164,8 @@ def reconstruct_droplet(image: ImageData,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
             remove_outliers=True,
-            scale_x=1, scale_y=1, scale_z=1)
+            scale_x=1, scale_y=1, scale_z=1,
+            show_progress=verbose)
 
         points = traced_points[0]
 
