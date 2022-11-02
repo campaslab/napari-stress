@@ -1,4 +1,3 @@
-(point_and_click.spherical_harmonics_expansion)=
 (glossary:measure_curvature:interactive)=
 # Measure curvature
 

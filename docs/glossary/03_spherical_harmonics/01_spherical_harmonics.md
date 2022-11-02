@@ -51,7 +51,7 @@ Using this framework has several desirable characteristics:
 
 In the context of napari-stress, a spherical harmonics expansion is used to obtain spherical harmonics coefficients $f_l^m$ that describe the position of a vertex on the surface of an object (e.g., an oil droplet):
 
-![](../imgs/viewer_screenshots/open_sample_droplet1.png)
+![](../../imgs/viewer_screenshots/open_sample_droplet1.png)
 
 In this case, the property that should be described in terms of latitude and longitude, is the *position* of the vertices on the surface. In other words, we would like to obtain a relation such as follows:
 

@@ -1,3 +1,4 @@
+(toolboxes:stress_toolbox)=
 # Stress measurement
 
 The stress measurement toolbox provides easy access to several measures of stress as defined in the paper. These include:

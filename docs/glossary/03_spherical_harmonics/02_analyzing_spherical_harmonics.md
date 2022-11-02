@@ -16,7 +16,7 @@ where $f(\theta_i, \phi_i)$ is a superposition of multiple spherical harmonics b
 
 This example shows the result of a spherical harmonics expansion of low degree $l$ for the approximation of a pointcloud:
 
-![](../imgs/viewer_screenshots/fit_spherical_harmonics3.png)
+![](../../imgs/viewer_screenshots/fit_spherical_harmonics3.png)
 
 The orange points show the input pointcloud consisting of points $\vec{x}_i$, the color-coded points show the results of the spherical harmonics expansion with $l<=1$ - which corresponds to only the basic modes of spherical harmonics being used - which in turn corresponds to a sphere. The color scale of the resulting sphere corresponds to the fit residue of the expansion for every point $\Delta_i$.
 

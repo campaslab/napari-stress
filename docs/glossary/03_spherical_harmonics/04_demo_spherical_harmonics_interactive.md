@@ -15,7 +15,7 @@ Select the spherical harmonics expansion from the tools menu (`Tools > Points > 
 
 This will bring up a dialogue with the available options:
 
-![](./imgs/demo_fit_spherical_harmonics1.png)
+![](imgs/demo_fit_spherical_harmonics1.png)
 
 **Parameters**:
 
