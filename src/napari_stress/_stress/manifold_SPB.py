@@ -440,11 +440,13 @@ class manifold(object): #This now represents geo of S^2, will later be adapted t
 
     def __init__(self,
                  Manifold_Constr_Dict: dict,
-                 manifold_type: str = 'cartesian'): #BJG: Need to add option to initialize from point cloud of lbdv point vals, and from named manifold
+                 manifold_type: str = 'cartesian',
+                 raw_coordinates: np.ndarray = None): #BJG: Need to add option to initialize from point cloud of lbdv point vals, and from named manifold
         # old constructor: (self, R_func, R_deg, lbdv, Maniold_Official_Name = [])
 
         #print("Constructing Manifold") # BJG: should add verbose option
         self.manifold_type = manifold_type
+        self.raw_coordinates = raw_coordinates
 
         self.Tol = 1.e-3 # Threshold for considering a quantity as 0, in terms of where to switch charts (replaces using condtion: lbdv.Chart_of_Quad_Pts > 0 )
         self.pickling = Manifold_Constr_Dict['Pickle_Manny_Data'] #BJG: May not want to pickle for moving surface and debugging
