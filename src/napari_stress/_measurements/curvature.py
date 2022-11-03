@@ -19,6 +19,7 @@ from ..types import (_METADATAKEY_MEAN_CURVATURE,
                      _METADATAKEY_S2_VOLUME_INTEGRAL,
                      _METADATAKEY_H0_VOLUME_INTEGRAL,
                      _METADATAKEY_H0_ARITHMETIC,
+                     _METADATAKEY_H0_RADIAL_SURFACE,
                      _METADATAKEY_GAUSS_BONNET_REL,
                      _METADATAKEY_GAUSS_BONNET_ABS,
                      manifold)
@@ -250,8 +251,10 @@ def average_mean_curvatures_on_manifold(input_manifold: manifold) -> Tuple[float
     
     S2_volume = None
     H0_volume_integral = None
+    H0_radial_surface = None
     if input_manifold.manifold_type == 'radial':
-        S2_volume, H0_volume_integral = volume_integrated_mean_curvature(input_manifold)        
+        S2_volume, H0_volume_integral = volume_integrated_mean_curvature(input_manifold) 
+        H0_radial_surface = radial_surface_averaged_mean_curvature(input_manifold)    
 
     # if a layer was passed instead of manifold - put result in metadata
     if layer is not None:
@@ -259,8 +262,9 @@ def average_mean_curvatures_on_manifold(input_manifold: manifold) -> Tuple[float
         layer.metadata[_METADATAKEY_H0_SURFACE_INTEGRAL] = H0_surface_integral
         layer.metadata[_METADATAKEY_H0_VOLUME_INTEGRAL] = H0_volume_integral
         layer.metadata[_METADATAKEY_S2_VOLUME_INTEGRAL] = S2_volume
+        layer.metadata[_METADATAKEY_H0_RADIAL_SURFACE] = H0_radial_surface
 
-    return H0_arithmetic, H0_surface_integral, H0_volume_integral, S2_volume
+    return H0_arithmetic, H0_surface_integral, H0_volume_integral, S2_volume, H0_radial_surface
 
 
 def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
@@ -291,13 +295,39 @@ def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
     H0_from_Vol_Int = ((4.*np.pi)/(3.*volume))**(1./3.) # approx ~1/R, for V ~ (4/3)*pi*R^3
     return volume, H0_from_Vol_Int
 
-def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
+def radial_surface_averaged_mean_curvature(input_manifold: manifold) -> float:
+    """
+     Eestimate H0 on Radial Manifold.
+     
+     Integratal of H_Rad (on surface) divided by Rad surface area
+
+    Args:
+        input_manifold (manifold): radial manifold
+
+    Returns:
+        float: averaged mean curvature
+    """
     mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
     sphere_radii = np.ones_like(mean_curvature)
 
-    area_radial_manifold = euc_kf.Integral_on_Manny(mean_curvature, manifold, manifold.lebedev_info)
-    area_unit_sphere = euc_kf.Integral_on_Manny(sphere_radii, manifold, manifold.lebedev_info)
+    area_radial_manifold = euc_kf.Integral_on_Manny(mean_curvature, input_manifold, input_manifold.lebedev_info)
+    area_unit_sphere = euc_kf.Integral_on_Manny(sphere_radii, input_manifold, input_manifold.lebedev_info)
     H0 = area_radial_manifold/area_unit_sphere
+    return H0
+
+
+def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
+    """
+    Calculate mean curvature on radial manifold
+
+    Args:
+        input_manifold (manifold): radial manifold
+
+    Returns:
+        np.ndarray: mean curvature
+    """
+    mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
+    H0 = radial_surface_averaged_mean_curvature(input_manifold)
     
     mean_curvature_radial = mean_curvature * abs(H0) / H0
     return mean_curvature_radial

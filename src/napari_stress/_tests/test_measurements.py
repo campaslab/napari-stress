@@ -237,3 +237,8 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
+
+
+if __name__ == '__main__':
+    import napari
+    test_curvature2(napari.Viewer)

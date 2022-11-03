@@ -139,6 +139,7 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_ANISO_STRESS_TISSUE,
                          _METADATAKEY_ANISO_STRESS_CELL,
                          _METADATAKEY_ANISO_STRESS_TOTAL,
+                         _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL,
                          _METADATAKEY_H0_ARITHMETIC,
                          _METADATAKEY_H0_SURFACE_INTEGRAL,
                          _METADATAKEY_S2_VOLUME_INTEGRAL,
@@ -167,21 +168,21 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     manifold_droplet = create_manifold(quadrature_points, lebedev_info, max_degree)
 
-    # Gauss Bonnet test
-    gauss_bonnet_absolute, gauss_bonnet_relative = measurements.gauss_bonnet_test(manifold_droplet)
-    gauss_bonnet_absolute_radial, gauss_bonnet_relative_radial = measurements.gauss_bonnet_test(manifold_droplet_radial)
-
     # RADIAL
     fitted_pointcloud_radial, coefficients_radial = stress_spherical_harmonics_expansion(
             pointcloud,max_degree=max_degree,
             expansion_type='radial')
 
     quadrature_points_radial, _ = lebedev_quadrature(
-        coefficients=coefficients,
+        coefficients=coefficients_radial,
         number_of_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False)
 
     manifold_droplet_radial = create_manifold(quadrature_points_radial, lebedev_info, max_degree)
+
+    # Gauss Bonnet test
+    gauss_bonnet_absolute, gauss_bonnet_relative = measurements.gauss_bonnet_test(manifold_droplet)
+    gauss_bonnet_absolute_radial, gauss_bonnet_relative_radial = measurements.gauss_bonnet_test(manifold_droplet_radial)
 
     # =====================================================================
     # Ellipsoid fit
@@ -234,10 +235,13 @@ def comprehensive_analysis(pointcloud: PointsData,
     H0_surface_droplet = averaged_curvatures[1]
 
     # Droplet (radial)
-    mean_curvature_radial, _, _ = measurements.calculate_mean_curvature_on_manifold(manifold_droplet_radial)
+    mean_curvature_radial = measurements.mean_curvature_on_radial_manifold(manifold_droplet_radial)
     averaged_curvatures_radial = measurements.average_mean_curvatures_on_manifold(manifold_droplet_radial)
+
     H0_volume_droplet = averaged_curvatures_radial[2]
     S2_volume_droplet = averaged_curvatures_radial[3]
+    H0_radial_surface = averaged_curvatures_radial[4]
+    stress_total_radial = gamma * (mean_curvature_radial - H0_radial_surface)
 
     delta_mean_curvature = measurements.mean_curvature_differences_radial_cartesian_manifolds(manifold_droplet,
                                                                                               manifold_droplet_radial)
@@ -375,7 +379,8 @@ def comprehensive_analysis(pointcloud: PointsData,
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
                 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
                  _METADATAKEY_ANISO_STRESS_CELL: stress_cell,
-                 _METADATAKEY_ANISO_STRESS_TOTAL: stress_total}
+                 _METADATAKEY_ANISO_STRESS_TOTAL: stress_total,
+                 _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL: stress_total_radial}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
                 _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
                 _METADATAKEY_GAUSS_BONNET_ABS_RAD: gauss_bonnet_absolute_radial,
