@@ -290,3 +290,34 @@ def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
     volume = S2_Integral(radii[:, None]**3/3, lbdv_info)
     H0_from_Vol_Int = ((4.*np.pi)/(3.*volume))**(1./3.) # approx ~1/R, for V ~ (4/3)*pi*R^3
     return volume, H0_from_Vol_Int
+
+def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
+    mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
+    sphere_radii = np.ones_like(mean_curvature)
+
+    area_radial_manifold = euc_kf.Integral_on_Manny(mean_curvature, manifold, manifold.lebedev_info)
+    area_unit_sphere = euc_kf.Integral_on_Manny(sphere_radii, manifold, manifold.lebedev_info)
+    H0 = area_radial_manifold/area_unit_sphere
+    
+    mean_curvature_radial = mean_curvature * abs(H0) / H0
+    return mean_curvature_radial
+
+def mean_curvature_differences_radial_cartesian_manifolds(manifold_cartesian: manifold,
+                                                          manifold_radial: manifold) -> np.ndarray:
+    """
+    Calculate difference of radial and cartesian mean curvature calculation
+
+    Args:
+        manifold_cartesian (manifold): Cartesian manifold
+        manifold_radial (manifold): Radial manifold
+
+    Returns:
+        np.ndarray: difference of mean curvatures.
+    """
+    mean_curvature_cartesian, _, _ = calculate_mean_curvature_on_manifold(manifold_cartesian)
+    mean_curvature_radial, _, _ = calculate_mean_curvature_on_manifold(manifold_radial)
+    
+    on_radial = euc_kf.Integral_on_Manny(mean_curvature_radial - mean_curvature_cartesian, manifold_radial, manifold_radial.lebedev_info)
+    on_cartesian = euc_kf.Integral_on_Manny(mean_curvature_radial - mean_curvature_cartesian, manifold_cartesian, manifold_cartesian.lebedev_info)
+
+    return 0.5 * (on_radial + on_cartesian)
