@@ -116,10 +116,15 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Functions
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="glossary/Readme.html">
-   1. Glossary
+  <a class="reference internal" href="glossary/01_surface_reconstruction/Readme.html">
+   1. Surface reconstruction
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -128,20 +133,20 @@ const thebe_selector_output = ".output, .cell_output"
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="glossary/01_spherical_harmonics.html">
-     1.1. Spherical harmonics
+    <a class="reference internal" href="glossary/01_surface_reconstruction/01_demo_surface_reconstruction_code.html">
+     1.1. Usage from code
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="glossary/02_analyzing_spherical_harmonics.html">
-     1.2. Analyzing spherical harmonics
+    <a class="reference internal" href="glossary/01_surface_reconstruction/02_demo_surface_reconstruction_interactive.html">
+     1.2. Interactive usage
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="tutorials/demo/Readme.html">
-   2. From code
+  <a class="reference internal" href="glossary/02_surface_tracing/Readme.html">
+   2. Trace-refinement
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
@@ -150,50 +155,15 @@ const thebe_selector_output = ".output, .cell_output"
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_surface_reconstruction.html">
-     2.1. Surface reconstruction
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_surface_tracing.html">
-     2.2. Trace refining a surface
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_fit_ellipsoid.html">
-     2.3. Ellipsoid fitting
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_spherical_harmonics.html">
-     2.4. Spherical harmonics expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_analyze_spherical_harmonics.html">
-     2.5. Analyzing a spherical harmonics expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_anisotropic_stresses.html">
-     2.6. Anisotropic stresses
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_stress_toolbox.html">
-     2.7. Stress analysis toolbox
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/demo/demo_analyze_everything.html">
-     2.8. Analyze everything
+    <a class="reference internal" href="glossary/02_surface_tracing/01_demo_surface_tracing.html">
+     2.1. Usage from code
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="tutorials/point_and_click/Readme.html">
-   3. Interactive usage
+  <a class="reference internal" href="glossary/03_spherical_harmonics/Readme.html">
+   3. Spherical harmonics
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
@@ -202,41 +172,155 @@ const thebe_selector_output = ".output, .cell_output"
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_surface_reconstruction.html">
-     3.1. Surface reconstruction
+    <a class="reference internal" href="glossary/03_spherical_harmonics/01_spherical_harmonics.html">
+     3.1. Spherical harmonics
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_fit_ellipsoid.html">
-     3.2. Ellipse fitting
+    <a class="reference internal" href="glossary/03_spherical_harmonics/02_analyzing_spherical_harmonics.html">
+     3.2. Analyzing spherical harmonics
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_spherical_harmonics.html">
-     3.3. Spherical harmonics expansion
+    <a class="reference internal" href="glossary/03_spherical_harmonics/03_demo_spherical_harmonics_code.html">
+     3.3. Usage from code
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_measure_curvature.html">
-     3.4. Measure curvature
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_visualize_features.html">
-     3.5. Visualize measurements
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_stress_toolbox_interactive.html">
-     3.6. Comprehensive stress analysis
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="tutorials/point_and_click/demo_droplet_reconstruction_toolbox.html">
-     3.7. Droplet reconstruction toolbox
+    <a class="reference internal" href="glossary/03_spherical_harmonics/04_demo_spherical_harmonics_interactive.html">
+     3.4. Interactive usage
     </a>
    </li>
   </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="glossary/04_fit_ellipsoid/Readme.html">
+   4. Ellipsoid-fiting
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="glossary/04_fit_ellipsoid/01_demo_fit_ellipsoid_code.html">
+     4.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="glossary/04_fit_ellipsoid/02_demo_fit_ellipsoid_interactive.html">
+     4.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="glossary/05_measure_curvature/Readme.html">
+   5. Measure curvature and stress
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="glossary/05_measure_curvature/01_demo_analyze_spherical_harmonics.html">
+     5.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="glossary/05_measure_curvature/02_demo_measure_curvature.html">
+     5.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Toolboxes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="02_toolboxes/01_droplet_reconstruction/Readme.html">
+   6. Droplet reconstruction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox.html">
+     6.1. Droplet reconstruction toolbox
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="02_toolboxes/02_measure_stress/Readme.html">
+   7. Stress measurement
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02_toolboxes/02_measure_stress/02_demo_stress_toolbox.html">
+     7.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive.html">
+     7.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="02_toolboxes/03_analyze_everything/demo_analyze_everything.html">
+   8. Analyze everything
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Example workflows
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="03_workflows/Image_to_surface.html">
+   11. From intensity image to surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="03_workflows/Surface_to_curvature.html">
+   12. From surface data to curvatures
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Utility
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="04_utility/01_demo_visualize_features.html">
+   13. Visualize measurements
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="04_utility/02_demo_timelapse_processing.html">
+   14. Decorator for time-lapse processing
+  </a>
  </li>
 </ul>
 

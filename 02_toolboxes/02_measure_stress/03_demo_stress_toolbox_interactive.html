@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>7.2. Comprehensive stress analysis &#8212; Napari-stress documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="8. Analyze everything" href="../03_analyze_everything/demo_analyze_everything.html" />
+    <link rel="prev" title="7.1. Stress analysis toolbox" href="02_demo_stress_toolbox.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Napari-stress documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Functions
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../glossary/01_surface_reconstruction/Readme.html">
+   1. Surface reconstruction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/01_surface_reconstruction/01_demo_surface_reconstruction_code.html">
+     1.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/01_surface_reconstruction/02_demo_surface_reconstruction_interactive.html">
+     1.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../glossary/02_surface_tracing/Readme.html">
+   2. Trace-refinement
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/02_surface_tracing/01_demo_surface_tracing.html">
+     2.1. Usage from code
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../glossary/03_spherical_harmonics/Readme.html">
+   3. Spherical harmonics
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/03_spherical_harmonics/01_spherical_harmonics.html">
+     3.1. Spherical harmonics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/03_spherical_harmonics/02_analyzing_spherical_harmonics.html">
+     3.2. Analyzing spherical harmonics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/03_spherical_harmonics/03_demo_spherical_harmonics_code.html">
+     3.3. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/03_spherical_harmonics/04_demo_spherical_harmonics_interactive.html">
+     3.4. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../glossary/04_fit_ellipsoid/Readme.html">
+   4. Ellipsoid-fiting
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/04_fit_ellipsoid/01_demo_fit_ellipsoid_code.html">
+     4.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/04_fit_ellipsoid/02_demo_fit_ellipsoid_interactive.html">
+     4.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../glossary/05_measure_curvature/Readme.html">
+   5. Measure curvature and stress
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/05_measure_curvature/01_demo_analyze_spherical_harmonics.html">
+     5.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../glossary/05_measure_curvature/02_demo_measure_curvature.html">
+     5.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Toolboxes
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../01_droplet_reconstruction/Readme.html">
+   6. Droplet reconstruction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../01_droplet_reconstruction/demo_droplet_reconstruction_toolbox.html">
+     6.1. Droplet reconstruction toolbox
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="Readme.html">
+   7. Stress measurement
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="02_demo_stress_toolbox.html">
+     7.1. Usage from code
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     7.2. Interactive usage
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../03_analyze_everything/demo_analyze_everything.html">
+   8. Analyze everything
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Example workflows
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../03_workflows/Image_to_surface.html">
+   11. From intensity image to surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../03_workflows/Surface_to_curvature.html">
+   12. From surface data to curvatures
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Utility
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../04_utility/01_demo_visualize_features.html">
+   13. Visualize measurements
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../04_utility/02_demo_timelapse_processing.html">
+   14. Decorator for time-lapse processing
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-stress-toolbox">
+   7.2.1. The stress toolbox
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyzing-the-output">
+   7.2.2. Analyzing the output
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Comprehensive stress analysis</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-stress-toolbox">
+   7.2.1. The stress toolbox
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyzing-the-output">
+   7.2.2. Analyzing the output
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="comprehensive-stress-analysis">
+<span id="toolboxes-stress-toolbox-stress-toolbox-interactive"></span><span id="point-and-click-stress-toolbox"></span><h1><span class="section-number">7.2. </span>Comprehensive stress analysis<a class="headerlink" href="#comprehensive-stress-analysis" title="Permalink to this headline">#</a></h1>
+<p>To provide a means for easy, comprehensive analysis of reconstructed droplet data, napari-stress provides the <code class="docutils literal notranslate"><span class="pre">stress</span> <span class="pre">analysis</span> <span class="pre">toolbox</span></code>. As example data, you can use the 4D example dataset of a reconstructed pointcloud (<code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Open</span> <span class="pre">Sample</span> <span class="pre">&gt;</span> <span class="pre">napari-stress</span> <span class="pre">&gt;</span> <span class="pre">4d</span> <span class="pre">Droplet</span> <span class="pre">pointcloud</span></code>):</p>
+<p><img alt="" src="../../_images/demo_stress_toolbox1.png" /></p>
+<section id="the-stress-toolbox">
+<h2><span class="section-number">7.2.1. </span>The stress toolbox<a class="headerlink" href="#the-stress-toolbox" title="Permalink to this headline">#</a></h2>
+<p>Open the stress toolbox from the plugins menu (<code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Measurement</span> <span class="pre">&gt;</span> <span class="pre">Measure</span> <span class="pre">stresses</span> <span class="pre">on</span> <span class="pre">droplet</span> <span class="pre">pointcloud</span> <span class="pre">(n-STRESS)</span></code>):</p>
+<p><img alt="" src="../../_images/demo_stress_toolbox2.png" /></p>
+<p>The settings require the following input:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Input</span> <span class="pre">pointcloud</span></code>: Layer of a reconstructed droplet. Can be 3D or 4D.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Degree</span></code>: Degree of the spherical harmonics expansion fitted to the pointcloud. The higher the degree, the better the fit. For mor details, see <a class="reference internal" href="../../glossary/03_spherical_harmonics/01_spherical_harmonics.html#spherical-harmonics-mathematical-basics-degree"><span class="std std-ref">glossary</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">of</span> <span class="pre">quadrature</span> <span class="pre">points</span></code>: Number of points on which curvature will be evaluated.</p>
+<p><em>Note 1</em>: High values (&gt;1000) can lead to signiicant computational expense on first time run.</p>
+<p><em>Note 2</em>: Using high-order spherical harmonics requires a specific minimal number of quadrature points. The number of quadrature points can be higher than this number, but not lower.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Interfacial</span> <span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">[mN/m]</span></code>: Surface tension in mN/m of the evaluated droplet.</p></li>
+</ul>
+</section>
+<section id="analyzing-the-output">
+<h2><span class="section-number">7.2.2. </span>Analyzing the output<a class="headerlink" href="#analyzing-the-output" title="Permalink to this headline">#</a></h2>
+<p>The toolbox creates a number of layers when finished, some with attached features that can be displayed using the <span class="xref myst">feature visualization utilities</span> from napari-stress. These include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">fit</span> <span class="pre">spherical</span> <span class="pre">harmonics</span></code>: Result of the spherical harmonics expansion. Contains the <code class="docutils literal notranslate"><span class="pre">fit_residues</span></code> feature which denotes the residual distances between the raw points and the input points.
+<img alt="" src="../../_images/demo_stress_toolbox7.png" /></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">expand</span> <span class="pre">points</span> <span class="pre">on</span> <span class="pre">ellipsoid</span></code>: Result of the <span class="xref myst">least-squares ellipsoidal</span> fit. Contains the <code class="docutils literal notranslate"><span class="pre">fit_residues</span></code> feature which denotes the residual distances between the raw points and the input points.
+<img alt="" src="../../_images/demo_stress_toolbox6.png" /></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">least</span> <span class="pre">squares</span> <span class="pre">ellipsoid</span></code>: Vectors layer that visualizes the major axes of the fitted ellipsoid.
+<img alt="" src="../../_images/demo_stress_toolbox5.png" /></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">lebedev</span> <span class="pre">quadrature</span> <span class="pre">(droplet)</span></code>: Result of the lebedev quadrature point determination. Contains the <code class="docutils literal notranslate"><span class="pre">mean_curvature</span></code> (<span class="math notranslate nohighlight">\(H_i\)</span>), <code class="docutils literal notranslate"><span class="pre">anisotropic_stress_cell</span></code> (<span class="math notranslate nohighlight">\(\sigma^A_C\)</span>) and <code class="docutils literal notranslate"><span class="pre">anisotropic_stress</span></code> (<span class="math notranslate nohighlight">\(\sigma^A\)</span>) features.
+<img alt="" src="../../_images/demo_stress_toolbox4.png" /></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">lebedev</span> <span class="pre">quadrature</span> <span class="pre">on</span> <span class="pre">ellipsoid</span></code>: Result of evaluating the determined quadrature points on the corresponding locations on surface of the previously determined least-squares ellipsoid. Contains the feature <code class="docutils literal notranslate"><span class="pre">anisotropic_stress_tissue</span></code></p></li>
+</ul>
+<p><img alt="" src="../../_images/demo_stress_toolbox3.png" /></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./02_toolboxes/02_measure_stress"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="02_demo_stress_toolbox.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">7.1. </span>Stress analysis toolbox</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../03_analyze_everything/demo_analyze_everything.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">8. </span>Analyze everything</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Johannes Müller<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

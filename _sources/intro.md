@@ -4,6 +4,13 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 
 ## Contents
 
-- [Glossary](glossary/Readme.md): Overview about mathematical background and concepts
-- [Usage from code](tutorials/demo/Readme.md): How to use napari-stress from code
-- [Interactive usage](tutorials/point_and_click/Readme.md): How to use napari-stress interactively from the [napari](https://napari.org/stable/) viewer
+- [Functions](glossary/Readme.md): Overview about modular functions in napari-stress and how to use them from code or interactively from the napari viewer. 
+
+- [Toolboxes](02_toolboxes/Readme.md): Key feature for retrieving all measurements napari-stress has to offer with minimal amount of coding/interactive analysis.
+
+![](imgs/viewer_screenshots/all_outputs.png)
+
+- [Workflows](03_workflows/Readme.md): Set of workflows, the entirety of which make up the functionality that is embedded in the toolboxes.
+
+- [Utilities](04_utility/Readme.md): Other interesting pieces of code or widgets.
+
