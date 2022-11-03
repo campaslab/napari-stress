@@ -1,6 +1,68 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_spatiotemporal_autocorrelation():
+    from napari_stress import lebedev_quadrature
+    from napari_stress import (measurements, reconstruction,
+                               get_droplet_point_cloud,
+                               create_manifold, TimelapseConverter)
+    from napari_stress._spherical_harmonics.spherical_harmonics import stress_spherical_harmonics_expansion
+    from napari.types import SurfaceData
+
+    max_degree = 5
+    # do sh expansion
+    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
+    _, coefficients = stress_spherical_harmonics_expansion(pointcloud,
+                                                           max_degree=max_degree,
+                                                            expansion_type='radial')
+    quadrature_points, lbdv_info = lebedev_quadrature(coefficients, number_of_quadrature_points=434,
+                                                      use_minimal_point_set=False)
+    manifold = create_manifold(quadrature_points, lbdv_info, max_degree=max_degree)
+    quadrature_points = manifold.get_coordinates()
+    surface = reconstruction.reconstruct_surface_from_quadrature_points(quadrature_points)
+    
+    Converter = TimelapseConverter()
+    surfaces_4d = Converter.list_of_data_to_data(data=[surface, surface, surface], layertype=SurfaceData)
+
+    # get distance matrix and divide by volume-integrated H0
+    H0 = measurements.average_mean_curvatures_on_manifold(manifold)[2]
+    distance_matrix = measurements.haversine_distances(max_degree, 434)/H0
+    
+
+    measurements.spatio_temporal_autocorrelation(surfaces=surfaces_4d,
+                                                 distance_matrix=distance_matrix)
+
+def test_autocorrelation():
+    from napari_stress import measurements
+    import numpy as np
+    import pandas as pd
+    
+    n_frames = 10
+    n_measurements = 100
+
+    # create a set of features in multiple timepoints and add a bit more noise
+    # in every frame - the autocorrelaiton should thus decrease monotonously
+    frames = np.repeat(np.arange(n_frames), n_measurements)
+    feature = np.ones(n_measurements)
+    features = []
+    features.append(feature)
+    for i in range(1, n_frames):
+        features.append(features[i-1] + np.random.normal(size=n_measurements, scale=0.3))
+
+    df = pd.DataFrame(np.concatenate(features), columns=['feature'])
+    df['frame'] = frames
+
+    gradient = np.gradient(measurements.temporal_autocorrelation(df, feature='feature'))
+    assert np.all(gradient < 0)
+
+def test_haversine():
+    from napari_stress import measurements
+
+    distance_matrix = measurements.haversine_distances(degree_lebedev=10, n_lebedev_points=434)
+
+    # the biggest possible distance on a unit sphere is pi/2
+    assert np.allclose(distance_matrix.max(), np.pi/2)
+
 def test_geodesics():
     import vedo
     from napari_stress import measurements
@@ -206,3 +268,7 @@ def test_compatibility_decorator():
     sig = inspect.signature(function)
 
     assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
+
+
+if __name__ == '__main__':
+    test_spatiotemporal_autocorrelation()
