@@ -10,7 +10,8 @@ from typing import List
 import tqdm
 
 
-def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
+def geodesic_distance_matrix(surface: SurfaceData,
+                            show_progress: bool = False) -> np.ndarray:
     """
     Calculate a pairwise distance matrix for vertices of a surface.
 
@@ -34,7 +35,12 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     distance_matrix = np.zeros((n_points, n_points))
     points = surface[0]
 
-    for idx, pt in tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances'):
+    if show_progress:
+        iterator = tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances')
+    else:
+        iterator = enumerate(points)
+        
+    for idx, pt in iterator:
         distances, _ = geoalg.geodesicDistances([idx], None)
         distance_matrix[idx, :] = distances
 

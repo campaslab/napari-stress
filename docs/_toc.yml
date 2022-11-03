@@ -5,31 +5,70 @@ format: jb-book
 root: intro
 
 options:
-  numbered: true
+  numbered: False
 
-chapters:
-- file: glossary/Readme
-  sections:
-  - file: glossary/01_spherical_harmonics
-  - file: glossary/02_analyzing_spherical_harmonics
+parts:
+  - caption: Functions
+    numbered: True
+    chapters:
+    - file: glossary/01_surface_reconstruction/Readme
+      sections:
+      - file: glossary/01_surface_reconstruction/01_demo_surface_reconstruction_code
+        title: Usage from code
+      - file: glossary/01_surface_reconstruction/02_demo_surface_reconstruction_interactive
+        title: Interactive usage
+    
+    - file: glossary/02_surface_tracing/Readme
+      sections: 
+      - file: glossary/02_surface_tracing/01_demo_surface_tracing
+        title: Usage from code
+      
+    - file: glossary/03_spherical_harmonics/Readme
+      sections:
+      - file: glossary/03_spherical_harmonics/01_spherical_harmonics
+      - file: glossary/03_spherical_harmonics/02_analyzing_spherical_harmonics
+      - file: glossary/03_spherical_harmonics/03_demo_spherical_harmonics_code
+        title: Usage from code
+      - file: glossary/03_spherical_harmonics/04_demo_spherical_harmonics_interactive
+        title: Interactive usage
+        
+    - file: glossary/04_fit_ellipsoid/Readme
+      sections:
+      - file: glossary/04_fit_ellipsoid/01_demo_fit_ellipsoid_code
+        title: Usage from code
+      - file: glossary/04_fit_ellipsoid/02_demo_fit_ellipsoid_interactive
+        title: Interactive usage
 
-- file: tutorials/demo/Readme
-  sections:
-  - file: tutorials/demo/demo_surface_reconstruction
-  - file: tutorials/demo/demo_surface_tracing
-  - file: tutorials/demo/demo_fit_ellipsoid
-  - file: tutorials/demo/demo_spherical_harmonics
-  - file: tutorials/demo/demo_analyze_spherical_harmonics
-  - file: tutorials/demo/demo_anisotropic_stresses
-  - file: tutorials/demo/demo_stress_toolbox
-  - file: tutorials/demo/demo_analyze_everything
+    - file: glossary/05_measure_curvature/Readme
+      sections:
+      - file: glossary/05_measure_curvature/01_demo_analyze_spherical_harmonics
+        title: Usage from code
+      - file: glossary/05_measure_curvature/02_demo_measure_curvature
+        title: Interactive usage
 
-- file: tutorials/point_and_click/Readme
-  sections:
-  - file: tutorials/point_and_click/demo_surface_reconstruction
-  - file: tutorials/point_and_click/demo_fit_ellipsoid
-  - file: tutorials/point_and_click/demo_spherical_harmonics
-  - file: tutorials/point_and_click/demo_measure_curvature
-  - file: tutorials/point_and_click/demo_visualize_features
-  - file: tutorials/point_and_click/demo_stress_toolbox_interactive
-  - file: tutorials/point_and_click/demo_droplet_reconstruction_toolbox
+  - caption: Toolboxes
+    numbered: True
+    chapters:
+    - file: 02_toolboxes/01_droplet_reconstruction/Readme
+      sections:
+      - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox
+    - file: 02_toolboxes/02_measure_stress/Readme
+      sections:
+      - file: 02_toolboxes/02_measure_stress/02_demo_stress_toolbox
+        title: Usage from code
+      - file: 02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive
+        title: Interactive usage
+    - file: 02_toolboxes/03_analyze_everything/demo_analyze_everything
+
+  - caption: Example workflows
+    numbered: True
+    chapters:
+    - file: 03_workflows/Image_to_surface
+    - file: 03_workflows/Surface_to_curvature
+    
+    
+  - caption: Utility
+    numbered: True
+    chapters:
+    - file: 04_utility/01_demo_visualize_features
+    - file: 04_utility/02_demo_timelapse_processing

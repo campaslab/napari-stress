@@ -18,36 +18,8 @@ and has been made open source in [this repository](https://github.com/campaslab/
 
 ## Usage
 
-Functionality in this repository is divided in two groups: **Workflows** and **functions**.
+For documentation on how to use napari-stress both interactively from the napari-viewer or from code, please visit the [**documentation**](https://biapol.github.io/napari-stress/intro.html)
 
-### Workflows
-
-This section describes common workflows for processing images, points and surface data step-by-step.
-
-| Workflow| Description |
-| --- | --- |
-| <img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/workflows/_image_to_surface_imgs/workflow.png" width="100%"> | **Confocal data** (*.tif*), 3D+t: [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Image_to_surface.md) on how to extract surfaces from intensity image data |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/tutorials/workflows/_surface_to_curvature_imgs/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Interactive tutorial](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Surface_to_curvature.md) on how to extract curvature from surfaces|
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/confocal/workflow.png" width="100%">| **Confocal data** (*.tif*), 3D+t:  [Jupyter notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/workflows/Process_confocal.ipynb) for processing single channel data and extracting gaussian curvature.|
-
-
-### Functions
-
-All functions in napari-stress are documented separately for [interactive usage from the napari viewer](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click) as well as [Jupyter notebooks](https://github.com/BiAPoL/napari-stress/main/docs/tutorials/demo). 
-
-|Function| Links |
-| --- | --- |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |Fit spherical harmonics: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_spherical_harmonics.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_spherical_harmonics.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |Surface tracing: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_tracing.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|Reconstruct surface: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_surface_reconstruction.ipynb)|
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/ellipse_fitting.gif" width="80%">|Fit ellipsoid: [Interactive](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/point_and_click/demo_fit_ellipsoid.md) [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_fit_ellipsoid.ipynb)|
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/analyze_spherical_harmonics.png" width="80%">|Analyze spherical harmonics: [Code](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_analyze_spherical_harmonics.ipynb)|
-
-### Utilities
-
-Data to be used for this plugin is typically of the form `[TZYX]` (e.g., 3D + time). 
-Napari-stress offers convenient ways to use functions from other repositories (which are often made for 3D data) on timelapse data with the `frame_by_frame` function and the `TimelapseConverter` class. 
-Both are described in more detail in [this notebook](https://github.com/BiAPoL/napari-stress/blob/main/docs/tutorials/demo/demo_timelapse_processing.ipynb).
 
 ## Installation
 

@@ -92,7 +92,8 @@ def comprehensive_analysis(pointcloud: PointsData,
                            max_degree: int=5,
                            n_quadrature_points: int = 110,
                            maximal_distance: int = None,
-                           gamma: float = 26.0) -> List[LayerDataTuple]:
+                           gamma: float = 26.0,
+                           verbose=False) -> List[LayerDataTuple]:
     """
     Run a comprehensive stress analysis on a given pointcloud.
 
@@ -275,7 +276,8 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     GDM = None
     if GDM is None:
-        GDM = measurements.geodesic_distance_matrix(surface_cell_stress)
+        GDM = measurements.geodesic_distance_matrix(surface_cell_stress,
+                                                    show_progress=verbose)
 
     if maximal_distance is None:
         maximal_distance = int(np.floor(GDM.max()))
