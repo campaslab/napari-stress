@@ -37,9 +37,16 @@ def temporal_autocorrelation(df: pd.DataFrame,
     return temporal_autocorrelation
 
 def spatio_temporal_autocorrelation(surfaces: SurfaceData,
-                                    volume_integrated_mean_curvature: float,
-                                    max_degree: int,
+                                    distance_matrix: np.ndarray,
                                     maximal_distance: float = None):
+    """
+    Spatio-temporal autocorrelation.
+
+    Args:
+        surfaces (SurfaceData): 4D-surface object with values
+        distance_matrix (np.ndarray): Distance matrix to be used on the surface.
+        maximal_distance (float, optional): _description_. Defaults to None.
+    """
     # Calculate Spatio-Temporal Corrs of total stresses:
     from .geodesics import correlation_on_surface
     from .._utils.frame_by_frame import TimelapseConverter
@@ -47,16 +54,10 @@ def spatio_temporal_autocorrelation(surfaces: SurfaceData,
     # Convert 4D surface into list of surfaces
     Converter = TimelapseConverter()
     list_of_surfaces = Converter.data_to_list_of_data(surfaces, layertype=SurfaceData)
-    n_frames = len(list_of_surfaces)
-
-    # get distance matrix
-    haversine_distances = haversine_distances(degree_lebedev=max_degree,
-                                              n_lebedev_points=len(list_of_surfaces[0][0]))
-    haversine_distances *= 1.0/volume_integrated_mean_curvature
-    
+    n_frames = len(list_of_surfaces)    
 
     # get bins for spatial correlation on surface
-    result = correlation_on_surface(list_of_surfaces[0], list_of_surfaces[0], haversine_distances)
+    result = correlation_on_surface(list_of_surfaces[0], list_of_surfaces[0], distance_matrix)
     distances = len(result['auto_correlations_distances'].flatten())
     inner_product = np.zeros(( n_frames, n_frames, distances ))
 
@@ -65,8 +66,8 @@ def spatio_temporal_autocorrelation(surfaces: SurfaceData,
 
     for i in range(n_frames):
         for j in range(i, n_frames):
-            result = correlation_on_surface(list_of_surfaces[j - i], list_of_surfaces[j], haversine_distances)
-            inner_product[i, j, :] = results['auto_correlations_average'].flatten()
+            result = correlation_on_surface(list_of_surfaces[j - i], list_of_surfaces[j], distance_matrix)
+            inner_product[i, j, :] = result['auto_correlations_average'].flatten()
 
     # sum vals of cols for each row, gives us a matrix
     summed_inner_product = np.squeeze(np.sum(inner_product, axis=1)) 
@@ -80,6 +81,8 @@ def spatio_temporal_autocorrelation(surfaces: SurfaceData,
     results = {'summed_spatiotemporal_correlations': summed_inner_product,
                'avg_summed_spatiotemporal_correlations': avg_summed_inner_product,
                'normed_avg_summed_spatiotemporal_correlations': normed_avg_summed_inner_product}
+
+    return results
 
 def haversine_distances(degree_lebedev: int, n_lebedev_points: int):
     """

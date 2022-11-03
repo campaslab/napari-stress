@@ -1,6 +1,37 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_spatiotemporal_autocorrelation():
+    from napari_stress import lebedev_quadrature
+    from napari_stress import (measurements, reconstruction,
+                               get_droplet_point_cloud,
+                               create_manifold, TimelapseConverter)
+    from napari_stress._spherical_harmonics.spherical_harmonics import stress_spherical_harmonics_expansion
+    from napari.types import SurfaceData
+
+    max_degree = 5
+    # do sh expansion
+    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
+    _, coefficients = stress_spherical_harmonics_expansion(pointcloud,
+                                                           max_degree=max_degree,
+                                                            expansion_type='radial')
+    quadrature_points, lbdv_info = lebedev_quadrature(coefficients, number_of_quadrature_points=434,
+                                                      use_minimal_point_set=False)
+    manifold = create_manifold(quadrature_points, lbdv_info, max_degree=max_degree)
+    quadrature_points = manifold.get_coordinates()
+    surface = reconstruction.reconstruct_surface_from_quadrature_points(quadrature_points)
+    
+    Converter = TimelapseConverter()
+    surfaces_4d = Converter.list_of_data_to_data(data=[surface, surface, surface], layertype=SurfaceData)
+
+    # get distance matrix and divide by volume-integrated H0
+    H0 = measurements.average_mean_curvatures_on_manifold(manifold)[2]
+    distance_matrix = measurements.haversine_distances(max_degree, 434)/H0
+    
+
+    measurements.spatio_temporal_autocorrelation(surfaces=surfaces_4d,
+                                                 distance_matrix=distance_matrix)
+
 def test_autocorrelation():
     from napari_stress import measurements
     import numpy as np
@@ -240,5 +271,4 @@ def test_compatibility_decorator():
 
 
 if __name__ == '__main__':
-    import napari
-    test_curvature2(napari.Viewer)
+    test_spatiotemporal_autocorrelation()
