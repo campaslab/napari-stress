@@ -127,6 +127,7 @@ def reconstruct_droplet(image: ImageData,
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
     from .._preprocess import rescale
+    import copy
 
     # rescale
     scaling_factors = voxelsize/target_voxelsize
@@ -144,12 +145,9 @@ def reconstruct_droplet(image: ImageData,
     surface_smoothed = nppas.filter_smooth_laplacian(
         surface, number_of_iterations=n_smoothing_iterations)
 
-    points = nppas.sample_points_poisson_disk(
+    points_first_guess = nppas.sample_points_poisson_disk(
         surface_smoothed, number_of_points=n_points)
-
-    properties = {'name': 'points_first_guess',
-                  'size': 1}
-    layer_points_first_guess = (points, properties, 'points')
+    points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
@@ -173,11 +171,23 @@ def reconstruct_droplet(image: ImageData,
     # Returns
     # =========================================================================
 
-    properties = {'name': 'Rescaled image'}
+    properties = {'name': 'points_first_guess',
+                  'size': 1}
+    layer_points_first_guess = (points_first_guess*target_voxelsize, properties, 'points')
+
+    properties = {'name': 'Rescaled image',
+                  'scale': [target_voxelsize] * 3}
     layer_image_rescaled = (rescaled_image, properties, 'image')
 
-    properties = {'name': 'Label image'}
+    properties = {'name': 'Label image',
+                  'scale': [target_voxelsize] * 3}
     layer_label_image = (label_image, properties, 'labels')
+
+    traced_points = list(traced_points)
+    traced_points[0] *= target_voxelsize
+
+    trace_vectors = list(trace_vectors)
+    trace_vectors[0] *= target_voxelsize
 
     return [layer_image_rescaled,
             layer_label_image,
