@@ -14,3 +14,17 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 
 - [Utilities](04_utility/Readme.md): Other interesting pieces of code or widgets.
 
+## Installation
+
+In order to make napari-stress on your machine, you can follow these tutorials:
+
+- [Getting started with Python and Anaconda](https://biapol.github.io/blog/johannes_mueller/anaconda_getting_started/): If you have not yet installed Python or Anaconda on your computer, this explains how to set it up and create an environment that contain the most basic functionality ([napari](https://napari.org/stable/) & [Jupyterlab](https://jupyter.org/))
+- [Devbio-napari](https://github.com/haesleinhuepf/devbio-napari): Not strictly necessary but strongly recommended - this package brings many handy functionalities to an otherwise quite plain napari-viewer.
+
+After both of these are installed, install napari-stress into the environment you created by typing
+
+```
+pip install napari-stress
+```
+
+in your Anaconda prompt.
