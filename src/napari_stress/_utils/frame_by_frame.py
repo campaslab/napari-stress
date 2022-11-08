@@ -272,6 +272,11 @@ class TimelapseConverter:
 
         # Stack the other properties
         layer_props = self._list_of_dictionaries_to_dictionary(properties)
+
+        # exclude 'scale' from stacked metadata
+        if 'scale' in layer_props.keys() and len(data) != 1:
+            layer_props['scale'] = properties[0]['scale']
+
         for key in layer_props.keys():
             _properties[key] = layer_props[key]
 
