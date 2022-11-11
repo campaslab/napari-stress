@@ -100,6 +100,8 @@ class droplet_reconstruction_toolbox(QWidget):
             fit_type=self.comboBox_fittype.currentText(),
             edge_type=self.comboBox_fluorescence_type.currentText(),
             trace_length=self.doubleSpinBox_trace_length.value(),
+            remove_outliers=self.checkBox_remove_outliers.isChecked(),
+            outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value()
             )
 
@@ -120,6 +122,8 @@ def reconstruct_droplet(image: ImageData,
                         fit_type: str = 'fancy',
                         edge_type: str = 'interior',
                         trace_length: float = 10,
+                        remove_outliers: bool = True,
+                        outlier_tolerance: float = 1.5,
                         sampling_distance: float = 0.5,
                         verbose=False
                         ) -> List[LayerDataTuple]:
@@ -161,7 +165,8 @@ def reconstruct_droplet(image: ImageData,
             selected_edge=edge_type,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
-            remove_outliers=True,
+            remove_outliers=remove_outliers,
+            outlier_tolerance=outlier_tolerance,
             scale_x=1, scale_y=1, scale_z=1,
             show_progress=verbose)
 
