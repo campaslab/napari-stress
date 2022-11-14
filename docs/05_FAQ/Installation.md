@@ -1,3 +1,4 @@
+(FAQ:installation)=
 # Installation issues
 In this section you find some known installation issues and how to fix them.
 
