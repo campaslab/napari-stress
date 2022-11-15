@@ -72,3 +72,8 @@ parts:
     chapters:
     - file: 04_utility/01_demo_visualize_features
     - file: 04_utility/02_demo_timelapse_processing
+    
+  - captio: FAQ
+    numbered: False
+    chapters:
+    - file: 05_FAQ/Installation
