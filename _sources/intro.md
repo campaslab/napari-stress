@@ -27,4 +27,8 @@ After both of these are installed, install napari-stress into the environment yo
 pip install napari-stress
 ```
 
-in your Anaconda prompt.
+in your Anaconda prompt. If you encounter any issues during installation, please 
+
+* browse the [FAQ section](FAQ:installation) for known issues
+* file an [issue on github](https://github.com/BiAPoL/napari-stress/issues)
+* check out the [image.sc forum](https://forum.image.sc/) for help (Please tag @EL_Pollo_Diablo to notify the developers)

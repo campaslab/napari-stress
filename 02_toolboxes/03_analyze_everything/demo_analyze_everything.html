@@ -320,6 +320,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../05_FAQ/Installation.html">
+   Installation issues
+  </a>
+ </li>
+</ul>
 
     </div>
 </nav></div>
@@ -815,6 +822,12 @@ title="Print to PDF"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: QWindowsWindow::setGeometry: Unable to set geometry 5748x4581+960+312 (frame: 5780x4669+944+240) on QWidgetWindow/&quot;_QtMainWindowClassWindow&quot; on &quot;\\.\DISPLAY1&quot;. Resulting geometry: 3844x2108+960+312 (frame: 3876x2196+944+240) margins: 16, 72, 16, 16 minimum size: 612x553 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=1868,1747 maxtrack=0,0)
+11-Nov-22 20:52:08 - vispy    - WARNING  - QWindowsWindow::setGeometry: Unable to set geometry 5748x4581+960+312 (frame: 5780x4669+944+240) on QWidgetWindow/&quot;_QtMainWindowClassWindow&quot; on &quot;\\.\DISPLAY1&quot;. Resulting geometry: 3844x2108+960+312 (frame: 3876x2196+944+240) margins: 16, 72, 16, 16 minimum size: 612x553 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=1868,1747 maxtrack=0,0)
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -843,7 +856,7 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x16eac8b6040&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x17508243af0&gt;
 </pre></div>
 </div>
 </div>
@@ -939,6 +952,234 @@ stress_autocorrelations
 </div>
 </div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">error_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
+<span class="n">error_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>center</th>
+      <th>amplitude</th>
+      <th>slope</th>
+      <th>offset</th>
+      <th>center_err</th>
+      <th>amplitude_err</th>
+      <th>slope_err</th>
+      <th>idx_of_border</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10.171750</td>
+      <td>0.621403</td>
+      <td>0.858346</td>
+      <td>-0.001128</td>
+      <td>0.062860</td>
+      <td>0.007585</td>
+      <td>0.040815</td>
+      <td>10.171750</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10.506931</td>
+      <td>0.696685</td>
+      <td>1.182345</td>
+      <td>0.001735</td>
+      <td>0.038347</td>
+      <td>0.005799</td>
+      <td>0.046639</td>
+      <td>10.506931</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10.356692</td>
+      <td>0.677533</td>
+      <td>1.253369</td>
+      <td>0.002672</td>
+      <td>0.038270</td>
+      <td>0.005743</td>
+      <td>0.052261</td>
+      <td>10.356692</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10.375868</td>
+      <td>0.631057</td>
+      <td>0.881399</td>
+      <td>-0.000860</td>
+      <td>0.043904</td>
+      <td>0.005436</td>
+      <td>0.030001</td>
+      <td>10.375868</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10.397514</td>
+      <td>0.725073</td>
+      <td>1.207843</td>
+      <td>0.003217</td>
+      <td>0.051260</td>
+      <td>0.008120</td>
+      <td>0.065043</td>
+      <td>10.397514</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>8208</th>
+      <td>10.140012</td>
+      <td>0.641018</td>
+      <td>1.246144</td>
+      <td>0.003294</td>
+      <td>0.044055</td>
+      <td>0.006227</td>
+      <td>0.059544</td>
+      <td>10.140012</td>
+    </tr>
+    <tr>
+      <th>8209</th>
+      <td>10.845609</td>
+      <td>0.646760</td>
+      <td>1.199964</td>
+      <td>0.005659</td>
+      <td>0.050979</td>
+      <td>0.007244</td>
+      <td>0.063883</td>
+      <td>10.845609</td>
+    </tr>
+    <tr>
+      <th>8210</th>
+      <td>10.651830</td>
+      <td>0.703488</td>
+      <td>1.135992</td>
+      <td>0.009145</td>
+      <td>0.072360</td>
+      <td>0.010914</td>
+      <td>0.081316</td>
+      <td>10.651830</td>
+    </tr>
+    <tr>
+      <th>8211</th>
+      <td>10.002006</td>
+      <td>0.617621</td>
+      <td>1.176941</td>
+      <td>0.003622</td>
+      <td>0.042486</td>
+      <td>0.005653</td>
+      <td>0.051259</td>
+      <td>10.002006</td>
+    </tr>
+    <tr>
+      <th>8212</th>
+      <td>10.853314</td>
+      <td>0.664764</td>
+      <td>1.127880</td>
+      <td>0.006359</td>
+      <td>0.051619</td>
+      <td>0.007369</td>
+      <td>0.057200</td>
+      <td>10.853314</td>
+    </tr>
+  </tbody>
+</table>
+<p>8213 rows × 8 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">error_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;center_err&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Position error [µm]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Counts [#]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/demo_analyze_everything_25_0.png" src="../../_images/demo_analyze_everything_25_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">error_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;amplitude_err&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Amplitude error [a.u.]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Counts [#]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error1.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/demo_analyze_everything_26_0.png" src="../../_images/demo_analyze_everything_26_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">error_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;slope_err&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Slope error [µm$^{-1}$]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Counts [#]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error2.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">error_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Counts [#]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error3.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/demo_analyze_everything_28_0.png" src="../../_images/demo_analyze_everything_28_0.png" />
+</div>
+</div>
 <section id="spherical-harmonics">
 <h2><span class="section-number">10.1. </span>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">#</a></h2>
 <section id="fit-residue">
@@ -960,7 +1201,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_25_0.png" src="../../_images/demo_analyze_everything_25_0.png" />
+<img alt="../../_images/demo_analyze_everything_30_0.png" src="../../_images/demo_analyze_everything_30_0.png" />
 </div>
 </div>
 </section>
@@ -988,7 +1229,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_28_0.png" src="../../_images/demo_analyze_everything_28_0.png" />
+<img alt="../../_images/demo_analyze_everything_33_0.png" src="../../_images/demo_analyze_everything_33_0.png" />
 </div>
 </div>
 </section>
@@ -1013,7 +1254,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_30_0.png" src="../../_images/demo_analyze_everything_30_0.png" />
+<img alt="../../_images/demo_analyze_everything_35_0.png" src="../../_images/demo_analyze_everything_35_0.png" />
 </div>
 </div>
 <section id="total-stress">
@@ -1065,7 +1306,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_34_0.png" src="../../_images/demo_analyze_everything_34_0.png" />
+<img alt="../../_images/demo_analyze_everything_39_0.png" src="../../_images/demo_analyze_everything_39_0.png" />
 </div>
 </div>
 </section>
@@ -1117,7 +1358,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_38_0.png" src="../../_images/demo_analyze_everything_38_0.png" />
+<img alt="../../_images/demo_analyze_everything_43_0.png" src="../../_images/demo_analyze_everything_43_0.png" />
 </div>
 </div>
 </section>
@@ -1149,7 +1390,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_41_0.png" src="../../_images/demo_analyze_everything_41_0.png" />
+<img alt="../../_images/demo_analyze_everything_46_0.png" src="../../_images/demo_analyze_everything_46_0.png" />
 </div>
 </div>
 </section>
@@ -1204,7 +1445,7 @@ stress_autocorrelations
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot: xlabel=&#39;frame&#39;, ylabel=&#39;angle_x1_e1&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/demo_analyze_everything_45_1.png" src="../../_images/demo_analyze_everything_45_1.png" />
+<img alt="../../_images/demo_analyze_everything_50_1.png" src="../../_images/demo_analyze_everything_50_1.png" />
 </div>
 </div>
 </section>
@@ -1256,7 +1497,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_50_0.png" src="../../_images/demo_analyze_everything_50_0.png" />
+<img alt="../../_images/demo_analyze_everything_55_0.png" src="../../_images/demo_analyze_everything_55_0.png" />
 </div>
 </div>
 </section>
@@ -1314,7 +1555,8 @@ stress_autocorrelations
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;dark_background&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_total</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;autocorrelation_total&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_cell</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;autocorrelation_cell&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_tissue</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;normalized_autocorrelation_tissue&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -1325,12 +1567,14 @@ stress_autocorrelations
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Geodesic distances, s ($\mu m$)&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Spatial autocorrelation&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\autocorrelation.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_56_0.png" src="../../_images/demo_analyze_everything_56_0.png" />
+<img alt="../../_images/demo_analyze_everything_61_0.png" src="../../_images/demo_analyze_everything_61_0.png" />
 </div>
 </div>
 </section>
@@ -1368,7 +1612,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_60_0.png" src="../../_images/demo_analyze_everything_60_0.png" />
+<img alt="../../_images/demo_analyze_everything_65_0.png" src="../../_images/demo_analyze_everything_65_0.png" />
 </div>
 </div>
 </section>
@@ -1397,7 +1641,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/demo_analyze_everything_63_0.png" src="../../_images/demo_analyze_everything_63_0.png" />
+<img alt="../../_images/demo_analyze_everything_68_0.png" src="../../_images/demo_analyze_everything_68_0.png" />
 </div>
 </div>
 </section>
