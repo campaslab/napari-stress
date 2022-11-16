@@ -74,6 +74,6 @@ parts:
     - file: 04_utility/02_demo_timelapse_processing
     
   - caption: FAQ
-    numbered: False
+    numbered: True
     chapters:
     - file: 05_FAQ/Installation
