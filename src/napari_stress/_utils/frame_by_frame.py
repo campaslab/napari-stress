@@ -7,6 +7,7 @@ from typing import List
 
 from functools import wraps
 import inspect
+import dask
 
 import pandas as pd
 import tqdm
@@ -40,6 +41,11 @@ def frame_by_frame(function, progress_bar: bool = False):
         #TODO: Put this in a thread by default?
         results = [None] * n_frames
         frames = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
+
+        @dask.delayed
+        def process_frame(function, *args, **kwargs):
+            return function(*args, **kwargs)
+
         for t in frames:
             _args = args.copy()
 
@@ -47,9 +53,12 @@ def frame_by_frame(function, progress_bar: bool = False):
             for idx in index_of_converted_arg:
                 _args[idx] = _args[idx][t]
 
-            results[t] = function(*_args, **kwargs)
+            results[t] = process_frame(function, *_args, **kwargs)
+        
+        graph = dask.delayed()(results)
+        computed_results = graph.compute()
 
-        return converter.list_of_data_to_data(results, sig.return_annotation)
+        return converter.list_of_data_to_data(computed_results, sig.return_annotation)
     return wrapper
 
 class TimelapseConverter:
