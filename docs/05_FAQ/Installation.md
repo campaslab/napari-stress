@@ -40,3 +40,14 @@ hint: See above for output from the failure.
 ```
 
 Similar to [this issue](FAQ:installation:xcode), this problem can be fixed by updating the XCode command line tools on your Mac as described above.
+
+## OSError (Windows) during installation
+
+This describes how to fix the following error:
+
+```
+ERROR: Could not install packages due to an OSError: [WinError 5] Access is denied: 'C:\\Users\\xxx\\AppData\\Local\\Temp\\pip-uninstall-f7qla__t\\jupyter-trust.exe'
+Consider using the `--user` option or check the permissions.
+```
+
+If this occurs, close all open Python instances (e.g., anaconda command line prompts, Jupyterlab instances, etc) and try again - this should fix the issue.
