@@ -748,32 +748,32 @@ title="Print to PDF"
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">results</span></code> variable now contains all the resulting napari layers, again stored as a <code class="docutils literal notranslate"><span class="pre">LayerDataTuple</span></code>. Each of these can be converted to a Layer and added to the napari viewer. The structure of the results is as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>results
-├── results<span class="o">[</span><span class="m">0</span><span class="o">]</span>: layer_spherical_harmonics
-│   ├── features:
-│   │   ├── fit_residue
-│   ├── metadata:
-│   │   ├── spherical_harmonics_coefficients
-│   │   ├── spherical_harmonics_implementation
-├── results<span class="o">[</span><span class="m">1</span><span class="o">]</span>: layer_fitted_ellipsoid_points
-│   ├── features:
-│   │   ├── fit_residue
-├── results<span class="o">[</span><span class="m">2</span><span class="o">]</span>: layer_fitted_ellipsoid
-├── results<span class="o">[</span><span class="m">3</span><span class="o">]</span>: layer_quadrature_ellipsoid
-│   ├── features:
-│   │   ├── anisotropic_stress_tissue
-│   │   ├── mean_curvature
-│   ├── metadata:
-│   │   ├── Tissue_stress_tensor_cartesian
-│   │   ├── Tissue_stress_tensor_elliptical
-├── results<span class="o">[</span><span class="m">4</span><span class="o">]</span>: layer_quadrature
-│   ├── features:
-│   │   ├── mean_curvature
-│   │   ├── anisotropic_stress_cell
-│   │   ├── anisotropic_stress
-│   ├── metadata:
-│   │   ├── Gauss_Bonnet_relative_error
-│   │   ├── Gauss_Bonnet_error
-│   │   ├── max_issue_stress_anisotropy
+├──<span class="w"> </span>results<span class="o">[</span><span class="m">0</span><span class="o">]</span>:<span class="w"> </span>layer_spherical_harmonics
+│<span class="w">   </span>├──<span class="w"> </span>features:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>fit_residue
+│<span class="w">   </span>├──<span class="w"> </span>metadata:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>spherical_harmonics_coefficients
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>spherical_harmonics_implementation
+├──<span class="w"> </span>results<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>layer_fitted_ellipsoid_points
+│<span class="w">   </span>├──<span class="w"> </span>features:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>fit_residue
+├──<span class="w"> </span>results<span class="o">[</span><span class="m">2</span><span class="o">]</span>:<span class="w"> </span>layer_fitted_ellipsoid
+├──<span class="w"> </span>results<span class="o">[</span><span class="m">3</span><span class="o">]</span>:<span class="w"> </span>layer_quadrature_ellipsoid
+│<span class="w">   </span>├──<span class="w"> </span>features:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>anisotropic_stress_tissue
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>mean_curvature
+│<span class="w">   </span>├──<span class="w"> </span>metadata:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Tissue_stress_tensor_cartesian
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Tissue_stress_tensor_elliptical
+├──<span class="w"> </span>results<span class="o">[</span><span class="m">4</span><span class="o">]</span>:<span class="w"> </span>layer_quadrature
+│<span class="w">   </span>├──<span class="w"> </span>features:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>mean_curvature
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>anisotropic_stress_cell
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>anisotropic_stress
+│<span class="w">   </span>├──<span class="w"> </span>metadata:
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Gauss_Bonnet_relative_error
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Gauss_Bonnet_error
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>max_issue_stress_anisotropy
 </pre></div>
 </div>
 <div class="cell docutils container">
@@ -822,7 +822,7 @@ title="Print to PDF"
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">histogram_over_time</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">feature</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create histogram plots over time&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create histogram plots over time&quot;&quot;&quot;</span>
     <span class="n">n_frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frames</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
