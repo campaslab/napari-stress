@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>312</height>
+        <height>308</height>
        </rect>
       </property>
       <attribute name="label">
@@ -109,17 +109,23 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>312</height>
+        <height>308</height>
        </rect>
       </property>
       <attribute name="label">
        <string>2. Initial reconstruction</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="3" column="3">
-        <widget class="QSpinBox" name="spinBox_n_smoothing">
+       <item row="0" column="3">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_gaussian_blur">
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>10.000000000000000</double>
+         </property>
          <property name="value">
-          <number>10</number>
+          <double>1.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -136,14 +142,21 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="2">
-        <widget class="QLabel" name="label">
+       <item row="2" column="1" colspan="2">
+        <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Initial number of points</string>
+          <string>Surface smoothing iterations</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Image smoothing sigma</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -157,43 +170,16 @@
         </spacer>
        </item>
        <item row="2" column="3">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_pointdensity">
-         <property name="decimals">
-          <number>3</number>
-         </property>
-         <property name="singleStep">
-          <double>0.010000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Point density on surface</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" colspan="2">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Surface smoothing iterations</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_gaussian_blur">
-         <property name="maximum">
-          <double>10.000000000000000</double>
-         </property>
+        <widget class="QSpinBox" name="spinBox_n_smoothing">
          <property name="value">
-          <double>1.000000000000000</double>
+          <number>10</number>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_16">
+       <item row="1" column="1" colspan="2">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Image smoothing sigma</string>
+          <string>Initial number of points</string>
          </property>
         </widget>
        </item>
@@ -205,7 +191,7 @@
         <x>0</x>
         <y>0</y>
         <width>838</width>
-        <height>322</height>
+        <height>316</height>
        </rect>
       </property>
       <attribute name="label">

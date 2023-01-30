@@ -49,19 +49,10 @@ class droplet_reconstruction_toolbox(QWidget):
 
         # calculate density/point number
         self.spinBox_n_vertices.valueChanged.connect(self._on_update_n_points)
-        self.doubleSpinBox_pointdensity.valueChanged.connect(self._on_update_density)
         self.spinBox_n_vertices.setValue(256)
 
         self.pushButton_run.clicked.connect(self._run)
 
-    def _on_update_density(self):
-        """Recalculate point number if point density is changed."""
-        surface = self.surface_layer_select.value.data
-        mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-        area = mesh.area()
-
-        n_points = int(self.doubleSpinBox_pointdensity.value() * area)
-        self.spinBox_n_vertices.setValue(n_points)
 
     def _on_update_n_points(self):
         """Recalculate point density if point number is changed."""
@@ -70,7 +61,6 @@ class droplet_reconstruction_toolbox(QWidget):
         area = mesh.area()
 
         density = self.spinBox_n_vertices.value()/area
-        self.doubleSpinBox_pointdensity.setValue(density)
 
 
     def eventFilter(self, obj: QObject, event: QEvent):
