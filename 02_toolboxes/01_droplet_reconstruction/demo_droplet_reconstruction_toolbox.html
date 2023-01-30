@@ -531,18 +531,17 @@ title="Print to PDF"
 <h2><span class="section-number">6.1.1. </span>Principal steps<a class="headerlink" href="#principal-steps" title="Permalink to this headline">#</a></h2>
 <p>The principal steps of the reconstruction procedure and the relevant settings are:</p>
 <p><strong>Preprocessing</strong></p>
-<ul class="simple">
-<li><p>Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to.</p></li>
-</ul>
 <p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox1.png" /></p>
-<p>The fields <code class="docutils literal notranslate"><span class="pre">Voxel</span> <span class="pre">size</span> <span class="pre">[x,y,z]</span></code> denote the <em>current</em> voxel sizes of the data and the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">voxel</span> <span class="pre">size</span></code> refers to the voxel size you’d like the data to have. The lower you set the latter, the slower the process will be.</p>
 <ul class="simple">
+<li><p>Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to. The fields <code class="docutils literal notranslate"><span class="pre">Voxel</span> <span class="pre">size</span> <span class="pre">[x,y,z]</span></code> denote the <em>current</em> voxel sizes of the data and the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">voxel</span> <span class="pre">size</span></code> refers to the voxel size you’d like the data to have. The lower you set the latter, the slower the process will be.</p></li>
+</ul>
+<p><strong>Initial reconstruction</strong></p>
+<p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox2.png" /></p>
+<ul class="simple">
+<li><p>Smoothing: Before proceeding to obtain a first segmented estimate for the outline of the droplet, it is typically processed with a gaussian blur. You can set the strength of this blur with the <code class="docutils literal notranslate"><span class="pre">Image</span> <span class="pre">smoothing</span> <span class="pre">sigma</span></code> parameter.</p></li>
 <li><p>Binarization: Getting a first estimate of the droplet volume as a <a class="reference external" href="https://napari.org/stable/howtos/layers/labels.html">label image</a></p></li>
 <li><p>Conversion to surface: The <a class="reference external" href="https://en.wikipedia.org/wiki/Marching_cubes">marching cubes</a> algorithm is used to extract the surface from the label image</p></li>
 <li><p>Surface smoothing: To avoid voxel-artifacts, the surface is smoothed with the <a class="reference external" href="https://en.wikipedia.org/wiki/Laplacian_smoothing">Laplacian smoothing algorithm</a>. The behavior of this step is controlled with the <code class="docutils literal notranslate"><span class="pre">Smoothing</span> <span class="pre">iterations</span></code> parameter. Note that this is only a first guess for the point locations.</p></li>
-</ul>
-<p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox2.png" /></p>
-<ul class="simple">
 <li><p>Extracting points: The <a class="reference external" href="https://en.wikipedia.org/wiki/Supersampling#Poisson_disk">Poisson disk algorithm</a> is used to extract a set of points on the surface as a first guess at the reconstructed droplets from the smoothed surface. The number of points drawn (and the respective density of points on the surface) can  be controlled via the <code class="docutils literal notranslate"><span class="pre">Initial</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">points</span></code> and <code class="docutils literal notranslate"><span class="pre">Point</span> <span class="pre">density</span> <span class="pre">on</span> <span class="pre">surface</span></code> parameters. The initially sampled points are shown after the toolbox has finished, so if you find the points too few, you can increase this number.</p></li>
 </ul>
 <p><strong>Refinement</strong></p>
