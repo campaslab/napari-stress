@@ -12,6 +12,7 @@ from napari.layers import Layer
 from napari import Viewer
 
 from .._utils import coordinate_conversion as conversion
+from .._utils.frame_by_frame import frame_by_frame
 from ..types import (_METADATAKEY_MEAN_CURVATURE,
                      _METADATAKEY_H0_ELLIPSOID,
                      _METADATAKEY_H_E123_ELLIPSOID,
@@ -27,6 +28,7 @@ from ..types import (_METADATAKEY_MEAN_CURVATURE,
 from typing import Tuple
 
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
+@frame_by_frame
 def curvature_on_ellipsoid(ellipsoid: VectorsData,
                            sample_points: PointsData) -> LayerDataTuple:
     """
