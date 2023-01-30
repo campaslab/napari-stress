@@ -7,18 +7,19 @@ In order to save you the trouble of walking through each of the steps manually f
 The principal steps of the reconstruction procedure and the relevant settings are:
 
 **Preprocessing**
-* Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to.
 
 ![](imgs/demo_reconstruction_toolbox1.png) 
 
-The fields `Voxel size [x,y,z]` denote the *current* voxel sizes of the data and the `Target voxel size` refers to the voxel size you'd like the data to have. The lower you set the latter, the slower the process will be.
+* Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to. The fields `Voxel size [x,y,z]` denote the *current* voxel sizes of the data and the `Target voxel size` refers to the voxel size you'd like the data to have. The lower you set the latter, the slower the process will be.
 
-* Binarization: Getting a first estimate of the droplet volume as a [label image](https://napari.org/stable/howtos/layers/labels.html)
-* Conversion to surface: The [marching cubes](https://en.wikipedia.org/wiki/Marching_cubes) algorithm is used to extract the surface from the label image
-* Surface smoothing: To avoid voxel-artifacts, the surface is smoothed with the [Laplacian smoothing algorithm](https://en.wikipedia.org/wiki/Laplacian_smoothing). The behavior of this step is controlled with the `Smoothing iterations` parameter. Note that this is only a first guess for the point locations.
+**Initial reconstruction**
 
 ![](imgs/demo_reconstruction_toolbox2.png) 
 
+* Smoothing: Before proceeding to obtain a first segmented estimate for the outline of the droplet, it is typically processed with a gaussian blur. You can set the strength of this blur with the `Image smoothing sigma` parameter.
+* Binarization: Getting a first estimate of the droplet volume as a [label image](https://napari.org/stable/howtos/layers/labels.html)
+* Conversion to surface: The [marching cubes](https://en.wikipedia.org/wiki/Marching_cubes) algorithm is used to extract the surface from the label image
+* Surface smoothing: To avoid voxel-artifacts, the surface is smoothed with the [Laplacian smoothing algorithm](https://en.wikipedia.org/wiki/Laplacian_smoothing). The behavior of this step is controlled with the `Smoothing iterations` parameter. Note that this is only a first guess for the point locations.
 * Extracting points: The [Poisson disk algorithm](https://en.wikipedia.org/wiki/Supersampling#Poisson_disk) is used to extract a set of points on the surface as a first guess at the reconstructed droplets from the smoothed surface. The number of points drawn (and the respective density of points on the surface) can  be controlled via the `Initial number of points` and `Point density on surface` parameters. The initially sampled points are shown after the toolbox has finished, so if you find the points too few, you can increase this number.
 
 **Refinement**

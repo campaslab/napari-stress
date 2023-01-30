@@ -49,19 +49,10 @@ class droplet_reconstruction_toolbox(QWidget):
 
         # calculate density/point number
         self.spinBox_n_vertices.valueChanged.connect(self._on_update_n_points)
-        self.doubleSpinBox_pointdensity.valueChanged.connect(self._on_update_density)
         self.spinBox_n_vertices.setValue(256)
 
         self.pushButton_run.clicked.connect(self._run)
 
-    def _on_update_density(self):
-        """Recalculate point number if point density is changed."""
-        surface = self.surface_layer_select.value.data
-        mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-        area = mesh.area()
-
-        n_points = int(self.doubleSpinBox_pointdensity.value() * area)
-        self.spinBox_n_vertices.setValue(n_points)
 
     def _on_update_n_points(self):
         """Recalculate point density if point number is changed."""
@@ -70,7 +61,6 @@ class droplet_reconstruction_toolbox(QWidget):
         area = mesh.area()
 
         density = self.spinBox_n_vertices.value()/area
-        self.doubleSpinBox_pointdensity.setValue(density)
 
 
     def eventFilter(self, obj: QObject, event: QEvent):
@@ -93,6 +83,7 @@ class droplet_reconstruction_toolbox(QWidget):
             self.image_layer_select.value.data,
             voxelsize=current_voxel_size,
             target_voxelsize=self.doubleSpinBox_target_voxelsize.value(),
+            smoothing_sigma=self.doubleSpinBox_gaussian_blur.value(),
             n_smoothing_iterations=self.spinBox_n_smoothing.value(),
             n_tracing_iterations=self.spinBox_n_refinement_steps.value(),
             resampling_length=self.doubleSpinBox_sampling_length.value(),
@@ -115,6 +106,7 @@ class droplet_reconstruction_toolbox(QWidget):
 def reconstruct_droplet(image: ImageData,
                         voxelsize: np.ndarray = None,
                         target_voxelsize: float = 1.0,
+                        smoothing_sigma: float = 1.0,
                         n_smoothing_iterations: int = 10,
                         n_points: int = 256,
                         n_tracing_iterations: int = 1,
@@ -131,6 +123,7 @@ def reconstruct_droplet(image: ImageData,
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
     from .._preprocess import rescale
+    from skimage import filters
     import copy
 
     # rescale
@@ -139,6 +132,9 @@ def reconstruct_droplet(image: ImageData,
                              scale_z=scaling_factors[0],
                              scale_y=scaling_factors[1],
                              scale_x=scaling_factors[2]).squeeze()
+
+    # Blur
+    rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
 
     # convert to surface
     binarized_image = nsbatwm.threshold_otsu(rescaled_image)
