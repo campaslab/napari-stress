@@ -7,12 +7,12 @@ from typing import List
 
 from functools import wraps
 import inspect
-import dask
+from dask.distributed import Client
 
 import pandas as pd
 import tqdm
 
-def frame_by_frame(function, progress_bar: bool = False):
+def frame_by_frame(function: callable, progress_bar: bool = True):
 
     @wraps(function)
     def wrapper(*args, **kwargs):
@@ -26,6 +26,11 @@ def frame_by_frame(function, progress_bar: bool = False):
 
         args = list(args)
         n_frames = None
+
+        # Inspect arguments and check if `use_dask` is passed as keyword argument
+        if 'use_dask' in sig.parameters.keys():
+            use_dask = kwargs['use_dask']
+            del kwargs['use_dask']
 
         # Convert 4D data to list(s) of 3D data for every supported argument
         # and store the list in the same place as the original 4D data
@@ -41,10 +46,12 @@ def frame_by_frame(function, progress_bar: bool = False):
         #TODO: Put this in a thread by default?
         results = [None] * n_frames
         frames = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
-
-        @dask.delayed
-        def process_frame(function, *args, **kwargs):
-            return function(*args, **kwargs)
+        
+        # start dask cluster client
+        if use_dask:
+            client = Client()
+            print(client)
+            jobs = []
 
         for t in frames:
             _args = args.copy()
@@ -53,12 +60,17 @@ def frame_by_frame(function, progress_bar: bool = False):
             for idx in index_of_converted_arg:
                 _args[idx] = _args[idx][t]
 
-            results[t] = process_frame(function, *_args, **kwargs)
-        
-        graph = dask.delayed()(results)
-        computed_results = graph.compute()
+            if use_dask:
+                jobs.append(client.submit(function, *_args, **kwargs))
+            else:
+                results[t] = function(*_args, **kwargs)
 
-        return converter.list_of_data_to_data(computed_results, sig.return_annotation)
+        if use_dask:
+            # gather results
+            results = client.gather(jobs)
+            client.close()
+
+        return converter.list_of_data_to_data(results, sig.return_annotation)
     return wrapper
 
 class TimelapseConverter:
