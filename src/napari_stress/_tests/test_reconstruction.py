@@ -27,6 +27,15 @@ def test_reconstruction(make_napari_viewer):
         layer = Layer.create(result[0], result[1], result[2])
         viewer.add_layer(layer)
 
+    # test with dask
+    results = reconstruction.reconstruct_droplet(
+        image,
+        voxelsize=np.asarray([1.93, 1, 1]),
+        target_voxelsize=1,
+        resampling_length=1,
+        use_dask=True
+        )
+
 def test_quadrature_point_reconstuction(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud, fit_spherical_harmonics
     from napari_stress import reconstruction
@@ -41,3 +50,8 @@ def test_quadrature_point_reconstuction(make_napari_viewer):
     # quadrature
     lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)[0]
     reconstruction.reconstruct_surface_from_quadrature_points(lebedev_points)
+
+if __name__ == "__main__":
+    
+    import napari
+    test_reconstruction(napari.Viewer)

@@ -28,7 +28,8 @@ def frame_by_frame(function: callable, progress_bar: bool = True):
         n_frames = None
 
         # Inspect arguments and check if `use_dask` is passed as keyword argument
-        if 'use_dask' in sig.parameters.keys():
+        use_dask = False
+        if 'use_dask' in kwargs.keys():
             use_dask = kwargs['use_dask']
             del kwargs['use_dask']
 
@@ -50,7 +51,7 @@ def frame_by_frame(function: callable, progress_bar: bool = True):
         # start dask cluster client
         if use_dask:
             client = Client()
-            print(client)
+            print('Dask client up an running', client, ' Log: https://localhost:8787')
             jobs = []
 
         for t in frames:
