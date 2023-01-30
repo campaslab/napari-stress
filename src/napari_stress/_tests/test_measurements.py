@@ -206,6 +206,17 @@ def test_curvature2(make_napari_viewer):
     assert results_layer.metadata[types._METADATAKEY_S2_VOLUME_INTEGRAL] is not None
     assert results_layer.metadata[types._METADATAKEY_H0_VOLUME_INTEGRAL] is not None
     
+def test_curvature3():
+    """Tests mean curvatures on ellipsoid"""
+    from napari_stress import get_droplet_point_cloud_4d
+    from napari_stress import approximation, measurements
+
+    pointcloud = get_droplet_point_cloud_4d()[0][0]
+
+    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
+    approximated_pointcloud = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+    curvature = measurements.curvature_on_ellipsoid(ellipsoid, approximated_pointcloud)
+
 
 def test_stresses():
     from napari_stress import lebedev_quadrature
@@ -271,4 +282,4 @@ def test_compatibility_decorator():
 
 
 if __name__ == '__main__':
-    test_spatiotemporal_autocorrelation()
+    test_curvature3()
