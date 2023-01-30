@@ -50,8 +50,3 @@ def test_quadrature_point_reconstuction(make_napari_viewer):
     # quadrature
     lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)[0]
     reconstruction.reconstruct_surface_from_quadrature_points(lebedev_points)
-
-if __name__ == "__main__":
-    
-    import napari
-    test_reconstruction(napari.Viewer)
