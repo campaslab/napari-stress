@@ -86,3 +86,6 @@ venv/
 # written by setuptools_scm
 **/_version.py
 
+# Dask 
+dask-worker-space/
+
