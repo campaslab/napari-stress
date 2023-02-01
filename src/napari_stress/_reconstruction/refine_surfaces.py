@@ -31,7 +31,7 @@ class edge_functions(Enum):
 
 
 @register_function(menu="Points > Trace-refine points (n-STRESS)")
-@frame_by_frame
+@frame_by_frame()
 def trace_refinement_of_surface(intensity_image: ImageData,
                                 points: PointsData,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
@@ -138,7 +138,10 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
     columns = ['surface_points'] + ['idx_of_border'] +\
-        fit_parameters + fit_errors + ['profiles']
+        fit_parameters + fit_errors + ['mean_squared_error'] +\
+        ['fraction_variance_unexplained'] +\
+        ['fraction_variance_unexplained_log'] +\
+        ['profiles']
 
     if len(fit_parameters) == 1:
         fit_parameters, fit_errors = [fit_parameters[0]], [fit_errors[0]]
@@ -158,15 +161,23 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, 'profiles'] = interpolator(coordinates)
 
         # Simple or fancy fit?
+        intensity = np.array(fit_data.loc[idx, 'profiles'])
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border = edge_detection_function(np.array(fit_data.loc[idx, 'profiles']))
+            idx_of_border = edge_detection_function(intensity)
             perror = 0
             popt = 0
+            MSE = [0, 0]
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
-            popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                           selected_edge_func=edge_detection_function)
+            popt, perror = _fancy_edge_fit(intensity, selected_edge_func=edge_detection_function)
             idx_of_border = popt[0]
+
+            # calculate fit errors
+            MSE = _mean_squared_error(
+                fit_function=edge_detection_function,
+                x=np.arange(len(intensity)),
+                y=intensity,
+                fit_params=popt)
 
         new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
 
@@ -174,6 +185,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, fit_parameters] = popt
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
         fit_data.loc[idx, 'surface_points'] = new_point
+        fit_data.loc[idx, 'mean_squared_error'] = MSE[0]
+        fit_data.loc[idx, 'fraction_variance_unexplained'] = MSE[1]
+        fit_data.loc[idx, 'fraction_variance_unexplained_log'] = np.log(MSE[1])
 
     fit_data['start_points'] = list(start_points)
     fit_data['vectors'] = list(vectors)
@@ -183,16 +197,19 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names=fit_errors,
+                                             column_names=['fraction_variance_unexplained_log'],
                                              factor=outlier_tolerance,
                                              which='above')
-        fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names='idx_of_border',
-                                             factor=outlier_tolerance,
-                                             which='both')
+        if 'slope' in fit_data.columns:
+            fit_data = _remove_outliers_by_index(fit_data,
+                                                column_names='slope',
+                                                factor=outlier_tolerance,
+                                                which='both')
 
     # reformat to layerdatatuple: points
-    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    feature_names = fit_parameters + fit_errors +\
+        ['mean_squared_error', 'fraction_variance_unexplained'] +\
+        ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
     metadata = {'intensity_profiles': fit_data['profiles']}
     properties = {'name': 'Refined_points',
@@ -297,10 +314,16 @@ def _fancy_edge_fit(array: np.ndarray,
             if array[0] > array[-1]:
                 array = array[::-1]
 
-            parameter_estimate = [len(array)/2,
-                                  max(array),
-                                  np.diff(array).mean(),
-                                  min(array)]
+            amplitude_est = max(array)
+            center_est = np.where(np.diff(array) == np.diff(array).max())[0][0]
+            background_slope = (array[int(center_est)] - array[0])/(center_est - 0)
+            slope_est = (array[int(center_est)-2] - array[int(center_est)+2]) / ((int(center_est)-2) - (int(center_est)+2))
+            offset_est = min(array)
+            parameter_estimate = [center_est,
+                                  amplitude_est,
+                                  slope_est,
+                                  background_slope,
+                                  offset_est]
             optimal_fit_parameters, _covariance = curve_fit(
                 selected_edge_func, np.arange(len(array)), array, parameter_estimate
                 )
@@ -316,9 +339,34 @@ def _fancy_edge_fit(array: np.ndarray,
         # retrieve errors from covariance matrix
         parameter_error = np.sqrt(np.diag(_covariance))
 
+        # calculate fit errors (mean squared error & fraction of variance unexplained)
+        y_fit = selected_edge_func(np.arange(len(array)), *optimal_fit_parameters)
+        
+
     # If fit fails, replace bad values with NaN
     except Exception:
         optimal_fit_parameters = np.repeat(np.nan, len(params))
         parameter_error = np.repeat(np.nan, len(params))
 
     return optimal_fit_parameters, parameter_error
+
+def _mean_squared_error(fit_function: callable, x: np.ndarray, y: np.ndarray, fit_params: list) -> List[float]:
+    """
+    Calculate error parameters for a given fit functions and the determined parameters.
+
+    Args:
+        fit_function (callable): Used fit function
+        x (np.ndarray): x-values
+        y (np.ndarray): measured, corresponding y-values
+        fit_params (list): determined fit parameters
+
+    Returns:
+        float: mean squared error
+        float: fraction of variance unexplained
+    """
+    y_fit = fit_function(x, *fit_params)
+    
+    mean_squared_error = np.mean((y - y_fit)**2)
+    fraction_variance_unexplained = mean_squared_error/np.var(y)
+
+    return mean_squared_error, fraction_variance_unexplained
