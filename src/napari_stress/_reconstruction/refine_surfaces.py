@@ -31,7 +31,7 @@ class edge_functions(Enum):
 
 
 @register_function(menu="Points > Trace-refine points (n-STRESS)")
-@frame_by_frame()
+@frame_by_frame
 def trace_refinement_of_surface(intensity_image: ImageData,
                                 points: PointsData,
                                 selected_fit_type: fit_types = fit_types.fancy_edge_fit,
@@ -317,7 +317,7 @@ def _fancy_edge_fit(array: np.ndarray,
             amplitude_est = max(array)
             center_est = np.where(np.diff(array) == np.diff(array).max())[0][0]
             background_slope = (array[int(center_est)] - array[0])/(center_est - 0)
-            slope_est = (array[int(center_est)-2] - array[int(center_est)+2]) / ((int(center_est)-2) - (int(center_est)+2))
+            slope_est = np.diff(array)[int(center_est)]
             offset_est = min(array)
             parameter_estimate = [center_est,
                                   amplitude_est,
