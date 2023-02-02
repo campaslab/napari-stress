@@ -241,7 +241,7 @@ def _resample_pointcloud(points: PointsData,
     resampled_points : TYPE
 
     """
-    from scipy.interpolate import Rbf
+    from scipy.interpolate import Rbf, griddata
 
     # convert to spherical, relative coordinates
     center = np.mean(points, axis=0)
@@ -252,7 +252,7 @@ def _resample_pointcloud(points: PointsData,
 
     # estimate point number according to passed sampling length
     mean_radius = points_spherical[:, 0].mean()
-    surface_area = mean_radius**2 * 2 * np.pi
+    surface_area = mean_radius**2 * 4 * np.pi
     n = int(surface_area/sampling_length**2)
 
     # sample points on unit-sphere according to fibonacci-scheme
@@ -262,25 +262,45 @@ def _resample_pointcloud(points: PointsData,
                                            sampled_points[:, 2]).T
 
     # interpolate cartesian coordinates on (theta, phi) grid
-    theta_interpolation = np.concatenate([points_spherical[:, 1] + 2 * np.pi,
+    theta_interpolation = np.concatenate([points_spherical[:, 1],
                                           points_spherical[:, 1],
-                                          points_spherical[:, 1] - 2 * np.pi])
-    phi_interpolation = np.concatenate([points_spherical[:, 2],
+                                          points_spherical[:, 1]])
+    phi_interpolation = np.concatenate([points_spherical[:, 2] + 2 * np.pi,
                                         points_spherical[:, 2],
-                                        points_spherical[:, 2]])
-    rbf_x = Rbf(theta_interpolation,
-                phi_interpolation,
-                list(points_centered[:, 0])*3)
-    rbf_y = Rbf(theta_interpolation,
-                phi_interpolation,
-                list(points_centered[:, 1])*3)
-    rbf_z = Rbf(theta_interpolation,
-                phi_interpolation,
-                list(points_centered[:, 2])*3)
+                                        points_spherical[:, 2] - 2 * np.pi])
+    # rbf_x = Rbf(theta_interpolation,
+    #             phi_interpolation,
+    #             list(points_centered[:, 0])*3)
+    # rbf_y = Rbf(theta_interpolation,
+    #             phi_interpolation,
+    #             list(points_centered[:, 1])*3)
+    # rbf_z = Rbf(theta_interpolation,
+    #             phi_interpolation,
+    #             list(points_centered[:, 2])*3)
 
-    new_x = rbf_x(sampled_points[:, 1], sampled_points[:, 2])
-    new_y = rbf_y(sampled_points[:, 1], sampled_points[:, 2])
-    new_z = rbf_z(sampled_points[:, 1], sampled_points[:, 2])
+    # new_x = rbf_x(sampled_points[:, 1], sampled_points[:, 2])
+    # new_y = rbf_y(sampled_points[:, 1], sampled_points[:, 2])
+    # new_z = rbf_z(sampled_points[:, 1], sampled_points[:, 2])
+
+    new_x = griddata(
+        np.stack([theta_interpolation, phi_interpolation]).T,
+        list(points_centered[:, 0])*3,
+        sampled_points[:, 1:],
+    )
+
+    new_y = griddata(
+        np.stack([theta_interpolation, phi_interpolation]).T,
+        list(points_centered[:, 1])*3,
+        sampled_points[:, 1:],
+    )
+
+    new_z = griddata(
+        np.stack([theta_interpolation, phi_interpolation]).T,
+        list(points_centered[:, 2])*3,
+        sampled_points[:, 1:],
+    )
 
     resampled_points = np.stack([new_x, new_y, new_z]).T + center
-    return resampled_points
+
+    no_nan_idx = np.where(~np.isnan(resampled_points[:, 0]))[0]
+    return resampled_points[no_nan_idx, :]
