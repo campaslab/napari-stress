@@ -74,7 +74,7 @@ def test_decorator_points_layers():
 
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame
-    from napari_process_points_and_surfaces import sample_points_poisson_disk
+    from napari_process_points_and_surfaces import sample_points_from_surface
     from napari.types import SurfaceData
     from vedo import Sphere
 
@@ -95,8 +95,8 @@ def test_decorator_surfaces():
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-    points = frame_by_frame(sample_points_poisson_disk)(surface_array)
-    points = frame_by_frame(sample_points_poisson_disk)(surface_list[0])
+    points = frame_by_frame(sample_points_from_surface)(surface_array)
+    points = frame_by_frame(sample_points_from_surface)(surface_list[0])
 
 def test_decorator_images():
 
@@ -136,4 +136,4 @@ def test_frame_by_frame_vectors():
 
 
 if __name__ =='__main__':
-    test_decorator_points_layers()
+    test_decorator_surfaces()
