@@ -166,33 +166,3 @@ def decimate(surface: SurfaceData,
 
     return (mesh.points(), np.asarray(mesh.faces()))
 
-
-@register_function(menu="Surfaces > Surface density adjustment (vedo, n-STRESS)")
-@frame_by_frame
-def adjust_surface_density(surface: SurfaceData,
-                           density_target: float = 1.0) -> SurfaceData:
-    """Adjust the number of vertices of a surface to a defined density"""
-    import open3d
-
-    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    n_vertices_target = int(mesh.area() * density_target)
-
-    # sample desired number of vertices from surface
-    points = nppas.sample_points_poisson_disk(surface, n_vertices_target)
-    pcd = open3d.geometry.PointCloud()
-    pcd.points = open3d.utility.Vector3dVector(points)
-
-    # measure distances between points
-    distances = np.array(pcd.compute_nearest_neighbor_distance())
-    radius = np.median(distances)
-    delta = 2 * distances.std()
-
-    # reconstruct the surface
-    surface = nppas.surface_from_point_cloud_ball_pivoting(points,
-                                                           radius=radius,
-                                                           delta_radius=delta)
-    # Fix holes
-    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.fillHoles(size=(radius+delta)**2)
-
-    return (mesh.points(), np.asarray(mesh.faces()))
