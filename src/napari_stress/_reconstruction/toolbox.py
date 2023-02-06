@@ -142,11 +142,12 @@ def reconstruct_droplet(image: ImageData,
     surface = nppas.largest_label_to_surface(label_image)
 
     # Smooth surface
-    surface_smoothed = nppas.filter_smooth_laplacian(
-        surface, number_of_iterations=n_smoothing_iterations)
+    surface_smoothed = nppas.smooth_surface(surface, number_of_iterations=n_smoothing_iterations)
+    surface_area = vedo.mesh.Mesh((surface_smoothed)).area()
+    points_first_guess = nppas.sample_points_from_surface(
+        surface_smoothed, 
+        distance_fraction=5*surface_area/(n_points**2))
 
-    points_first_guess = nppas.sample_points_poisson_disk(
-        surface_smoothed, number_of_points=n_points)
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
