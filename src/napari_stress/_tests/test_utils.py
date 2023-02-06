@@ -133,7 +133,3 @@ def test_frame_by_frame_vectors():
     vectors_data = Converter.list_of_data_to_data(vectors_list, VectorsData)
 
     assert np.array_equal(vectors_data, vectors_4d)
-
-
-if __name__ =='__main__':
-    test_decorator_surfaces()
