@@ -190,11 +190,18 @@ def reconstruct_droplet(image: ImageData,
     trace_vectors = list(trace_vectors)
     trace_vectors[0] *= target_voxelsize
 
+    properties = {'name': 'Center',
+                  'symbol': 'ring',
+                  'face_color': 'yellow',
+                  'size': 3}
+    droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, 'points')
+
     return [layer_image_rescaled,
             layer_label_image,
             layer_points_first_guess,
             traced_points,
-            trace_vectors
+            trace_vectors,
+            droplet_center
             ]
 
 def _fibonacci_sampling(number_of_points: int = 256)->PointsData:
