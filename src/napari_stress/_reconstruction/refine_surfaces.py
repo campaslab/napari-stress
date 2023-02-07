@@ -118,10 +118,10 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # Define start and end points for the surface tracing vectors
     scale = np.asarray([scale_z, scale_y, scale_x])
     n_samples = int(trace_length/sampling_distance)
-    start_points = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
+    start_points = pointcloud.points()/scale[None, :] + 0.5 * trace_length * pointcloud.pointdata['Normals']
 
     # Define trace vectors (full length and single step
-    vectors = trace_length * pointcloud.pointdata['Normals']
+    vectors = (-1) * trace_length * pointcloud.pointdata['Normals']
     vector_step = vectors/n_samples
 
     # Create coords for interpolator
@@ -131,7 +131,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     interpolator = RegularGridInterpolator((X1, X2, X3),
                                            intensity_image,
                                            bounds_error=False,
-                                           fill_value=intensity_image.min())
+                                           fill_value=np.nan,
+                                           method='cubic')
 
     # Allocate arrays for results (location of object border, fit parameters,
     # fit errors, and intensity profiles)
@@ -148,7 +149,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # create empty dataframe to keep track of results
     fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
-
+    show_progress=True
     if show_progress:
         iterator = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
     else:
@@ -158,7 +159,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     for idx in iterator:
 
         coordinates = [start_points[idx] + k * vector_step[idx] for k in range(n_samples)]
-        fit_data.loc[idx, 'profiles'] = interpolator(coordinates)
+        fit_data.loc[idx, 'profiles'] = [x for x in interpolator(coordinates) if not np.isnan(x)]
 
         # Simple or fancy fit?
         intensity = np.array(fit_data.loc[idx, 'profiles'])
@@ -200,15 +201,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              column_names=['fraction_variance_unexplained_log'],
                                              factor=outlier_tolerance,
                                              which='above')
-        if 'slope' in fit_data.columns:
-            fit_data = _remove_outliers_by_index(fit_data,
-                                                column_names='slope',
-                                                factor=outlier_tolerance,
-                                                which='both')
 
     # reformat to layerdatatuple: points
     feature_names = fit_parameters + fit_errors +\
-        ['mean_squared_error', 'fraction_variance_unexplained'] +\
+        ['mean_squared_error',
+        'fraction_variance_unexplained', 'fraction_variance_unexplained_log'] +\
         ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
     metadata = {'intensity_profiles': fit_data['profiles']}
@@ -310,14 +307,14 @@ def _fancy_edge_fit(array: np.ndarray,
     try:
         if selected_edge_func == _sigmoid:
 
-            # Make sure that intensity goes up along ray so that fit can work
-            if array[0] > array[-1]:
-                array = array[::-1]
+            # trim begin of trace to get rid of rising intensity slope
+            ind_max = np.argmax(array)
+            array = array[ind_max:]
 
             amplitude_est = max(array)
             center_est = np.where(np.diff(array) == np.diff(array).max())[0][0]
-            background_slope = (array[int(center_est)] - array[0])/(center_est - 0)
-            slope_est = np.diff(array)[int(center_est)]
+            background_slope = np.mean([np.diff(array)[:5].mean(), np.diff(array)[-5:].mean()])
+            slope_est = 1
             offset_est = min(array)
             parameter_estimate = [center_est,
                                   amplitude_est,
@@ -325,8 +322,10 @@ def _fancy_edge_fit(array: np.ndarray,
                                   background_slope,
                                   offset_est]
             optimal_fit_parameters, _covariance = curve_fit(
-                selected_edge_func, np.arange(len(array)), array, parameter_estimate
+                selected_edge_func, -np.arange(len(array)), array, parameter_estimate
                 )
+            
+            optimal_fit_parameters[0] = optimal_fit_parameters[0] -ind_max
 
         elif selected_edge_func == _gaussian:
             parameter_estimate = [len(array)/2,
@@ -337,11 +336,7 @@ def _fancy_edge_fit(array: np.ndarray,
                 )
 
         # retrieve errors from covariance matrix
-        parameter_error = np.sqrt(np.diag(_covariance))
-
-        # calculate fit errors (mean squared error & fraction of variance unexplained)
-        y_fit = selected_edge_func(np.arange(len(array)), *optimal_fit_parameters)
-        
+        parameter_error = np.sqrt(np.diag(_covariance))        
 
     # If fit fails, replace bad values with NaN
     except Exception:
