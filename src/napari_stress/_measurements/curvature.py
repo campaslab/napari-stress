@@ -182,7 +182,7 @@ def calculate_mean_curvature_on_manifold(input_manifold: manifold
     normals = get_normals_on_manifold(input_manifold)
 
     # Test orientation:
-    points = input_manifold.get_coordinates()
+    points = input_manifold.get_coordinates().squeeze()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
     # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
