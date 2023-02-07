@@ -476,9 +476,9 @@ class manifold(object): #This now represents geo of S^2, will later be adapted t
 
         # BJG: otherwise, we use input lebedev quad pts, in our shape dictionary:
         else:
-            self.X_A_Pts = self.Man_Shape_Dict['coordinates'][:, 0]
-            self.Y_A_Pts = self.Man_Shape_Dict['coordinates'][:, 1]
-            self.Z_A_Pts = self.Man_Shape_Dict['coordinates'][:, 2]
+            self.X_A_Pts = self.Man_Shape_Dict['coordinates'][:, 0][:,  None]
+            self.Y_A_Pts = self.Man_Shape_Dict['coordinates'][:, 1][:,  None]
+            self.Z_A_Pts = self.Man_Shape_Dict['coordinates'][:, 2][:,  None]
 
             #print("self.X_A_Pts.shape = "+str(self.X_A_Pts.shape))
 
