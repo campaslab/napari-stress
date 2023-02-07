@@ -125,6 +125,10 @@ def reconstruct_droplet(image: ImageData,
     from .._preprocess import rescale
     from skimage import filters
     import copy
+    import napari
+
+    import matplotlib.pyplot as plt
+    import matplotlib as mpl
 
     # rescale
     scaling_factors = voxelsize/target_voxelsize
@@ -147,7 +151,21 @@ def reconstruct_droplet(image: ImageData,
 
     points_first_guess = nppas.sample_points_poisson_disk(
         surface_smoothed, number_of_points=n_points)
-    points = copy.deepcopy(points_first_guess)
+
+    # initial raytracing
+    traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
+            rescaled_image,
+            points_first_guess,
+            selected_fit_type=fit_type,
+            selected_edge=edge_type,
+            trace_length=trace_length,
+            sampling_distance=sampling_distance,
+            remove_outliers=remove_outliers,
+            outlier_tolerance=outlier_tolerance,
+            scale_x=1, scale_y=1, scale_z=1,
+            show_progress=verbose)
+
+    points = traced_points[0]
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
@@ -171,7 +189,7 @@ def reconstruct_droplet(image: ImageData,
     # =========================================================================
     # Returns
     # =========================================================================
-
+    plt.show()
     properties = {'name': 'points_first_guess',
                   'size': 1}
     layer_points_first_guess = (points_first_guess*target_voxelsize, properties, 'points')
@@ -268,36 +286,26 @@ def _resample_pointcloud(points: PointsData,
     phi_interpolation = np.concatenate([points_spherical[:, 2] + 2 * np.pi,
                                         points_spherical[:, 2],
                                         points_spherical[:, 2] - 2 * np.pi])
-    # rbf_x = Rbf(theta_interpolation,
-    #             phi_interpolation,
-    #             list(points_centered[:, 0])*3)
-    # rbf_y = Rbf(theta_interpolation,
-    #             phi_interpolation,
-    #             list(points_centered[:, 1])*3)
-    # rbf_z = Rbf(theta_interpolation,
-    #             phi_interpolation,
-    #             list(points_centered[:, 2])*3)
-
-    # new_x = rbf_x(sampled_points[:, 1], sampled_points[:, 2])
-    # new_y = rbf_y(sampled_points[:, 1], sampled_points[:, 2])
-    # new_z = rbf_z(sampled_points[:, 1], sampled_points[:, 2])
 
     new_x = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 0])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     new_y = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 1])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     new_z = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 2])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     resampled_points = np.stack([new_x, new_y, new_z]).T + center
