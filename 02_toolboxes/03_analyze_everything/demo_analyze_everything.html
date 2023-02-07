@@ -752,6 +752,11 @@ title="Print to PDF"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>napari.manifest -&gt; &#39;napari&#39; could not be imported: Could not find file &#39;builtins.yaml&#39; in module &#39;napari&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <section id="config">
 <h2><span class="section-number">8.1. </span>Config<a class="headerlink" href="#config" title="Permalink to this headline">#</a></h2>
@@ -829,6 +834,11 @@ title="Print to PDF"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>napari.manifest -&gt; &#39;napari&#39; could not be imported: Could not find file &#39;builtins.yaml&#39; in module &#39;napari&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -857,7 +867,7 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x2055f5b2e80&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x235b820f9a0&gt;
 </pre></div>
 </div>
 </div>
@@ -885,10 +895,10 @@ title="Print to PDF"
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/21 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:57604&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: https://localhost:8787
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:59952&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: https://localhost:8787
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 21/21 [00:05&lt;00:00,  3.89it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 21/21 [00:07&lt;00:00,  2.93it/s]
 </pre></div>
 </div>
 </div>
@@ -921,6 +931,31 @@ title="Print to PDF"
         <span class="n">viewer</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;vectors&#39;</span><span class="p">:</span>
         <span class="n">viewer</span><span class="o">.</span><span class="n">add_vectors</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 24%|██▍       | 5/21 [00:03&lt;00:08,  1.96it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:60125&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: https://localhost:8787
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 21/21 [00:03&lt;00:00,  6.01it/s]
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-183&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2D71820&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-187&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2D91430&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-188&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2D91D60&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-189&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2C4A610&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-190&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2D7D580&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-191&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:823&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2D7D2B0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:688]&gt;
+07-Feb-23 08:54:16 - asyncio  - ERROR    - Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-229&#39; coro=&lt;RequestHandler._execute() running at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:1704&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x00000235C2A19A60&gt;()]&gt; cb=[_HandlerDelegate.execute.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johan\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:2326]&gt;
 </pre></div>
 </div>
 </div>
@@ -998,58 +1033,58 @@ stress_autocorrelations
   <tbody>
     <tr>
       <th>0</th>
-      <td>10.171750</td>
-      <td>0.621403</td>
-      <td>0.858346</td>
-      <td>-0.001128</td>
-      <td>0.062860</td>
-      <td>0.007585</td>
-      <td>0.040815</td>
-      <td>10.171750</td>
+      <td>10.326200</td>
+      <td>0.666431</td>
+      <td>0.610344</td>
+      <td>-0.002715</td>
+      <td>0.022740</td>
+      <td>0.002772</td>
+      <td>0.007784</td>
+      <td>10.326200</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>10.506931</td>
-      <td>0.696685</td>
-      <td>1.182345</td>
-      <td>0.001735</td>
-      <td>0.038347</td>
-      <td>0.005799</td>
-      <td>0.046639</td>
-      <td>10.506931</td>
+      <td>10.701370</td>
+      <td>0.706286</td>
+      <td>0.659772</td>
+      <td>-0.001653</td>
+      <td>0.033519</td>
+      <td>0.004398</td>
+      <td>0.013201</td>
+      <td>10.701370</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>10.356692</td>
-      <td>0.677533</td>
-      <td>1.253369</td>
-      <td>0.002672</td>
-      <td>0.038270</td>
-      <td>0.005743</td>
-      <td>0.052261</td>
-      <td>10.356692</td>
+      <td>10.758581</td>
+      <td>0.691498</td>
+      <td>0.644887</td>
+      <td>-0.002233</td>
+      <td>0.031161</td>
+      <td>0.003997</td>
+      <td>0.011759</td>
+      <td>10.758581</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>10.375868</td>
-      <td>0.631057</td>
-      <td>0.881399</td>
-      <td>-0.000860</td>
-      <td>0.043904</td>
-      <td>0.005436</td>
-      <td>0.030001</td>
-      <td>10.375868</td>
+      <td>10.433528</td>
+      <td>0.657934</td>
+      <td>0.599495</td>
+      <td>-0.002879</td>
+      <td>0.019559</td>
+      <td>0.002356</td>
+      <td>0.006476</td>
+      <td>10.433528</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>10.397514</td>
-      <td>0.725073</td>
-      <td>1.207843</td>
-      <td>0.003217</td>
-      <td>0.051260</td>
-      <td>0.008120</td>
-      <td>0.065043</td>
-      <td>10.397514</td>
+      <td>10.229014</td>
+      <td>0.736409</td>
+      <td>0.641233</td>
+      <td>0.000196</td>
+      <td>0.036269</td>
+      <td>0.004900</td>
+      <td>0.013590</td>
+      <td>10.229014</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1063,63 +1098,63 @@ stress_autocorrelations
       <td>...</td>
     </tr>
     <tr>
-      <th>8208</th>
-      <td>10.140012</td>
-      <td>0.641018</td>
-      <td>1.246144</td>
-      <td>0.003294</td>
-      <td>0.044055</td>
-      <td>0.006227</td>
-      <td>0.059544</td>
-      <td>10.140012</td>
+      <th>8452</th>
+      <td>10.849414</td>
+      <td>0.673404</td>
+      <td>0.651306</td>
+      <td>0.002871</td>
+      <td>0.037072</td>
+      <td>0.004647</td>
+      <td>0.014238</td>
+      <td>10.849414</td>
     </tr>
     <tr>
-      <th>8209</th>
-      <td>10.845609</td>
-      <td>0.646760</td>
-      <td>1.199964</td>
-      <td>0.005659</td>
-      <td>0.050979</td>
-      <td>0.007244</td>
-      <td>0.063883</td>
-      <td>10.845609</td>
+      <th>8453</th>
+      <td>11.263934</td>
+      <td>0.683327</td>
+      <td>0.658682</td>
+      <td>0.000595</td>
+      <td>0.031940</td>
+      <td>0.004121</td>
+      <td>0.012474</td>
+      <td>11.263934</td>
     </tr>
     <tr>
-      <th>8210</th>
-      <td>10.651830</td>
-      <td>0.703488</td>
-      <td>1.135992</td>
-      <td>0.009145</td>
-      <td>0.072360</td>
-      <td>0.010914</td>
-      <td>0.081316</td>
-      <td>10.651830</td>
+      <th>8454</th>
+      <td>10.487128</td>
+      <td>0.623040</td>
+      <td>0.670030</td>
+      <td>0.000881</td>
+      <td>0.036169</td>
+      <td>0.004175</td>
+      <td>0.014677</td>
+      <td>10.487128</td>
     </tr>
     <tr>
-      <th>8211</th>
-      <td>10.002006</td>
-      <td>0.617621</td>
-      <td>1.176941</td>
-      <td>0.003622</td>
-      <td>0.042486</td>
-      <td>0.005653</td>
-      <td>0.051259</td>
-      <td>10.002006</td>
+      <th>8455</th>
+      <td>11.277534</td>
+      <td>0.687975</td>
+      <td>0.637756</td>
+      <td>0.002068</td>
+      <td>0.032275</td>
+      <td>0.004177</td>
+      <td>0.011862</td>
+      <td>11.277534</td>
     </tr>
     <tr>
-      <th>8212</th>
-      <td>10.853314</td>
-      <td>0.664764</td>
-      <td>1.127880</td>
-      <td>0.006359</td>
-      <td>0.051619</td>
-      <td>0.007369</td>
-      <td>0.057200</td>
-      <td>10.853314</td>
+      <th>8456</th>
+      <td>10.830056</td>
+      <td>0.649761</td>
+      <td>0.662996</td>
+      <td>-0.000379</td>
+      <td>0.027908</td>
+      <td>0.003381</td>
+      <td>0.011080</td>
+      <td>10.830056</td>
     </tr>
   </tbody>
 </table>
-<p>8213 rows × 8 columns</p>
+<p>8457 rows × 8 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1131,7 +1166,6 @@ stress_autocorrelations
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1148,7 +1182,6 @@ stress_autocorrelations
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error1.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1165,9 +1198,11 @@ stress_autocorrelations
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error2.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/demo_analyze_everything_27_0.png" src="../../_images/demo_analyze_everything_27_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1179,7 +1214,6 @@ stress_autocorrelations
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\trace_error3.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1449,7 +1483,7 @@ stress_autocorrelations
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot: xlabel=&#39;frame&#39;, ylabel=&#39;angle_x1_e1&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;frame&#39;, ylabel=&#39;angle_x1_e1&#39;&gt;
 </pre></div>
 </div>
 <img alt="../../_images/demo_analyze_everything_50_1.png" src="../../_images/demo_analyze_everything_50_1.png" />
@@ -1576,7 +1610,6 @@ stress_autocorrelations
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Spatial autocorrelation&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\johamuel\ownCloud\Documents\Reisen\2211_crick_symposium\flash_talk\imgs\autocorrelation.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
