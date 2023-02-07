@@ -32,4 +32,4 @@ def rescale(image: ImageData,
 
     scale_factors = np.asarray([scale_z, scale_y, scale_x])
 
-    return transform.rescale(image, scale=scale_factors)
+    return transform.rescale(image, scale=scale_factors, preserve_range=True)
