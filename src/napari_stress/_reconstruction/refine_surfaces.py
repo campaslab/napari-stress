@@ -285,17 +285,27 @@ def _fancy_edge_fit(array: np.ndarray,
     try:
         if selected_edge_func == _sigmoid:
 
-            # Make sure that intensity goes up along ray so that fit can work
-            if array[0] > array[-1]:
-                array = array[::-1]
+            # trim begin of trace to get rid of rising intensity slope
+            ind_max = np.argmax(array)
+            array = array[ind_max:]
 
-            parameter_estimate = [len(array)/2,
-                                  max(array),
-                                  np.diff(array).mean(),
-                                  min(array)]
+            
+            amplitude_est = max(array)
+            center_est = np.where(np.diff(array) == np.diff(array).min())[0][0]
+            background_slope = 0
+            slope_est = 1
+            offset_est = min(array)
+            parameter_estimate = [center_est,
+                                    amplitude_est,
+                                    slope_est,
+                                    background_slope,
+                                    offset_est]
+
             optimal_fit_parameters, _covariance = curve_fit(
                 selected_edge_func, np.arange(len(array)), array, parameter_estimate
                 )
+            
+            optimal_fit_parameters[0] = optimal_fit_parameters[0] + ind_max
 
         elif selected_edge_func == _gaussian:
             parameter_estimate = [len(array)/2,
