@@ -161,6 +161,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         elif selected_fit_type == fit_types.fancy_edge_fit:
             popt, perror = _fancy_edge_fit(array, selected_edge_func=edge_detection_function)
             idx_of_border = popt[0]
+            
+            # calculate fit errors
+            MSE = _mean_squared_error(
+                fit_function=edge_detection_function,
+                x=np.arange(len(array)),
+                y=array,
+                fit_params=popt)
 
         new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
 
@@ -168,6 +175,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, fit_parameters] = popt
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
         fit_data.loc[idx, 'surface_points'] = new_point
+        fit_data.loc[idx, 'mean_squared_error'] = MSE[0]
+        fit_data.loc[idx, 'fraction_variance_unexplained'] = MSE[1]
+        fit_data.loc[idx, 'fraction_variance_unexplained_log'] = np.log(MSE[1])
 
     # NaN rows should be removed either way
     fit_data['start_points'] = list(start_points)
