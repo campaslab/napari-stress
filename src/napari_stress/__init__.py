@@ -24,3 +24,4 @@ from ._sample_data import get_droplet_point_cloud, get_droplet_point_cloud_4d, g
 from ._plotting.features_histogram import FeaturesHistogramWidget
 
 from . import types
+from . import _vectors as vectors
