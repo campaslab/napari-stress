@@ -325,3 +325,24 @@ def _fancy_edge_fit(array: np.ndarray,
         parameter_error = np.repeat(np.nan, len(params))
 
     return optimal_fit_parameters, parameter_error
+
+def _mean_squared_error(fit_function: callable, x: np.ndarray, y: np.ndarray, fit_params: list) -> List[float]:
+    """
+    Calculate error parameters for a given fit functions and the determined parameters.
+
+    Args:
+        fit_function (callable): Used fit function
+        x (np.ndarray): x-values
+        y (np.ndarray): measured, corresponding y-values
+        fit_params (list): determined fit parameters
+
+    Returns:
+        float: mean squared error
+        float: fraction of variance unexplained
+    """
+    y_fit = fit_function(x, *fit_params)
+    
+    mean_squared_error = np.mean((y - y_fit)**2)
+    fraction_variance_unexplained = mean_squared_error/np.var(y)
+
+    return mean_squared_error, fraction_variance_unexplained
