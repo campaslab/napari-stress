@@ -101,6 +101,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     PointsData
 
     """
+    from .. import _vectors as vectors
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
 
@@ -109,63 +110,56 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     else:
         edge_detection_function = selected_edge.value[selected_fit_type.value]
 
-    # Convert to mesh and calculate normals
-    pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.compute_normals_with_pca(
-        orientation_point=pointcloud.centerOfMass()
-        )
+    # Convert to mesh and calculate outward normals
+    unit_normals = vectors.normal_vectors_on_pointcloud(points)[:, 1] * (-1)
 
     # Define start and end points for the surface tracing vectors
     scale = np.asarray([scale_z, scale_y, scale_x])
     n_samples = int(trace_length/sampling_distance)
-    start_points = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
+    n_points = len(points)
 
     # Define trace vectors (full length and single step
-    vectors = trace_length * pointcloud.pointdata['Normals']
-    vector_step = vectors/n_samples
+    start_points = points/scale[None, :] - 0.5 * trace_length * unit_normals
+    trace_vectors = trace_length * unit_normals
+    vector_step = trace_vectors/n_samples  # vector of length sampling distance
 
-    # Create coords for interpolator
-    X1 = np.arange(0, intensity_image.shape[0], 1)
-    X2 = np.arange(0, intensity_image.shape[1], 1)
-    X3 = np.arange(0, intensity_image.shape[2], 1)
-    interpolator = RegularGridInterpolator((X1, X2, X3),
-                                           intensity_image,
-                                           bounds_error=False,
-                                           fill_value=intensity_image.min())
+    # measure intensity along the vectors
+    intensity_along_vector = vectors.sample_intensity_along_vector(
+        np.stack([start_points, trace_vectors]).transpose((1, 0, 2)),
+        intensity_image,
+        sampling_distance=sampling_distance,
+        interpolation_method='cubic')
 
     # Allocate arrays for results (location of object border, fit parameters,
     # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
     columns = ['surface_points'] + ['idx_of_border'] +\
-        fit_parameters + fit_errors + ['profiles']
+        fit_parameters + fit_errors
 
     if len(fit_parameters) == 1:
         fit_parameters, fit_errors = [fit_parameters[0]], [fit_errors[0]]
 
     # create empty dataframe to keep track of results
-    fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
+    fit_data = pd.DataFrame(columns=columns, index=np.arange(n_points))
 
     if show_progress:
-        iterator = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
+        iterator = tqdm.tqdm(range(n_points), desc = 'Processing vertices...')
     else:
-        iterator = range(pointcloud.N())
+        iterator = range(n_points)
 
     # Iterate over all provided target points
     for idx in iterator:
 
-        coordinates = [start_points[idx] + k * vector_step[idx] for k in range(n_samples)]
-        fit_data.loc[idx, 'profiles'] = interpolator(coordinates)
-
+        array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border = edge_detection_function(np.array(fit_data.loc[idx, 'profiles']))
+            idx_of_border = edge_detection_function(array)
             perror = 0
             popt = 0
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
-            popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                           selected_edge_func=edge_detection_function)
+            popt, perror = _fancy_edge_fit(array, selected_edge_func=edge_detection_function)
             idx_of_border = popt[0]
 
         new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
@@ -175,9 +169,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
         fit_data.loc[idx, 'surface_points'] = new_point
 
-    fit_data['start_points'] = list(start_points)
-    fit_data['vectors'] = list(vectors)
     # NaN rows should be removed either way
+    fit_data['start_points'] = list(start_points)
     fit_data = fit_data.dropna().reset_index()
 
     # Filter points to remove points with high fit errors
@@ -194,7 +187,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # reformat to layerdatatuple: points
     feature_names = fit_parameters + fit_errors + ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
-    metadata = {'intensity_profiles': fit_data['profiles']}
+    metadata = {'intensity_profiles': intensity_along_vector}
     properties = {'name': 'Refined_points',
                   'size': 1,
                   'features': features,
@@ -205,11 +198,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data['start_points'].to_numpy()).squeeze()
-    vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
-    data = np.stack([start_points, vectors]).transpose((1,0,2))
+    trace_vectors = trace_vectors[fit_data.index.to_numpy()]
+    trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
 
     properties = {'name': 'Normals'}
-    layer_normals = (data, properties, 'vectors')
+    layer_normals = (trace_vectors, properties, 'vectors')
 
 
     return (layer_points, layer_normals)
@@ -293,17 +286,27 @@ def _fancy_edge_fit(array: np.ndarray,
     try:
         if selected_edge_func == _sigmoid:
 
-            # Make sure that intensity goes up along ray so that fit can work
-            if array[0] > array[-1]:
-                array = array[::-1]
+            # trim begin of trace to get rid of rising intensity slope
+            ind_max = np.argmax(array)
+            array = array[ind_max:]
 
-            parameter_estimate = [len(array)/2,
-                                  max(array),
-                                  np.diff(array).mean(),
-                                  min(array)]
+            
+            amplitude_est = max(array)
+            center_est = np.where(np.diff(array) == np.diff(array).min())[0][0]
+            background_slope = 0
+            slope_est = 1
+            offset_est = min(array)
+            parameter_estimate = [center_est,
+                                    amplitude_est,
+                                    slope_est,
+                                    background_slope,
+                                    offset_est]
+
             optimal_fit_parameters, _covariance = curve_fit(
                 selected_edge_func, np.arange(len(array)), array, parameter_estimate
                 )
+            
+            optimal_fit_parameters[0] = optimal_fit_parameters[0] + ind_max
 
         elif selected_edge_func == _gaussian:
             parameter_estimate = [len(array)/2,

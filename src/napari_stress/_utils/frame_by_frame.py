@@ -83,23 +83,35 @@ class TimelapseConverter:
         # Supported LayerData types
         self.data_to_list_conversion_functions = {
             PointsData: self._points_to_list_of_points,
+            'napari.types.PointsData': self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
+            'napari.types.SurfaceData': self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
+            'napari.types.ImageData': self._image_to_list_of_images,
             LabelsData: self._image_to_list_of_images,
+            'napari.types.LabelsData': self._image_to_list_of_images,
             VectorsData: self._vectors_to_list_of_vectors,
-            Points: self._layer_to_list_of_layers
+            Points: self._layer_to_list_of_layers,
+            'napari.types.VectorsData': self._vectors_to_list_of_vectors,
+            Points: self._layer_to_list_of_layers,
+            str: None
             }
 
     # Supported list data types
         self.list_to_data_conversion_functions = {
             Layer: self._list_of_layers_to_layer,
             PointsData: self._list_of_points_to_points,
+            'napari.types.PointsData': self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
+            'napari.types.SurfaceData': self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
+            'napari.types.ImageData': self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
+            'napari.types.LabelsData': self._list_of_images_to_image,
             LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
             List[LayerDataTuple]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
             VectorsData: self._list_of_vectors_to_vectors,
+            'napari.types.VectorsData': self._list_of_vectors_to_vectors,
             Points: self._list_of_layers_to_layer
             }
 
