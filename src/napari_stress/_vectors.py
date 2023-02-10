@@ -52,7 +52,13 @@ def sample_intensity_along_vector(
     sampling_distance: float = 1.0,
     interpolation_method: str = 'linear') -> pd.DataFrame:
     """
-    Sample intensity along vector.
+    Sample intensity along vectors of equal length.
+
+    Args:
+        vectors (napari.types.VectorsData): Vectors along which to measure intensity
+        image (napari.types.ImageData): Image to sample
+        sampling_distance (float, optional): Distance between samples. Defaults to 1.0.
+        interpolation_method (str, optional): Interpolation method. Defaults to 'linear'.
     """
     from scipy.interpolate import RegularGridInterpolator    
 
