@@ -66,7 +66,3 @@ def test_vector_tools():
 
     assert df_intensity.shape[0] == normal_vectors.shape[0]
     assert df_intensity.shape[1] == 1/sampling_distance
-
-
-if __name__ == "__main__":
-    test_vector_tools()
