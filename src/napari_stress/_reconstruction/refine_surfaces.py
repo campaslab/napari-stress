@@ -198,6 +198,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data['start_points'].to_numpy()).squeeze()
+    trace_vectors = trace_vectors[fit_data.index.to_numpy()]
     trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
 
     properties = {'name': 'Normals'}
