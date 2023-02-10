@@ -4,12 +4,18 @@ from napari.types import  PointsData
 
 from .._stress import lebedev_info_SPB as lebedev_info
 
-def _sigmoid(array: np.ndarray, center:float, amplitude:float, slope:float, offset:float):
+def _sigmoid(
+    array: np.ndarray,
+    center:float,
+    amplitude:float,
+    slope:float,
+    background_slope: float,
+    offset:float):
     """
     Sigmoidal fit function
     https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
     """
-    return amplitude / (1 + np.exp(-slope*(array-center))) + offset
+    return (amplitude + background_slope * (-1) * (array - center)) / (1 + np.exp((-1) * slope * (array-center))) + offset
 
 def _gaussian(array: np.ndarray, center:float, sigma:float, amplitude:float):
     """
