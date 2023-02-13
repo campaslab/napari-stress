@@ -280,18 +280,21 @@ def _resample_pointcloud(points: PointsData,
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 0])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     new_y = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 1])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     new_z = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
         list(points_centered[:, 2])*3,
         sampled_points[:, 1:],
+        method='cubic'
     )
 
     resampled_points = np.stack([new_x, new_y, new_z]).T + center
