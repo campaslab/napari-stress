@@ -358,6 +358,9 @@ def _mean_squared_error(fit_function: callable, x: np.ndarray, y: np.ndarray, fi
         float: mean squared error
         float: fraction of variance unexplained
     """
+    is_number = ~np.isnan(y)
+    x = x[is_number].squeeze()  # filter out nans
+    y = y[is_number].squeeze()  # filter out nans
     y_fit = fit_function(x, *fit_params)
     
     mean_squared_error = np.mean((y - y_fit)**2)
