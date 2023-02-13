@@ -42,8 +42,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 scale_y: float = 1.0,
                                 scale_x: float = 1.0,
                                 show_progress: bool = True,
-                                remove_outliers: bool = False,
-                                outlier_tolerance: float = 4.5
                                 )-> List[LayerDataTuple]:
     """
     Generate intensity profiles along traces.
@@ -195,17 +193,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                   'surface_points_z']].to_numpy(), k=5
     )
 
-    # Filter points to remove points with high fit errors
-    if remove_outliers:
-        fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names=fit_errors,
-                                             factor=outlier_tolerance,
-                                             which='above')
-        fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names=['distance_to_nearest_neighbor'],
-                                             factor=outlier_tolerance,
-                                             which='above')
-
     # reformat to layerdatatuple: points
     feature_names = fit_parameters + fit_errors +\
         ['distance_to_nearest_neighbor',
@@ -238,12 +225,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     layer_normals = (trace_vectors, properties, 'vectors')
 
 
-    return (layer_points, layer_normals)
+    return (layer_points, layer_normals)        
 
-def _remove_outliers_by_index(table: pd.DataFrame,
-                              column_names: list,
-                              which: str = 'above',
-                              factor: float = 1.5) -> pd.DataFrame:
+def _identify_outliers(
+        table: pd.DataFrame,
+        column_names: list,
+        which: str = 'above',
+        factor: float = 1.5) -> np.ndarray:
     """
     Filter all rows in a dataframe that qualify as outliers based on column-statistics.
 
@@ -262,7 +250,7 @@ def _remove_outliers_by_index(table: pd.DataFrame,
 
     Returns
     -------
-    table : pd.DataFrame
+    indices : np.ndarray: True if values are good, False if outliers
 
     """
     # Check if list or single string was passed
@@ -273,7 +261,6 @@ def _remove_outliers_by_index(table: pd.DataFrame,
     # intensity offset is not meaningful for distinction of good/bad fit
     if 'offset_err' in column_names:
         column_names.remove('offset_err' )
-
 
     # True if values are good, False if outliers
     table = table.dropna().reset_index(drop=True)
@@ -291,7 +278,7 @@ def _remove_outliers_by_index(table: pd.DataFrame,
             idx = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
         indices[table[idx].index] = False
 
-    return table[indices]
+    return indices
 
 
 def _fancy_edge_fit(array: np.ndarray,
@@ -316,6 +303,7 @@ def _fancy_edge_fit(array: np.ndarray,
 
     """
     params = _function_args_to_list(selected_edge_func)[1:]
+    array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
 

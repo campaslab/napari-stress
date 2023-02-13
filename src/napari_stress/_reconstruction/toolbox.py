@@ -161,10 +161,10 @@ def reconstruct_droplet(image: ImageData,
             selected_edge=edge_type,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
-            remove_outliers=remove_outliers,
-            outlier_tolerance=outlier_tolerance,
             scale_x=1, scale_y=1, scale_z=1,
             show_progress=verbose)
+        
+        
 
         points = traced_points[0]
 
