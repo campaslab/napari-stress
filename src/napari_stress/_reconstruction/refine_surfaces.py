@@ -102,6 +102,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     """
     from .. import _vectors as vectors
+    from scipy.spatial import KDTree
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
 
@@ -173,6 +174,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['start_points'] = list(start_points)
     fit_data = fit_data.dropna().reset_index()
 
+    # measure distance to nearest neighbor
+    tree = KDTree(np.stack(fit_data['surface_points'].to_numpy()))
+    dist, _ = tree.query(np.stack(fit_data['surface_points'].to_numpy()), k=5)
+    fit_data['distance_to_nearest_neighbor'] = dist[:, 1:].mean(axis=1)  # first is itself
+
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data,
@@ -180,12 +186,17 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              factor=outlier_tolerance,
                                              which='above')
         fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names='idx_of_border',
+                                             column_names=['distance_to_nearest_neighbor'],
                                              factor=outlier_tolerance,
-                                             which='both')
+                                             which='above')
 
     # reformat to layerdatatuple: points
-    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    feature_names = fit_parameters + fit_errors +\
+        ['distance_to_nearest_neighbor',
+         'mean_squared_error',
+        'fraction_variance_unexplained', 
+        'fraction_variance_unexplained_log'] +\
+        ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
     metadata = {'intensity_profiles': intensity_along_vector}
     properties = {'name': 'Refined_points',
