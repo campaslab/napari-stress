@@ -41,6 +41,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 scale_z: float = 1.0,
                                 scale_y: float = 1.0,
                                 scale_x: float = 1.0,
+                                remove_outliers: bool = True,
+                                outlier_tolerance: float = 1.5,
                                 show_progress: bool = True,
                                 )-> List[LayerDataTuple]:
     """
@@ -186,6 +188,16 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['start_points'] = list(start_points)
     fit_data = fit_data.dropna().reset_index()
 
+    if remove_outliers:
+        # Remove outliers
+        good_points = _identify_outliers(
+            fit_data, 
+            column_names=['fraction_variance_unexplained_log'],
+            which=['above'],
+            factor=outlier_tolerance)
+        fit_data = fit_data[good_points]
+        intensity_along_vector = intensity_along_vector[good_points]
+
     # measure distance to nearest neighbor
     fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
         fit_data[['surface_points_x',
@@ -223,7 +235,6 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     properties = {'name': 'Normals'}
     layer_normals = (trace_vectors, properties, 'vectors')
-
 
     return (layer_points, layer_normals)        
 
@@ -297,7 +308,6 @@ def _fancy_edge_fit(array: np.ndarray,
     -------
     float
         DESCRIPTION.
-
     """
     params = _function_args_to_list(selected_edge_func)[1:]
     array = [x for x in array if not np.isnan(x)]  # filter out nans
