@@ -190,7 +190,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
         fit_data[['surface_points_x',
                   'surface_points_y',
-                  'surface_points_z']].to_numpy(), k=5
+                  'surface_points_z']].to_numpy(), k=15
     )
 
     # reformat to layerdatatuple: points
@@ -230,53 +230,50 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 def _identify_outliers(
         table: pd.DataFrame,
         column_names: list,
-        which: str = 'above',
-        factor: float = 1.5) -> np.ndarray:
+        which: list,
+        factor: float = 1.5,
+        merge: float = 'and') -> np.ndarray:
     """
-    Filter all rows in a dataframe that qualify as outliers based on column-statistics.
+    Identify outliers in a table based on the IQR method.
 
     Parameters
     ----------
     table : pd.DataFrame
-    on : list
-        list of column names that should be taken into account
-    which : str, optional
-        Can be 'above', 'below' or 'both' and determines which outliers to
-        remove - the excessively high or low values or both.
-        The default is 'above'.
+        Table containing the data.
+    column_names : list
+        List of column names to check for outliers.
+    which : list
+        List of strings indicating which outliers to identify. Options are
+        'above', 'below', and 'both'.
     factor : float, optional
-        Determine how far a datapoint is to be above the interquartile range to
-        be classified as outlier. The default is 1.5.
-
-    Returns
-    -------
-    indices : np.ndarray: True if values are good, False if outliers
-
+        Factor to multiply the IQR with. The default is 1.5.
+    merge : float, optional
+        Merge outliers identified in different columns. Options are 'and' and
+        'or'. The default is 'and'.
     """
-    # Check if list or single string was passed
-    if isinstance(column_names, str):
-        column_names = [column_names]
-
-    # Remove the offset error from the list of relevant errors - fluorescence
-    # intensity offset is not meaningful for distinction of good/bad fit
-    if 'offset_err' in column_names:
-        column_names.remove('offset_err' )
+    if isinstance(table, dict):
+        table = pd.DataFrame(table)
 
     # True if values are good, False if outliers
     table = table.dropna().reset_index(drop=True)
-    indices = np.ones(len(table), dtype=bool)
+    indices = np.ones((len(column_names), len(table)), dtype=bool)
 
-    for column in column_names:
+    for idx, column in enumerate(column_names):
         Q1 = table[column].quantile(0.25)
         Q3 = table[column].quantile(0.75)
         IQR = Q3 - Q1
-        if which == 'above':
-            idx = table[column] > (Q3 + factor * IQR)
-        elif which == 'below':
-            idx = table[column] < (Q1 - factor * IQR)
-        elif which == 'both':
-            idx = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
-        indices[table[idx].index] = False
+        if which[idx] == 'above':
+            idx_outlier = table[column] > (Q3 + factor * IQR)
+        elif which[idx] == 'below':
+            idx_outlier = table[column] < (Q1 - factor * IQR)
+        elif which[idx] == 'both':
+            idx_outlier = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
+        indices[idx, table[idx_outlier].index] = False
+
+    if merge == 'and':
+        indices = np.all(indices, axis=0)
+    elif merge == 'or':
+        indices = ~np.any(~indices, axis=0)
 
     return indices
 
