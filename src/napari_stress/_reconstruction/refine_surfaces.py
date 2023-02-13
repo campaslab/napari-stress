@@ -102,6 +102,8 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     """
     from .. import _vectors as vectors
+    from .._measurements.measurements import distance_to_k_nearest_neighbors
+    from scipy.spatial import KDTree
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
 
@@ -186,6 +188,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data['start_points'] = list(start_points)
     fit_data = fit_data.dropna().reset_index()
 
+    # measure distance to nearest neighbor
+    fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
+        fit_data[['surface_points_x',
+                  'surface_points_y',
+                  'surface_points_z']].to_numpy(), k=5
+    )
+
     # Filter points to remove points with high fit errors
     if remove_outliers:
         fit_data = _remove_outliers_by_index(fit_data,
@@ -193,12 +202,17 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                              factor=outlier_tolerance,
                                              which='above')
         fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names='idx_of_border',
+                                             column_names=['distance_to_nearest_neighbor'],
                                              factor=outlier_tolerance,
-                                             which='both')
+                                             which='above')
 
     # reformat to layerdatatuple: points
-    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    feature_names = fit_parameters + fit_errors +\
+        ['distance_to_nearest_neighbor',
+         'mean_squared_error',
+        'fraction_variance_unexplained', 
+        'fraction_variance_unexplained_log'] +\
+        ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
     metadata = {'intensity_profiles': intensity_along_vector}
     properties = {'name': 'Refined_points',

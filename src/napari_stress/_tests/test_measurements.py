@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_k_nearest_neighbors():
+    from napari_stress import measurements
+    from napari.types import PointsData
+
+    points = PointsData(np.random.rand(100, 3))
+    df = measurements.distance_to_k_nearest_neighbors(points)
+
+    assert df.shape[0] == points.shape[0]
+
+    points = PointsData(np.array([[0, 0],
+                                  [1, 1],
+                                  [0.5, 0.5],
+                                  [0, 1],
+                                  [1, 0]]))
+    df = measurements.distance_to_k_nearest_neighbors(points, k=4)
+    assert df.loc[2].to_numpy() == np.linalg.norm([0.5, 0.5])
+
+
+
 def test_spatiotemporal_autocorrelation():
     from napari_stress import lebedev_quadrature
     from napari_stress import (measurements, reconstruction,
@@ -282,4 +301,4 @@ def test_compatibility_decorator():
 
 
 if __name__ == '__main__':
-    test_curvature3()
+    test_k_nearest_neighbors()
