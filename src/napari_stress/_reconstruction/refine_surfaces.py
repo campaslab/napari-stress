@@ -102,6 +102,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
 
     """
     from .. import _vectors as vectors
+    from .._measurements.measurements import distance_to_k_nearest_neighbors
     from scipy.spatial import KDTree
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
@@ -188,9 +189,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     fit_data = fit_data.dropna().reset_index()
 
     # measure distance to nearest neighbor
-    tree = KDTree(np.stack(fit_data['surface_points'].to_numpy()))
-    dist, _ = tree.query(np.stack(fit_data['surface_points'].to_numpy()), k=5)
-    fit_data['distance_to_nearest_neighbor'] = dist[:, 1:].mean(axis=1)  # first is itself
+    fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
+        fit_data[['surface_points_x',
+                  'surface_points_y',
+                  'surface_points_z']].to_numpy(), k=5
+    )
 
     # Filter points to remove points with high fit errors
     if remove_outliers:
