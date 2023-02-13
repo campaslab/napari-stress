@@ -134,7 +134,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
-    columns = ['surface_points'] + ['idx_of_border'] +\
+    columns = ['idx_of_border'] +\
         fit_parameters + fit_errors
 
     if len(fit_parameters) == 1:
@@ -157,6 +157,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
             idx_of_border = edge_detection_function(array)
             perror = 0
             popt = 0
+            MSE = np.array([0, 0])
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
             popt, perror = _fancy_edge_fit(array, selected_edge_func=edge_detection_function)
@@ -174,7 +175,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, fit_errors] = perror
         fit_data.loc[idx, fit_parameters] = popt
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
-        fit_data.loc[idx, 'surface_points'] = new_point
+        fit_data.loc[idx, 'surface_points_x'] = new_point[0]
+        fit_data.loc[idx, 'surface_points_y'] = new_point[1]
+        fit_data.loc[idx, 'surface_points_z'] = new_point[2]
         fit_data.loc[idx, 'mean_squared_error'] = MSE[0]
         fit_data.loc[idx, 'fraction_variance_unexplained'] = MSE[1]
         fit_data.loc[idx, 'fraction_variance_unexplained_log'] = np.log(MSE[1])
@@ -203,7 +206,13 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                   'features': features,
                   'metadata': metadata,
                   'face_color': 'cyan'}
-    data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
+    data = fit_data[['surface_points_x',
+                     'surface_points_y',
+                     'surface_points_z']].to_numpy()
+    fit_data.drop(columns=['surface_points_x',
+                           'surface_points_y',
+                           'surface_points_z'],
+                  inplace=True)
     layer_points = (data, properties, 'points')
 
     # reformat to layerdatatuple: normal vectors
