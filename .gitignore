@@ -6,9 +6,10 @@ __pycache__/
 # data
 /data
 
-# STRESS outluts
+# STRESS outputs
 *.pdf  
 *.vtp
+*.mat
 
 # C extensions
 *.so
