@@ -3,6 +3,7 @@ __version__ = "0.1.5"
 from . import _measurements as measurements
 from . import _approximation as approximation
 from . import _reconstruction as reconstruction
+from . import _sample_data as sample_data
 
 from ._preprocess import rescale
 from ._surface import adjust_surface_density,\
