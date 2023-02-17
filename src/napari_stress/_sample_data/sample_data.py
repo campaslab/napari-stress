@@ -5,7 +5,7 @@ from napari.types import LayerDataTuple
 import os
 from pathlib import Path
 
-DATA_ROOT  = os.path.join(Path(__file__).parent, 'sample_data')
+DATA_ROOT  = os.path.join(Path(__file__).parent)
 
 def get_droplet_point_cloud() -> LayerDataTuple:
     """Generates a sample point cloud of a droplet surface"""
