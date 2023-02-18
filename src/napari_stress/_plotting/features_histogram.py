@@ -94,9 +94,8 @@ class FeaturesHistogramWidget(HistogramWidget):
         self.rectangle_selector = RectangleSelector(
             self.axes3,
             self._on_area_select,
-            drawtype="box",
             useblit=True,
-            rectprops=dict(edgecolor="white", fill=False),
+            props=dict(edgecolor="white", fill=False),
             minspanx=5,
             minspany=5,
             spancoords="pixels",
