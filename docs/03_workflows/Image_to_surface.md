@@ -4,7 +4,7 @@ This tutorial will demonstrate how to convert an intensity image to a surface la
 
 | Heterotropic image data | Resulting surface |
 | --- | --- |
-|![](./_image_to_surface_imgs/recipe_image_to_surface.png) | ![](./_image_to_surface_imgs/recipe_image_to_surface1.png)|
+|![](./_image_to_surface_imgs/recipe_image_to_surface.png) | ![](./_image_to_surface_imgs/recipe_image_to_surface10.png)|
 
 The steps covered in this tutorial involve the following:
 
@@ -54,13 +54,17 @@ This should produce the following output:
 
 ![](./_image_to_surface_imgs/recipe_image_to_surface8.png)
 
+*Note:* Marching cubes often creates surfaces with duplicate vertices or faces. These duplicates can impair downstream analysis steps. To prevent this from happening, use the `Remove duplicate vertices` function (`Tools > Surfaces > Remove duplicate vertices (vedo, nppas`). The result may look the same as before.
+
+![](./_image_to_surface_imgs/recipe_image_to_surface8a.png)
+
 ## Smoothing
 
-To get rid of the voxely look of the surface, we can smooth the surface to get a better approximation of the droplet's surface, which we assume to be smooth. To do so, use the smoothing function from `napari-process-points-and-surfaces` from the menu `Tools > Surfaces > Smoothing (Laplacian, open3d, nppas)`:
+To get rid of the voxely look of the surface, we can smooth the surface to get a better approximation of the droplet's surface, which we assume to be smooth. To do so, use the smoothing function from `napari-process-points-and-surfaces` from the menu `Tools > Surfaces > Smooth (vedo, nppas)`:
 
 ![](./_image_to_surface_imgs/recipe_image_to_surface9.png)
 
-Notice how the output surface becomes progressively more smooth as you increase the `number of iterations` parameter in the smoothing plugin. The ouput (e.g., for `number of iterations = 10`) should look like this:
+Notice how the output surface becomes progressively more smooth as you increase the `number of iterations` parameter in the smoothing plugin. The ouput (e.g., for `number of iterations = 15`) should look like this:
 
 ![](./_image_to_surface_imgs/recipe_image_to_surface10.png)
 

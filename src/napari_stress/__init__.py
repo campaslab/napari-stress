@@ -6,8 +6,7 @@ from . import _reconstruction as reconstruction
 from . import _sample_data as sample_data
 
 from ._preprocess import rescale
-from ._surface import adjust_surface_density,\
-    smooth_sinc,\
+from ._surface import smooth_sinc,\
     smoothMLS2D,\
     reconstruct_surface,\
     decimate,\
