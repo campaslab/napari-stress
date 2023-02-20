@@ -555,7 +555,7 @@ title="Print to PDF"
 </thead>
 <tbody>
 <tr class="row-even"><td><p><img alt="" src="../_images/recipe_image_to_surface.png" /></p></td>
-<td><p><img alt="" src="../_images/recipe_image_to_surface1.png" /></p></td>
+<td><p><img alt="" src="../_images/recipe_image_to_surface10.png" /></p></td>
 </tr>
 </tbody>
 </table>
@@ -597,12 +597,14 @@ title="Print to PDF"
 <p><img alt="" src="03_workflows/%22./_image_to_surface_imgs/recipe_image_to_surface7.png" /></p>
 <p>This should produce the following output:</p>
 <p><img alt="" src="../_images/recipe_image_to_surface8.png" /></p>
+<p><em>Note:</em> Marching cubes often creates surfaces with duplicate vertices or faces. These duplicates can impair downstream analysis steps. To prevent this from happening, use the <code class="docutils literal notranslate"><span class="pre">Remove</span> <span class="pre">duplicate</span> <span class="pre">vertices</span></code> function (<code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Surfaces</span> <span class="pre">&gt;</span> <span class="pre">Remove</span> <span class="pre">duplicate</span> <span class="pre">vertices</span> <span class="pre">(vedo,</span> <span class="pre">nppas</span></code>). The result may look the same as before.</p>
+<p><img alt="" src="../_images/recipe_image_to_surface8a.png" /></p>
 </section>
 <section id="smoothing">
 <h2><span class="section-number">11.5. </span>Smoothing<a class="headerlink" href="#smoothing" title="Permalink to this headline">#</a></h2>
-<p>To get rid of the voxely look of the surface, we can smooth the surface to get a better approximation of the droplet’s surface, which we assume to be smooth. To do so, use the smoothing function from <code class="docutils literal notranslate"><span class="pre">napari-process-points-and-surfaces</span></code> from the menu <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Surfaces</span> <span class="pre">&gt;</span> <span class="pre">Smoothing</span> <span class="pre">(Laplacian,</span> <span class="pre">open3d,</span> <span class="pre">nppas)</span></code>:</p>
+<p>To get rid of the voxely look of the surface, we can smooth the surface to get a better approximation of the droplet’s surface, which we assume to be smooth. To do so, use the smoothing function from <code class="docutils literal notranslate"><span class="pre">napari-process-points-and-surfaces</span></code> from the menu <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Surfaces</span> <span class="pre">&gt;</span> <span class="pre">Smooth</span> <span class="pre">(vedo,</span> <span class="pre">nppas)</span></code>:</p>
 <p><img alt="" src="../_images/recipe_image_to_surface9.png" /></p>
-<p>Notice how the output surface becomes progressively more smooth as you increase the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span></code> parameter in the smoothing plugin. The ouput (e.g., for <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span> <span class="pre">=</span> <span class="pre">10</span></code>) should look like this:</p>
+<p>Notice how the output surface becomes progressively more smooth as you increase the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span></code> parameter in the smoothing plugin. The ouput (e.g., for <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span> <span class="pre">=</span> <span class="pre">15</span></code>) should look like this:</p>
 <p><img alt="" src="../_images/recipe_image_to_surface10.png" /></p>
 </section>
 </section>

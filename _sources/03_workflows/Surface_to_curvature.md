@@ -34,22 +34,20 @@ Napari-stress provides two different implementations of the approximation, `stre
 
 It can make sense to play a bit with the `max_degree` parameter to get an understanding of the resulting quality. The output should look something like this (you may have to change the color of the pointcloud for better vision):
 
-<img src="../../imgs/function_gifs/spherical_harmonics.gif" width="100%">
+<img src="../imgs/function_gifs/spherical_harmonics.gif" width="100%">
 
 ## Measureing curvature
 
-Lastly, you can use the spherical harmonics expansion to calculate curvatures (which directly translate to [anistropic stress](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract) on the surface). To apply this measurement, select the measurement function from the tools menu (`Tools > Measurement > Surface curvature from points (n-STRESS)`).
+Lastly, you can use the spherical harmonics expansion to calculate curvatures (which directly translate to [anistropic stress](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract) on the surface). To apply this measurement, you first need to obtain a suitable set of sample locations. Napari-stress provides the [*Lebedev quadrature*](https://en.wikipedia.org/wiki/Lebedev_quadrature) points for this (`Tools > Points > Perform lebedev quadrature (n-Stress)`)
 
 <img src="./_surface_to_curvature_imgs/surface_to_curvature5.png" width="50%">
 
-This measurement function provides the same option as the spherical harmonics expansion described above (`max_degree`, `implementation`) as well as an option to control the `number of quadrature points`. This controls how many points will be used to show curvature on the resulting pointcloud. For simple shapes (small `max_degree`), a small set of points sufices to calculate correct global mean curvatures. To select the minimal amount of points required for correct calculation, select the `use minimal point set` option.
+This creates an evenly spaced array of points on top of the previously determined spherical harmonics expansion:
 
-To determine accurate curvatures, a minimal amount of quadrature points is required. This number depends on the chosen `max_degree`. You can, however, chose a higher number for nicer visualization.
+<img src="./_surface_to_curvature_imgs/surface_to_curvature5a.png" width="50%">
 
-*Note*: Chosing a higher number of points (>3000) will lead to significant computational expense. It is theoretically impossible to use more than 5180 surface points
+*Note:*
+* *This function can only be applied to a pointcloud which is a result of a spherical harmonics expansion. Moreover, depending on the degree of the expansion, a minimum number of quadrature points (`number of quadrature points`) is required to reflect the complexity of the expansion.
+* Chosing a higher number of points (>3000) will lead to significant computational expense. It is theoretically impossible to use more than 5180 surface points
 
-*Background*: In order to calculate curvatures on the surface of a set of spherical harmonics functions $Y_{m, n}^l (\theta , \phi)$, where $l$ corresponds to `max_degree`, it is required to calculate to calculate the derivates of $Y_{m, n}^l$ with respect to the latitude and longitude of points on the surface. This problem is closely related to calculating surface integrals - a mathematical procedure which is also referred to as [quadrature](https://en.wikipedia.org/wiki/Quadrature_(mathematics)). There are several methods for this procedure, one of which is the so-called [Lebedev-quadrature](https://en.wikipedia.org/wiki/Lebedev_quadrature). The Lebedev method identifies specific points on the spherical harmonic surface, the so-called lebedev points. Surprisingly, it is sufficient to calculate properties of the surface (e.g., curvature, etc) at these points to determine global properties with [high accuracy](https://link.springer.com/article/10.1007/s10915-017-0617-2#Bib1). The lebedev points have the further property of being symetric under octahedral rotation.
-
-The output will look like this:
-
-<img src="./_surface_to_curvature_imgs/surface_to_curvature6.png" width="100%">
+Lastly, you can use the `Measure mean curvature on manifold function` (`Tools > Measurements > Measurement mean curvature on manifold (n-STRESS)`) to determine mean curvature at the obtained quadrature points.
