@@ -91,6 +91,7 @@ class TimelapseConverter:
             LabelsData: self._image_to_list_of_images,
             'napari.types.LabelsData': self._image_to_list_of_images,
             VectorsData: self._vectors_to_list_of_vectors,
+            Points: self._layer_to_list_of_layers,
             'napari.types.VectorsData': self._vectors_to_list_of_vectors,
             Points: self._layer_to_list_of_layers,
             str: None

@@ -7,7 +7,7 @@ def test_fit_functions():
 
     x = np.arange(0, 100, 1)
 
-    y = _sigmoid(x, center=50, amplitude=1.0, slope=0.5, offset=0)
+    y = _sigmoid(x, center=50, amplitude=1.0, slope=0.5, offset=0, background_slope=0)
     assert np.max(y) <= 1.0
     assert y[51] > 0.5 and y[49] < 0.5
 

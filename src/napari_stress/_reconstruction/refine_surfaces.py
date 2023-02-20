@@ -41,9 +41,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
                                 scale_z: float = 1.0,
                                 scale_y: float = 1.0,
                                 scale_x: float = 1.0,
+                                remove_outliers: bool = True,
+                                outlier_tolerance: float = 1.5,
                                 show_progress: bool = True,
-                                remove_outliers: bool = False,
-                                outlier_tolerance: float = 4.5
                                 )-> List[LayerDataTuple]:
     """
     Generate intensity profiles along traces.
@@ -101,6 +101,9 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     PointsData
 
     """
+    from .. import _vectors as vectors
+    from .._measurements.measurements import distance_to_k_nearest_neighbors
+    from scipy.spatial import KDTree
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
 
@@ -109,163 +112,181 @@ def trace_refinement_of_surface(intensity_image: ImageData,
     else:
         edge_detection_function = selected_edge.value[selected_fit_type.value]
 
-    # Convert to mesh and calculate normals
-    pointcloud = vedo.pointcloud.Points(points)
-    pointcloud.compute_normals_with_pca(
-        orientation_point=pointcloud.centerOfMass()
-        )
+    # Convert to mesh and calculate outward normals
+    unit_normals = vectors.normal_vectors_on_pointcloud(points)[:, 1] * (-1)
 
     # Define start and end points for the surface tracing vectors
     scale = np.asarray([scale_z, scale_y, scale_x])
     n_samples = int(trace_length/sampling_distance)
-    start_points = pointcloud.points()/scale[None, :] - 0.5 * trace_length * pointcloud.pointdata['Normals']
+    n_points = len(points)
 
     # Define trace vectors (full length and single step
-    vectors = trace_length * pointcloud.pointdata['Normals']
-    vector_step = vectors/n_samples
+    start_points = points/scale[None, :] - 0.5 * trace_length * unit_normals
+    trace_vectors = trace_length * unit_normals
+    vector_step = trace_vectors/n_samples  # vector of length sampling distance
 
-    # Create coords for interpolator
-    X1 = np.arange(0, intensity_image.shape[0], 1)
-    X2 = np.arange(0, intensity_image.shape[1], 1)
-    X3 = np.arange(0, intensity_image.shape[2], 1)
-    interpolator = RegularGridInterpolator((X1, X2, X3),
-                                           intensity_image,
-                                           bounds_error=False,
-                                           fill_value=intensity_image.min())
+    # measure intensity along the vectors
+    intensity_along_vector = vectors.sample_intensity_along_vector(
+        np.stack([start_points, trace_vectors]).transpose((1, 0, 2)),
+        intensity_image,
+        sampling_distance=sampling_distance,
+        interpolation_method='cubic')
 
     # Allocate arrays for results (location of object border, fit parameters,
     # fit errors, and intensity profiles)
     fit_parameters = _function_args_to_list(edge_detection_function)[1:]
     fit_errors = [p + '_err' for p in fit_parameters]
-    columns = ['surface_points'] + ['idx_of_border'] +\
-        fit_parameters + fit_errors + ['profiles']
+    columns = ['idx_of_border'] +\
+        fit_parameters + fit_errors
 
     if len(fit_parameters) == 1:
         fit_parameters, fit_errors = [fit_parameters[0]], [fit_errors[0]]
 
     # create empty dataframe to keep track of results
-    fit_data = pd.DataFrame(columns=columns, index=np.arange(pointcloud.N()))
+    fit_data = pd.DataFrame(columns=columns, index=np.arange(n_points))
 
     if show_progress:
-        iterator = tqdm.tqdm(range(pointcloud.N()), desc = 'Processing vertices...')
+        iterator = tqdm.tqdm(range(n_points), desc = 'Processing vertices...')
     else:
-        iterator = range(pointcloud.N())
+        iterator = range(n_points)
 
     # Iterate over all provided target points
     for idx in iterator:
 
-        coordinates = [start_points[idx] + k * vector_step[idx] for k in range(n_samples)]
-        fit_data.loc[idx, 'profiles'] = interpolator(coordinates)
-
+        array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
-            idx_of_border = edge_detection_function(np.array(fit_data.loc[idx, 'profiles']))
+            idx_of_border = edge_detection_function(array)
             perror = 0
             popt = 0
+            MSE = np.array([0, 0])
 
         elif selected_fit_type == fit_types.fancy_edge_fit:
-            popt, perror = _fancy_edge_fit(np.array(fit_data.loc[idx, 'profiles']),
-                                           selected_edge_func=edge_detection_function)
+            popt, perror = _fancy_edge_fit(array, selected_edge_func=edge_detection_function)
             idx_of_border = popt[0]
+            
+            # calculate fit errors
+            MSE = _mean_squared_error(
+                fit_function=edge_detection_function,
+                x=np.arange(len(array)),
+                y=array,
+                fit_params=popt)
 
         new_point = (start_points[idx] + idx_of_border * vector_step[idx]) * scale
 
         fit_data.loc[idx, fit_errors] = perror
         fit_data.loc[idx, fit_parameters] = popt
         fit_data.loc[idx, 'idx_of_border'] = idx_of_border
-        fit_data.loc[idx, 'surface_points'] = new_point
+        fit_data.loc[idx, 'surface_points_x'] = new_point[0]
+        fit_data.loc[idx, 'surface_points_y'] = new_point[1]
+        fit_data.loc[idx, 'surface_points_z'] = new_point[2]
+        fit_data.loc[idx, 'mean_squared_error'] = MSE[0]
+        fit_data.loc[idx, 'fraction_variance_unexplained'] = MSE[1]
+        fit_data.loc[idx, 'fraction_variance_unexplained_log'] = np.log(MSE[1])
 
-    fit_data['start_points'] = list(start_points)
-    fit_data['vectors'] = list(vectors)
     # NaN rows should be removed either way
+    fit_data['start_points'] = list(start_points)
     fit_data = fit_data.dropna().reset_index()
 
-    # Filter points to remove points with high fit errors
     if remove_outliers:
-        fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names=fit_errors,
-                                             factor=outlier_tolerance,
-                                             which='above')
-        fit_data = _remove_outliers_by_index(fit_data,
-                                             column_names='idx_of_border',
-                                             factor=outlier_tolerance,
-                                             which='both')
+        # Remove outliers
+        good_points = _identify_outliers(
+            fit_data, 
+            column_names=['fraction_variance_unexplained_log'],
+            which=['above'],
+            factor=outlier_tolerance)
+        fit_data = fit_data[good_points]
+        intensity_along_vector = intensity_along_vector[good_points]
+
+    # measure distance to nearest neighbor
+    fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
+        fit_data[['surface_points_x',
+                  'surface_points_y',
+                  'surface_points_z']].to_numpy(), k=15
+    )
 
     # reformat to layerdatatuple: points
-    feature_names = fit_parameters + fit_errors + ['idx_of_border']
+    feature_names = fit_parameters + fit_errors +\
+        ['distance_to_nearest_neighbor',
+         'mean_squared_error',
+        'fraction_variance_unexplained', 
+        'fraction_variance_unexplained_log'] +\
+        ['idx_of_border']
     features = fit_data[feature_names].to_dict('list')
-    metadata = {'intensity_profiles': fit_data['profiles']}
+    metadata = {'intensity_profiles': intensity_along_vector}
     properties = {'name': 'Refined_points',
                   'size': 1,
                   'features': features,
                   'metadata': metadata,
                   'face_color': 'cyan'}
-    data = np.stack(fit_data['surface_points'].to_numpy()).astype(float)
+    data = fit_data[['surface_points_x',
+                     'surface_points_y',
+                     'surface_points_z']].to_numpy()
+    fit_data.drop(columns=['surface_points_x',
+                           'surface_points_y',
+                           'surface_points_z'],
+                  inplace=True)
     layer_points = (data, properties, 'points')
 
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data['start_points'].to_numpy()).squeeze()
-    vectors = np.stack(fit_data['vectors'].to_numpy()).squeeze()
-    data = np.stack([start_points, vectors]).transpose((1,0,2))
+    trace_vectors = trace_vectors[fit_data.index.to_numpy()]
+    trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
 
     properties = {'name': 'Normals'}
-    layer_normals = (data, properties, 'vectors')
+    layer_normals = (trace_vectors, properties, 'vectors')
 
+    return (layer_points, layer_normals)        
 
-    return (layer_points, layer_normals)
-
-def _remove_outliers_by_index(table: pd.DataFrame,
-                              column_names: list,
-                              which: str = 'above',
-                              factor: float = 1.5) -> pd.DataFrame:
+def _identify_outliers(
+        table: pd.DataFrame,
+        column_names: list,
+        which: list,
+        factor: float = 1.5,
+        merge: float = 'and') -> np.ndarray:
     """
-    Filter all rows in a dataframe that qualify as outliers based on column-statistics.
+    Identify outliers in a table based on the IQR method.
 
     Parameters
     ----------
     table : pd.DataFrame
-    on : list
-        list of column names that should be taken into account
-    which : str, optional
-        Can be 'above', 'below' or 'both' and determines which outliers to
-        remove - the excessively high or low values or both.
-        The default is 'above'.
+        Table containing the data.
+    column_names : list
+        List of column names to check for outliers.
+    which : list
+        List of strings indicating which outliers to identify. Options are
+        'above', 'below', and 'both'.
     factor : float, optional
-        Determine how far a datapoint is to be above the interquartile range to
-        be classified as outlier. The default is 1.5.
-
-    Returns
-    -------
-    table : pd.DataFrame
-
+        Factor to multiply the IQR with. The default is 1.5.
+    merge : float, optional
+        Merge outliers identified in different columns. Options are 'and' and
+        'or'. The default is 'and'.
     """
-    # Check if list or single string was passed
-    if isinstance(column_names, str):
-        column_names = [column_names]
-
-    # Remove the offset error from the list of relevant errors - fluorescence
-    # intensity offset is not meaningful for distinction of good/bad fit
-    if 'offset_err' in column_names:
-        column_names.remove('offset_err' )
-
+    if isinstance(table, dict):
+        table = pd.DataFrame(table)
 
     # True if values are good, False if outliers
     table = table.dropna().reset_index(drop=True)
-    indices = np.ones(len(table), dtype=bool)
+    indices = np.ones((len(column_names), len(table)), dtype=bool)
 
-    for column in column_names:
+    for idx, column in enumerate(column_names):
         Q1 = table[column].quantile(0.25)
         Q3 = table[column].quantile(0.75)
         IQR = Q3 - Q1
-        if which == 'above':
-            idx = table[column] > (Q3 + factor * IQR)
-        elif which == 'below':
-            idx = table[column] < (Q1 - factor * IQR)
-        elif which == 'both':
-            idx = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
-        indices[table[idx].index] = False
+        if which[idx] == 'above':
+            idx_outlier = table[column] > (Q3 + factor * IQR)
+        elif which[idx] == 'below':
+            idx_outlier = table[column] < (Q1 - factor * IQR)
+        elif which[idx] == 'both':
+            idx_outlier = (table[column] < (Q1 - factor * IQR)) + (table[column] > (Q3 + factor * IQR))
+        indices[idx, table[idx_outlier].index] = False
 
-    return table[indices]
+    if merge == 'and':
+        indices = np.all(indices, axis=0)
+    elif merge == 'or':
+        indices = ~np.any(~indices, axis=0)
+
+    return indices
 
 
 def _fancy_edge_fit(array: np.ndarray,
@@ -287,23 +308,33 @@ def _fancy_edge_fit(array: np.ndarray,
     -------
     float
         DESCRIPTION.
-
     """
     params = _function_args_to_list(selected_edge_func)[1:]
+    array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
 
-            # Make sure that intensity goes up along ray so that fit can work
-            if array[0] > array[-1]:
-                array = array[::-1]
+            # trim begin of trace to get rid of rising intensity slope
+            ind_max = np.argmax(array)
+            array = array[ind_max:]
 
-            parameter_estimate = [len(array)/2,
-                                  max(array),
-                                  np.diff(array).mean(),
-                                  min(array)]
+            
+            amplitude_est = max(array)
+            center_est = np.where(np.diff(array) == np.diff(array).min())[0][0]
+            background_slope = 0
+            slope_est = 1
+            offset_est = min(array)
+            parameter_estimate = [center_est,
+                                    amplitude_est,
+                                    slope_est,
+                                    background_slope,
+                                    offset_est]
+
             optimal_fit_parameters, _covariance = curve_fit(
                 selected_edge_func, np.arange(len(array)), array, parameter_estimate
                 )
+            
+            optimal_fit_parameters[0] = optimal_fit_parameters[0] + ind_max
 
         elif selected_edge_func == _gaussian:
             parameter_estimate = [len(array)/2,
@@ -322,3 +353,27 @@ def _fancy_edge_fit(array: np.ndarray,
         parameter_error = np.repeat(np.nan, len(params))
 
     return optimal_fit_parameters, parameter_error
+
+def _mean_squared_error(fit_function: callable, x: np.ndarray, y: np.ndarray, fit_params: list) -> List[float]:
+    """
+    Calculate error parameters for a given fit functions and the determined parameters.
+
+    Args:
+        fit_function (callable): Used fit function
+        x (np.ndarray): x-values
+        y (np.ndarray): measured, corresponding y-values
+        fit_params (list): determined fit parameters
+
+    Returns:
+        float: mean squared error
+        float: fraction of variance unexplained
+    """
+    is_number = ~np.isnan(y)
+    x = x[is_number].squeeze()  # filter out nans
+    y = y[is_number].squeeze()  # filter out nans
+    y_fit = fit_function(x, *fit_params)
+    
+    mean_squared_error = np.mean((y - y_fit)**2)
+    fraction_variance_unexplained = mean_squared_error/np.var(y)
+
+    return mean_squared_error, fraction_variance_unexplained
