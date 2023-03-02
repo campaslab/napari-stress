@@ -196,6 +196,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data = fit_data[good_points]
         intensity_along_vector = intensity_along_vector[good_points]
 
+    # remove NaNs from reconstructed points
+    no_nan_idx = ~np.isnan(np.stack(fit_data['start_points'].to_numpy()).squeeze()).any(axis=1)
+    fit_data = fit_data[no_nan_idx]
+    intensity_along_vector = intensity_along_vector[no_nan_idx]
+
     # measure distance to nearest neighbor
     fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
         fit_data[['surface_points_x',
