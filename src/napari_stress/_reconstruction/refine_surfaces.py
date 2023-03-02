@@ -184,9 +184,7 @@ def trace_refinement_of_surface(intensity_image: ImageData,
         fit_data.loc[idx, 'fraction_variance_unexplained'] = MSE[1]
         fit_data.loc[idx, 'fraction_variance_unexplained_log'] = np.log(MSE[1])
 
-    # NaN rows should be removed either way
     fit_data['start_points'] = list(start_points)
-    fit_data = fit_data.dropna().reset_index()
 
     if remove_outliers:
         # Remove outliers
@@ -197,6 +195,11 @@ def trace_refinement_of_surface(intensity_image: ImageData,
             factor=outlier_tolerance)
         fit_data = fit_data[good_points]
         intensity_along_vector = intensity_along_vector[good_points]
+
+    # remove NaNs from reconstructed points
+    no_nan_idx = ~np.isnan(np.stack(fit_data['start_points'].to_numpy()).squeeze()).any(axis=1)
+    fit_data = fit_data[no_nan_idx]
+    intensity_along_vector = intensity_along_vector[no_nan_idx]
 
     # measure distance to nearest neighbor
     fit_data['distance_to_nearest_neighbor'] = distance_to_k_nearest_neighbors(
@@ -266,8 +269,8 @@ def _identify_outliers(
         table = pd.DataFrame(table)
 
     # True if values are good, False if outliers
-    table = table.dropna().reset_index(drop=True)
     indices = np.ones((len(column_names), len(table)), dtype=bool)
+    indices[:, table[table.isnull().any(axis=1)].index] = False
 
     for idx, column in enumerate(column_names):
         Q1 = table[column].quantile(0.25)

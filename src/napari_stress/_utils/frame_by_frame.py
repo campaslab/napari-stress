@@ -12,7 +12,7 @@ from dask.distributed import Client
 import pandas as pd
 import tqdm
 
-def frame_by_frame(function: callable, progress_bar: bool = True):
+def frame_by_frame(function: callable, progress_bar: bool = False):
 
     @wraps(function)
     def wrapper(*args, **kwargs):

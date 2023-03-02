@@ -170,6 +170,8 @@ def reconstruct_droplet(image: ImageData,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
             scale_x=1, scale_y=1, scale_z=1,
+            remove_outliers=remove_outliers,
+            outlier_tolerance=outlier_tolerance,
             show_progress=verbose)
         
         

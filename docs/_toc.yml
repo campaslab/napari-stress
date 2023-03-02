@@ -77,3 +77,4 @@ parts:
     numbered: True
     chapters:
     - file: 05_FAQ/Installation
+    - file: 05_FAQ/02_validation/analyze_validation
