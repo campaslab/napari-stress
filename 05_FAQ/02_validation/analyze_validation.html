@@ -545,7 +545,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">16. Validation</a></li>
 
 
-
 </ul>
 
     </div>
@@ -724,11 +723,6 @@ title="Print to PDF"
     </a>
    </li>
   </ul>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#investigate-refinement-quality">
-   19. Investigate refinement quality
-  </a>
  </li>
 </ul>
 
@@ -1158,234 +1152,6 @@ title="Print to PDF"
 </div>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="investigate-refinement-quality">
-<h1><span class="section-number">19. </span>Investigate refinement quality<a class="headerlink" href="#investigate-refinement-quality" title="Permalink to this heading">#</a></h1>
-<p>We check whether the spacing parameter that is used to sample the vooxels from the ideal ellipsoid leads to this offset:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer3</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: QWindowsWindow::setGeometry: Unable to set geometry 2172x1352+0-2 (frame: 2198x1423-13-60) on QWidgetWindow/&quot;_QtMainWindowClassWindow&quot; on &quot;\\.\DISPLAY1&quot;. Resulting geometry: 4350x2119+5+25 (frame: 4376x2190-8-33) margins: 13, 58, 13, 13 minimum size: 374x560 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=774,1191 maxtrack=0,0)
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sampling_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">sampling</span> <span class="o">=</span> <span class="n">sampling_values</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">ax1</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">ax2</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="n">ax3</span> <span class="o">=</span> <span class="mi">15</span>
-
-<span class="n">ellipsoid</span> <span class="o">=</span> <span class="n">sample_data</span><span class="o">.</span><span class="n">make_binary_ellipsoid</span><span class="p">(</span><span class="n">major_axis_length</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">medial_axis_length</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">minor_axis_length</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">edge_padding</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">ellipsoid</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">ellipsoid</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-
-<span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">ellipsoid</span><span class="p">,</span>
-                                                        <span class="n">voxelsize</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-                                                        <span class="n">target_voxelsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                                        <span class="n">n_smoothing_iterations</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-                                                        <span class="n">n_points</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-                                                        <span class="n">n_tracing_iterations</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                                        <span class="n">resampling_length</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">sampling</span><span class="p">,</span>
-                                                        <span class="n">fit_type</span><span class="o">=</span><span class="s1">&#39;fancy&#39;</span><span class="p">,</span>
-                                                        <span class="n">edge_type</span><span class="o">=</span><span class="s1">&#39;interior&#39;</span><span class="p">,</span>
-                                                        <span class="n">trace_length</span><span class="o">=</span><span class="mi">10</span><span class="o">/</span><span class="n">sampling</span><span class="p">,</span>
-                                                        <span class="n">sampling_distance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                                        <span class="n">remove_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                        <span class="n">use_dask</span><span class="o">=</span><span class="kc">False</span>
-                                                        <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sampling_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sampling_values</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">reconstructed_sizes</span> <span class="o">=</span> <span class="p">[]</span> 
-<span class="n">ax1</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">ax2</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="n">ax3</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sampling</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sampling_values</span><span class="p">):</span>
-
-    <span class="n">ellipsoid</span> <span class="o">=</span> <span class="n">sample_data</span><span class="o">.</span><span class="n">make_binary_ellipsoid</span><span class="p">(</span><span class="n">major_axis_length</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">medial_axis_length</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">minor_axis_length</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">edge_padding</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">ellipsoid</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">ellipsoid</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-
-    <span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">ellipsoid</span><span class="p">,</span>
-                                                            <span class="n">voxelsize</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-                                                            <span class="n">target_voxelsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                                            <span class="n">n_smoothing_iterations</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-                                                            <span class="n">n_points</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-                                                            <span class="n">n_tracing_iterations</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                                            <span class="n">resampling_length</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">sampling</span><span class="p">,</span>
-                                                            <span class="n">fit_type</span><span class="o">=</span><span class="s1">&#39;fancy&#39;</span><span class="p">,</span>
-                                                            <span class="n">edge_type</span><span class="o">=</span><span class="s1">&#39;interior&#39;</span><span class="p">,</span>
-                                                            <span class="n">trace_length</span><span class="o">=</span><span class="mi">10</span><span class="o">/</span><span class="n">sampling</span><span class="p">,</span>
-                                                            <span class="n">sampling_distance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                                            <span class="n">remove_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                            <span class="n">use_dask</span><span class="o">=</span><span class="kc">False</span>
-                                                            <span class="p">)</span>
-    <span class="c1"># refined_points = results_reconstruction[3][0]</span>
-    <span class="c1"># refined_points = refined_points - refined_points.mean(axis=0)[None, :]</span>
-    <span class="c1"># refined_points = refined_points * sampling</span>
-    <span class="n">refined_points</span> <span class="o">=</span> <span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">refined_points</span> <span class="o">=</span> <span class="n">refined_points</span> <span class="o">-</span> <span class="n">refined_points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># center refined points</span>
-    <span class="n">refined_points</span> <span class="o">=</span> <span class="n">refined_points</span> <span class="o">*</span> <span class="n">sampling</span>  <span class="c1"># rescale to original sampling</span>
-
-    <span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">refined_points</span><span class="p">,</span>
-                                                              <span class="n">max_degree</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                                                              <span class="n">n_quadrature_points</span><span class="o">=</span><span class="mi">590</span><span class="p">,</span>
-                                                              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                              <span class="n">use_dask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results_stress_analysis</span><span class="p">)</span> 
-    
-    <span class="c1"># ellipsoid_size = np.sort(refined_points.max(axis=0) - refined_points.min(axis=0))[::-1]</span>
-    
-    <span class="c1"># reconstructed_sizes.append(ellipsoid_size)</span>
-    <span class="c1"># print(&#39;Difference in measured sizes: &#39;, ellipsoid_size - np.asarray([ax1, ax2, ax3]))</span>
-
-    <span class="c1"># mean_curvatures_theoretical_true = theoretical_mean_curvature_on_pointcloud(ax1, ax2, ax3, refined_points)</span>
-    <span class="c1"># mean_curvatures_theoretical_measured = theoretical_mean_curvature_on_pointcloud(ellipsoid_size[0], ellipsoid_size[1], ellipsoid_size[2], refined_points)</span>
-
-    <span class="c1"># sns.kdeplot(data=mean_curvatures_theoretical_true, ax=axes[idx], label=&#39;true theoretical&#39;)</span>
-    <span class="c1"># sns.kdeplot(data=mean_curvatures_theoretical_measured, ax=axes[idx], label=&#39;reconstructed theoretical&#39;)</span>
-    <span class="c1"># sns.kdeplot(data=results_stress_analysis[4][1][&#39;features&#39;][&#39;mean_curvature&#39;], ax=axes[idx], label=f&#39;measured&#39;)</span>
-    <span class="c1"># axes[idx].set_xlabel(&#39;Mean curvature (1/µm)&#39;)</span>
-    <span class="c1"># axes[idx].grid(which=&#39;major&#39;, axis=&#39;x&#39;, linestyle=&#39;--&#39;, alpha=0.5)</span>
-    <span class="c1"># axes[idx].legend()</span>
-    <span class="c1"># axes[idx].set_title(&#39;voxel sampling={:.2f} px&#39;.format(sampling))</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Difference in measured sizes:  [-2.04638477 -1.44691984 -1.45492046]
-Difference in measured sizes:  [-1.68764755 -1.2251534  -1.25543488]
-Difference in measured sizes:  [-1.23670462 -0.76218368 -0.7851554 ]
-Difference in measured sizes:  [-0.44968716  0.11747617  0.09132238]
-Difference in measured sizes:  [-0.81770744 -0.43374501 -0.44259015]
-Difference in measured sizes:  [-0.18125602  0.12847087  0.11225289]
-Difference in measured sizes:  [-0.4561966  -0.2546065  -0.25643345]
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">LinAlgError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">30</span><span class="p">],</span> <span class="n">line</span> <span class="mi">36</span>
-<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="n">refined_points</span> <span class="o">=</span> <span class="n">refined_points</span> <span class="o">-</span> <span class="n">refined_points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># center refined points</span>
-<span class="g g-Whitespace">     </span><span class="mi">34</span> <span class="n">refined_points</span> <span class="o">=</span> <span class="n">refined_points</span> <span class="o">*</span> <span class="n">sampling</span>  <span class="c1"># rescale to original sampling</span>
-<span class="ne">---&gt; </span><span class="mi">36</span> <span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">refined_points</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span>                                                           <span class="n">max_degree</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">38</span>                                                           <span class="n">n_quadrature_points</span><span class="o">=</span><span class="mi">590</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span>                                                           <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">40</span>                                                           <span class="n">use_dask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span> <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results_stress_analysis</span><span class="p">)</span> 
-<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="n">ellipsoid_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">refined_points</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">refined_points</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_utils\frame_by_frame.py:67,</span> in <span class="ni">frame_by_frame.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">65</span>         <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-<span class="g g-Whitespace">     </span><span class="mi">66</span>     <span class="k">else</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">67</span>         <span class="n">results</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">69</span> <span class="k">if</span> <span class="n">use_dask</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">70</span>     <span class="c1"># gather results</span>
-<span class="g g-Whitespace">     </span><span class="mi">71</span>     <span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_measurements\toolbox.py:161,</span> in <span class="ni">comprehensive_analysis</span><span class="nt">(pointcloud, max_degree, n_quadrature_points, maximal_distance, gamma, verbose)</span>
-<span class="g g-Whitespace">    </span><span class="mi">136</span> <span class="kn">from</span> <span class="nn">..types</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_METADATAKEY_MEAN_CURVATURE</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">137</span>                      <span class="n">_METADATAKEY_MEAN_CURVATURE_DIFFERENCE</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">138</span>                      <span class="n">_METADATAKEY_H_E123_ELLIPSOID</span><span class="p">,</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">154</span>                      <span class="n">_METADATAKEY_FIT_RESIDUE</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">155</span>                      <span class="n">_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">156</span> <span class="c1"># =====================================================================</span>
-<span class="g g-Whitespace">    </span><span class="mi">157</span> <span class="c1"># Spherical harmonics expansion</span>
-<span class="g g-Whitespace">    </span><span class="mi">158</span> <span class="c1"># =====================================================================</span>
-<span class="g g-Whitespace">    </span><span class="mi">159</span> 
-<span class="g g-Whitespace">    </span><span class="mi">160</span> <span class="c1"># CARTESIAN</span>
-<span class="ne">--&gt; </span><span class="mi">161</span> <span class="n">fitted_pointcloud</span><span class="p">,</span> <span class="n">coefficients</span> <span class="o">=</span> <span class="n">stress_spherical_harmonics_expansion</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">162</span>         <span class="n">pointcloud</span><span class="p">,</span><span class="n">max_degree</span><span class="o">=</span><span class="n">max_degree</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span> <span class="n">quadrature_points</span><span class="p">,</span> <span class="n">lebedev_info</span> <span class="o">=</span> <span class="n">lebedev_quadrature</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">165</span>     <span class="n">coefficients</span><span class="o">=</span><span class="n">coefficients</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span>     <span class="n">number_of_quadrature_points</span><span class="o">=</span><span class="n">n_quadrature_points</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">167</span>     <span class="n">use_minimal_point_set</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span> <span class="n">manifold_droplet</span> <span class="o">=</span> <span class="n">create_manifold</span><span class="p">(</span><span class="n">quadrature_points</span><span class="p">,</span> <span class="n">lebedev_info</span><span class="p">,</span> <span class="n">max_degree</span><span class="p">)</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_spherical_harmonics\spherical_harmonics.py:109,</span> in <span class="ni">stress_spherical_harmonics_expansion</span><span class="nt">(points, max_degree, expansion_type)</span>
-<span class="g g-Whitespace">    </span><span class="mi">105</span> <span class="kn">from</span> <span class="nn">.._stress.charts_SPB</span> <span class="kn">import</span> <span class="n">Cart_To_Coor_A</span>
-<span class="g g-Whitespace">    </span><span class="mi">107</span> <span class="k">if</span> <span class="n">expansion_type</span> <span class="o">==</span> <span class="s1">&#39;cartesian&#39;</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">108</span>     <span class="c1"># get LS Ellipsoid estimate and get point cordinates in elliptical coordinates</span>
-<span class="ne">--&gt; </span><span class="mi">109</span>     <span class="n">ellipsoid</span> <span class="o">=</span> <span class="n">approximation</span><span class="o">.</span><span class="n">least_squares_ellipsoid</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">110</span>     <span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span> <span class="o">=</span> <span class="n">cartesian_to_elliptical</span><span class="p">(</span><span class="n">ellipsoid</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">112</span>     <span class="c1"># This implementation fits a superposition of three sets of spherical harmonics</span>
-<span class="g g-Whitespace">    </span><span class="mi">113</span>     <span class="c1"># to the data, one for each cardinal direction (x/y/z).</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_utils\frame_by_frame.py:67,</span> in <span class="ni">frame_by_frame.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">65</span>         <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-<span class="g g-Whitespace">     </span><span class="mi">66</span>     <span class="k">else</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">67</span>         <span class="n">results</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">69</span> <span class="k">if</span> <span class="n">use_dask</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">70</span>     <span class="c1"># gather results</span>
-<span class="g g-Whitespace">     </span><span class="mi">71</span>     <span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_approximation\fit_ellipsoid.py:28,</span> in <span class="ni">least_squares_ellipsoid</span><span class="nt">(points)</span>
-<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="n">coefficients</span> <span class="o">=</span> <span class="n">solve_ellipsoid_polynomial</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>    
-<span class="g g-Whitespace">     </span><span class="mi">27</span> <span class="c1"># convert results to VectorsData</span>
-<span class="ne">---&gt; </span><span class="mi">28</span> <span class="n">center</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">R_inverse</span> <span class="o">=</span> <span class="n">polynomial_to_parameters3D</span><span class="p">(</span><span class="n">coefficients</span><span class="o">=</span><span class="n">coefficients</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">direction</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">axes</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">30</span> <span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">[</span><span class="n">center</span><span class="p">])</span>  <span class="c1"># cheap repeat</span>
-
-<span class="nn">File ~\Documents\BiAPoL\Projects\napari-stress\src\napari_stress\_utils\coordinate_conversion.py:59,</span> in <span class="ni">polynomial_to_parameters3D</span><span class="nt">(coefficients)</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span> <span class="n">s1</span> <span class="o">=</span> <span class="o">-</span><span class="n">R</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">58</span> <span class="n">R3S</span> <span class="o">=</span> <span class="n">R3</span><span class="o">/</span><span class="n">s1</span>
-<span class="ne">---&gt; </span><span class="mi">59</span> <span class="p">(</span><span class="n">el</span><span class="p">,</span><span class="n">ec</span><span class="p">)</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">R3S</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">61</span> <span class="n">recip</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">62</span> <span class="n">axes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">recip</span><span class="p">)</span>
-
-<span class="nn">File &lt;__array_function__ internals&gt;:180,</span> in <span class="ni">eig</span><span class="nt">(*args, **kwargs)</span>
-
-<span class="nn">File c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\numpy\linalg\linalg.py:1312,</span> in <span class="ni">eig</span><span class="nt">(a)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1310</span> <span class="n">_assert_stacked_2d</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1311</span> <span class="n">_assert_stacked_square</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">1312</span> <span class="n">_assert_finite</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span> <span class="n">t</span><span class="p">,</span> <span class="n">result_t</span> <span class="o">=</span> <span class="n">_commonType</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span> <span class="n">extobj</span> <span class="o">=</span> <span class="n">get_linalg_error_extobj</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1316</span>     <span class="n">_raise_linalgerror_eigenvalues_nonconvergence</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\numpy\linalg\linalg.py:209,</span> in <span class="ni">_assert_finite</span><span class="nt">(*arrays)</span>
-<span class="g g-Whitespace">    </span><span class="mi">207</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">isfinite</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">209</span>         <span class="k">raise</span> <span class="n">LinAlgError</span><span class="p">(</span><span class="s2">&quot;Array must not contain infs or NaNs&quot;</span><span class="p">)</span>
-
-<span class="ne">LinAlgError</span>: Array must not contain infs or NaNs
-</pre></div>
-</div>
-<img alt="../../_images/3e7b7a457fa72b2433e0b709a48f767e233691bd87ca57d12141251798670acd.png" src="../../_images/3e7b7a457fa72b2433e0b709a48f767e233691bd87ca57d12141251798670acd.png" />
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">Kernel</span> <span class="n">crashed</span> <span class="k">while</span> <span class="n">executing</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">the</span> <span class="n">current</span> <span class="n">cell</span> <span class="ow">or</span> <span class="n">a</span> <span class="n">previous</span> <span class="n">cell</span><span class="o">.</span> <span class="n">Please</span> <span class="n">review</span> <span class="n">the</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">cell</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="n">to</span> <span class="n">identify</span> <span class="n">a</span> <span class="n">possible</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">failure</span><span class="o">.</span> <span class="n">Click</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s1">&#39;https://aka.ms/vscodeJupyterKernelCrash&#39;</span><span class="o">&gt;</span><span class="n">here</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">info</span><span class="o">.</span> <span class="n">View</span> <span class="n">Jupyter</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s1">&#39;command:jupyter.viewOutput&#39;</span><span class="o">&gt;</span><span class="n">log</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">further</span> <span class="n">details</span><span class="o">.</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer3</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">face_color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reconstructed points&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Points layer &#39;reconstructed points&#39; at 0x1fadf8c2580&gt;
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1493,11 +1259,6 @@ Difference in measured sizes:  [-0.4561966  -0.2546065  -0.25643345]
     </a>
    </li>
   </ul>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#investigate-refinement-quality">
-   19. Investigate refinement quality
-  </a>
  </li>
 </ul>
 
