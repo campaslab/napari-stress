@@ -71,7 +71,6 @@ def sample_intensity_along_vector(
         interpolation_method (str, optional): Interpolation method.
             Defaults to 'linear'.
     """
-    from joblib import Parallel, delayed
     from scipy.interpolate import RegularGridInterpolator
 
     # Create coords for interpolator
@@ -107,10 +106,8 @@ def sample_intensity_along_vector(
         _sample_vectors = start_points[idx] + _directions
         coordinates_along_sample_vectors.append(_sample_vectors)
 
-    intensity = Parallel(n_jobs=-1)(
-        delayed(interpolator)(coordinates_along_sample_vectors[idx])
-        for idx in range(len(start_points))
-    )
+    for idx in range(len(start_points)):
+        intensity[idx, :] = interpolator(coordinates_along_sample_vectors[idx])
 
     intensity = pd.DataFrame(np.stack(intensity))
     intensity.columns = [f"step_{idx}" for idx in range(steps)]
