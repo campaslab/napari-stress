@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 from pathlib import Path
 from typing import List
@@ -48,8 +46,6 @@ class droplet_reconstruction_toolbox(QWidget):
         surface = self.surface_layer_select.value.data
         mesh = vedo.mesh.Mesh((surface[0], surface[1]))
         area = mesh.area()
-
-        density = self.spinBox_n_vertices.value() / area
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
@@ -107,32 +103,42 @@ def reconstruct_droplet(
     remove_outliers: bool = True,
     outlier_tolerance: float = 1.5,
     sampling_distance: float = 0.5,
+    interpolation_method: str = "cubic",
     verbose=False,
 ) -> List[LayerDataTuple]:
     import copy
 
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
-    from skimage import filters
+    import pyclesperanto_prototype as cle
 
     from napari_stress import reconstruction
 
-    from .._preprocess import rescale
-
     # rescale
     scaling_factors = voxelsize / target_voxelsize
-    rescaled_image = rescale(
-        image,
-        scale_z=scaling_factors[0],
-        scale_y=scaling_factors[1],
-        scale_x=scaling_factors[2],
+    rescaled_image = np.asarray(
+        cle.scale(
+            image,
+            None,
+            factor_z=scaling_factors[0],
+            factor_y=scaling_factors[1],
+            factor_x=scaling_factors[2],
+            auto_size=True,
+        )
     ).squeeze()
 
     # Blur
-    rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
+    rescaled_image = np.asarray(
+        cle.gaussian_blur(
+            rescaled_image,
+            sigma_x=smoothing_sigma,
+            sigma_y=smoothing_sigma,
+            sigma_z=smoothing_sigma,
+        )
+    )
 
     # convert to surface
-    binarized_image = nsbatwm.threshold_otsu(rescaled_image)
+    binarized_image = cle.threshold_otsu(rescaled_image)
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
     mesh_vedo = vedo.mesh.Mesh((surface[0], surface[1])).clean()
@@ -171,6 +177,7 @@ def reconstruct_droplet(
             sampling_distance=sampling_distance,
             remove_outliers=remove_outliers,
             outlier_tolerance=outlier_tolerance,
+            interpolation_method=interpolation_method,
         )
 
         points = traced_points[0]
