@@ -903,6 +903,11 @@ title="Print to PDF"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -911,7 +916,7 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x22ca0fd6e50&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x1f5db744fd0&gt;
 </pre></div>
 </div>
 </div>
@@ -943,13 +948,7 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 21/21 [00:03&lt;00:00,  6.68it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:55911&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: https://localhost:8787
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:62517&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: https://localhost:8787
 </pre></div>
 </div>
 </div>
@@ -986,14 +985,7 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 19%|█▉        | 4/21 [00:03&lt;00:10,  1.68it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:56050&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: https://localhost:8787
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 21/21 [00:03&lt;00:00,  6.46it/s]
-2023-03-02 09:12:33,443 - distributed.nanny - WARNING - Worker process still alive after 3.1999978637695317 seconds, killing
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up an running &lt;Client: &#39;tcp://127.0.0.1:60393&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: https://localhost:8787
 </pre></div>
 </div>
 </div>
@@ -1094,6 +1086,8 @@ title="Print to PDF"
 <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">filename_without_ending</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">filename_without_ending</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span> 
+    <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;results_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1102,17 +1096,6 @@ title="Print to PDF"
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_directory</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_directory</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">28</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_directory</span><span class="p">):</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_directory</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;save_directory&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -1385,15 +1368,25 @@ title="Print to PDF"
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Task was destroyed but it is pending!
-task: &lt;Task pending name=&#39;Task-11471&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F55AA39280&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+task: &lt;Task pending name=&#39;Task-47451&#39; coro=&lt;RequestHandler._execute() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:1713&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5ED980700&gt;()]&gt; cb=[_HandlerDelegate.execute.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:2361]&gt;
 Task was destroyed but it is pending!
-task: &lt;Task pending name=&#39;Task-198419&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F55A8C9DF0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+task: &lt;Task pending name=&#39;Task-6307&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DCECBFD0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
 Task was destroyed but it is pending!
-task: &lt;Task pending name=&#39;Task-198522&#39; coro=&lt;RequestHandler._execute() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:1713&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F55A3BCBB0&gt;()]&gt; cb=[_HandlerDelegate.execute.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:2361]&gt;
+task: &lt;Task pending name=&#39;Task-6305&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DD185760&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
 Task was destroyed but it is pending!
-task: &lt;Task pending name=&#39;Task-238339&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F566F6CC40&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+task: &lt;Task pending name=&#39;Task-6308&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DD1AF1F0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
 Task was destroyed but it is pending!
-task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execute() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:1713&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F566F5ACD0&gt;()]&gt; cb=[_HandlerDelegate.execute.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:2361]&gt;
+task: &lt;Task pending name=&#39;Task-6306&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DCECB640&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-6261&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DD185730&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-6270&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DD1AF3A0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-147786&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DF05F6A0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-151425&#39; coro=&lt;HTTP1ServerConnection._server_request_loop() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\http1connection.py:825&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DF05F7C0&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\ioloop.py:687]&gt;
+Task was destroyed but it is pending!
+task: &lt;Task pending name=&#39;Task-151502&#39; coro=&lt;RequestHandler._execute() running at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:1713&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x000001F5DF05FAF0&gt;()]&gt; cb=[_HandlerDelegate.execute.&lt;locals&gt;.&lt;lambda&gt;() at c:\Users\johamuel\Anaconda3\envs\stress\lib\site-packages\tornado\web.py:2361]&gt;
 </pre></div>
 </div>
 <img alt="../../_images/5a67c54c0a1c928a47f0f7261bf5c8d8a10d1d6ce12a910927035ea6fdbdcb05.png" src="../../_images/5a67c54c0a1c928a47f0f7261bf5c8d8a10d1d6ce12a910927035ea6fdbdcb05.png" />
@@ -1425,7 +1418,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/44d023f4db351d693df95dab359dab26f4540befdb15ee4d875c2ab41cb8fb21.png" src="../../_images/44d023f4db351d693df95dab359dab26f4540befdb15ee4d875c2ab41cb8fb21.png" />
+<img alt="../../_images/e7bc48a79a439da085eb6dd258491ead3cfc03af7bb4eaeb99599b3830c80be5.png" src="../../_images/e7bc48a79a439da085eb6dd258491ead3cfc03af7bb4eaeb99599b3830c80be5.png" />
 </div>
 </div>
 </section>
@@ -1477,7 +1470,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/34d4c1ff8318b98e079275489ac81f652b44b2494b5a3ea491ed48d705ea9f0a.png" src="../../_images/34d4c1ff8318b98e079275489ac81f652b44b2494b5a3ea491ed48d705ea9f0a.png" />
+<img alt="../../_images/a874afd8ae89059e75e6169364a1984438f93d77c4cc7039ade730118c6b654f.png" src="../../_images/a874afd8ae89059e75e6169364a1984438f93d77c4cc7039ade730118c6b654f.png" />
 </div>
 </div>
 <section id="total-stress">
@@ -1531,7 +1524,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/d6d49e38c91571d29075f98d2f7c401b4645683c2153a522a99732d95885c142.png" src="../../_images/d6d49e38c91571d29075f98d2f7c401b4645683c2153a522a99732d95885c142.png" />
+<img alt="../../_images/facc890ec26aa3d6423a4bbf499c33270f87d74c8a494c0f2b926ad4f9ec54bd.png" src="../../_images/facc890ec26aa3d6423a4bbf499c33270f87d74c8a494c0f2b926ad4f9ec54bd.png" />
 </div>
 </div>
 </section>
@@ -1586,7 +1579,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/04a7bdc51e36097f077e986fb3f69fa72fa50dfa189c0052583fab2096682a66.png" src="../../_images/04a7bdc51e36097f077e986fb3f69fa72fa50dfa189c0052583fab2096682a66.png" />
+<img alt="../../_images/d5652138ee3e4eab8f369d0c1fd5f33680ed8e365f942d3fd7e02f4563058ceb.png" src="../../_images/d5652138ee3e4eab8f369d0c1fd5f33680ed8e365f942d3fd7e02f4563058ceb.png" />
 </div>
 </div>
 </section>
@@ -1730,7 +1723,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ad69c9b5061c0251b0ee23f5932fee83e8014dd4c08359fd47bfd9dee5d16840.png" src="../../_images/ad69c9b5061c0251b0ee23f5932fee83e8014dd4c08359fd47bfd9dee5d16840.png" />
+<img alt="../../_images/4f798f82386ae90f0095957ad119ef910c9cad75b0476276b7913fa5aae71903.png" src="../../_images/4f798f82386ae90f0095957ad119ef910c9cad75b0476276b7913fa5aae71903.png" />
 </div>
 </div>
 </section>
@@ -1809,7 +1802,7 @@ task: &lt;Task pending name=&#39;Task-243617&#39; coro=&lt;RequestHandler._execu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/466413f381e26346fd382137b90e7a48b339ccc35e7cea2ff0080ceb6a75ccb7.png" src="../../_images/466413f381e26346fd382137b90e7a48b339ccc35e7cea2ff0080ceb6a75ccb7.png" />
+<img alt="../../_images/c7322c6b04cd7fee1eacfbbe8c766b1dce789ff9e3da9de159961e0c646a6642.png" src="../../_images/c7322c6b04cd7fee1eacfbbe8c766b1dce789ff9e3da9de159961e0c646a6642.png" />
 </div>
 </div>
 </section>
