@@ -19,7 +19,6 @@ def test_k_nearest_neighbors():
     assert df.loc[2].to_numpy() == np.linalg.norm([0.5, 0.5])
 
 
-
 def test_spatiotemporal_autocorrelation():
     from napari_stress import lebedev_quadrature
     from napari_stress import (measurements, reconstruction,
@@ -82,20 +81,38 @@ def test_haversine():
     # the biggest possible distance on a unit sphere is pi/2
     assert np.allclose(distance_matrix.max(), np.pi/2)
 
+
 def test_geodesics():
     import vedo
-    from napari_stress import measurements
+    from napari_stress import measurements, approximation
 
-    sphere = vedo.Sphere(r=10)
-    values = np.zeros(sphere.N())
-    values[0] = -1
-    values[-1] = 1
-    surface = (sphere.points(), np.asarray(sphere.faces()), values)
+    sphere = vedo.Ellipsoid(pos=(0, 0, 0),
+                            axis1=(1, 0, 0),
+                            axis2=(0, 2, 0),
+                            axis3=(0, 0, 3))
+    ellipsoid = approximation.least_squares_ellipsoid(sphere.points())
+    expansion = approximation.expand_points_on_ellipse(ellipsoid,
+                                                       sphere.points())
+
+    curvature = measurements.curvature_on_ellipsoid(ellipsoid, expansion)
+    surface = (sphere.points(), np.asarray(sphere.faces()),
+               curvature[1]['features']['mean_curvature'])
 
     GDM = measurements.geodesic_distance_matrix(surface)
-    geodesic_vectors = measurements.geodesic_path(surface, 1, 2)
     results = measurements.local_extrema_analysis(surface,
-                                                distance_matrix=GDM)
+                                                  distance_matrix=GDM)
+
+    maxima_points = results[0][1]['features']['local_max_and_min']
+
+    assert sum(maxima_points == 1) == 2
+    assert sum(maxima_points == -1) == 2
+
+    geodesic_vectors = measurements.geodesic_path(surface, 0, 1)
+
+    assert geodesic_vectors.shape[0] == 44
+    assert geodesic_vectors.shape[1] == 2
+    assert geodesic_vectors.shape[2] == 3
+
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud, measurements)
@@ -301,4 +318,4 @@ def test_compatibility_decorator():
 
 
 if __name__ == '__main__':
-    test_k_nearest_neighbors()
+    test_geodesics()
