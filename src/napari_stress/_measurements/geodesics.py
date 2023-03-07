@@ -28,29 +28,24 @@ def geodesic_distance_matrix(
         at `distance_matrix[i, j]`
 
     """
-    from joblib import Parallel, delayed
     from pygeodesic import geodesic
 
     geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
 
     n_points = len(surface[0])
     distance_matrix = np.zeros((n_points, n_points))
-
-    args_list = []
-    for i in range(n_points):
-        args_list.append(([i], np.arange(i + 1, n_points)))
+    points = surface[0]
 
     if show_progress:
-        iterator = tqdm.tqdm(args_list)
+        iterator = tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances')
     else:
-        iterator = args_list
+        iterator = enumerate(points)
 
-    results = Parallel(n_jobs=16, backend="threading")(
-        delayed(geoalg.geodesicDistances)(*args) for args in iterator
-    )
-
-    for i, result in enumerate(results):
-        distance_matrix[i, i + 1:] = result[0]
+    for idx, pt in iterator:
+        distances, _ = geoalg.geodesicDistances(
+            [idx], np.arange(idx + 1, n_points))
+        distance_matrix[idx, idx + 1:] = distances
+        distance_matrix[idx + 1:, idx] = distances
 
     return distance_matrix
 
