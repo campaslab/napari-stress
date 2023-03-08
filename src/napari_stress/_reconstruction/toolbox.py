@@ -50,6 +50,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
     def _run(self):
         """Call analysis function."""
+        import webbrowser
 
         current_voxel_size = np.asarray(
             [
@@ -58,6 +59,9 @@ class droplet_reconstruction_toolbox(QWidget):
                 self.doubleSpinBox_voxelsize_x.value(),
             ]
         )
+
+        if self.checkBox_use_dask.isChecked():
+            webbrowser.open("http://localhost:8787")
 
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
@@ -74,7 +78,8 @@ class droplet_reconstruction_toolbox(QWidget):
             remove_outliers=self.checkBox_remove_outliers.isChecked(),
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
-            interpolation_method=self.comboBox_interpolation_method.currentText()
+            interpolation_method=self.comboBox_interpolation_method.currentText(),
+            use_dask=self.checkBox_use_dask.isChecked()
         )
 
         for layer in results:
