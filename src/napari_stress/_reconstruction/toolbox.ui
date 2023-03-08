@@ -17,7 +17,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page_3">
       <property name="geometry">
@@ -189,9 +189,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-29</y>
         <width>838</width>
-        <height>316</height>
+        <height>341</height>
        </rect>
       </property>
       <attribute name="label">
@@ -218,12 +218,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Fluorescence type</string>
-            </property>
-           </widget>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="comboBox_fittype"/>
           </item>
           <item row="1" column="1">
            <widget class="QComboBox" name="comboBox_fluorescence_type">
@@ -232,23 +228,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_trace_length">
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>2.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>10.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_8">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>Sampling distance</string>
+             <string>Fluorescence type</string>
             </property>
            </widget>
           </item>
@@ -268,8 +251,39 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_fittype"/>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Sampling distance</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_trace_length">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>2.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Image intensity interpolation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="comboBox_interpolation_method">
+            <property name="currentText">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

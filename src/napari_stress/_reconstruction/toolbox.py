@@ -34,6 +34,7 @@ class droplet_reconstruction_toolbox(QWidget):
         # populate comboboxes with allowed values
         self.comboBox_fittype.addItems(["fancy", "quick"])
         self.comboBox_fluorescence_type.addItems(["interior", "surface"])
+        self.comboBox_interpolation_method.addItems(["linear", "cubic"])
 
         # calculate density/point number
         self.spinBox_n_vertices.setValue(256)
@@ -73,6 +74,7 @@ class droplet_reconstruction_toolbox(QWidget):
             remove_outliers=self.checkBox_remove_outliers.isChecked(),
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
+            interpolation_method=self.comboBox_interpolation_method.currentText()
         )
 
         for layer in results:
