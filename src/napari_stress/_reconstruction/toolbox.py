@@ -36,16 +36,9 @@ class droplet_reconstruction_toolbox(QWidget):
         self.comboBox_fluorescence_type.addItems(["interior", "surface"])
 
         # calculate density/point number
-        self.spinBox_n_vertices.valueChanged.connect(self._on_update_n_points)
         self.spinBox_n_vertices.setValue(256)
 
         self.pushButton_run.clicked.connect(self._run)
-
-    def _on_update_n_points(self):
-        """Recalculate point density if point number is changed."""
-        surface = self.surface_layer_select.value.data
-        mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-        area = mesh.area()
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
