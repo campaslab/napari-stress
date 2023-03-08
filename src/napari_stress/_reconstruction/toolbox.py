@@ -34,18 +34,12 @@ class droplet_reconstruction_toolbox(QWidget):
         # populate comboboxes with allowed values
         self.comboBox_fittype.addItems(["fancy", "quick"])
         self.comboBox_fluorescence_type.addItems(["interior", "surface"])
+        self.comboBox_interpolation_method.addItems(["linear", "cubic"])
 
         # calculate density/point number
-        self.spinBox_n_vertices.valueChanged.connect(self._on_update_n_points)
         self.spinBox_n_vertices.setValue(256)
 
         self.pushButton_run.clicked.connect(self._run)
-
-    def _on_update_n_points(self):
-        """Recalculate point density if point number is changed."""
-        surface = self.surface_layer_select.value.data
-        mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-        area = mesh.area()
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
@@ -56,6 +50,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
     def _run(self):
         """Call analysis function."""
+        import webbrowser
 
         current_voxel_size = np.asarray(
             [
@@ -64,6 +59,9 @@ class droplet_reconstruction_toolbox(QWidget):
                 self.doubleSpinBox_voxelsize_x.value(),
             ]
         )
+
+        if self.checkBox_use_dask.isChecked():
+            webbrowser.open("http://localhost:8787")
 
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
@@ -80,6 +78,8 @@ class droplet_reconstruction_toolbox(QWidget):
             remove_outliers=self.checkBox_remove_outliers.isChecked(),
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
+            interpolation_method=self.comboBox_interpolation_method.currentText(),
+            use_dask=self.checkBox_use_dask.isChecked()
         )
 
         for layer in results:
