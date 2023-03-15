@@ -1,31 +1,19 @@
-# -*- coding: utf-8 -*-
-
-# -*- coding: utf-8 -*-
+import os
+from pathlib import Path
+from typing import List
 
 import numpy as np
 import vedo
-
-from qtpy.QtWidgets import QWidget
-from pathlib import Path
-import os
-
-from qtpy.QtCore import QEvent, QObject
-from qtpy import uic
 from magicgui.widgets import create_widget
-
-from napari.layers import Image, Layer, Surface
-from napari.types import LayerDataTuple, ImageData, SurfaceData, PointsData
-
-from typing import List
-
-from .._stress import lebedev_info_SPB
-from .._spherical_harmonics.spherical_harmonics import (
-    stress_spherical_harmonics_expansion,
-    lebedev_quadrature,
-    create_manifold)
+from napari.layers import Image, Layer
+from napari.types import ImageData, LayerDataTuple, PointsData
+from napari_tools_menu import register_dock_widget
+from qtpy import uic
+from qtpy.QtCore import QEvent, QObject
+from qtpy.QtWidgets import QWidget
 
 from .._utils.frame_by_frame import frame_by_frame
-from napari_tools_menu import register_dock_widget
+
 
 @register_dock_widget(menu="Surfaces > Droplet reconstruction toolbox (n-STRESS)")
 class droplet_reconstruction_toolbox(QWidget):
@@ -36,7 +24,7 @@ class droplet_reconstruction_toolbox(QWidget):
 
         self.viewer = napari_viewer
 
-        uic.loadUi(os.path.join(Path(__file__).parent, './toolbox.ui'), self)
+        uic.loadUi(os.path.join(Path(__file__).parent, "./toolbox.ui"), self)
 
         # add input dropdowns to plugin
         self.image_layer_select = create_widget(annotation=Image, label="Image_layer")
@@ -44,24 +32,14 @@ class droplet_reconstruction_toolbox(QWidget):
         self.installEventFilter(self)
 
         # populate comboboxes with allowed values
-        self.comboBox_fittype.addItems(['fancy', 'quick'])
-        self.comboBox_fluorescence_type.addItems(['interior', 'surface'])
+        self.comboBox_fittype.addItems(["fancy", "quick"])
+        self.comboBox_fluorescence_type.addItems(["interior", "surface"])
+        self.comboBox_interpolation_method.addItems(["linear", "cubic"])
 
         # calculate density/point number
-        self.spinBox_n_vertices.valueChanged.connect(self._on_update_n_points)
         self.spinBox_n_vertices.setValue(256)
 
         self.pushButton_run.clicked.connect(self._run)
-
-
-    def _on_update_n_points(self):
-        """Recalculate point density if point number is changed."""
-        surface = self.surface_layer_select.value.data
-        mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-        area = mesh.area()
-
-        density = self.spinBox_n_vertices.value()/area
-
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
@@ -72,12 +50,18 @@ class droplet_reconstruction_toolbox(QWidget):
 
     def _run(self):
         """Call analysis function."""
+        import webbrowser
 
-        current_voxel_size = np.asarray([
-            self.doubleSpinBox_voxelsize_z.value(),
-            self.doubleSpinBox_voxelsize_y.value(),
-            self.doubleSpinBox_voxelsize_x.value()
-            ])
+        current_voxel_size = np.asarray(
+            [
+                self.doubleSpinBox_voxelsize_z.value(),
+                self.doubleSpinBox_voxelsize_y.value(),
+                self.doubleSpinBox_voxelsize_x.value(),
+            ]
+        )
+
+        if self.checkBox_use_dask.isChecked():
+            webbrowser.open("http://localhost:8787")
 
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
@@ -93,51 +77,86 @@ class droplet_reconstruction_toolbox(QWidget):
             trace_length=self.doubleSpinBox_trace_length.value(),
             remove_outliers=self.checkBox_remove_outliers.isChecked(),
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
-            sampling_distance=self.doubleSpinBox_sampling_distance.value()
-            )
+            sampling_distance=self.doubleSpinBox_sampling_distance.value(),
+            interpolation_method=self.comboBox_interpolation_method.currentText(),
+            use_dask=self.checkBox_use_dask.isChecked()
+        )
 
         for layer in results:
-            _layer = Layer.create(data=layer[0],
-                                  meta=layer[1],
-                                  layer_type=layer[2])
+            _layer = Layer.create(data=layer[0], meta=layer[1], layer_type=layer[2])
             self.viewer.add_layer(_layer)
 
+
 @frame_by_frame
-def reconstruct_droplet(image: ImageData,
-                        voxelsize: np.ndarray = None,
-                        target_voxelsize: float = 1.0,
-                        smoothing_sigma: float = 1.0,
-                        n_smoothing_iterations: int = 10,
-                        n_points: int = 256,
-                        n_tracing_iterations: int = 1,
-                        resampling_length: float = 5,
-                        fit_type: str = 'fancy',
-                        edge_type: str = 'interior',
-                        trace_length: float = 10,
-                        remove_outliers: bool = True,
-                        outlier_tolerance: float = 1.5,
-                        sampling_distance: float = 0.5,
-                        verbose=False
-                        ) -> List[LayerDataTuple]:
+def reconstruct_droplet(
+    image: ImageData,
+    voxelsize: np.ndarray = None,
+    target_voxelsize: float = 1.0,
+    smoothing_sigma: float = 1.0,
+    n_smoothing_iterations: int = 10,
+    n_points: int = 256,
+    n_tracing_iterations: int = 1,
+    resampling_length: float = 5,
+    fit_type: str = "fancy",
+    edge_type: str = "interior",
+    trace_length: float = 10,
+    remove_outliers: bool = True,
+    outlier_tolerance: float = 1.5,
+    sampling_distance: float = 0.5,
+    interpolation_method: str = "cubic",
+    verbose=False,
+) -> List[LayerDataTuple]:
+    import copy
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
-    from .._preprocess import rescale
-    from skimage import filters
-    import copy
+
+    try:
+        import pyclesperanto_prototype as cle
+        cle.get_device()  # run to check whether GPU exists
+
+        cle_installed = True
+    except Exception:
+        cle_installed = False
+        from skimage import filters, transform
+
+    scaling_factors = voxelsize / target_voxelsize
 
     # rescale
-    scaling_factors = voxelsize/target_voxelsize
-    rescaled_image = rescale(image,
-                             scale_z=scaling_factors[0],
-                             scale_y=scaling_factors[1],
-                             scale_x=scaling_factors[2]).squeeze()
+    if cle_installed:
+        rescaled_image = np.asarray(
+            cle.scale(
+                image,
+                None,
+                factor_z=scaling_factors[0],
+                factor_y=scaling_factors[1],
+                factor_x=scaling_factors[2],
+                auto_size=True,
+                )
+            ).squeeze()
 
-    # Blur
-    rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
+        # Blur
+        rescaled_image = np.asarray(
+            cle.gaussian_blur(
+                rescaled_image,
+                sigma_x=smoothing_sigma,
+                sigma_y=smoothing_sigma,
+                sigma_z=smoothing_sigma,
+            )
+        )
+        binarized_image = cle.threshold_otsu(rescaled_image)
+
+    else:
+        rescaled_image = transform.rescale(
+            image,
+            scaling_factors)
+        rescaled_image = filters.gaussian(
+            rescaled_image,
+            sigma=smoothing_sigma)
+        threshold = filters.threshold_otsu(rescaled_image)
+        binarized_image = rescaled_image > threshold
 
     # convert to surface
-    binarized_image = nsbatwm.threshold_otsu(rescaled_image)
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
     mesh_vedo = vedo.mesh.Mesh((surface[0], surface[1])).clean()
@@ -147,20 +166,25 @@ def reconstruct_droplet(image: ImageData,
         (mesh_vedo.points(), mesh_vedo.faces()),
         number_of_iterations=n_smoothing_iterations,
     )
-    points_low = nppas.sample_points_from_surface(surface_smoothed, distance_fraction=0.01)
-    points_high = nppas.sample_points_from_surface(surface_smoothed, distance_fraction=0.25)
+    points_low = nppas.sample_points_from_surface(
+        surface_smoothed, distance_fraction=0.01
+    )
+    points_high = nppas.sample_points_from_surface(
+        surface_smoothed, distance_fraction=0.25
+    )
     points_per_fraction = (0.01 - 0.25) / (len(points_low) - len(points_high))
 
     points_first_guess = nppas.sample_points_from_surface(
-        surface_smoothed, 
-        distance_fraction=points_per_fraction*n_points)
+        surface_smoothed, distance_fraction=points_per_fraction * n_points
+    )
 
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
         resampled_points = _resample_pointcloud(
-            points, sampling_length=resampling_length)
+            points, sampling_length=resampling_length
+        )
 
         traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
             rescaled_image,
@@ -169,12 +193,10 @@ def reconstruct_droplet(image: ImageData,
             selected_edge=edge_type,
             trace_length=trace_length,
             sampling_distance=sampling_distance,
-            scale_x=1, scale_y=1, scale_z=1,
             remove_outliers=remove_outliers,
             outlier_tolerance=outlier_tolerance,
-            show_progress=verbose)
-        
-        
+            interpolation_method=interpolation_method,
+        )
 
         points = traced_points[0]
 
@@ -182,17 +204,18 @@ def reconstruct_droplet(image: ImageData,
     # Returns
     # =========================================================================
 
-    properties = {'name': 'points_first_guess',
-                  'size': 1}
-    layer_points_first_guess = (points_first_guess*target_voxelsize, properties, 'points')
+    properties = {"name": "points_first_guess", "size": 1}
+    layer_points_first_guess = (
+        points_first_guess * target_voxelsize,
+        properties,
+        "points",
+    )
 
-    properties = {'name': 'Rescaled image',
-                  'scale': [target_voxelsize] * 3}
-    layer_image_rescaled = (rescaled_image, properties, 'image')
+    properties = {"name": "Rescaled image", "scale": [target_voxelsize] * 3}
+    layer_image_rescaled = (rescaled_image, properties, "image")
 
-    properties = {'name': 'Label image',
-                  'scale': [target_voxelsize] * 3}
-    layer_label_image = (label_image, properties, 'labels')
+    properties = {"name": "Label image", "scale": [target_voxelsize] * 3}
+    layer_label_image = (label_image, properties, "labels")
 
     traced_points = list(traced_points)
     traced_points[0] *= target_voxelsize
@@ -200,21 +223,20 @@ def reconstruct_droplet(image: ImageData,
     trace_vectors = list(trace_vectors)
     trace_vectors[0] *= target_voxelsize
 
-    properties = {'name': 'Center',
-                  'symbol': 'ring',
-                  'face_color': 'yellow',
-                  'size': 3}
-    droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, 'points')
+    properties = {"name": "Center", "symbol": "ring", "face_color": "yellow", "size": 3}
+    droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
 
-    return [layer_image_rescaled,
-            layer_label_image,
-            layer_points_first_guess,
-            traced_points,
-            trace_vectors,
-            droplet_center
-            ]
+    return [
+        layer_image_rescaled,
+        layer_label_image,
+        layer_points_first_guess,
+        traced_points,
+        trace_vectors,
+        droplet_center,
+    ]
 
-def _fibonacci_sampling(number_of_points: int = 256)->PointsData:
+
+def _fibonacci_sampling(number_of_points: int = 256) -> PointsData:
     """
     Sample points on unit sphere according to fibonacci-scheme.
 
@@ -232,18 +254,18 @@ def _fibonacci_sampling(number_of_points: int = 256)->PointsData:
     PointsData
 
     """
-    goldenRatio = (1 + 5**0.5)/2
+    goldenRatio = (1 + 5**0.5) / 2
     i = np.arange(0, number_of_points)
-    theta = 2 *np.pi * i / goldenRatio
-    phi = np.arccos(1 - 2 * (i + 0.5)/number_of_points)
+    theta = 2 * np.pi * i / goldenRatio
+    phi = np.arccos(1 - 2 * (i + 0.5) / number_of_points)
     x = np.cos(theta) * np.sin(phi)
     y = np.sin(theta) * np.sin(phi)
     z = np.cos(phi)
 
     return np.stack([x, y, z]).T
 
-def _resample_pointcloud(points: PointsData,
-                         sampling_length: float = 5):
+
+def _resample_pointcloud(points: PointsData, sampling_length: float = 5):
     """
     Resampe a spherical-like pointcloud on fibonacci grid.
 
@@ -263,48 +285,52 @@ def _resample_pointcloud(points: PointsData,
     # convert to spherical, relative coordinates
     center = np.mean(points, axis=0)
     points_centered = points - center
-    points_spherical = vedo.cart2spher(points_centered[:, 0],
-                                       points_centered[:, 1],
-                                       points_centered[:, 2]).T
+    points_spherical = vedo.cart2spher(
+        points_centered[:, 0], points_centered[:, 1], points_centered[:, 2]
+    ).T
 
     # estimate point number according to passed sampling length
     mean_radius = points_spherical[:, 0].mean()
     surface_area = mean_radius**2 * 4 * np.pi
-    n = int(surface_area/sampling_length**2)
+    n = int(surface_area / sampling_length**2)
 
     # sample points on unit-sphere according to fibonacci-scheme
     sampled_points = _fibonacci_sampling(n)
-    sampled_points = vedo.utils.cart2spher(sampled_points[:, 0],
-                                           sampled_points[:, 1],
-                                           sampled_points[:, 2]).T
+    sampled_points = vedo.utils.cart2spher(
+        sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2]
+    ).T
 
     # interpolate cartesian coordinates on (theta, phi) grid
-    theta_interpolation = np.concatenate([points_spherical[:, 1],
-                                          points_spherical[:, 1],
-                                          points_spherical[:, 1]])
-    phi_interpolation = np.concatenate([points_spherical[:, 2] + 2 * np.pi,
-                                        points_spherical[:, 2],
-                                        points_spherical[:, 2] - 2 * np.pi])
+    theta_interpolation = np.concatenate(
+        [points_spherical[:, 1], points_spherical[:, 1], points_spherical[:, 1]]
+    )
+    phi_interpolation = np.concatenate(
+        [
+            points_spherical[:, 2] + 2 * np.pi,
+            points_spherical[:, 2],
+            points_spherical[:, 2] - 2 * np.pi,
+        ]
+    )
 
     new_x = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 0])*3,
+        list(points_centered[:, 0]) * 3,
         sampled_points[:, 1:],
-        method='cubic'
+        method="cubic",
     )
 
     new_y = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 1])*3,
+        list(points_centered[:, 1]) * 3,
         sampled_points[:, 1:],
-        method='cubic'
+        method="cubic",
     )
 
     new_z = griddata(
         np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 2])*3,
+        list(points_centered[:, 2]) * 3,
         sampled_points[:, 1:],
-        method='cubic'
+        method="cubic",
     )
 
     resampled_points = np.stack([new_x, new_y, new_z]).T + center
