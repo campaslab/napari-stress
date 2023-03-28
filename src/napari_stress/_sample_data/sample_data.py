@@ -35,42 +35,49 @@ def get_droplet_4d() -> LayerDataTuple:
 
     return [(image, {}, 'image')]
 
-def make_binary_ellipsoid(major_axis_length: float = 10.0,
-                   medial_axis_length: float = 7.0,
-                   minor_axis_length: float = 5.0,
-                   sampling: float = 0.5,
-                   edge_padding: int = 5) -> LayerDataTuple:
-    """
-    Creates a 3D ellipsoid with the given dimensions and sampling.
+
+def make_blurry_ellipsoid(
+        axis_length_a: float = 0.7,
+        axis_length_b: float = 0.3,
+        axis_length_c: float = 0.3,
+        size: int = 64,
+        definition_width: int = 5) -> LayerDataTuple:
+    """Generates a blurry ellipsoid.
 
     Parameters
     ----------
-    major_axis_length : float
+    axis_length_a : float
         Length of the major axis of the ellipsoid.
-    medial_axis_length : float
+        Must be greater than 0 and less than 1.
+    axis_length_b : float
         Length of the medial axis of the ellipsoid.
-    minor_axis_length : float
+        Must be greater than 0 and less than 1.
+    axis_length_c : float
         Length of the minor axis of the ellipsoid.
-    sampling : float
-        Sampling of the ellipsoid.
-    edge_padding : int
-        Number of voxels to pad the ellipsoid with.
+        Must be greater than 0 and less than 1.
+    size : int
+        Size of the image.
+    definition_width : int
+        Steepness of the intensity gradient on the edge
+        of the ellipsoid.
 
     Returns
     -------
-    LabelsData
-        The ellipsoid as a 3D binary image.
+    LayerDataTuple
+        A blurry ellipsoid.
     """
-    import vedo
     import numpy as np
 
-    ellipsoid = vedo.Ellipsoid(
-        pos=(0, 0, 0),
-        axis1=(major_axis_length, 0, 0),
-        axis2=(0, medial_axis_length, 0),
-        axis3=(0, 0, minor_axis_length)).binarize(spacing=[sampling]*3).tonumpy()
-    
-    properties = {
-        'name': 'Ellipsoid'
-    }
-    return (np.pad(ellipsoid, edge_padding).astype(int), properties, 'labels')
+    def sigmoid(x, a):
+        return 1 / (1 + np.exp(-a * x))
+
+    x, y, z = np.meshgrid(np.linspace(-1, 1, size),
+                          np.linspace(-1, 1, size),
+                          np.linspace(-1, 1, size), indexing='ij')
+
+    ellipsoid = (x/axis_length_a)**2 +\
+        (y/axis_length_b)**2 +\
+        (z/axis_length_c)**2
+
+    blurry_image = 1 - sigmoid(ellipsoid - 1, definition_width)
+    return (blurry_image, {'name': 'blurry_ellipsoid'}, 'image')
