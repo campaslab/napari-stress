@@ -1,6 +1,147 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+
+def test_mean_curvature_on_ellipsoid():
+    """Test that the mean curvature is computed correctly."""
+    from napari_stress import reconstruction, sample_data, measurements
+    size = 128
+    b, c = 0.5, 0.5
+    number_of_ellipsoids = 4
+
+    for a in np.linspace(0.2, 0.8, number_of_ellipsoids):
+        ellipsoid = sample_data.make_blurry_ellipsoid(a, b, c, size,
+                                                      definition_width=10)[0]
+        results_reconstruction = reconstruction.reconstruct_droplet(
+            ellipsoid, voxelsize=np.array([1, 1, 1]), use_dask=False,
+            resampling_length=3.5, interpolation_method='linear',
+            trace_length=10, sampling_distance=1)
+
+        # calculate each point's distance to the surface of the ellipsoid
+        distances = []
+        ellipse_points = []
+        for pt in results_reconstruction[3][0]:
+            ellipse_points.append(
+                project_point_on_ellipse_surface(
+                    pt, a*size, b*size, c*size, np.array([size/2, size/2, size/2])
+                )
+            )
+            distances.append(np.linalg.norm(pt - ellipse_points[-1]))
+        distances = np.array(distances).flatten()
+
+        # relative position error in x, y and z direction
+        relative_position_error = np.abs(
+            results_reconstruction[3][0] - ellipse_points) / ellipse_points
+        relative_position_error = relative_position_error.flatten()
+
+        assert np.mean(relative_position_error) < 0.01
+        assert np.mean(distances) < 1
+
+        # calculate mean curvature for two aspect ratios
+        # average relative mean curvature error must be < 10%
+        if 1 < a/b and a/b < 1.4:
+            results_measurement = measurements.comprehensive_analysis(
+                results_reconstruction[3][0],
+                max_degree=20,
+                n_quadrature_points=434,
+                gamma=5)
+
+            mean_curvature_measured = results_measurement[3][1][
+                'features']['mean_curvature']
+            mean_curvature_theoretical = theoretical_mean_curvature_on_pointcloud(
+                c * size/2, b * size/2, a * size/2,
+                results_measurement[4][0])
+            relative_difference = np.abs(mean_curvature_measured -
+                                         mean_curvature_theoretical) / mean_curvature_theoretical
+            assert np.mean(relative_difference) < 0.1
+
+
+def theoretical_mean_curvature_on_pointcloud(a, b, c, pointcloud) -> float:
+    """Theoretical mean curvature of an ellipsoid.
+
+    Parameters
+    ----------
+    a : float
+        Length of the first semi-axis.
+    b : float
+        Length of the second semi-axis.
+    c : float
+        Length of the third semi-axis.
+    elevation : float
+        Angular position of sample on ellipsoid surface
+    azimuth : float
+        Equatorial position of sample on ellipsoid surface
+    """
+    import vedo
+    pointcloud = pointcloud - pointcloud.mean(axis=0)[None, :]
+
+    pointcloud_spherical = vedo.cart2spher(pointcloud[:, 2],
+                                           pointcloud[:, 1],
+                                           pointcloud[:, 0])
+    elevation = pointcloud_spherical[1]
+    azimuth = pointcloud_spherical[2]
+
+    above = a * b * c * (3 * (a**2 + b**2) + 2*c**2 + (a**2 + b**2 - 2*c**2) *
+                         np.cos(2*elevation) - 2*(a**2 - b**2) *
+                         np.cos(2*azimuth) * np.sin(elevation)**2)
+    below = 8 * (a**2 * b**2 * np.cos(elevation)**2 + c**2 *
+                 (b**2 * np.cos(azimuth)**2 + a**2 * np.sin(azimuth)**2) *
+                 np.sin(elevation)**2)**(3/2)
+    return above/below
+
+
+def project_point_on_ellipse_surface(query_point: np.ndarray,
+                                     a: float,
+                                     b: float,
+                                     c: float,
+                                     center: np.ndarray) -> np.ndarray:
+    """Project a point on the surface of an ellipsoid.
+
+    Parameters
+    ----------
+    query_point : np.ndarray
+        Point to project on the surface of the ellipsoid.
+    a : float
+        Length of the first axis of the ellipsoid.
+    b : float
+        Length of the second axis of the ellipsoid.
+    c : float
+        Length of the third axis of the ellipsoid.
+    center : np.ndarray
+        Center of the ellipsoid.
+
+    Returns
+    -------
+    np.ndarray
+        Point on the surface of the ellipsoid.
+    """
+    import vedo
+    # transformation matrix to turn ellipsoid into a sphere
+    T = np.array([[1/a, 0, 0],
+                  [0, 1/b, 0],
+                  [0, 0, 1/c]])
+
+    # transform query point to coordinate system in which ellipsoid is a sphere
+    transformed_query_point = np.dot(query_point - center, T)
+
+    # transform query point into spherical coordinates
+    transformed_query_point_spherical = vedo.utils.cart2spher(transformed_query_point[2],
+                                                              transformed_query_point[1],
+                                                              transformed_query_point[0])
+
+    # replace radius of query point with radius of sphere, which in this coordinate 
+    # system is always 0.5
+    point_on_transformed_ellipse_surface = np.array([0.5,
+                                                     transformed_query_point_spherical[1],
+                                                     transformed_query_point_spherical[2]])
+
+    # transform point on sphere back to cartesian coordinates
+    point_on_transformed_ellipse_surface = vedo.utils.spher2cart(*point_on_transformed_ellipse_surface)[::-1]
+    point_on_ellipse_surface = np.dot(point_on_transformed_ellipse_surface, np.linalg.inv(T)) + center
+
+    return point_on_ellipse_surface
+
+
 def test_k_nearest_neighbors():
     from napari_stress import measurements
     from napari.types import PointsData
