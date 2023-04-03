@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+
 def test_reconstruction(make_napari_viewer):
     from napari_stress import reconstruction, get_droplet_4d
-    import napari_process_points_and_surfaces as nppas
-    from skimage import measure
     from napari.layers import Layer
 
-
     viewer = make_napari_viewer()
-
-
     image = get_droplet_4d()[0][0]
     viewer.add_image(image)
 
@@ -63,8 +59,11 @@ def test_vector_tools():
     sampling_distance = 0.25
 
     vectors.normal_vectors_on_pointcloud(sphere.points())
-    normal_vectors = vectors.normal_vectors_on_surface((sphere.points(), np.asarray(sphere.faces())))
-    df_intensity = vectors.sample_intensity_along_vector(normal_vectors, image, sampling_distance=sampling_distance)
+    normal_vectors = vectors.normal_vectors_on_surface(
+        (sphere.points(),
+         np.asarray(sphere.faces())))
+    df_intensity = vectors.sample_intensity_along_vector(
+        normal_vectors, image, sampling_distance=sampling_distance)
 
     assert df_intensity.shape[0] == normal_vectors.shape[0]
     assert df_intensity.shape[1] == 1/sampling_distance
