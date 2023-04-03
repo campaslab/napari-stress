@@ -36,6 +36,7 @@ def test_reconstruction(make_napari_viewer):
         use_dask=True
         )
 
+
 def test_quadrature_point_reconstuction(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud, fit_spherical_harmonics
     from napari_stress import reconstruction
@@ -50,6 +51,7 @@ def test_quadrature_point_reconstuction(make_napari_viewer):
     # quadrature
     lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)[0]
     reconstruction.reconstruct_surface_from_quadrature_points(lebedev_points)
+
 
 def test_vector_tools():
     from napari_stress import vectors
@@ -67,9 +69,10 @@ def test_vector_tools():
     assert df_intensity.shape[0] == normal_vectors.shape[0]
     assert df_intensity.shape[1] == 1/sampling_distance
 
+
 def test_surface_tracing():
     from napari_stress import reconstruction
-    from skimage import filters, morphology, io, measure
+    from skimage import filters, morphology
     from vedo import shapes
 
     true_radius = 30
@@ -79,7 +82,7 @@ def test_surface_tracing():
     image[50 - 30:50 + 31,
           50 - 30:50 + 31,
           50 - 30:50 + 31] = morphology.ball(radius=true_radius)
-    blurry_sphere = filters.gaussian(image, sigma = 5)
+    blurry_sphere = filters.gaussian(image, sigma=5)
 
     # Put surface points on a slightly larger radius and add a bit of noise
     surf_points = shapes.Sphere().points()
@@ -87,11 +90,13 @@ def test_surface_tracing():
 
     # Test different fit methods (fancy/quick)
     fit_type = 'quick'
-    results = reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
-                                                trace_length=20,
-                                                sampling_distance=1.0,
-                                                selected_fit_type=fit_type,
-                                                remove_outliers=False)
+    results = reconstruction.trace_refinement_of_surface(
+        blurry_sphere, surf_points,
+        trace_length=20,
+        sampling_distance=1.0,
+        selected_fit_type=fit_type,
+        interpolation_method='linear',
+        remove_outliers=False)
     traced_points = results[0][0]
 
     radial_vectors = np.array([50, 50, 50])[None, :] - traced_points
@@ -99,10 +104,12 @@ def test_surface_tracing():
     assert np.allclose(true_radius, mean_radii, atol=1.5)
 
     fit_type = 'fancy'
-    results = reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
-                                                trace_length=10,
-                                                selected_fit_type=fit_type,
-                                                remove_outliers=False)
+    results = reconstruction.trace_refinement_of_surface(
+        blurry_sphere, surf_points,
+        trace_length=10,
+        selected_fit_type=fit_type,
+        interpolation_method='linear',
+        remove_outliers=False)
     traced_points = results[0][0]
     radial_vectors = np.array([50, 50, 50])[None, :] - traced_points
     mean_radii = np.linalg.norm(radial_vectors, axis=1).mean()
@@ -111,10 +118,12 @@ def test_surface_tracing():
 
     # Test outlier identification
     surf_points[0] += [0, 0, 10]
-    results= reconstruction.trace_refinement_of_surface(blurry_sphere, surf_points,
-                                                trace_length=10,
-                                                selected_fit_type=fit_type,
-                                                remove_outliers=True)
+    results = reconstruction.trace_refinement_of_surface(
+        blurry_sphere, surf_points,
+        trace_length=10,
+        selected_fit_type=fit_type,
+        interpolation_method='linear',
+        remove_outliers=True)
     traced_points = results[0][0]
     assert len(traced_points.squeeze()) < len(surf_points)
 
@@ -125,17 +134,20 @@ def test_surface_tracing():
     surf_points += (surf_points * true_radius + 2) + 50
 
     fit_type = 'fancy'
-    results= reconstruction.trace_refinement_of_surface(blurry_ring, surf_points,
-                                                trace_length=10,
-                                                sampling_distance=1,
-                                                selected_fit_type=fit_type,
-                                                selected_edge='surface',
-                                                remove_outliers=False)
+    results = reconstruction.trace_refinement_of_surface(
+        blurry_ring, surf_points,
+        trace_length=10,
+        sampling_distance=1,
+        selected_fit_type=fit_type,
+        selected_edge='surface',
+        remove_outliers=False)
 
     fit_type = 'quick'
-    results = reconstruction.trace_refinement_of_surface(blurry_ring, surf_points,
-                                                trace_length=10,
-                                                sampling_distance=1,
-                                                selected_fit_type=fit_type,
-                                                selected_edge='surface',
-                                                remove_outliers=False)
+    results = reconstruction.trace_refinement_of_surface(
+        blurry_ring, surf_points,
+        trace_length=10,
+        sampling_distance=1,
+        selected_fit_type=fit_type,
+        selected_edge='surface',
+        interpolation_method='linear',
+        remove_outliers=False)
