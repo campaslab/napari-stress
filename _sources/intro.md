@@ -27,6 +27,12 @@ After both of these are installed, install napari-stress into the environment yo
 pip install napari-stress
 ```
 
+## Acknowledgements
+
+If you use napari-stress in your research, please check the [acknowledgements and citation section](acknoledgement:citation) on further information.
+
+## Issues
+
 in your Anaconda prompt. If you encounter any issues during installation, please 
 
 * browse the [FAQ section](FAQ:installation) for known issues
