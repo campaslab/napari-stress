@@ -52,6 +52,7 @@ parts:
     - file: 02_toolboxes/01_droplet_reconstruction/Readme
       sections:
       - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox
+      - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox_code
     - file: 02_toolboxes/02_measure_stress/Readme
       sections:
       - file: 02_toolboxes/02_measure_stress/02_demo_stress_toolbox
