@@ -1,7 +1,43 @@
 import numpy as np
 import pandas as pd
-
+from napari_tools_menu import register_function
 from ._utils.frame_by_frame import frame_by_frame
+
+
+@register_function(menu="Points > Pairwise distances (n-STRESS)")
+@frame_by_frame
+def pairwise_point_distances(points: 'napari.types.PointsData',
+                             fitted_points: 'napari.types.PointsData'
+                             ) -> 'napari.types.VectorsData':
+    """
+    Calculate pairwise distance vectors between pointclouds.
+
+    For this to work, the two pointclouds must have the same
+    number of points. This can be the case, for example, when
+    one pointcloud is a fitted ellipsoid and the other is the
+    original pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+    fitted_points : PointsData
+
+    Raises
+    ------
+    ValueError
+        Both pointclouds must have the same number of points.
+
+    Returns
+    -------
+    VectorsData
+
+    """
+    if not len(points) == len(fitted_points):
+        raise ValueError('Both pointclouds must have same length, but had'
+                         f'{len(points)} and {len(fitted_points)}.')
+
+    delta = points - fitted_points
+    return np.stack([fitted_points, delta]).transpose((1, 0, 2))
 
 
 @frame_by_frame

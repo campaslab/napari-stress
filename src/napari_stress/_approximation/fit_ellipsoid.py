@@ -141,32 +141,3 @@ def expand_points_on_ellipse(fitted_ellipsoid: VectorsData,
 
     return points_on_fitted_ellipse
 
-
-@register_function(menu="Points > Pairwise distances (n-STRESS)")
-@frame_by_frame
-def pairwise_point_distances(points: PointsData,
-                             fitted_points: PointsData) -> VectorsData:
-    """
-    Calculate pairwise distances between pointclouds.
-
-    Parameters
-    ----------
-    points : PointsData
-    fitted_points : PointsData
-
-    Raises
-    ------
-    ValueError
-        Both pointclouds must have the same number of points.
-
-    Returns
-    -------
-    VectorsData
-
-    """
-    if not len(points) == len(fitted_points):
-        raise ValueError('Both pointclouds must have same length, but had'
-                         f'{len(points)} and {len(fitted_points)}.')
-
-    delta = points - fitted_points
-    return np.stack([fitted_points, delta]).transpose((1, 0, 2))
