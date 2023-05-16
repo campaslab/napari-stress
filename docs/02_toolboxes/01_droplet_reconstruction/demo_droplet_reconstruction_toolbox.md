@@ -8,13 +8,13 @@ The principal steps of the reconstruction procedure and the relevant settings ar
 
 **Preprocessing**
 
-![](imgs/demo_reconstruction_toolbox1.png)
+![](imgs/demo_reconstruction_toolbox1.PNG)
 
 * Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to. The fields `Voxel size [x,y,z]` denote the *current* voxel sizes of the data and the `Target voxel size` refers to the voxel size you'd like the data to have. The lower you set the latter, the slower the process will be.
 
 **Initial reconstruction**
 
-![](imgs/demo_reconstruction_toolbox2.png)
+![](imgs/demo_reconstruction_toolbox2.PNG)
 
 * `Image smoothing sigma`: Before proceeding to obtain a first segmented estimate for the outline of the droplet, it is typically processed with a gaussian blur. You can set the strength of this blur with this parameter.
 * `Smoothing iterations`: To avoid voxel-artifacts, the surface is smoothed with the [using the vedo library](https://vedo.embl.es/docs/vedo/mesh.html#Mesh.smooth). The more iterations you perform, the smoother the surface will be.
@@ -24,7 +24,7 @@ The principal steps of the reconstruction procedure and the relevant settings ar
 
 The refinement of the first selection of points consists of two principal steps and is performed several times - the number of iterations can be controlled with the `number of iterations` parameter:
 
-![](imgs/demo_reconstruction_toolbox3.png)
+![](imgs/demo_reconstruction_toolbox3.PNG)
 
 In each iteration, the following steps are done:
 * Resampling: The cartesian coordinates of the points are interpolated according to latitude and longitude. The resampled points are drawn according to a fibonacci-scheme. You can control the number of points that are sampled with the following parameters:

@@ -294,7 +294,7 @@ def comprehensive_analysis(pointcloud: PointsData,
                                                     show_progress=verbose)
 
     if maximal_distance is None:
-        maximal_distance = int(np.floor(GDM.max()))
+        maximal_distance = int(np.floor(np.nanmax(GDM[GDM != np.inf])))
 
     # Compute Overall total stress spatial correlations
     autocorrelations_total = measurements.correlation_on_surface(
