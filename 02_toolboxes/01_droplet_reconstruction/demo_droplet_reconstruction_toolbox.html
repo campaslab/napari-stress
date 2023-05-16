@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = '02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="7. Stress measurement" href="../02_measure_stress/Readme.html" />
+    <link rel="next" title="6.2. Droplet reconstruction from code" href="demo_droplet_reconstruction_toolbox_code.html" />
     <link rel="prev" title="6. Droplet reconstruction" href="Readme.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -191,6 +191,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="Readme.html">6. Droplet reconstruction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">6.1. Droplet reconstruction toolbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_droplet_reconstruction_toolbox_code.html">6.2. Droplet reconstruction from code</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02_measure_stress/Readme.html">7. Stress measurement</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -386,12 +387,12 @@ document.write(`
 <h2><span class="section-number">6.1.1. </span>Principal steps<a class="headerlink" href="#principal-steps" title="Permalink to this heading">#</a></h2>
 <p>The principal steps of the reconstruction procedure and the relevant settings are:</p>
 <p><strong>Preprocessing</strong></p>
-<p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox1.png" /></p>
+<p><img alt="" src="../../_images/demo_reconstruction_toolbox1.PNG" /></p>
 <ul class="simple">
 <li><p>Rescaling: Making data isotropic. The principal choice here is, to which voxel size the data should be rescaled to. The fields <code class="docutils literal notranslate"><span class="pre">Voxel</span> <span class="pre">size</span> <span class="pre">[x,y,z]</span></code> denote the <em>current</em> voxel sizes of the data and the <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">voxel</span> <span class="pre">size</span></code> refers to the voxel size you’d like the data to have. The lower you set the latter, the slower the process will be.</p></li>
 </ul>
 <p><strong>Initial reconstruction</strong></p>
-<p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox2.png" /></p>
+<p><img alt="" src="../../_images/demo_reconstruction_toolbox2.PNG" /></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Image</span> <span class="pre">smoothing</span> <span class="pre">sigma</span></code>: Before proceeding to obtain a first segmented estimate for the outline of the droplet, it is typically processed with a gaussian blur. You can set the strength of this blur with this parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Smoothing</span> <span class="pre">iterations</span></code>: To avoid voxel-artifacts, the surface is smoothed with the <a class="reference external" href="https://vedo.embl.es/docs/vedo/mesh.html#Mesh.smooth">using the vedo library</a>. The more iterations you perform, the smoother the surface will be.</p></li>
@@ -399,7 +400,7 @@ document.write(`
 </ul>
 <p><strong>Refinement</strong></p>
 <p>The refinement of the first selection of points consists of two principal steps and is performed several times - the number of iterations can be controlled with the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">iterations</span></code> parameter:</p>
-<p><img alt="" src="../../_images/demo_reconstruction_toolbox3.png" /></p>
+<p><img alt="" src="02_toolboxes/01_droplet_reconstruction/imgs/demo_reconstruction_toolbox3.PNG" /></p>
 <p>In each iteration, the following steps are done:</p>
 <ul class="simple">
 <li><p>Resampling: The cartesian coordinates of the points are interpolated according to latitude and longitude. The resampled points are drawn according to a fibonacci-scheme. You can control the number of points that are sampled with the following parameters:</p>
@@ -497,11 +498,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../02_measure_stress/Readme.html"
+       href="demo_droplet_reconstruction_toolbox_code.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">7. </span>Stress measurement</p>
+        <p class="prev-next-title"><span class="section-number">6.2. </span>Droplet reconstruction from code</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
