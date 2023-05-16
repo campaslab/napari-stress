@@ -26,6 +26,7 @@ parts:
   - caption: Examples
     numbered: True
     chapters:
+    - file: glossary/Readme
     - file: glossary/01_surface_reconstruction/Readme
       sections:
       - file: glossary/01_surface_reconstruction/01_demo_surface_reconstruction_code
