@@ -42,7 +42,7 @@ We will use a simple thresholding method to obtain a binary map of the droplet. 
 
 This should produce the following output:
 
-<img src="./_image_to_surface_imgs/recipe_image_to_surface6.png" width = "100%">
+![](./_image_to_surface_imgs/recipe_image_to_surface6.png)
 
 ## Surface extraction
 

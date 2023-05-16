@@ -4,7 +4,8 @@ This tutorial will demonstrate how to convert an existing intensity image with a
 
 | Image + surface data | Resulting pointcloud with curvatures |
 | --- | --- |
-|<img src="./_surface_to_curvature_imgs/surface_to_curvature1.png" width="100%"> |<img src="./_surface_to_curvature_imgs/surface_to_curvature5.gif" width="100%">|
+|![](./_surface_to_curvature_imgs/surface_to_curvature1.png) |![](./_surface_to_curvature_imgs/surface_to_curvature5.gif)|
+
 
 This tutorial consists of three elemental steps:
 
@@ -16,11 +17,11 @@ This tutorial consists of three elemental steps:
 
 One of the most suitable functions for this (especially for odd-shaped objects) is the Poission-disk algorithm. In Napari, it is available from `Tools > Points > Create points from surface using poisson disk sampling (open3d, nppas)`. It has the particular advantage of putting more points in regions of complicated shape.
 
-<img src="./_surface_to_curvature_imgs/surface_to_curvature2.png" width="50%">
+![](./_surface_to_curvature_imgs/surface_to_curvature2.png)
 
 You can also use this menu to increase the point density on the surface. The result should look like this:
 
-<img src="./_surface_to_curvature_imgs/surface_to_curvature3.png" width="100%">
+![](./_surface_to_curvature_imgs/surface_to_curvature3.png)
 
 ## Spherical harmonics expansion
 
@@ -30,21 +31,21 @@ Napari stress provides functionality for such an approximation in the tools-menu
 
 Napari-stress provides two different implementations of the approximation, `stress` and `shtools`. The former typically converges better.
 
-<img src="./_surface_to_curvature_imgs/surface_to_curvature4.png" width="50%">
+![](./_surface_to_curvature_imgs/surface_to_curvature4.png)
 
 It can make sense to play a bit with the `max_degree` parameter to get an understanding of the resulting quality. The output should look something like this (you may have to change the color of the pointcloud for better vision):
 
-<img src="../imgs/function_gifs/spherical_harmonics.gif" width="100%">
+![](./_surface_to_curvature_imgs/surface_to_curvature5.gif)
 
 ## Measureing curvature
 
 Lastly, you can use the spherical harmonics expansion to calculate curvatures (which directly translate to [anistropic stress](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract) on the surface). To apply this measurement, you first need to obtain a suitable set of sample locations. Napari-stress provides the [*Lebedev quadrature*](https://en.wikipedia.org/wiki/Lebedev_quadrature) points for this (`Tools > Points > Perform lebedev quadrature (n-Stress)`)
 
-<img src="./_surface_to_curvature_imgs/surface_to_curvature5.png" width="50%">
+![](./_surface_to_curvature_imgs/surface_to_curvature5.png)
 
 This creates an evenly spaced array of points on top of the previously determined spherical harmonics expansion:
 
-<img src="./_surface_to_curvature_imgs/surface_to_curvature5a.png" width="50%">
+![](./_surface_to_curvature_imgs/surface_to_curvature5a.png)
 
 *Note:*
 * *This function can only be applied to a pointcloud which is a result of a spherical harmonics expansion. Moreover, depending on the degree of the expansion, a minimum number of quadrature points (`number of quadrature points`) is required to reflect the complexity of the expansion.
