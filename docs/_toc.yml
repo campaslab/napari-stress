@@ -8,7 +8,22 @@ options:
   numbered: False
 
 parts:
-  - caption: Functions
+  - caption: Toolboxes
+    numbered: True
+    chapters:
+    - file: 02_toolboxes/Readme
+    - file: 02_toolboxes/01_droplet_reconstruction/Readme
+      sections:
+      - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox
+    - file: 02_toolboxes/02_measure_stress/Readme
+      sections:
+      - file: 02_toolboxes/02_measure_stress/02_demo_stress_toolbox
+        title: Usage from code
+      - file: 02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive
+        title: Interactive usage
+    - file: 02_toolboxes/03_analyze_everything/demo_analyze_everything
+
+  - caption: Examples
     numbered: True
     chapters:
     - file: glossary/01_surface_reconstruction/Readme
@@ -46,20 +61,6 @@ parts:
       - file: glossary/05_measure_curvature/02_demo_measure_curvature
         title: Interactive usage
 
-  - caption: Toolboxes
-    numbered: True
-    chapters:
-    - file: 02_toolboxes/01_droplet_reconstruction/Readme
-      sections:
-      - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox
-    - file: 02_toolboxes/02_measure_stress/Readme
-      sections:
-      - file: 02_toolboxes/02_measure_stress/02_demo_stress_toolbox
-        title: Usage from code
-      - file: 02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive
-        title: Interactive usage
-    - file: 02_toolboxes/03_analyze_everything/demo_analyze_everything
-
   - caption: Example workflows
     numbered: True
     chapters:
@@ -78,3 +79,4 @@ parts:
     chapters:
     - file: 05_FAQ/Installation
     - file: 05_FAQ/02_validation/analyze_validation
+    - file: 06_API/api
