@@ -9,7 +9,7 @@ import napari
 def deviation_from_ellipsoidal_mode(points: PointsData,
                                     max_degree:int=5,
                                     viewer: napari.Viewer = None) -> LayerDataTuple:
-    from napari_stress import approximation
+    from napari_stress import approximation, vectors
     from .._utils.fit_utils import Least_Squares_Harmonic_Fit
     from .._utils.coordinate_conversion import cartesian_to_elliptical
     from .._stress import sph_func_SPB as sph_f
@@ -20,7 +20,7 @@ def deviation_from_ellipsoidal_mode(points: PointsData,
     # calculate errors
     ellipsoid = approximation.least_squares_ellipsoid(points)
     ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, points)
-    errors = approximation.pairwise_point_distances(points, ellipsoid_points)[:, 1]
+    errors = vectors.pairwise_point_distances(points, ellipsoid_points)[:, 1]
     normals = approximation.normals_on_ellipsoid(ellipsoid_points)[:, 1]
     signed_errors = -1.*np.multiply(normals, errors).sum(axis=1)
 

@@ -68,7 +68,6 @@ parts:
     - file: 03_workflows/Image_to_surface
     - file: 03_workflows/Surface_to_curvature
     
-    
   - caption: Utility
     numbered: True
     chapters:
