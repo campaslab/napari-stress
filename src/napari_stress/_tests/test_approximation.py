@@ -85,16 +85,3 @@ def test_curvature_on_ellipsoid(make_napari_viewer):
     assert types._METADATAKEY_H0_ELLIPSOID in results[1]['metadata'].keys()
     assert types._METADATAKEY_MEAN_CURVATURE in results[1]['features'].keys()
 
-
-def test_pairwise_distance():
-    from napari_stress import approximation, get_droplet_point_cloud
-    pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
-
-    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
-    fitted_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
-
-    distances = approximation.pairwise_point_distances(pointcloud, fitted_points)
-
-if __name__ == '__main__':
-    import napari
-    test_ellipse_normals()

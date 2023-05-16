@@ -132,6 +132,7 @@ def comprehensive_analysis(pointcloud: PointsData,
     from .. import approximation
     from .. import measurements
     from .. import reconstruction
+    from .. import vectors
 
     from ..types import (_METADATAKEY_MEAN_CURVATURE,
                          _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
@@ -212,13 +213,13 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Evaluate fit quality
     # =========================================================================
     # Spherical harmonics
-    residue_spherical_harmonics = approximation.pairwise_point_distances(
+    residue_spherical_harmonics = vectors.pairwise_point_distances(
         pointcloud, fitted_pointcloud)
     residue_spherical_harmonics_norm = np.linalg.norm(
         residue_spherical_harmonics[:, 1], axis=1)
 
     # Ellipsoid
-    residue_ellipsoid = approximation.pairwise_point_distances(
+    residue_ellipsoid = vectors.pairwise_point_distances(
         pointcloud, ellipsoid_points)
     residue_ellipsoid_norm = np.linalg.norm(
         residue_ellipsoid[:, 1], axis=1)
