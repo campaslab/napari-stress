@@ -4,7 +4,8 @@ from napari_tools_menu import register_function
 from ._utils.frame_by_frame import frame_by_frame
 
 
-@register_function(menu="Points > Pairwise distances (n-STRESS)")
+@register_function(
+        menu="Points > Calculate pairwise distance vectors (n-STRESS)")
 @frame_by_frame
 def pairwise_point_distances(points: 'napari.types.PointsData',
                              fitted_points: 'napari.types.PointsData'
@@ -40,10 +41,12 @@ def pairwise_point_distances(points: 'napari.types.PointsData',
     return np.stack([fitted_points, delta]).transpose((1, 0, 2))
 
 
+@register_function(
+        menu="Points > Calculate normal vectors on pointcloud (n-STRESS, vedo)")
 @frame_by_frame
 def normal_vectors_on_pointcloud(
-    points: "napari.types.PointsData",
-) -> "napari.types.VectorsData":
+    points: "napari.types.PointsData"
+    ) -> "napari.types.VectorsData":
     """
     Calculate normal vectors on pointcloud.
 
@@ -65,10 +68,12 @@ def normal_vectors_on_pointcloud(
     return normals
 
 
+@register_function(
+        menu="Surfaces > Calculate normal vectors on surface (n-STRESS, vedo)")
 @frame_by_frame
 def normal_vectors_on_surface(
     surface: "napari.types.SurfaceData",
-) -> "napari.types.VectorsData":
+    ) -> "napari.types.VectorsData":
     """
     Calculate normal vectors on surface.
 
@@ -94,7 +99,7 @@ def sample_intensity_along_vector(
     image: "napari.types.ImageData",
     sampling_distance: float = 1.0,
     interpolation_method: str = "linear",
-) -> pd.DataFrame:
+    ) -> pd.DataFrame:
     """
     Sample intensity along sample_vectors of equal length.
 
