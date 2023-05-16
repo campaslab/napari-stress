@@ -22,7 +22,7 @@ def least_squares_ellipsoid(points: PointsData
     VectorsData: Major/minor axis of the ellipsoid
     """
     from .._utils.coordinate_conversion import polynomial_to_parameters3D
-    coefficients = solve_ellipsoid_polynomial(points)    
+    coefficients = _solve_ellipsoid_polynomial(points)    
 
     # convert results to VectorsData
     center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=coefficients)
@@ -36,7 +36,7 @@ def least_squares_ellipsoid(points: PointsData
 @frame_by_frame
 def normals_on_ellipsoid(points: PointsData) -> VectorsData:
     """Retrieve normal vector on ellipsoid points."""
-    coefficients = solve_ellipsoid_polynomial(points)
+    coefficients = _solve_ellipsoid_polynomial(points)
 
     A = coefficients.flatten()[0]
     B = coefficients.flatten()[1]	
@@ -63,7 +63,7 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
     return np.stack([points, grad_F_X_normed]).transpose((1,0,2))
 
 
-def solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
+def _solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
     """
     Fit ellipsoid polynomial equation.
     
