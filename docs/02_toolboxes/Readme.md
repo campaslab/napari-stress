@@ -1,4 +1,4 @@
-# About
+# Toolboxes
 
 To save you the trouble of going through lengthy workflows step by step to complete the STRESS-analysis (either from code or from the viewer), napari-stress provides some handy toolboxes that bundle up the biggest part of the functionality.
 

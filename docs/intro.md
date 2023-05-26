@@ -29,7 +29,7 @@ pip install napari-stress
 
 ## Acknowledgements
 
-If you use napari-stress in your research, please check the [acknowledgements and citation section](acknoledgement:citation) on further information.
+If you use napari-stress in your research, please check the [acknowledgements and citation section](acknowledgement:citation) on further information.
 
 ## Issues
 
