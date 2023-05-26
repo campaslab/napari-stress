@@ -13,7 +13,7 @@ parts:
     chapters:
     - file: 01_code_usage/code_usage
       sections: 
-      - file: 02_toolboxes/Readme
+      - file: 01_code_usage/02_toolboxes/Readme
         sections:
         - file: 01_code_usage/01_toolboxes/demo_droplet_reconstruction_toolbox_code
         - file: 01_code_usage/01_toolboxes/demo_anisotropic_stresses
@@ -29,13 +29,24 @@ parts:
 
     - file: 02_interactive_usage/interactive_usage
       sections:
-      - file: 02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox
-      - file: 02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive
+      - file: 02_interactive_usage/01_toolboxes/Readme
+        sections:
+        - file: 02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox
+        - file: 02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive
+
       - file: 02_interactive_usage/02_example_workflows/Readme
         sections:
         - file: 02_interactive_usage/02_example_workflows/demo_fit_ellipsoid_interactive
         - file: 02_interactive_usage/02_example_workflows/demo_surface_reconstruction_interactive
-        - file: 02_interactive_usage/02_example_workflows/
+        - file: 02_interactive_usage/02_example_workflows/demo_spherical_harmonics_interactive
+        - file: 02_interactive_usage/02_example_workflows/demo_measure_mean_curvature
+
+  - caption: Glossary
+    chapters:
+    - file: 03_glossary/01_spherical_harmonics/Readme
+      sections:
+      - file: 03_glossary/01_spherical_harmonics/01_spherical_harmonics
+      - file: 03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics
 
 
   - caption: API
