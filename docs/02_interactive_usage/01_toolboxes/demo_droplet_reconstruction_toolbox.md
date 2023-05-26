@@ -67,4 +67,4 @@ The droplet reconstruction toolbox yields a number of result layers:
 
 ## How to proceed
 
-In order to run the stress analysis, use the `Refined points` as an input for the [stress analysis toolbox](toolboxes:stress_toolbox)
+In order to run the stress analysis, use the `Refined points` as an input for the [stress analysis toolbox](toolboxes:stress_toolbox:stress_toolbox_interactive)

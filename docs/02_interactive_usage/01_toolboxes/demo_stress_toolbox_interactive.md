@@ -27,12 +27,12 @@ The settings require the following input:
 
 ## Analyzing the output
 
-The toolbox creates a number of layers when finished, some with attached features that can be displayed using the [feature visualization utilities](point_and_click.visualize_features) from napari-stress. These include:
+The toolbox creates a number of layers when finished, some with attached features that can be displayed using the [feature visualization utilities](point_and_click:visualize_features) from napari-stress. These include:
 
 * `Result of fit spherical harmonics`: Result of the spherical harmonics expansion. Contains the `fit_residues` feature which denotes the residual distances between the raw points and the input points.
 ![](./imgs/demo_stress_toolbox7.png)
 
-* `Result of expand points on ellipsoid`: Result of the [least-squares ellipsoidal](point_and_click.fit_ellipsoid.least_squares) fit. Contains the `fit_residues` feature which denotes the residual distances between the raw points and the input points.
+* `Result of expand points on ellipsoid`: Result of the [least-squares ellipsoidal](point_and_click:fit_ellipsoid:least_squares) fit. Contains the `fit_residues` feature which denotes the residual distances between the raw points and the input points.
 ![](./imgs/demo_stress_toolbox6.png)
 
 * `Result of least squares ellipsoid`: Vectors layer that visualizes the major axes of the fitted ellipsoid.

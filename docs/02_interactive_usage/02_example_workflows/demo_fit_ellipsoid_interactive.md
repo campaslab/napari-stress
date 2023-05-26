@@ -1,4 +1,5 @@
 (glossary:ellipse_fitting:interactive)=
+(point_and_click:fit_ellipsoid:least_squares)=
 # Ellipse fitting
 
 This tutorial shows how to handle ellipse-fitting in napari-stress. It covers the following functionality:
