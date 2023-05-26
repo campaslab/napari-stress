@@ -1,5 +1,5 @@
 (glossary:surface_reconstruction:interactive)=
-# Surface reconstruction: interactive
+# Surface reconstruction
 
 This tutorial will explain how to perform a surface reconstruction with napari-stress interactively from the napari viewer. This plugin implements the [respective function](https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.reconstructSurface) from the [vedo](https://vedo.embl.es) library. To get started, open your own data or use the provided sample data from napari-stress ([raw data source](https://github.com/campaslab/STRESS)):
 
@@ -28,8 +28,7 @@ Such surfaces typically consist of a large ammount of vertices. This behaviour c
 
 ![](../../imgs/viewer_screenshots/reconstruct_surface4.png)
 
-
-
+If you are interested in doing this from code, check out this [example notebook](glossary:surface_reconstruction:code)=
 
 
 

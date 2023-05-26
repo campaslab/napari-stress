@@ -1,7 +1,7 @@
 (glossary:measure_curvature:interactive)=
 # Measure curvature
 
-This tutorial explains how to measure [curvature](spherical_harmonics:measurements:mean_curvature) from a sperhical harmonics expansion. To do so, first create a spherical harmonics expansion as shownw in [this section](glossary:spherical_harmonics). To get the curvature from this you'll then have to perform a lebedev quadrature and then measure curvature.
+This tutorial explains how to measure [curvature](spherical_harmonics:measurements:mean_curvature) from a sperhical harmonics expansion. To do so, first create a spherical harmonics expansion as shown in [this section](glossary:spherical_harmonics). To get the curvature from this you'll then have to perform a lebedev quadrature and then measure curvature.
 
 ## Lebedev quadrature
 
@@ -15,8 +15,8 @@ Next, you can already measure the mean curvature on this surface with `Tools > M
 
 ![](imgs/demo_measure_curvature2.png)
 
-The results are then stored in the `layer.features`. To retrieve the actual curvature values, navigate to the console of the viewer (button in the lower left corner) and type `viewer.layers[-1].features` to display all features that are associated with the data:
+The results are then stored in the `layer.features`. In case the curvature values should not be displayed as colors on the pointcloud,  you can retrieve the values from the napari console by clicking the `>_` icon on the bottom left and typying the following command: `viewer.layers[-1].features['mean_curvature']`
 
 ![](imgs/demo_measure_curvature3.png)
 
-Type `viewer.layers[-1].features['Mean_curvature_at_lebedev_points']` to retrieve specifically the curvature values.
+Type  to retrieve specifically the curvature values.

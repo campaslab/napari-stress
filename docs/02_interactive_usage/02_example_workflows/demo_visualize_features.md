@@ -11,9 +11,9 @@ Napari-stress offers functionality to visualize measured data interactively in t
 
 To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (`File > Open Sample > napari-stress: Droplet pointcloud`).
 
-![](../imgs/viewer_screenshots/open_sample_droplet.png) 
+![](imgs/open_sample_droplet.png) 
 
-![](../imgs/viewer_screenshots/open_sample_droplet1.png)
+![](imgs/open_sample_droplet1.png)
 
 Create a spherical harmonics expansion with `Tools > Points > Fit spherical harmonics (n-STRESS)`:
 

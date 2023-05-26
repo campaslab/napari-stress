@@ -33,11 +33,11 @@ This section describes the implementation taken from the [vedo repository](https
 
 Similar to the napari-stress implementation, this returns a vectors layer:
 
-![](imgs/demo_fit_ellipsoid4.png)
+![](imgs/demo_fit_ellipsoid2.png)
 
 Again, you can use the expansion widget (`Tools > Points > Points > Expand point locations on ellipsoid (n-STRESS)`) to create a pointcloud from this:
 
-![](imgs/demo_fit_ellipsoid2.png)
+![](imgs/demo_fit_ellipsoid3.png)
 
 (fit_ellipsoid:mean_curvature)=
 ## Mean curvature
@@ -49,10 +49,10 @@ Lastly, you can measure mean curvature on the surface of this ellipse. To do so,
 You can also use the built-in [feature visualization widget](utility:visualize_features) to show, for instance, a hiostogram of the curvature on the surface.
 
 (fit_ellipsoid:normal_vectors)=
-## Normal vectors
+## Distances between pointcloud and approximation
 
-You can calculate the inwards-pointing normal vectors usingnapari-stress. For this, use the `Tools > Points > Calculate normals on ellipsoid (n-STRESS)` function. Simply pass the expanded ellipsoid points as input to get a vectors layer returned:
+You can calculate how well the ellipsoid approximates the pointcloud by calculating the pairwise distances between the input points and the approximated points. To do so, use the `Tools > Points > Calculate pairwise distance vectors (n-STRESS)` plugin from the tools menu. As input, you should select the originl and the approximated pointclouds. The result will be the following:
 
 ![](imgs/demo_fit_ellipsoid8.png)
 
-![](imgs/demo_fit_ellipsoid9.png)
+Measureing the lengths of these vectors will soon be possible.
