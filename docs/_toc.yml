@@ -39,7 +39,8 @@ parts:
         - file: 02_interactive_usage/02_example_workflows/demo_fit_ellipsoid_interactive
         - file: 02_interactive_usage/02_example_workflows/demo_surface_reconstruction_interactive
         - file: 02_interactive_usage/02_example_workflows/demo_spherical_harmonics_interactive
-        - file: 02_interactive_usage/02_example_workflows/demo_measure_mean_curvature
+        - file: 02_interactive_usage/02_example_workflows/demo_measure_curvature
+        - file: 02_interactive_usage/02_example_workflows/demo_visualize_features
 
   - caption: Glossary
     chapters:
@@ -48,84 +49,13 @@ parts:
       - file: 03_glossary/01_spherical_harmonics/01_spherical_harmonics
       - file: 03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics
 
+  - caption: FAQ
+    chapters:
+    - file: 04_FAQ/Installation
+    - file: 04_FAQ/Acknowledgement_and_citation
+    - file: 04_FAQ/02_validation/analyze_validation
 
   - caption: API
     chapters:
     - file: 06_API/approximation
     - file: 06_API/vectors
-
-# parts:
-#   - caption: Toolboxes
-#     numbered: True
-#     chapters:
-#     - file: 02_toolboxes/Readme
-#     - file: 02_toolboxes/01_droplet_reconstruction/Readme
-#       sections:
-#       - file: 02_toolboxes/01_droplet_reconstruction/demo_droplet_reconstruction_toolbox
-#     - file: 02_toolboxes/02_measure_stress/Readme
-#       sections:
-#       - file: 02_toolboxes/02_measure_stress/02_demo_stress_toolbox
-#         title: Usage from code
-#       - file: 02_toolboxes/02_measure_stress/03_demo_stress_toolbox_interactive
-#         title: Interactive usage
-#     - file: 02_toolboxes/03_analyze_everything/demo_analyze_everything
-
-#   - caption: Examples
-#     numbered: True
-#     chapters:
-#     - file: glossary/Readme
-#     - file: glossary/01_surface_reconstruction/Readme
-#       sections:
-#       - file: glossary/01_surface_reconstruction/01_demo_surface_reconstruction_code
-#         title: Usage from code
-#       - file: glossary/01_surface_reconstruction/02_demo_surface_reconstruction_interactive
-#         title: Interactive usage
-    
-#     - file: glossary/02_surface_tracing/Readme
-#       sections: 
-#       - file: glossary/02_surface_tracing/01_demo_surface_tracing
-#         title: Usage from code
-      
-#     - file: glossary/03_spherical_harmonics/Readme
-#       sections:
-#       - file: glossary/03_spherical_harmonics/01_spherical_harmonics
-#       - file: glossary/03_spherical_harmonics/02_analyzing_spherical_harmonics
-#       - file: glossary/03_spherical_harmonics/03_demo_spherical_harmonics_code
-#         title: Usage from code
-#       - file: glossary/03_spherical_harmonics/04_demo_spherical_harmonics_interactive
-#         title: Interactive usage
-        
-#     - file: glossary/04_fit_ellipsoid/Readme
-#       sections:
-#       - file: glossary/04_fit_ellipsoid/01_demo_fit_ellipsoid_code
-#         title: Usage from code
-#       - file: glossary/04_fit_ellipsoid/02_demo_fit_ellipsoid_interactive
-#         title: Interactive usage
-
-#     - file: glossary/05_measure_curvature/Readme
-#       sections:
-#       - file: glossary/05_measure_curvature/01_demo_analyze_spherical_harmonics
-#         title: Usage from code
-#       - file: glossary/05_measure_curvature/02_demo_measure_curvature
-#         title: Interactive usage
-
-#     numbered: True
-#     chapters:
-#     - file: 03_workflows/Image_to_surface
-#     - file: 03_workflows/Surface_to_curvature
-    
-#   - caption: Utility
-#     numbered: True
-#     chapters:
-#     - file: 04_utility/01_demo_visualize_features
-#     - file: 04_utility/02_demo_timelapse_processing
-    
-#   - caption: FAQ
-#     numbered: False
-#     chapters:
-#     - file: 05_FAQ/Installation
-#     - file: 05_FAQ/02_validation/analyze_validation
-  
-#   - caption: API
-#     - file: 06_API/approximation
-#     - file: 06_API/vectors
