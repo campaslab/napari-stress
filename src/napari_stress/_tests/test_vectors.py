@@ -39,7 +39,14 @@ def test_move_points():
 
     sphere = vedo.Sphere(r=10, res=100).points()
     normals = vectors.normal_vectors_on_pointcloud(sphere)
-    moved_points = vectors.relative_move_points_along_vector(sphere, normals, 0.5)
-    moved_points_length = np.linalg.norm(moved_points - sphere, axis=1)
+    moved_points_relative = vectors.relative_move_points_along_vector(
+        sphere, normals, 0.5)
+    moved_points_absolute = vectors.absolute_move_points_along_vector(
+        sphere, normals, 2)
+    moved_points_relative_length = np.linalg.norm(
+        moved_points_relative - sphere, axis=1)
+    moved_points_absolute_length = np.linalg.norm(
+        moved_points_absolute - sphere, axis=1)
 
-    assert np.allclose(moved_points_length, 0.5)
+    assert np.allclose(moved_points_relative_length, 0.5)
+    assert np.allclose(moved_points_absolute_length, 2)

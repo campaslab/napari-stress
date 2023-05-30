@@ -3,8 +3,35 @@ import pandas as pd
 from napari_tools_menu import register_function
 from ._utils.frame_by_frame import frame_by_frame
 
+
 @register_function(
-        menu="Points > Move point along vectors (n-STRESS)")
+        menu="Points > Move point along vectors by absolute value (n-STRESS)")
+@frame_by_frame
+def absolute_move_points_along_vector(points: "napari.types.PointsData",
+                                      vectors: "napari.types.VectorsData",
+                                      position: float = 1,
+                                      pointwise_position: np.ndarray = None
+                             ) -> "napari.types.PointsData":
+    """
+    Move points along vectors by an absolute value.
+
+    Args:
+        points (napari.types.PointsData): Points
+        vectors (napari.types.VectorsData): Vectors
+        position (float, optional): Position along vector. Defaults to 1.0.
+        pointwise_position (np.ndarray, optional): Position for each point.
+            Defaults to None. If given, this overrides the `position` argument.
+
+    Returns:
+        napari.types.PointsData: Moved points
+    """
+    vector_length = np.linalg.norm(vectors[:, 1], axis=1)[:, np.newaxis]
+    unit_vector = vectors[:, 1] / vector_length
+    return points + position * unit_vector
+
+
+@register_function(
+        menu="Points > Move point along vectors by relative factor (n-STRESS)")
 @frame_by_frame
 def relative_move_points_along_vector(points: "napari.types.PointsData",
                                       vectors: "napari.types.VectorsData",

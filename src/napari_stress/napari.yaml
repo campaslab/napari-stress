@@ -77,9 +77,12 @@ contributions:
     - id: napari-stress.normal_vectors_on_surface
       python_name: napari_stress._vectors:normal_vectors_on_surface
       title: Calculate normal vectors on surface
-    - id: napari-stress.move_point_along_vector
+    - id: napari-stress.move_point_along_vector_relative
       python_name: napari_stress._vectors:relative_move_points_along_vector
-      title: Move points along vector
+      title: Move points along vector (relative)
+    - id: napari-stress.move_point_along_vector_absolute
+      python_name: napari_stress._vectors:absolute_move_points_along_vector
+      title: Move points along vector (absolute)
 
     # Plotting
     - id: napari-stress.features_histogram
@@ -175,9 +178,12 @@ contributions:
     - command: napari-stress.normal_vectors_on_surface
       autogenerate: true
       display_name: Calculate normal vectors on surface
-    - command: napari-stress.move_point_along_vector
+    - command: napari-stress.move_point_along_vector_relative
       autogenerate: true
-      display_name: Move points along vector
+      display_name: Move points along vector (relative)
+    - command: napari-stress.move_point_along_vector_absolute
+      autogenerate: true
+      display_name: Move points along vector (absolute)
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data
