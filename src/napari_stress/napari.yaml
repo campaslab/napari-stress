@@ -70,6 +70,17 @@ contributions:
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
       title: Fit PCA ellipsoid to pointcloud and return major axis
 
+    # Vectors
+    - id: napari-stress.normal_vectors_on_pointcloud
+      python_name: napari_stress._vectors:normal_vectors_on_pointcloud
+      title: Calculate normal vectors on pointcloud
+    - id: napari-stress.normal_vectors_on_surface
+      python_name: napari_stress._vectors:normal_vectors_on_surface
+      title: Calculate normal vectors on surface
+    - id: napari-stress.move_point_along_vector
+      python_name: napari_stress._vectors:relative_move_points_along_vector
+      title: Move points along vector
+
     # Plotting
     - id: napari-stress.features_histogram
       python_name: napari_stress:FeaturesHistogramWidget
@@ -156,6 +167,17 @@ contributions:
     # Plotting
     - command: napari-stress.features_histogram
       display_name: Visualize features (histogram)
+
+    # Vectors
+    - command: napari-stress.normal_vectors_on_pointcloud
+      autogenerate: true
+      display_name: Calculate normal vectors on pointcloud
+    - command: napari-stress.normal_vectors_on_surface
+      autogenerate: true
+      display_name: Calculate normal vectors on surface
+    - command: napari-stress.move_point_along_vector
+      autogenerate: true
+      display_name: Move points along vector
 
   sample_data:
     - command: napari-stress.get_pointcloud_sample_data

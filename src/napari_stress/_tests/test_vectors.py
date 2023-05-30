@@ -30,3 +30,16 @@ def test_pairwise_point_distances():
 
     vector_legth = np.linalg.norm(pairwise_point_distances[:, 1], axis=1)
     assert np.allclose(vector_legth, 5)
+
+
+def test_move_points():
+    import vedo
+    from napari_stress import vectors
+    import numpy as np
+
+    sphere = vedo.Sphere(r=10, res=100).points()
+    normals = vectors.normal_vectors_on_pointcloud(sphere)
+    moved_points = vectors.relative_move_points_along_vector(sphere, normals, 0.5)
+    moved_points_length = np.linalg.norm(moved_points - sphere, axis=1)
+
+    assert np.allclose(moved_points_length, 0.5)
