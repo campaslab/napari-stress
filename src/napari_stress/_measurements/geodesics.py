@@ -95,6 +95,10 @@ def correlation_on_surface(
     """
     Calculate (auto-) correlation of features on surface.
 
+    This calculates the correlation of features on a surface with itself
+    (auto-correlation) or with another surface (cross-correlation).
+    If the two input surfaces are identical, this is the auto-correlation.
+
     Parameters
     ----------
     surface1 : SurfaceData
@@ -103,17 +107,11 @@ def correlation_on_surface(
     Returns
     -------
     dict
-        Dictionary with information about correlation between `feature1` and
-        `feature2` on a surface. The keys of the dictionary are:#
-            * `auto_corrs_microns_dists`: Distances for
-                which correlations were binned
-            * `auto_correlations_average`: Correlations
-                between averaged feature values
-            * `auto_correlations_normalized`: Normalized,
-                un-averaged correlations
-            * `auto_correlations_averaged_normalized`:
-                Normalized, averaged correlations
-
+        Dictionary with keys:
+            - auto_correlations_distances
+            - auto_correlations_average
+            - auto_correlations_normalized
+            - auto_correlations_averaged_normalized
     """
     if distance_matrix is None:
         distance_matrix = geodesic_distance_matrix(surface1)
@@ -222,22 +220,12 @@ def local_extrema_analysis(
     Returns
     -------
     List[LayerDataTuple]
-        local extrema: Points LayerDataTuple with extrema type
-        (maximum/minimum) stored in `features[local_max_and_min]`. The metadata
-        contain:
-            `nearest_min_max_dists`: The distances between every extremum and
-            its nearest other kind of extremum (Max-min distances + min-max
-            distances)
-            `nearest_min_max_dists`: Differene in feature value between
-            neighboring extrema
-            `min_max_pair_distances`: Mutual distances between all extrema
-            `min_max_pair_anisotropies`: Difference in feature expression
-            between all pairs of extrema
-        output_geodesics_min_max: Vectors LayerDataTuple with geodesic
-        distances between every minimum and its nearest maximum
-        output_geodesics_max_min: Vectors LayerDataTuple with geodesic
-        distances between every maximum and its nearest minimum
-
+        List of layer data tuples with features and metadata:
+            - local_max_and_min (features)
+            - nearest_min_max_dists (metadata)
+            - nearest_min_max_anisotropies (metadata)
+            - min_max_pair_distances (metadata)
+            - min_max_pair_anisotropies (metadata)
     """
     triangles = surface[1]
     feature = surface[2]
