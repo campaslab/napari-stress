@@ -5,12 +5,13 @@ import numpy as np
 def test_reconstruction(make_napari_viewer):
     from napari_stress import reconstruction, get_droplet_4d
     from napari.layers import Layer
+    import napari_stress
 
     viewer = make_napari_viewer()
     image = get_droplet_4d()[0][0]
     viewer.add_image(image)
 
-    widget = reconstruction.droplet_reconstruction_toolbox(viewer)
+    widget = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
 
     results = reconstruction.reconstruct_droplet(
