@@ -26,7 +26,7 @@ jobs:
     # Build the book
     - name: Build the book
       run: |
-        sphinx-build docs/ -b html
+        sphinx-build docs/ docs/_build/html -b html
     # Push the book's HTML to github-pages
     - name: GitHub Pages action
       uses: peaceiris/actions-gh-pages@v3.5.9
