@@ -7,7 +7,7 @@ from typing import List
 
 from functools import wraps
 import inspect
-from dask.distributed import Client
+from dask.distributed import Client, get_client
 
 import pandas as pd
 import tqdm
@@ -51,7 +51,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
         # start dask cluster client
         if use_dask:
             client = Client()
-            print('Dask client up an running', client, ' Log: https://localhost:8787')
+            print('Dask client up and running', client, f' Log: {client.dashboard_link}')
             jobs = []
 
         for t in frames:
