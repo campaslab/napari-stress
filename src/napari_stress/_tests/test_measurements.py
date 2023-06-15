@@ -200,6 +200,7 @@ def test_autocorrelation():
     n_frames = 10
     n_measurements = 100
 
+    np.random.seed(1)
     # create a set of features in multiple timepoints and add a bit more noise
     # in every frame - the autocorrelaiton should thus decrease monotonously
     frames = np.repeat(np.arange(n_frames), n_measurements)
