@@ -304,9 +304,6 @@ class TimelapseConverter:
         for key in layer_props.keys():
             _properties[key] = layer_props[key]
 
-        # Reminder: Each list entry is tuple (data, properties, type)
-        results = [None] * len(data)  # allocate list for results
-
         dtype = data[0, -1]
         result = [None] * 3
         result[0] = self.list_to_data_conversion_functions[layertype]([x for x in data[:, 0]])
