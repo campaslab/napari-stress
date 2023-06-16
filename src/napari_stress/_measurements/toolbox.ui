@@ -14,15 +14,19 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="4" column="0" colspan="2">
+    <widget class="QPushButton" name="pushButton_run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Input pointcloud</string>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QWidget" name="input_widget" native="true"/>
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
@@ -57,6 +61,22 @@
      </layout>
     </widget>
    </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QWidget" name="input_widget" native="true"/>
+   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
@@ -83,25 +103,12 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_run">
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="checkBox_use_dask">
      <property name="text">
-      <string>Run</string>
+      <string>Parallelize with dask (only timelapse)</string>
      </property>
     </widget>
-   </item>
-   <item row="4" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
