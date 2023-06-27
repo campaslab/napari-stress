@@ -42,6 +42,8 @@ class droplet_reconstruction_toolbox(QWidget):
         self.pushButton_run.clicked.connect(self._run)
         self.image_layer_select.changed.connect(self._set_scales)
 
+        self._set_scales()
+
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
         if event.type() == QEvent.ParentChange:
@@ -51,11 +53,14 @@ class droplet_reconstruction_toolbox(QWidget):
 
     def _set_scales(self):
         """Get scales from loaded data."""
-        scales = self.image_layer_select.value.scale
-        scales = scales[-3:]  # scales may be 4D
-        self.doubleSpinBox_voxelsize_x.setValue(scales[2])
-        self.doubleSpinBox_voxelsize_y.setValue(scales[1])
-        self.doubleSpinBox_voxelsize_z.setValue(scales[0])
+        try:
+            scales = self.image_layer_select.value.scale
+            scales = scales[-3:]  # scales may be 4D
+            self.doubleSpinBox_voxelsize_x.setValue(scales[2])
+            self.doubleSpinBox_voxelsize_y.setValue(scales[1])
+            self.doubleSpinBox_voxelsize_z.setValue(scales[0])
+        except Exception:
+            pass
 
     def _run(self):
         """Call analysis function."""
