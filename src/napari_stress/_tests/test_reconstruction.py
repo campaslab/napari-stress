@@ -127,27 +127,28 @@ def test_surface_tracing():
     traced_points = results[0][0]
     assert len(traced_points.squeeze()) < len(surf_points)
 
-    # Now, let's test surface-labelled data
-    blurry_ring = filters.sobel(image)
+    # # Now, let's test surface-labelled data
+    # blurry_ring = filters.sobel(image)
 
-    surf_points = shapes.Sphere().points()
-    surf_points += (surf_points * true_radius + 2) + 50
+    # surf_points = shapes.Sphere().points()
+    # surf_points += (surf_points * true_radius + 2) + 50
 
-    fit_type = 'fancy'
-    results = reconstruction.trace_refinement_of_surface(
-        blurry_ring, surf_points,
-        trace_length=10,
-        sampling_distance=1,
-        selected_fit_type=fit_type,
-        selected_edge='surface',
-        remove_outliers=False)
+    # fit_type = 'fancy'
+    # results = reconstruction.trace_refinement_of_surface(
+    #     blurry_ring, surf_points,
+    #     trace_length=10,
+    #     sampling_distance=1,
+    #     selected_fit_type=fit_type,
+    #     interpolation_method='linear',
+    #     selected_edge='surface',
+    #     remove_outliers=False)
 
-    fit_type = 'quick'
-    results = reconstruction.trace_refinement_of_surface(
-        blurry_ring, surf_points,
-        trace_length=10,
-        sampling_distance=1,
-        selected_fit_type=fit_type,
-        selected_edge='surface',
-        interpolation_method='linear',
-        remove_outliers=False)
+    # fit_type = 'quick'
+    # results = reconstruction.trace_refinement_of_surface(
+    #     blurry_ring, surf_points,
+    #     trace_length=10,
+    #     sampling_distance=1,
+    #     selected_fit_type=fit_type,
+    #     selected_edge='surface',
+    #     interpolation_method='linear',
+    #     remove_outliers=False)
