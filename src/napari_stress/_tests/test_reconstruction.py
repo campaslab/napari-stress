@@ -139,6 +139,7 @@ def test_surface_tracing():
         trace_length=10,
         sampling_distance=1,
         selected_fit_type=fit_type,
+        interpolation_method='linear',
         selected_edge='surface',
         remove_outliers=False)
 
