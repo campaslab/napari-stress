@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>308</height>
+        <height>312</height>
        </rect>
       </property>
       <attribute name="label">
@@ -119,7 +119,7 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>308</height>
+        <height>312</height>
        </rect>
       </property>
       <attribute name="label">
@@ -199,9 +199,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-53</y>
+        <y>0</y>
         <width>838</width>
-        <height>365</height>
+        <height>371</height>
        </rect>
       </property>
       <attribute name="label">
@@ -432,6 +432,26 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>doubleSpinBox_voxelsize_x</tabstop>
+  <tabstop>doubleSpinBox_voxelsize_y</tabstop>
+  <tabstop>doubleSpinBox_voxelsize_z</tabstop>
+  <tabstop>doubleSpinBox_target_voxelsize</tabstop>
+  <tabstop>doubleSpinBox_gaussian_blur</tabstop>
+  <tabstop>spinBox_n_vertices</tabstop>
+  <tabstop>spinBox_n_smoothing</tabstop>
+  <tabstop>spinBox_n_refinement_steps</tabstop>
+  <tabstop>doubleSpinBox_sampling_length</tabstop>
+  <tabstop>comboBox_fittype</tabstop>
+  <tabstop>comboBox_fluorescence_type</tabstop>
+  <tabstop>doubleSpinBox_trace_length</tabstop>
+  <tabstop>doubleSpinBox_sampling_distance</tabstop>
+  <tabstop>comboBox_interpolation_method</tabstop>
+  <tabstop>checkBox_remove_outliers</tabstop>
+  <tabstop>doubleSpinBox_outlier_tolerance</tabstop>
+  <tabstop>pushButton_run</tabstop>
+  <tabstop>checkBox_use_dask</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
