@@ -114,7 +114,7 @@ def normal_vectors_on_pointcloud(
     import vedo
 
     pointcloud = vedo.pointcloud.Points(points)
-    center_of_mass = pointcloud.centerOfMass()
+    center_of_mass = pointcloud.center_of_mass()
     pointcloud.compute_normals_with_pca(orientation_point=center_of_mass)
 
     normals = pointcloud.pointdata["Normals"]
