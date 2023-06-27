@@ -27,7 +27,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page_3">
       <property name="geometry">
@@ -44,6 +44,9 @@
       <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_voxelsize_x">
+         <property name="decimals">
+          <number>4</number>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
@@ -65,6 +68,9 @@
        </item>
        <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_target_voxelsize">
+         <property name="decimals">
+          <number>4</number>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
@@ -86,6 +92,9 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_voxelsize_y">
+         <property name="decimals">
+          <number>4</number>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
@@ -93,6 +102,9 @@
        </item>
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_voxelsize_z">
+         <property name="decimals">
+          <number>4</number>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
