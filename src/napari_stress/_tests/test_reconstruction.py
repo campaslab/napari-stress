@@ -9,14 +9,19 @@ def test_reconstruction(make_napari_viewer):
 
     viewer = make_napari_viewer()
     image = get_droplet_4d()[0][0]
-    viewer.add_image(image)
+    viewer.add_image(image, scale=[1.1, 1.1, 1.1], name='image')
 
     widget = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
 
+    assert widget.doubleSpinBox_voxelsize_x.value() == 1.1
+    assert widget.doubleSpinBox_voxelsize_y.value() == 1.1
+    assert widget.doubleSpinBox_voxelsize_z.value() == 1.1
+
     results = reconstruction.reconstruct_droplet(
         image,
         voxelsize=np.asarray([1.93, 1, 1]),
+        interpolation_method='linear',
         target_voxelsize=1
         )
 
@@ -29,6 +34,7 @@ def test_reconstruction(make_napari_viewer):
         image,
         voxelsize=np.asarray([1.93, 1, 1]),
         target_voxelsize=1,
+        interpolation_method='linear',
         resampling_length=1,
         use_dask=True
         )
