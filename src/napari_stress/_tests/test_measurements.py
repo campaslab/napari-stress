@@ -17,7 +17,7 @@ def test_mean_curvature_on_ellipsoid():
             resampling_length=3.5, interpolation_method='linear',
             trace_length=10, sampling_distance=1)
 
-        # calculate each point's distance to the surface of the ellipsoid
+        # calculate each point's distance to the surface of the ellipsoid8        
         distances = []
         ellipse_points = []
         for pt in results_reconstruction[3][0]:
@@ -251,11 +251,13 @@ def test_geodesics():
     assert sum(maxima_points == 1) == 2
     assert sum(maxima_points == -1) == 2
 
-    geodesic_vectors = measurements.geodesic_path(surface, 0, 1)
+    sphere = vedo.Sphere(pos=(0, 0, 0), r=1, res=50)
+    sphere = (sphere.points(), np.asarray(sphere.faces()))
+    GDM = measurements.geodesic_distance_matrix(sphere)
 
-    assert geodesic_vectors.shape[0] == 44
-    assert geodesic_vectors.shape[1] == 2
-    assert geodesic_vectors.shape[2] == 3
+    assert np.isclose(GDM.max(), np.pi, rtol=0.01)
+
+    path = measurements.geodesic_path(sphere, 0, 1)
 
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):

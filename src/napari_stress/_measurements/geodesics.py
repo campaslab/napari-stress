@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-import tqdm
 from napari.types import LayerDataTuple, SurfaceData, VectorsData
 from napari_tools_menu import register_function
 
@@ -9,7 +8,9 @@ from .._utils.frame_by_frame import frame_by_frame
 
 
 def geodesic_distance_matrix(
-    surface: SurfaceData, show_progress: bool = False
+    surface: SurfaceData,
+    show_progress: bool = False,
+    method: str = "dijkstra",
 ) -> np.ndarray:
     """
     Calculate a pairwise distance matrix for vertices of a surface.
@@ -20,69 +21,66 @@ def geodesic_distance_matrix(
     Parameters
     ----------
     surface : SurfaceData
+    show_progress : bool, optional
+        Show progress bar. The default is False.
+    method : str, optional
+        Method to use for geodesic distance calculation. The default is
+        "dijkstra". Other option is "heat". For more information, see
+        [pyFM](https://github.com/RobinMagnet/pyFM/tree/master)
 
     Returns
     -------
-    distance_matrix : np.ndarray
-        Triangular matrix with differences between vertex i and j located
-        at `distance_matrix[i, j]`
-
+    np.ndarray
+        Pairwise distance matrix.
     """
-    from pygeodesic import geodesic
+    from pyFM.mesh import TriMesh
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    surface_trimesh = TriMesh(surface[0], surface[1])
 
-    n_points = len(surface[0])
-    distance_matrix = np.zeros((n_points, n_points))
-    points = surface[0]
-
-    if show_progress:
-        iterator = tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances')
-    else:
-        iterator = enumerate(points)
-
-    for idx, pt in iterator:
-        distances, _ = geoalg.geodesicDistances(
-            [idx], np.arange(idx + 1, n_points))
-        distance_matrix[idx, idx + 1:] = distances
-        distance_matrix[idx + 1:, idx] = distances
+    if method == "dijkstra":
+        distance_matrix = surface_trimesh.get_geodesic(
+            verbose=show_progress,
+            dijkstra=True,)
+    elif method == "heat":
+        distance_matrix = surface_trimesh.get_geodesic(
+            verbose=show_progress,
+            robust=True)
 
     return distance_matrix
 
 
-@register_function(menu="Surfaces > Geodesic path (pygeodesics, n-STRESS)")
+@register_function(menu="Surfaces > Geodesic distance from vertex (vedo, n-STRESS)")
 @frame_by_frame
 def geodesic_path(surface: SurfaceData,
                   index_1: int,
-                  index_2: int) -> VectorsData:
+                  index_2) -> VectorsData:
     """
-    Calculate the geodesic path between two index-defined surface vertices .
+    Calculate the geodesic path from a vertex to all other vertices.
 
     Parameters
     ----------
     surface : SurfaceData
     index_1 : int
-        Index of start vertex
+        Index of vertex to calculate geodesic path from.
     index_2 : int
-        Index of destination vertex
+        Index of vertex to calculate geodesic path to.
 
     Returns
     -------
     VectorsData
 
     """
-    from pygeodesic import geodesic
+    import vedo
+    import numpy as np
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
-    distances, path = geoalg.geodesicDistance(index_1, index_2)
+    mesh = vedo.Mesh((surface[0], surface[1]))
+    path = mesh.geodesic(index_1, index_2)
 
-    # convert points to vectors from point to point
-    vectors = []
-    for i in range(len(path) - 1):
-        vectors.append(path[i + 1] - path[i])
-    vectors = np.asarray(vectors)
-    napari_vectors = np.stack([path[:-1], vectors]).transpose((1, 0, 2))
+    # convert path points to napari vector
+    points = np.copy(path.points())
+    vectors = np.diff(points, axis=0)
 
+    napari_vectors = np.stack([points[:-1], vectors]).transpose((1, 0, 2))
     return napari_vectors
 
 
