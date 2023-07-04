@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from napari_tools_menu import register_function
 from ._utils.frame_by_frame import frame_by_frame
+from napari.types import LayerDataTuple
 
 from typing import Annotated
 
@@ -175,6 +176,63 @@ def normal_vectors_on_surface(
     normals = np.stack([base, normals]).transpose((1, 0, 2))
 
     return normals
+
+
+@register_function(
+    menu="Measurement > Calculate intensities along normals (n-STRESS)")
+@frame_by_frame
+def _sample_intensity_along_vector(
+    sample_vectors: "napari.types.VectorsData",
+    image: "napari.types.ImageData",
+    sampling_distance: float = 1.0,
+    interpolation_method: str = "linear",
+) -> LayerDataTuple:
+    """
+    Sample intensity along sample_vectors of equal length.
+
+    This function exposes the `sample_intensity_along_vector` function
+    to napari. It returns a tuple of (sample_vectors, properties, 'vectors').
+    It requires the vectors to be of equal length.
+
+    Parameters
+    ----------
+    sample_vectors : VectorsData
+        sample_vectors along which to measure intensity
+    image : ImageData
+        Image to sample
+    sampling_distance : float, optional
+        Distance between samples, by default 1.0
+    interpolation_method : str, optional
+        Interpolation method, by default "linear"
+
+    Returns
+    -------
+    LayerDataTuple
+        Tuple of (sample_vectors, properties, 'vectors')
+    """
+    intensities = sample_intensity_along_vector(
+        sample_vectors,
+        image,
+        sampling_distance=sampling_distance,
+        interpolation_method=interpolation_method,
+    )
+    intensity_mean = intensities.mean(axis=1)
+    intensity_std = intensities.std(axis=1)
+    intensity_max = intensities.max(axis=1)
+    intensity_min = intensities.min(axis=1)
+
+    intensities['intensity_mean'] = intensity_mean
+    intensities['intensity_std'] = intensity_std
+    intensities['intensity_max'] = intensity_max
+    intensities['intensity_min'] = intensity_min
+
+    properties = {
+        'features': intensities,
+        'edge_color': 'intensity_max',
+        'edge_width': 1,
+        'edge_colormap': 'inferno'
+    }
+    return (sample_vectors, properties, 'vectors')
 
 
 def sample_intensity_along_vector(
