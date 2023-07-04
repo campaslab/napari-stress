@@ -31,9 +31,6 @@ class FeaturesHistogramWidget(HistogramWidget):
 
     def __init__(self, napari_viewer: napari.viewer.Viewer):
         super().__init__(napari_viewer)
-
-        self.x_axis_key = None
-
         self._key_selection_widget = magicgui(
             self._set_axis_keys,
             x_axis_key={"choices": self._get_valid_axis_keys},
