@@ -1,4 +1,4 @@
-__version__ = "0.2.3"
+__version__ = "0.2.5"
 
 from . import _measurements as measurements
 from . import _approximation as approximation

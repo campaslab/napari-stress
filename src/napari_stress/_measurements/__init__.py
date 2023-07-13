@@ -21,5 +21,5 @@ from .geodesics import (geodesic_distance_matrix,
                         local_extrema_analysis)
 
 from .stresses import anisotropic_stress, tissue_stress_tensor, maximal_tissue_anisotropy
-from .toolbox import stress_analysis_toolbox, comprehensive_analysis
+from .toolbox import comprehensive_analysis
 from .measurements import distance_to_k_nearest_neighbors

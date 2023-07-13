@@ -78,7 +78,8 @@ class stress_analysis_toolbox(QWidget):
             self.layer_select.value.data,
             max_degree=self.spinBox_max_degree.value(),
             n_quadrature_points=int(self.comboBox_quadpoints.currentData()),
-            gamma=self.doubleSpinBox_gamma.value()
+            gamma=self.doubleSpinBox_gamma.value(),
+            use_dask=self.checkBox_use_dask.isChecked()
             )
 
         for layer in results:

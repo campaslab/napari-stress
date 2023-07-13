@@ -13,6 +13,10 @@ def least_squares_ellipsoid(points: PointsData
     """
     Fit ellipsoid to points with a last-squares approach.
 
+    This function takes a pointcloud and fits an ellipsoid to it using a
+    least-squares approach. The ellipsoid is returned as a set of vectors
+    representing the major and minor axes of the ellipsoid.
+
     Parameters
     ----------
     points : PointsData
@@ -37,7 +41,20 @@ def least_squares_ellipsoid(points: PointsData
 @register_function(menu="Points > Calculate normals on ellipsoid (n-STRESS)")
 @frame_by_frame
 def normals_on_ellipsoid(points: PointsData) -> VectorsData:
-    """Retrieve normal vector on ellipsoid points."""
+    """
+    Fits an ellipsoid and calculates the normals vectors.
+
+    This function takes a pointcloud and calculates the normals on the
+    ellipsoid fitted to the pointcloud.
+
+    Parameters
+    ----------
+    points : PointsData
+
+    Returns
+    -------
+    VectorsData: Normals on the ellipsoid
+    """
     coefficients = _solve_ellipsoid_polynomial(points)
 
     A = coefficients.flatten()[0]

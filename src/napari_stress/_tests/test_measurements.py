@@ -191,6 +191,7 @@ def test_spatiotemporal_autocorrelation():
     measurements.spatio_temporal_autocorrelation(surfaces=surfaces_4d,
                                                  distance_matrix=distance_matrix)
 
+
 def test_autocorrelation():
     from napari_stress import measurements
     import numpy as np
@@ -199,6 +200,7 @@ def test_autocorrelation():
     n_frames = 10
     n_measurements = 100
 
+    np.random.seed(1)
     # create a set of features in multiple timepoints and add a bit more noise
     # in every frame - the autocorrelaiton should thus decrease monotonously
     frames = np.repeat(np.arange(n_frames), n_measurements)
@@ -213,6 +215,7 @@ def test_autocorrelation():
 
     gradient = np.gradient(measurements.temporal_autocorrelation(df, feature='feature'))
     assert np.all(gradient < 0)
+
 
 def test_haversine():
     from napari_stress import measurements
@@ -257,24 +260,26 @@ def test_geodesics():
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud, measurements)
+    import napari_stress
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud()[0]
     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
 
-    widget = measurements.stress_analysis_toolbox(viewer)
+    widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
 
     widget._run()
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud_4d, measurements)
+    import napari_stress
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
     viewer.add_points(pointcloud[0], **pointcloud[1])
 
-    widget = measurements.stress_analysis_toolbox(viewer)
+    widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
 
     widget._run()
