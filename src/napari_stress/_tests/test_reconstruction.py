@@ -20,9 +20,10 @@ def test_reconstruction(make_napari_viewer):
 
     results = reconstruction.reconstruct_droplet(
         image,
-        voxelsize=np.asarray([1.93, 1, 1]),
+        voxelsize=np.asarray([4, 2, 2]),
         interpolation_method='linear',
-        target_voxelsize=1
+        target_voxelsize=2,
+        use_dask=True
         )
 
     for result in results:
