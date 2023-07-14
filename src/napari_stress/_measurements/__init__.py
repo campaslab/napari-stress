@@ -23,4 +23,4 @@ from .geodesics import (geodesic_distance_matrix,
 from .stresses import anisotropic_stress, tissue_stress_tensor, maximal_tissue_anisotropy
 from .toolbox import comprehensive_analysis
 from .measurements import distance_to_k_nearest_neighbors
-from .intensity import sample_intensity_along_vector
+from .intensity import sample_intensity_along_vector, measure_intensity_on_surface

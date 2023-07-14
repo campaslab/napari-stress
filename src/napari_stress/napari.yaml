@@ -61,6 +61,14 @@ contributions:
       python_name: napari_stress._measurements.toolbox:stress_analysis_toolbox
       title: Stress analysis toolbox
 
+    # Other measurements
+    - id: napari-stress.measure_intensity_along_normals
+      python_name: napari_stress._measurements.intensity:_sample_intensity_along_vector
+      title: Measure intensity along normals
+    - id: napari-stress.measure_intensity_on_surface
+      python_name: napari_stress._measurements.intensity:_measure_intensity_on_surface
+      title: Measure intensity on a surface
+
     # Ellipsoids
     - id: napari-stress.fit_ellipsoid_points
       python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
@@ -119,25 +127,32 @@ contributions:
       autogenerate: True
       display_name: Lebedev quadrature
 
-    # Measurement
+    # Measurement: stresses
     - command: napari-stress.measure_curvature
       autogenerate: true
       display_name: Measure curvature
     - command: napari-stress.gauss_bonnet_test
       autogenerate: true
       display_name: Measure Gauss-Bonnet error
-    - command: napari-stress.curvature_on_ellipsoid
-      autogenerate: true
-      display_name: Mean curvature on ellipsoid
-
-    # Measurement: stresses
     - command: napari-stress.measure_anisotropic_stresses
       autogenerate: true
       display_name: Measure tissue and cell-scale stresses
     - command: napari-stress.stress_analysis_toolbox
       autogenerate: false
       display_name: Stress analysis toolbox
+    
+    # Other measurementrs
+    - command: napari-stress.curvature_on_ellipsoid
+      autogenerate: true
+      display_name: Mean curvature on ellipsoid
+    - command: napari-stress.measure_intensity_along_normals
+      autogenerate: true
+      display_name: Measure intensity along normals
+    - command: napari-stress.measure_intensity_on_surface
+      autogenerate: true
+      display_name: Measure intensity on surface
 
+    # Reconstruction
     - command: napari-stress.trace_refine_surface
       autogenerate: true
       display_name: Trace-refine surface points

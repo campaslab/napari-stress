@@ -4,9 +4,121 @@ import pandas as pd
 import numpy as np
 from .._utils.frame_by_frame import frame_by_frame
 
+@register_function(
+    menu="Measurement > Measure intensities on surface (n-STRESS)")
+@frame_by_frame
+def _measure_intensity_on_surface(
+    surface: "napari.types.SurfaceData",
+    image: "napari.types.ImageData",
+    measurement_range: float = 1.0,
+    sampling_distance: float = 0.5,
+    center: bool = True,
+    interpolation_method: str = "linear"
+) -> LayerDataTuple:
+    """
+    Measure intensity on surface.
+
+    This function exposes the `measure_intensity_on_surface` function
+    to napari. It returns a tuple of (surface, properties, 'surface').
+
+    Parameters
+    ----------
+    surface : SurfaceData
+    image : ImageData
+    measurement_range : float, optional
+        Range of measurement, by default 1.0. This determines in which
+        range around the surface the intensity is measured.
+    sampling_distance : float, optional
+        Distance between samples, by default 0.5. This determines how many samples
+        are taken in the measurement range. Needs to be smaller than measurement_range.
+    center : bool, optional
+        Center normal vectors on surface, by default True. If set to False, the
+        normal vectors point away from the surface so that the intensity is measured
+        only on one side of the surface.
+    interpolation_method : str, optional
+        Interpolation method, by default "linear"
+
+    Returns
+    -------
+    LayerDataTuple
+        Tuple of (surface, properties, 'surface')
+    """
+    intensities = measure_intensity_on_surface(surface,
+                                               image,
+                                               measurement_range=measurement_range,
+                                               sampling_distance=sampling_distance,
+                                               center=center,
+                                               interpolation_method=interpolation_method)
+
+    intensity_mean = intensities.mean(axis=1)
+    intensity_std = intensities.std(axis=1)
+    intensity_max = intensities.max(axis=1)
+    intensity_min = intensities.min(axis=1)
+
+    intensities['intensity_mean'] = intensity_mean
+    intensities['intensity_std'] = intensity_std
+    intensities['intensity_max'] = intensity_max
+    intensities['intensity_min'] = intensity_min
+
+    properties = {
+        'metadata': {'features': intensities},
+        'colormap': 'inferno'
+    }
+
+    surface = list(surface)
+    surface[2] = intensities['intensity_max'].values
+
+    return (surface, properties, 'surface')   
+
+
+def measure_intensity_on_surface(
+    surface: "napari.types.SurfaceData",
+    image: "napari.types.ImageData",
+    measurement_range: float = 1.0,
+    sampling_distance: float = 0.5,
+    center: bool = True,
+    interpolation_method: str = "linear"
+) -> pd.DataFrame:
+    """
+    Measure intensity on surface.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+    image : ImageData
+    measurement_range : float, optional
+        Range of measurement, by default 1.0. This determines in which
+        range around the surface the intensity is measured.
+    sampling_distance : float, optional
+        Distance between samples, by default 0.5. This determines how many samples
+        are taken in the measurement range. Needs to be smaller than measurement_range.
+    center : bool, optional
+        Center normal vectors on surface, by default True. If set to False, the
+        normal vectors point away from the surface so that the intensity is measured
+        only on one side of the surface.
+    interpolation_method : str, optional
+        Interpolation method, by default "linear"
+
+    Returns
+    -------
+    pd.DataFrame
+        Intensity values
+    """
+    from .._vectors import normal_vectors_on_surface
+
+    normal_vectors = normal_vectors_on_surface(surface,
+                                               length_multiplier=measurement_range,
+                                               center=True)
+    intensities = sample_intensity_along_vector(normal_vectors,
+                                                image,
+                                                sampling_distance=sampling_distance,
+                                                interpolation_method=interpolation_method)
+
+    return intensities
+
 
 @register_function(
-    menu="Measurement > Calculate intensities along normals (n-STRESS)")
+    menu="Measurement > Measure intensities along normals (n-STRESS)")
 @frame_by_frame
 def _sample_intensity_along_vector(
     sample_vectors: "napari.types.VectorsData",
@@ -54,7 +166,7 @@ def _sample_intensity_along_vector(
     intensities['intensity_min'] = intensity_min
 
     properties = {
-        'features': intensities,
+        'metadata': {'features': intensities},
         'edge_color': 'intensity_max',
         'edge_width': 1,
         'edge_colormap': 'inferno'
