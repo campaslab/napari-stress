@@ -49,8 +49,12 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
 
         # start dask cluster client
         if use_dask:
-            client = Client()
-            print('Dask client up and running', client, f' Log: {client.dashboard_link}')
+            try:
+                client = get_client()
+                print('Dask client already running', client, f' Log: {client.dashboard_link}')
+            except ValueError:
+                client = Client()
+                print('Dask client up and running', client, f' Log: {client.dashboard_link}')
             jobs = []
 
         for t in frames:
@@ -61,6 +65,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
                 _args[idx] = _args[idx][t]
 
             if use_dask:
+                #args_futures = [client.scatter(arg) for arg in _args]
                 jobs.append(client.submit(function, *_args, **kwargs))
             else:
                 results[t] = function(*_args, **kwargs)
@@ -68,7 +73,6 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
         if use_dask:
             # gather results
             results = client.gather(jobs)
-            client.close()
 
         return converter.list_of_data_to_data(results, sig.return_annotation)
     return wrapper
