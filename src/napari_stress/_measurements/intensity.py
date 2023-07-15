@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from .._utils.frame_by_frame import frame_by_frame
 
+
 @register_function(
     menu="Measurement > Measure intensities on surface (n-STRESS)")
 @frame_by_frame
@@ -166,7 +167,7 @@ def _sample_intensity_along_vector(
     intensities['intensity_min'] = intensity_min
 
     properties = {
-        'metadata': {'features': intensities},
+        'features': intensities,
         'edge_color': 'intensity_max',
         'edge_width': 1,
         'edge_colormap': 'inferno'
