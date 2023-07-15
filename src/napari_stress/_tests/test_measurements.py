@@ -13,13 +13,19 @@ def test_intensity_measurement_on_normals():
 
     surface = frame_by_frame(nppas.label_to_surface)(droplet_binary, 1)
     surface_smooth = frame_by_frame(nppas.smooth_surface)(surface)
+    surface_decimated = frame_by_frame(nppas.decimate_quadric)(surface, number_of_vertices = 1000)
 
-    # measure intensity
-    normals = vectors.normal_vectors_on_surface(surface_smooth, length_multiplier=5, center=True)
+    # measure intensity on normal vectors
+    normals = vectors.normal_vectors_on_surface(surface_decimated, length_multiplier=5, center=True)
     vectors_LDtuple = measurements.intensity._sample_intensity_along_vector(normals, droplet_rescaled)
-
     assert len(vectors_LDtuple[0]) == len(normals)
     assert 'intensity_mean' in vectors_LDtuple[1]['features'].keys()
+
+    # measure intensity directly on surface
+    intensities = measurements.intensity._measure_intensity_on_surface(surface_decimated,
+                                                                       droplet_rescaled)
+    assert len(intensities[0]) == len(surface_decimated[0])
+    assert 'intensity_mean' in intensities['metadata']['features'].keys()
 
 
 def test_mean_curvature_on_ellipsoid():
