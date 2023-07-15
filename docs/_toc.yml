@@ -26,6 +26,7 @@ parts:
         - file: 01_code_usage/02_example_workflows/demo_surface_tracing
         - file: 01_code_usage/02_example_workflows/demo_spherical_harmonics_code
         - file: 01_code_usage/02_example_workflows/demo_timelapse_processing
+        - file: 01_code_usage/02_example_workflows/demo_measure_intensity_on_surface
 
     - file: 02_interactive_usage/interactive_usage
       sections:
