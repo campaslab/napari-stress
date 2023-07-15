@@ -60,3 +60,5 @@ parts:
     chapters:
     - file: 06_API/approximation
     - file: 06_API/vectors
+    - file: 06_API/measurements
+    - file: 06_API/reconstruction
