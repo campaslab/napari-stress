@@ -57,26 +57,6 @@ def test_quadrature_point_reconstuction(make_napari_viewer):
     reconstruction.reconstruct_surface_from_quadrature_points(lebedev_points)
 
 
-def test_vector_tools():
-    from napari_stress import vectors
-    import vedo
-    import numpy as np
-
-    sphere = vedo.Sphere(r=10, pos=(50, 50, 50))
-    image = np.random.rand(100, 100, 100)
-    sampling_distance = 0.25
-
-    vectors.normal_vectors_on_pointcloud(sphere.points())
-    normal_vectors = vectors.normal_vectors_on_surface(
-        (sphere.points(),
-         np.asarray(sphere.faces())))
-    df_intensity = vectors.sample_intensity_along_vector(
-        normal_vectors, image, sampling_distance=sampling_distance)
-
-    assert df_intensity.shape[0] == normal_vectors.shape[0]
-    assert df_intensity.shape[1] == 1/sampling_distance
-
-
 def test_surface_tracing():
     from napari_stress import reconstruction
     from skimage import filters, morphology

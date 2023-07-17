@@ -2,6 +2,33 @@
 import numpy as np
 
 
+def test_intensity_measurement_on_normals():
+    from napari_stress import vectors, measurements, sample_data, frame_by_frame
+    import napari_segment_blobs_and_things_with_membranes as nsbatwm
+    import napari_process_points_and_surfaces as nppas
+
+    droplet = sample_data.get_droplet_4d()[0][0]
+    droplet_rescaled = frame_by_frame(nsbatwm.rescale)(droplet, scale_x=1, scale_y=1, scale_z=2)
+    droplet_binary = frame_by_frame(nsbatwm.threshold_otsu)(droplet_rescaled)
+
+    surface = frame_by_frame(nppas.label_to_surface)(droplet_binary, 1)
+    surface_smooth = frame_by_frame(nppas.smooth_surface)(surface)
+    surface_decimated = frame_by_frame(nppas.decimate_quadric)(surface_smooth,
+                                                               number_of_vertices = 1000)
+
+    # measure intensity on normal vectors
+    normals = vectors.normal_vectors_on_surface(surface_decimated, length_multiplier=5, center=True)
+    vectors_LDtuple = measurements.intensity._sample_intensity_along_vector(normals, droplet_rescaled)
+    assert len(vectors_LDtuple[0]) == len(normals)
+    assert 'intensity_mean' in vectors_LDtuple[1]['features'].keys()
+
+    # measure intensity directly on surface
+    intensities = measurements.intensity._measure_intensity_on_surface(surface_decimated,
+                                                                       droplet_rescaled)
+    assert len(intensities[0][2]) == len(surface_decimated[0])
+    assert 'intensity_mean' in intensities[1]['metadata']['features'][0].keys()
+
+
 def test_mean_curvature_on_ellipsoid():
     """Test that the mean curvature is computed correctly."""
     from napari_stress import reconstruction, sample_data, measurements

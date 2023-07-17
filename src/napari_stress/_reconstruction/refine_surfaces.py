@@ -97,6 +97,7 @@ def trace_refinement_of_surface(
 
     """
     from .. import _vectors as vectors
+    from .._measurements.intensity import sample_intensity_along_vector
     from .._measurements.measurements import distance_to_k_nearest_neighbors
 
     if isinstance(selected_fit_type, str):
@@ -125,7 +126,7 @@ def trace_refinement_of_surface(
     vector_step = trace_vectors / n_samples
 
     # measure intensity along the vectors
-    intensity_along_vector = vectors.sample_intensity_along_vector(
+    intensity_along_vector = sample_intensity_along_vector(
         np.stack([start_points, trace_vectors]).transpose((1, 0, 2)),
         intensity_image,
         sampling_distance=sampling_distance,
