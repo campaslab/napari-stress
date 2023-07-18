@@ -100,6 +100,12 @@ class stress_analysis_toolbox(QWidget):
 
     def _run(self):
         """Call analysis function."""
+        # Prepare before analysis
+        from .._stress import lbdv_info
+        _ = lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
+                      Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
+
+        # Run analysis
         results = comprehensive_analysis(
             self.layer_select.value.data,
             max_degree=self.spinBox_max_degree.value(),
