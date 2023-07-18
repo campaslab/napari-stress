@@ -63,7 +63,7 @@ class droplet_reconstruction_toolbox(QWidget):
         except Exception:
             pass
 
-    def _export_settings(self):
+    def _export_settings(self, file_name: str = None):
         """
         Export reconstruction parameters to YAML file.
         """
@@ -86,15 +86,16 @@ class droplet_reconstruction_toolbox(QWidget):
             'interpolation_method': self.comboBox_interpolation_method.currentText(),
             'outlier_tolerance': self.doubleSpinBox_outlier_tolerance.value(),
             'remove_outliers': self.checkBox_remove_outliers.isChecked()}
-        export_settings(reconstruction_parameters, self)
 
-    def _import_settings(self):
+        export_settings(reconstruction_parameters, self, file_name=file_name)
+
+    def _import_settings(self, file_name: str = None):
         """
         Import reconstruction parameters from YAML file.
         """
         from .._utils.import_export_settings import import_settings
 
-        reconstruction_parameters = import_settings(self)
+        reconstruction_parameters = import_settings(self, file_name=file_name)
 
         self.doubleSpinBox_voxelsize_z.setValue(reconstruction_parameters['voxelsize'][0])
         self.doubleSpinBox_voxelsize_y.setValue(reconstruction_parameters['voxelsize'][1])
