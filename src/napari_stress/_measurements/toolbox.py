@@ -53,6 +53,32 @@ class stress_analysis_toolbox(QWidget):
         # connect buttons
         self.pushButton_run.clicked.connect(self._run)
         self.spinBox_max_degree.valueChanged.connect(self._check_minimal_point_number)
+        self.pushButton_import.clicked.connect(self._import_settings)
+        self.pushButton_export.clicked.connect(self._export_settings)
+
+    def _import_settings(self, file_name: str = None):
+        """
+        Import settings from yaml file.
+        """
+        from .._utils.import_export_settings import import_settings
+
+        settings = import_settings(parent=self, file_name=file_name)
+        if settings:
+            self.spinBox_max_degree.setValue(settings['max_degree'])
+            self.comboBox_quadpoints.setCurrentIndex(
+                self.comboBox_quadpoints.findData(settings['n_quadrature_points']))
+            self.doubleSpinBox_gamma.setValue(settings['gamma'])
+
+    def _export_settings(self, file_name: str = None):
+        """
+        Export settings to yaml file.
+        """
+        from .._utils.import_export_settings import export_settings
+
+        settings = {'max_degree': self.spinBox_max_degree.value(),
+                    'n_quadrature_points': self.comboBox_quadpoints.currentData(),
+                    'gamma': self.doubleSpinBox_gamma.value()}
+        export_settings(settings, parent=self, file_name=file_name)
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
@@ -74,6 +100,12 @@ class stress_analysis_toolbox(QWidget):
 
     def _run(self):
         """Call analysis function."""
+        # Prepare before analysis
+        from .. import stress_backend
+        _ = stress_backend.lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
+                                     Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
+
+        # Run analysis
         results = comprehensive_analysis(
             self.layer_select.value.data,
             max_degree=self.spinBox_max_degree.value(),

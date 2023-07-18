@@ -38,7 +38,15 @@ def test_reconstruction(make_napari_viewer):
         interpolation_method='linear',
         resampling_length=1,
         use_dask=True
-        )
+    )
+
+    # test saving/loading settings
+    widget._export_settings(file_name='test.yaml')
+    widget2 = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(viewer)
+    widget2._import_settings(file_name='test.yaml')
+    assert widget2.doubleSpinBox_voxelsize_x.value() == 1.1
+    assert widget2.doubleSpinBox_voxelsize_y.value() == 1.1
+    assert widget2.doubleSpinBox_voxelsize_z.value() == 1.1
 
 
 def test_quadrature_point_reconstuction(make_napari_viewer):
