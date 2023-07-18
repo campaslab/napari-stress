@@ -367,8 +367,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Analyze everything</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-data">Load the data</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-dimensions">Data dimensions</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#droplet-reconstruction-parameters">Droplet reconstruction parameters</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-analysis-parameters">Stress analysis parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-parameters">Analysis parameters</a></li>
 </ul>
 </li>
 </ul>
@@ -410,13 +409,13 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analyze-everything">
 <span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this heading">#</a></h1>
-<p>This notebook demonstrates how to run a complete STRESS analysis in a few lines of code and produce all relevant output graphs. If you want to download this notebook and execute it locally on your machine, download this file as a <code class="docutils literal notranslate"><span class="pre">ipynb</span></code> Jupyter notebook file and run it in your local python environment using the download button at the top of this page.</p>
+<p>This notebook demonstrates how to run a complete STRESS analysis and produce all relevant output graphs. If you want to download this notebook and execute it locally on your machine, download this file as a <code class="docutils literal notranslate"><span class="pre">ipynb</span></code> Jupyter notebook file and run it in your local python environment using the download button at the top of this page.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">napari_stress</span>
 <span class="kn">import</span> <span class="nn">napari</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">TimelapseConverter</span>
+<span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">TimelapseConverter</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">stress_backend</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
@@ -433,8 +432,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>napari.manifest -&gt; &#39;napari&#39; could not be imported: Could not find file &#39;builtins.yaml&#39; in module &#39;napari&#39;
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">measurement_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
 </div>
@@ -470,12 +472,26 @@ document.write(`
 </div>
 </div>
 </section>
-<section id="droplet-reconstruction-parameters">
-<h3>Droplet reconstruction parameters<a class="headerlink" href="#droplet-reconstruction-parameters" title="Permalink to this heading">#</a></h3>
-<p>All of the parameters are explained in more detail <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>.</p>
+<section id="analysis-parameters">
+<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this heading">#</a></h3>
+<p>In case you ran the reconstruction previously interactively from the napari viewer (as explained <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>) and exported the settings, you can import the settings here, too. To do so, simply uncomment the line below (remove the <code class="docutils literal notranslate"><span class="pre">#</span></code>) and provide the path to the saved settings file:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">smoothing_sigma</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reconstruction_parameters = utils.import_settings(file_name=&#39;path/of/reconstruction/settings.yaml&#39;)</span>
+<span class="c1"># measurement_parameters = utils.import_settings(file_name=&#39;path/of/measurement/settings.yaml&#39;)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you used a parameter file, you can skip the next step. Otherwise, use this cell to provide the necessary parameters for the reconstruction and the measurement. The parameters are explained here:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">Reconstruction</span></a></p></li>
+<li><p><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive.html#toolboxes-stress-toolbox-stress-toolbox-interactive"><span class="std std-ref">Measurement</span></a></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Reconstruction settings</span>
+<span class="n">smoothing_sigma</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">n_smoothing_iterations</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">n_points_first_guess</span> <span class="o">=</span> <span class="mi">256</span>
 <span class="n">n_tracing_iterations</span> <span class="o">=</span> <span class="mi">2</span>
@@ -487,6 +503,11 @@ document.write(`
 <span class="n">interpolation_method</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span> <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
 <span class="n">outlier_tolerance</span> <span class="o">=</span> <span class="mf">1.5</span>
 <span class="n">remove_outliers</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1">## Measurement settings</span>
+<span class="n">max_degree</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># spherical harmonics degree</span>
+<span class="n">n_quadrature_points</span> <span class="o">=</span> <span class="mi">434</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">3.3</span>  <span class="c1"># interfacial tension of droplet</span>
 </pre></div>
 </div>
 </div>
@@ -496,19 +517,6 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">parallelize</span> <span class="o">=</span> <span class="kc">True</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="stress-analysis-parameters">
-<h3>Stress analysis parameters<a class="headerlink" href="#stress-analysis-parameters" title="Permalink to this heading">#</a></h3>
-<p>All of the used parameters are explained in more detail <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive.html#toolboxes-stress-toolbox-stress-toolbox-interactive"><span class="std std-ref">here</span></a>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">max_degree</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># spherical harmonics degree</span>
-<span class="n">n_quadrature_points</span> <span class="o">=</span> <span class="mi">434</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">3.3</span>  <span class="c1"># interfacial tension of droplet</span>
 </pre></div>
 </div>
 </div>
@@ -525,7 +533,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>napari.manifest -&gt; &#39;napari&#39; could not be imported: Could not find file &#39;builtins.yaml&#39; in module &#39;napari&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
 </pre></div>
 </div>
 </div>
@@ -537,7 +545,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x276db60ad90&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x204bb797be0&gt;
 </pre></div>
 </div>
 </div>
@@ -552,26 +560,28 @@ document.write(`
 <p>We put all parameters into a dictionary so we can save and reload them later:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;voxelsize&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">]),</span>
-    <span class="s1">&#39;target_voxelsize&#39;</span><span class="p">:</span> <span class="n">target_voxel_size</span><span class="p">,</span>
-    <span class="s1">&#39;smoothing_sigma&#39;</span><span class="p">:</span> <span class="n">smoothing_sigma</span><span class="p">,</span>
-    <span class="s1">&#39;n_smoothing_iterations&#39;</span><span class="p">:</span> <span class="n">n_smoothing_iterations</span><span class="p">,</span>
-    <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="n">n_points_first_guess</span><span class="p">,</span>
-    <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="n">n_tracing_iterations</span><span class="p">,</span>
-    <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="n">resampling_length</span><span class="p">,</span>
-    <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="n">fit_type</span><span class="p">,</span>
-    <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="n">edge_type</span><span class="p">,</span>
-    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="n">trace_length</span><span class="p">,</span>
-    <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="n">trace_sampling_distance</span><span class="p">,</span>
-    <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="n">interpolation_method</span><span class="p">,</span>
-    <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="n">outlier_tolerance</span><span class="p">,</span>
-    <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="n">remove_outliers</span><span class="p">,}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">reconstruction_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;voxelsize&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">]),</span>
+        <span class="s1">&#39;target_voxelsize&#39;</span><span class="p">:</span> <span class="n">target_voxel_size</span><span class="p">,</span>
+        <span class="s1">&#39;smoothing_sigma&#39;</span><span class="p">:</span> <span class="n">smoothing_sigma</span><span class="p">,</span>
+        <span class="s1">&#39;n_smoothing_iterations&#39;</span><span class="p">:</span> <span class="n">n_smoothing_iterations</span><span class="p">,</span>
+        <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="n">n_points_first_guess</span><span class="p">,</span>
+        <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="n">n_tracing_iterations</span><span class="p">,</span>
+        <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="n">resampling_length</span><span class="p">,</span>
+        <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="n">fit_type</span><span class="p">,</span>
+        <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="n">edge_type</span><span class="p">,</span>
+        <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="n">trace_length</span><span class="p">,</span>
+        <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="n">trace_sampling_distance</span><span class="p">,</span>
+        <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="n">interpolation_method</span><span class="p">,</span>
+        <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="n">outlier_tolerance</span><span class="p">,</span>
+        <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="n">remove_outliers</span><span class="p">}</span>
 
-<span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="n">max_degree</span><span class="p">,</span>
-    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="n">n_quadrature_points</span><span class="p">,</span>
-    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="n">gamma</span><span class="p">}</span>
+<span class="k">if</span> <span class="n">measurement_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="n">max_degree</span><span class="p">,</span>
+        <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="n">n_quadrature_points</span><span class="p">,</span>
+        <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="n">gamma</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -579,27 +589,42 @@ document.write(`
 <p>We run the reconstruction and the stress analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span>
+                                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:49870&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">stress_backend</span><span class="o">.</span><span class="n">lbdv_info</span><span class="p">(</span><span class="n">Max_SPH_Deg</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;max_degree&#39;</span><span class="p">],</span>
+                             <span class="n">Num_Quad_Pts</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">])</span>
+
+<span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">,</span>
+                                                              <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:50293&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-07-04 16:39:33,481 - distributed.nanny - WARNING - Worker process still alive after 3.999997901916504 seconds, killing
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pickling This LBDV data:
+
+generating basis vals
+generated basis vals
+generating dphi/ dphi_phi vals
+done with dphi/ dphi_phi vals
+
+
+Pickling This LBDV  Chart data:
+
+generating lbdv rotation vals
+done with lbdv rotation vals
+
+Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -772,93 +797,93 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>10.058582</td>
-      <td>-179.282592</td>
-      <td>0.567653</td>
-      <td>-1.013209</td>
-      <td>170.338049</td>
-      <td>0.042319</td>
-      <td>2.019549</td>
-      <td>0.006759</td>
-      <td>0.238395</td>
-      <td>0.315805</td>
-      <td>1.006643</td>
-      <td>0.245012</td>
-      <td>0.000051</td>
-      <td>-9.888939</td>
-      <td>10.058582</td>
+      <td>10.081819</td>
+      <td>-0.693914</td>
+      <td>0.607314</td>
+      <td>-0.001880</td>
+      <td>0.676320</td>
+      <td>0.047377</td>
+      <td>0.009202</td>
+      <td>0.008967</td>
+      <td>0.001105</td>
+      <td>0.001462</td>
+      <td>0.957678</td>
+      <td>0.000006</td>
+      <td>0.000078</td>
+      <td>-9.460465</td>
+      <td>10.081819</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>9.773776</td>
-      <td>-178.873783</td>
-      <td>0.617264</td>
-      <td>-0.499657</td>
-      <td>174.173617</td>
-      <td>0.060338</td>
-      <td>3.541947</td>
-      <td>0.014986</td>
-      <td>0.378249</td>
-      <td>0.882891</td>
-      <td>1.067289</td>
-      <td>2.439659</td>
-      <td>0.000475</td>
-      <td>-7.651340</td>
-      <td>9.773776</td>
+      <td>9.997145</td>
+      <td>-0.721613</td>
+      <td>0.618847</td>
+      <td>-0.001849</td>
+      <td>0.703815</td>
+      <td>0.051559</td>
+      <td>0.012043</td>
+      <td>0.012329</td>
+      <td>0.001328</td>
+      <td>0.002801</td>
+      <td>1.025464</td>
+      <td>0.000036</td>
+      <td>0.000430</td>
+      <td>-7.751092</td>
+      <td>9.997145</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>10.029479</td>
-      <td>-175.767710</td>
-      <td>0.618332</td>
-      <td>-0.560819</td>
-      <td>170.588522</td>
-      <td>0.047573</td>
-      <td>2.539083</td>
-      <td>0.010489</td>
-      <td>0.292278</td>
-      <td>0.512702</td>
-      <td>1.063444</td>
-      <td>0.790831</td>
-      <td>0.000159</td>
-      <td>-8.746697</td>
-      <td>10.029479</td>
+      <td>10.019467</td>
+      <td>-0.705932</td>
+      <td>0.628523</td>
+      <td>-0.001733</td>
+      <td>0.689551</td>
+      <td>0.049747</td>
+      <td>0.011424</td>
+      <td>0.012283</td>
+      <td>0.001272</td>
+      <td>0.002654</td>
+      <td>1.044057</td>
+      <td>0.000038</td>
+      <td>0.000473</td>
+      <td>-7.655380</td>
+      <td>10.019467</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>10.081203</td>
-      <td>-179.382205</td>
-      <td>0.553541</td>
-      <td>-0.903885</td>
-      <td>171.459328</td>
-      <td>0.059541</td>
-      <td>2.805148</td>
-      <td>0.008848</td>
-      <td>0.327890</td>
-      <td>0.427461</td>
-      <td>0.972454</td>
-      <td>0.428318</td>
-      <td>0.000089</td>
-      <td>-9.325656</td>
-      <td>10.081203</td>
+      <td>10.058297</td>
+      <td>-0.705460</td>
+      <td>0.580484</td>
+      <td>-0.002987</td>
+      <td>0.678742</td>
+      <td>0.054540</td>
+      <td>0.010433</td>
+      <td>0.009215</td>
+      <td>0.001236</td>
+      <td>0.001637</td>
+      <td>0.939916</td>
+      <td>0.000007</td>
+      <td>0.000090</td>
+      <td>-9.319205</td>
+      <td>10.058297</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>9.987020</td>
-      <td>-180.367027</td>
-      <td>0.629450</td>
-      <td>-0.276723</td>
-      <td>177.687498</td>
-      <td>0.058620</td>
-      <td>3.767323</td>
-      <td>0.016118</td>
-      <td>0.395096</td>
-      <td>1.031927</td>
-      <td>1.088355</td>
-      <td>12.977258</td>
-      <td>0.002500</td>
-      <td>-5.991344</td>
-      <td>9.987020</td>
+      <td>9.994609</td>
+      <td>-0.733188</td>
+      <td>0.628733</td>
+      <td>-0.001073</td>
+      <td>0.722375</td>
+      <td>0.056920</td>
+      <td>0.014856</td>
+      <td>0.015583</td>
+      <td>0.001559</td>
+      <td>0.004056</td>
+      <td>1.054863</td>
+      <td>0.000220</td>
+      <td>0.002569</td>
+      <td>-5.964267</td>
+      <td>9.994609</td>
     </tr>
     <tr>
       <th>...</th>
@@ -879,98 +904,98 @@ document.write(`
       <td>...</td>
     </tr>
     <tr>
-      <th>15333</th>
-      <td>10.039275</td>
-      <td>-172.986237</td>
-      <td>0.642367</td>
-      <td>0.114698</td>
-      <td>174.405272</td>
-      <td>0.062055</td>
-      <td>3.844181</td>
-      <td>0.017564</td>
-      <td>0.408822</td>
-      <td>1.028414</td>
-      <td>1.053347</td>
-      <td>20.198719</td>
-      <td>0.004126</td>
-      <td>-5.490416</td>
-      <td>10.039275</td>
+      <th>15926</th>
+      <td>9.985638</td>
+      <td>-0.665616</td>
+      <td>0.638497</td>
+      <td>-0.000195</td>
+      <td>0.664523</td>
+      <td>0.057745</td>
+      <td>0.013784</td>
+      <td>0.016346</td>
+      <td>0.001452</td>
+      <td>0.003766</td>
+      <td>1.047671</td>
+      <td>0.000215</td>
+      <td>0.002983</td>
+      <td>-5.814902</td>
+      <td>9.985638</td>
     </tr>
     <tr>
-      <th>15334</th>
-      <td>10.037317</td>
-      <td>-161.977383</td>
-      <td>0.652236</td>
-      <td>-0.141253</td>
-      <td>160.622552</td>
-      <td>0.062549</td>
-      <td>3.353984</td>
-      <td>0.016748</td>
-      <td>0.378887</td>
-      <td>0.779301</td>
-      <td>1.029567</td>
-      <td>4.908071</td>
-      <td>0.001123</td>
-      <td>-6.791917</td>
-      <td>10.037317</td>
+      <th>15927</th>
+      <td>10.034801</td>
+      <td>-0.688489</td>
+      <td>0.639655</td>
+      <td>0.000048</td>
+      <td>0.689812</td>
+      <td>0.065848</td>
+      <td>0.016203</td>
+      <td>0.018504</td>
+      <td>0.001720</td>
+      <td>0.004350</td>
+      <td>0.989689</td>
+      <td>0.000309</td>
+      <td>0.004026</td>
+      <td>-5.515095</td>
+      <td>10.034801</td>
     </tr>
     <tr>
-      <th>15335</th>
-      <td>9.976806</td>
-      <td>-166.968117</td>
-      <td>0.647256</td>
-      <td>-0.126629</td>
-      <td>165.944262</td>
-      <td>0.063770</td>
-      <td>3.832654</td>
-      <td>0.018657</td>
-      <td>0.405985</td>
-      <td>1.057601</td>
-      <td>1.116667</td>
-      <td>12.030384</td>
-      <td>0.002646</td>
-      <td>-5.934647</td>
-      <td>9.976806</td>
+      <th>15928</th>
+      <td>9.993327</td>
+      <td>-0.637167</td>
+      <td>0.652894</td>
+      <td>-0.000147</td>
+      <td>0.635390</td>
+      <td>0.070049</td>
+      <td>0.014840</td>
+      <td>0.018929</td>
+      <td>0.001665</td>
+      <td>0.003482</td>
+      <td>1.074969</td>
+      <td>0.000087</td>
+      <td>0.001272</td>
+      <td>-6.667318</td>
+      <td>9.993327</td>
     </tr>
     <tr>
-      <th>15336</th>
-      <td>10.002076</td>
-      <td>-173.205821</td>
-      <td>0.645189</td>
-      <td>-0.044904</td>
-      <td>172.900695</td>
-      <td>0.058462</td>
-      <td>3.636623</td>
-      <td>0.016875</td>
-      <td>0.385884</td>
-      <td>0.991471</td>
-      <td>1.071238</td>
-      <td>16.647895</td>
-      <td>0.003408</td>
-      <td>-5.681650</td>
-      <td>10.002076</td>
+      <th>15929</th>
+      <td>9.962992</td>
+      <td>-0.677188</td>
+      <td>0.639055</td>
+      <td>0.000683</td>
+      <td>0.684309</td>
+      <td>0.064850</td>
+      <td>0.015825</td>
+      <td>0.018429</td>
+      <td>0.001657</td>
+      <td>0.004324</td>
+      <td>1.025626</td>
+      <td>0.000293</td>
+      <td>0.003885</td>
+      <td>-5.550508</td>
+      <td>9.962992</td>
     </tr>
     <tr>
-      <th>15337</th>
-      <td>9.966586</td>
-      <td>-160.858271</td>
-      <td>0.656048</td>
-      <td>-0.057649</td>
-      <td>160.291349</td>
-      <td>0.069804</td>
-      <td>3.744266</td>
-      <td>0.019175</td>
-      <td>0.419445</td>
-      <td>0.888286</td>
-      <td>1.091019</td>
-      <td>5.386867</td>
-      <td>0.001239</td>
-      <td>-6.693824</td>
-      <td>9.966586</td>
+      <th>15930</th>
+      <td>9.948624</td>
+      <td>-0.676930</td>
+      <td>0.636113</td>
+      <td>-0.000832</td>
+      <td>0.669345</td>
+      <td>0.053738</td>
+      <td>0.013056</td>
+      <td>0.015239</td>
+      <td>0.001367</td>
+      <td>0.003626</td>
+      <td>1.022825</td>
+      <td>0.000185</td>
+      <td>0.002506</td>
+      <td>-5.989060</td>
+      <td>9.948624</td>
     </tr>
   </tbody>
 </table>
-<p>15338 rows × 15 columns</p>
+<p>15931 rows × 15 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -990,7 +1015,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/011979ddd00f69abbbecf6b6cf70ec91c5d5222bb72edde7c3f6105419fe8806.png" src="../../_images/011979ddd00f69abbbecf6b6cf70ec91c5d5222bb72edde7c3f6105419fe8806.png" />
+<img alt="../../_images/44129bf86e398e376d09f1b8c7ffeb639482682a030f8ee3aae745b1aeaa2982.png" src="../../_images/44129bf86e398e376d09f1b8c7ffeb639482682a030f8ee3aae745b1aeaa2982.png" />
 </div>
 </div>
 </section>
@@ -1019,7 +1044,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b884792594c0e2a775699b0cdd1441662c14485aa860d1d12780ca758a51c3ef.png" src="../../_images/b884792594c0e2a775699b0cdd1441662c14485aa860d1d12780ca758a51c3ef.png" />
+<img alt="../../_images/74e504026c9241e47555e3ec1b90e30b92e19766bb09794449b86df9f510bfa5.png" src="../../_images/74e504026c9241e47555e3ec1b90e30b92e19766bb09794449b86df9f510bfa5.png" />
 </div>
 </div>
 </section>
@@ -1042,7 +1067,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/db0e1e3d92ecb355ce9d9c7d4d6a64d3ed6d916d71c1486af3b1e9cff02917f4.png" src="../../_images/db0e1e3d92ecb355ce9d9c7d4d6a64d3ed6d916d71c1486af3b1e9cff02917f4.png" />
+<img alt="../../_images/7deb3b66658bd6017a70607ff8e7d75642f80781b3f9b5b5dc162bc3fc561dba.png" src="../../_images/7deb3b66658bd6017a70607ff8e7d75642f80781b3f9b5b5dc162bc3fc561dba.png" />
 </div>
 </div>
 </section>
@@ -1071,7 +1096,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/2fe9a568553b8bc788752b79c38b0c9ff14b44c2ae086de23e9a968c8b42b657.png" src="../../_images/2fe9a568553b8bc788752b79c38b0c9ff14b44c2ae086de23e9a968c8b42b657.png" />
+<img alt="../../_images/75d289376103930305633909167902df68838a1dfbd04b3fc56467b005acc884.png" src="../../_images/75d289376103930305633909167902df68838a1dfbd04b3fc56467b005acc884.png" />
 </div>
 </div>
 <section id="total-stress">
@@ -1125,7 +1150,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/accd94ecc7c504df9710cca3ae1d68bc75694fb13d8bc17155ef8aa4a3a53144.png" src="../../_images/accd94ecc7c504df9710cca3ae1d68bc75694fb13d8bc17155ef8aa4a3a53144.png" />
+<img alt="../../_images/1bba051890ed62a370dedaecd9ac5b1c7097fe9c79d5a08f122f388645f7654b.png" src="../../_images/1bba051890ed62a370dedaecd9ac5b1c7097fe9c79d5a08f122f388645f7654b.png" />
 </div>
 </div>
 </section>
@@ -1180,7 +1205,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ed48c442714f01c802a5af32919b4a73b6b5970a08913918ec655fed20d807e8.png" src="../../_images/ed48c442714f01c802a5af32919b4a73b6b5970a08913918ec655fed20d807e8.png" />
+<img alt="../../_images/33e9611975556b9a201de4ab715e7ddbf28eae4acbcbadc0624e4d6bfc0eb4d0.png" src="../../_images/33e9611975556b9a201de4ab715e7ddbf28eae4acbcbadc0624e4d6bfc0eb4d0.png" />
 </div>
 </div>
 </section>
@@ -1214,7 +1239,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b47e322f42fd797a89fc74c1d0ba172248b0c0a3c6ac46c7aa277dc045a82644.png" src="../../_images/b47e322f42fd797a89fc74c1d0ba172248b0c0a3c6ac46c7aa277dc045a82644.png" />
+<img alt="../../_images/590b6e64cd08532c72756a8dd1b88c57a5e8413c1991d6a4c83fd68d0a914bfb.png" src="../../_images/590b6e64cd08532c72756a8dd1b88c57a5e8413c1991d6a4c83fd68d0a914bfb.png" />
 </div>
 </div>
 </section>
@@ -1269,7 +1294,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/6f9c5f40582993064382e51f1ad1ca3d5859e4013389aa46d1071cacf95bcb5f.png" src="../../_images/6f9c5f40582993064382e51f1ad1ca3d5859e4013389aa46d1071cacf95bcb5f.png" />
+<img alt="../../_images/d8259ead597513b3f96c0abfdc6c6cd2fa07d19ffe565af2b68d9787f2ab2727.png" src="../../_images/d8259ead597513b3f96c0abfdc6c6cd2fa07d19ffe565af2b68d9787f2ab2727.png" />
 </div>
 </div>
 </section>
@@ -1324,7 +1349,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b5e668d68c7fd0b0a380daee1b4d7b035b944cb837766b59af925f77587e84fa.png" src="../../_images/b5e668d68c7fd0b0a380daee1b4d7b035b944cb837766b59af925f77587e84fa.png" />
+<img alt="../../_images/80d068d7c0e92646c312defa717e064af06ed59635baca656bb6a4242145daff.png" src="../../_images/80d068d7c0e92646c312defa717e064af06ed59635baca656bb6a4242145daff.png" />
 </div>
 </div>
 </section>
@@ -1403,7 +1428,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/7d9a224b2595bdddf1944ac687b9f15af2d755522f397f003e847093ee0650ed.png" src="../../_images/7d9a224b2595bdddf1944ac687b9f15af2d755522f397f003e847093ee0650ed.png" />
+<img alt="../../_images/6d7cbf5cbda16e5265a1ad1da14743e873abb30151562264b6669d3ca6c7d13a.png" src="../../_images/6d7cbf5cbda16e5265a1ad1da14743e873abb30151562264b6669d3ca6c7d13a.png" />
 </div>
 </div>
 </section>
@@ -1444,7 +1469,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b7f9c823a1e95aa383d493401f4f205589f7a90e78e67f7051242860239fbf80.png" src="../../_images/b7f9c823a1e95aa383d493401f4f205589f7a90e78e67f7051242860239fbf80.png" />
+<img alt="../../_images/c6901d2d4b672a72b3155e80d53a77ccb8e8c66e875fbb480cc573a8c94e7cfc.png" src="../../_images/c6901d2d4b672a72b3155e80d53a77ccb8e8c66e875fbb480cc573a8c94e7cfc.png" />
 </div>
 </div>
 </section>
@@ -1476,7 +1501,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/21f88b19251f1ffb989c8e9b7c8998af9e220563aabcbce7c09e5e4277861b89.png" src="../../_images/21f88b19251f1ffb989c8e9b7c8998af9e220563aabcbce7c09e5e4277861b89.png" />
+<img alt="../../_images/a42aa79e2a0c7ba1d8b3d7593caaea65a8dfceb10222a213dcc53869fba8ac09.png" src="../../_images/a42aa79e2a0c7ba1d8b3d7593caaea65a8dfceb10222a213dcc53869fba8ac09.png" />
 </div>
 </div>
 </section>
@@ -1496,10 +1521,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/88dff9e1cec91cbcd9c83a164a21f3d717beb89e0821233c2c69321cfa58bed8.png" src="../../_images/88dff9e1cec91cbcd9c83a164a21f3d717beb89e0821233c2c69321cfa58bed8.png" />
+<img alt="../../_images/57be3adfbb7f4b4609cfada1c1b241bbae2120983991c57b1e87ac54fc510442.png" src="../../_images/57be3adfbb7f4b4609cfada1c1b241bbae2120983991c57b1e87ac54fc510442.png" />
 </div>
 </div>
 </section>
@@ -1541,12 +1566,8 @@ document.write(`
 <p>We also export the used settings for the analysis  into a <code class="docutils literal notranslate"><span class="pre">.yml</span></code> file:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ndarray_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">:</span> <span class="n">yaml</span><span class="o">.</span><span class="n">Dumper</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">yaml</span><span class="o">.</span><span class="n">Node</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_list</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ndarray_representer</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;analysis_parameters.yaml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-    <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">measurement_parameters</span><span class="p">],</span> <span class="n">file</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1624,8 +1645,7 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Analyze everything</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-data">Load the data</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-dimensions">Data dimensions</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#droplet-reconstruction-parameters">Droplet reconstruction parameters</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-analysis-parameters">Stress analysis parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-parameters">Analysis parameters</a></li>
 </ul>
 </li>
 </ul>
