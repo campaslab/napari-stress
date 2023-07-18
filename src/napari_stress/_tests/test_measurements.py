@@ -294,7 +294,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
-    widget.comboBox_quadpoints.setValue(6)
+    widget.comboBox_quadpoints.setCurrentIndex(4)
     viewer.window.add_dock_widget(widget)
     widget._run()
 
@@ -302,7 +302,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
     widget2 = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     widget2._import_settings(file_name='test.yaml')
 
-    assert widget2.spinBox_max_degree.value() == 6
+    assert widget2.comboBox_quadpoints.currentText() == '50'
 
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
