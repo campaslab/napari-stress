@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>709</width>
     <height>593</height>
    </rect>
   </property>
@@ -14,21 +14,56 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="4" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_run">
-     <property name="text">
-      <string>Run</string>
+   <item row="2" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Stress</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Interfacial surface tension [mN/m]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_gamma">
+        <property name="decimals">
+         <number>3</number>
+        </property>
+        <property name="value">
+         <double>3.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Input pointcloud</string>
+   <item row="5" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Import &amp; export settings</string>
      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton_export">
+        <property name="text">
+         <string>Export settings</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_import">
+        <property name="text">
+         <string>Import settings</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Spherical harmonics</string>
@@ -61,7 +96,14 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="7" column="0" colspan="3">
+    <widget class="QPushButton" name="pushButton_run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -74,36 +116,17 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="1">
-    <widget class="QWidget" name="input_widget" native="true"/>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Stress</string>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Input pointcloud</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Interfacial surface tension [mN/m]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_gamma">
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="value">
-         <double>3.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="0" column="1" colspan="2">
+    <widget class="QWidget" name="input_widget" native="true"/>
+   </item>
+   <item row="6" column="0" colspan="3">
     <widget class="QCheckBox" name="checkBox_use_dask">
      <property name="text">
       <string>Parallelize with dask (only timelapse)</string>
