@@ -101,9 +101,9 @@ class stress_analysis_toolbox(QWidget):
     def _run(self):
         """Call analysis function."""
         # Prepare before analysis
-        from .._stress import lbdv_info
-        _ = lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
-                      Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
+        from .. import stress_backend
+        _ = stress_backend.lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
+                                     Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
 
         # Run analysis
         results = comprehensive_analysis(
