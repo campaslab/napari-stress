@@ -10,7 +10,7 @@ from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
-from qtpy.QtWidgets import QWidget
+from qtpy.QtWidgets import QWidget, QFileDialog
 
 from .._utils.frame_by_frame import frame_by_frame
 
@@ -38,9 +38,10 @@ class droplet_reconstruction_toolbox(QWidget):
 
         # calculate density/point number
         self.spinBox_n_vertices.setValue(256)
-
         self.pushButton_run.clicked.connect(self._run)
         self.image_layer_select.changed.connect(self._set_scales)
+        self.pushButton_export.clicked.connect(self._export_settings)
+        self.pushButton_import.clicked.connect(self._import_settings)
 
         self._set_scales()
 
@@ -61,6 +62,56 @@ class droplet_reconstruction_toolbox(QWidget):
             self.doubleSpinBox_voxelsize_z.setValue(scales[0])
         except Exception:
             pass
+
+    def _export_settings(self):
+        """
+        Export reconstruction parameters to YAML file.
+        """
+        from .._utils.import_export_settings import export_settings
+
+        reconstruction_parameters = {
+            'voxelsize': np.asarray([self.doubleSpinBox_voxelsize_z.value(),
+                                     self.doubleSpinBox_voxelsize_y.value(),
+                                     self.doubleSpinBox_voxelsize_x.value()]),
+            'target_voxelsize': self.doubleSpinBox_target_voxelsize.value(),
+            'smoothing_sigma': self.doubleSpinBox_gaussian_blur.value(),
+            'n_smoothing_iterations': self.spinBox_n_smoothing.value(),
+            'n_points': self.spinBox_n_vertices.value(),
+            'n_tracing_iterations': self.spinBox_n_refinement_steps.value(),
+            'resampling_length': self.doubleSpinBox_sampling_length.value(),
+            'fit_type': self.comboBox_fittype.currentText(),
+            'edge_type': self.comboBox_fluorescence_type.currentText(),
+            'trace_length': self.doubleSpinBox_trace_length.value(),
+            'sampling_distance': self.doubleSpinBox_sampling_distance.value(),
+            'interpolation_method': self.comboBox_interpolation_method.currentText(),
+            'outlier_tolerance': self.doubleSpinBox_outlier_tolerance.value(),
+            'remove_outliers': self.checkBox_remove_outliers.isChecked()}
+        export_settings(reconstruction_parameters, self)
+
+    def _import_settings(self):
+        """
+        Import reconstruction parameters from YAML file.
+        """
+        from .._utils.import_export_settings import import_settings
+
+        reconstruction_parameters = import_settings(self)
+
+        self.doubleSpinBox_voxelsize_z.setValue(reconstruction_parameters['voxelsize'][0])
+        self.doubleSpinBox_voxelsize_y.setValue(reconstruction_parameters['voxelsize'][1])
+        self.doubleSpinBox_voxelsize_x.setValue(reconstruction_parameters['voxelsize'][2])
+        self.doubleSpinBox_target_voxelsize.setValue(reconstruction_parameters['target_voxelsize'])
+        self.doubleSpinBox_gaussian_blur.setValue(reconstruction_parameters['smoothing_sigma'])
+        self.spinBox_n_smoothing.setValue(reconstruction_parameters['n_smoothing_iterations'])
+        self.spinBox_n_vertices.setValue(reconstruction_parameters['n_points'])
+        self.spinBox_n_refinement_steps.setValue(reconstruction_parameters['n_tracing_iterations'])
+        self.doubleSpinBox_sampling_length.setValue(reconstruction_parameters['resampling_length'])
+        self.comboBox_fittype.setCurrentText(reconstruction_parameters['fit_type'])
+        self.comboBox_fluorescence_type.setCurrentText(reconstruction_parameters['edge_type'])
+        self.doubleSpinBox_trace_length.setValue(reconstruction_parameters['trace_length'])
+        self.doubleSpinBox_sampling_distance.setValue(reconstruction_parameters['sampling_distance'])
+        self.comboBox_interpolation_method.setCurrentText(reconstruction_parameters['interpolation_method'])
+        self.doubleSpinBox_outlier_tolerance.setValue(reconstruction_parameters['outlier_tolerance'])
+        self.checkBox_remove_outliers.setChecked(reconstruction_parameters['remove_outliers'])        
 
     def _run(self):
         """Call analysis function."""
