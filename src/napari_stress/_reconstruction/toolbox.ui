@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>312</height>
+        <height>308</height>
        </rect>
       </property>
       <attribute name="label">
@@ -86,7 +86,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="label_15">
          <property name="text">
-          <string>Target voxel size [m]</string>
+          <string>Target voxel size [µm]</string>
          </property>
         </widget>
        </item>
@@ -130,8 +130,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>855</width>
-        <height>312</height>
+        <width>212</width>
+        <height>93</height>
        </rect>
       </property>
       <attribute name="label">
@@ -212,8 +212,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>838</width>
-        <height>371</height>
+        <width>244</width>
+        <height>365</height>
        </rect>
       </property>
       <attribute name="label">
