@@ -286,7 +286,7 @@ def test_geodesics():
 
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
-    from napari_stress import (get_droplet_point_cloud, measurements)
+    from napari_stress import get_droplet_point_cloud
     import napari_stress
 
     viewer = make_napari_viewer()
@@ -294,9 +294,16 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
+    widget.comboBox_quadpoints.setValue(6)
     viewer.window.add_dock_widget(widget)
-
     widget._run()
+
+    widget._export_settings(file_name='test.yaml')
+    widget2 = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
+    widget2._import_settings(file_name='test.yaml')
+
+    assert widget2.spinBox_max_degree.value() == 6
+
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud_4d, measurements)
