@@ -53,6 +53,32 @@ class stress_analysis_toolbox(QWidget):
         # connect buttons
         self.pushButton_run.clicked.connect(self._run)
         self.spinBox_max_degree.valueChanged.connect(self._check_minimal_point_number)
+        self.pushButton_import.clicked.connect(self._import_settings)
+        self.pushButton_export.clicked.connect(self._export_settings)
+
+    def _import_settings(self):
+        """
+        Import settings from yaml file.
+        """
+        from .._utils.import_export_settings import import_settings
+
+        settings = import_settings(parent=self)
+        if settings:
+            self.spinBox_max_degree.setValue(settings['max_degree'])
+            self.comboBox_quadpoints.setCurrentIndex(
+                self.comboBox_quadpoints.findData(settings['n_quadrature_points']))
+            self.doubleSpinBox_gamma.setValue(settings['gamma'])
+
+    def _export_settings(self):
+        """
+        Export settings to yaml file.
+        """
+        from .._utils.import_export_settings import export_settings
+
+        settings = {'max_degree': self.spinBox_max_degree.value(),
+                    'n_quadrature_points': self.comboBox_quadpoints.currentData(),
+                    'gamma': self.doubleSpinBox_gamma.value()}
+        export_settings(settings, parent=self)
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
