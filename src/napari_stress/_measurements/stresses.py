@@ -3,6 +3,7 @@ import numpy as np
 
 from typing import Tuple
 from napari.types import VectorsData
+import pandas as pd
 
 from napari_stress.types import _METADATAKEY_MEAN_CURVATURE
 
@@ -133,3 +134,54 @@ def tissue_stress_tensor(ellipsoid: VectorsData,
         orientation_matrix)
 
     return Tissue_Stress_Tensor_elliptical, Tissue_Stress_Tensor_cartesian
+
+
+def calculate_anisotropy(df: pd.DataFrame,
+                         column: str,
+                         alpha: float = 0.05,
+                         group_column: str = 'time',
+                         ) -> pd.DataFrame:
+    """
+    Calculate anisotropy of a column in a dataframe. The dataframe is assumed
+    to contain multiple groups, which are defined by the values in the
+    group_column.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Dataframe containing the data to analyze
+    column : str, optional
+        Column name to analyze. The column is assumed to contain numerical
+        data.
+    alpha : float, optional
+        Lower and upper percentile of the data to exclude when calculating
+        the anisotropy, by default 0.05
+    group_column : str, optional
+        Column name to use for grouping the data, by default 'time'
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe containing the anisotropy of the data in the column for
+        every group in the dataframe
+
+    """
+    # write a function to apply to every group in the dataframe
+    def anisotropy(df: pd.DataFrame, alpha: float = 0.05, column: str = 'anisotropic_stress'):
+        from scipy import stats
+        hist_data = np.histogram(df[column], bins='auto', density=True)
+        hist_dist = stats.rv_histogram(hist_data)
+
+        smallest_excluded_value = hist_dist.ppf(alpha)
+        largest_excluded_value = hist_dist.ppf(1. - alpha)
+        return (smallest_excluded_value,
+                largest_excluded_value,
+                largest_excluded_value - smallest_excluded_value)
+
+    grouped_df = df.groupby(group_column)
+    anisotropy_df = grouped_df.apply(anisotropy, alpha=alpha, column=column)
+    anisotropy_df = anisotropy_df.rename(columns={0: 'min',
+                                                  1: 'max',
+                                                  2: 'anisotropy'})
+
+    return anisotropy_df
