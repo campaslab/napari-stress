@@ -8,7 +8,6 @@ from .curvature import (calculate_mean_curvature_on_manifold,
                         mean_curvature_on_ellipse_cardinal_points,
                         gauss_bonnet_test,
                         mean_curvature_differences_radial_cartesian_manifolds)
-from .utils import naparify_measurement
 from .deviation_analysis import deviation_from_ellipsoidal_mode
 
 from .temporal_correlation import (temporal_autocorrelation,
