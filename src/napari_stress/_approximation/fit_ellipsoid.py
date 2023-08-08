@@ -40,8 +40,8 @@ def least_squares_ellipsoid(points: PointsData
     origin = np.stack(3 * [center])  # cheap repeat
     vector = np.stack([origin, direction]).transpose((1, 0, 2))
 
-    # sort from longest to shortes vector
-    vector = vector[np.argsort(np.linalg.norm(vector[:, 1], axis=1))]
+    # sort from longest to shortes vector with inverted argsort
+    vector = vector[np.argsort(np.linalg.norm(direction, axis=1))][::-1]
 
     return vector
 
