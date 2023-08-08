@@ -22,13 +22,24 @@ _METADATAKEY_GAUSS_BONNET_ABS = 'Gauss_Bonnet_error'
 _METADATAKEY_GAUSS_BONNET_REL = 'Gauss_Bonnet_relative_error'
 _METADATAKEY_GAUSS_BONNET_ABS_RAD = 'Gauss_Bonnet_error_radial'
 _METADATAKEY_GAUSS_BONNET_REL_RAD = 'Gauss_Bonnet_relative_error_radial'
-_METADATAKEY_ANISO_STRESS_TISSUE = 'anisotropic_stress_tissue'
-_METADATAKEY_ANISO_STRESS_CELL = 'anisotropic_stress_cell'
-_METADATAKEY_ANISO_STRESS_TOTAL = 'anisotropic_stress'
-_METADATAKEY_ANISO_STRESS_TOTAL_RADIAL = 'anisotropic_stress_total_radial'
+
+_METADATAKEY_STRESS_TISSUE = 'stress_tissue'
+_METADATAKEY_STRESS_TISSUE_ANISO = 'stress_tissue_anisotropy'
+
+_METADATAKEY_STRESS_CELL = 'stress_cell'
+_METADATAKEY_STRESS_CELL_ANISO = 'stress_cell_anisotropy'
+
+_METADATAKEY_STRESS_TOTAL = 'stress_total'
+_METADATAKEY_STRESS_TOTAL_ANISO = 'stress_total_anisotropy'
+_METADATAKEY_STRESS_TOTAL_RADIAL = 'stress_total_radial'
+
+
 _METADATAKEY_STRESS_TENSOR_ELLI = 'Tissue_stress_tensor_elliptical'
 _METADATAKEY_STRESS_TENSOR_CART = 'Tissue_stress_tensor_cartesian'
-_METADATAKEY_MAX_TISSUE_ANISOTROPY = 'max_issue_stress_anisotropy'
+_METADATAKEY_STRESS_ELLIPSOID_ANISO_E12 = 'stress_ellipsoid_anisotropy_e12'
+_METADATAKEY_STRESS_ELLIPSOID_ANISO_E13 = 'stress_ellipsoid_anisotropy_e13'
+_METADATAKEY_STRESS_ELLIPSOID_ANISO_E23 = 'stress_ellipsoid_anisotropy_e23'
+
 _METADATAKEY_FIT_RESIDUE = 'fit_residue'
 _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = 'Elipsoid_deviation_contribution_matrix'
 
