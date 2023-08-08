@@ -308,6 +308,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud_4d, measurements)
     import napari_stress
+    import os
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
@@ -317,6 +318,18 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     viewer.window.add_dock_widget(widget)
 
     widget._run()
+    widget.checkBox_export.setChecked(False)
+    widget.checkBox_export.setChecked(True)
+    directory = widget.lineEdit_export.text()
+
+    # test that the directory is created
+    assert os.path.isdir(directory)
+
+    # test that the files are created
+    assert os.path.isfile(os.path.join(directory, 'stress_data.csv'))
+    assert os.path.isfile(os.path.join(directory, 'nearest_pairs.csv'))
+    assert os.path.isfile(os.path.join(directory, 'autocorrelations.csv'))
+    assert os.path.isfile(os.path.join(directory, 'all_pairs.csv'))
 
 
 def test_curvature(make_napari_viewer):
