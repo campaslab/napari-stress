@@ -13,20 +13,23 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="2" column="0" colspan="3">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="7" column="0" colspan="3">
+    <widget class="QPushButton" name="pushButton_run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QWidget" name="input_widget" native="true"/>
+   </item>
+   <item row="3" column="0" rowspan="2" colspan="3">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Stress</string>
+      <string>Stress &amp; Framerate</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Interfacial surface tension [mN/m]</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_gamma">
         <property name="decimals">
@@ -34,6 +37,27 @@
         </property>
         <property name="value">
          <double>3.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Interfacial surface tension [mN/m]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Time frame [min]</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spinBox_timeframe">
+        <property name="value">
+         <number>3</number>
         </property>
        </widget>
       </item>
@@ -61,6 +85,33 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Input pointcloud</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="QCheckBox" name="checkBox_use_dask">
+     <property name="text">
+      <string>Parallelize with dask (only timelapse)</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="0" colspan="3">
@@ -94,43 +145,6 @@
        <widget class="QComboBox" name="comboBox_quadpoints"/>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="3">
-    <widget class="QPushButton" name="pushButton_run">
-     <property name="text">
-      <string>Run</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Input pointcloud</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QWidget" name="input_widget" native="true"/>
-   </item>
-   <item row="6" column="0" colspan="3">
-    <widget class="QCheckBox" name="checkBox_use_dask">
-     <property name="text">
-      <string>Parallelize with dask (only timelapse)</string>
-     </property>
     </widget>
    </item>
   </layout>

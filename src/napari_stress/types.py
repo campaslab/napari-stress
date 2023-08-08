@@ -33,6 +33,20 @@ _METADATAKEY_STRESS_TOTAL = 'stress_total'
 _METADATAKEY_STRESS_TOTAL_ANISO = 'stress_total_anisotropy'
 _METADATAKEY_STRESS_TOTAL_RADIAL = 'stress_total_radial'
 
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO = 'stress_cell_nearest_pair_anisotropy'
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST = 'stress_cell_nearest_pair_distance'
+_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO = 'stress_cell_all_pair_anisotropy'
+_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST = 'stress_cell_all_pair_distance'
+
+_METADATAKEY_AUTOCORR_SPATIAL_TOTAL = 'autocorrelations_spatial_total'
+_METADATAKEY_AUTOCORR_SPATIAL_CELL = 'autocorrelations_spatial_cell'
+_METADATAKEY_AUTOCORR_SPATIAL_TISSUE = 'autocorrelations_spatial_tissue'
+_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL = 'autocorrelations_temporal_total'
+_METADATAKEY_AUTOCORR_TEMPORAL_CELL = 'autocorrelations_temporal_cell'
+_METADATAKEY_AUTOCORR_TEMPORAL_TISSUE = 'autocorrelations_temporal_tissue'
+
+_METADATAKEY_EXTREMA_CELL_STRESS = 'stress_cell_extrema'
+_METADATAKEY_EXTREMA_TOTAL_STRESS = 'stress_total_extrema'
 
 _METADATAKEY_STRESS_TENSOR_ELLI = 'Tissue_stress_tensor_elliptical'
 _METADATAKEY_STRESS_TENSOR_ELLI_E1 = 'Tissue_stress_tensor_elliptical_e1'

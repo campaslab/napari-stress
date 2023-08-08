@@ -24,7 +24,8 @@ from .._spherical_harmonics.spherical_harmonics import (
 from .._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_dock_widget
 
-@register_dock_widget(menu = 'Measurement > Measure stresses on droplet pointcloud (n-STRESS)')
+
+@register_dock_widget(menu='Measurement > Measure stresses on droplet pointcloud (n-STRESS)')
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -104,6 +105,13 @@ class stress_analysis_toolbox(QWidget):
         from .. import stress_backend
         _ = stress_backend.lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
                                      Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
+        from napari_stress import TimelapseConverter
+
+        # calculate number of frames
+        Converter = TimelapseConverter()
+        list_of_points = Converter.data_to_list_of_data(self.layer_select.value.data,
+                                                        layertype='napari.types.PointsData')
+        self.n_frames = len(list_of_points)
 
         # Run analysis
         results = comprehensive_analysis(
@@ -195,6 +203,15 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_ANGLE_ELLIPSOID_CART_E1,
                          _METADATAKEY_ANGLE_ELLIPSOID_CART_E2,
                          _METADATAKEY_ANGLE_ELLIPSOID_CART_E3,
+                         _METADATAKEY_EXTREMA_CELL_STRESS,
+                         _METADATAKEY_EXTREMA_TOTAL_STRESS,
+                         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
+                         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
+                         _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO,
+                         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
+                         _METADATAKEY_AUTOCORR_SPATIAL_CELL,
+                         _METADATAKEY_AUTOCORR_SPATIAL_TISSUE,
+                         _METADATAKEY_AUTOCORR_SPATIAL_TOTAL,
                          _METADATAKEY_FIT_RESIDUE,
                          _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
     # =====================================================================
@@ -387,16 +404,13 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     size = 0.5
     # spherical harmonics expansion
-    properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree}',
+    properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree})',
                   'features': {'fit_residue': residue_spherical_harmonics_norm},
                   'metadata': {_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB: deviation_heatmap},
                   'face_colormap': 'inferno',
                   'face_color': 'fit_residue',
                   'size': size}
     layer_spherical_harmonics = (fitted_pointcloud, properties, 'points')
-
-    properties = {'name': 'Result of lebedev quadrature',
-                  'size': size}
 
     # ellipsoid expansion
     features = {_METADATAKEY_FIT_RESIDUE: residue_ellipsoid_norm}
@@ -438,9 +452,11 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Curvatures and stresses: Show on droplet surface (points)
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
                 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
-                 _METADATAKEY_STRESS_CELL: stress_cell,
-                 _METADATAKEY_STRESS_TOTAL: stress_total,
-                 _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial}
+                _METADATAKEY_STRESS_CELL: stress_cell,
+                _METADATAKEY_STRESS_TOTAL: stress_total,
+                _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial,
+                _METADATAKEY_EXTREMA_CELL_STRESS: extrema_cellular_stress[1]['features']['local_max_and_min'],
+                _METADATAKEY_EXTREMA_TOTAL_STRESS: extrema_total_stress[1]['features']['local_max_and_min']}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
                 _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
                 _METADATAKEY_GAUSS_BONNET_ABS_RAD: gauss_bonnet_absolute_radial,
@@ -448,7 +464,12 @@ def comprehensive_analysis(pointcloud: PointsData,
                 _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
                 _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
                 _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
-                _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet}
+                _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet,
+                _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO: extrema_cellular_stress[1]['metadata']['nearest_pair_anisotropy'],
+                _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST: extrema_cellular_stress[1]['metadata']['nearest_pair_distance'],
+                _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO: extrema_cellular_stress[1]['metadata']['all_pair_anisotropy'],
+                _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST: extrema_cellular_stress[1]['metadata']['all_pair_distance'],
+                }
 
     properties = {'name': 'Result of lebedev quadrature (droplet)',
                   'features': features,
@@ -469,27 +490,12 @@ def comprehensive_analysis(pointcloud: PointsData,
     max_min_geodesics_cell[1]['name'] = 'Cell stress: ' + max_min_geodesics_cell[1]['name']
     min_max_geodesics_cell[1]['name'] = 'Cell stress: ' + min_max_geodesics_cell[1]['name']
 
-    metadata = {'autocorrelations_total': autocorrelations_total,
-                'autocorrelations_cell': autocorrelations_cell,
-                'autocorrelations_tissue': autocorrelations_tissue}
+    metadata = {_METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
+                _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
+                _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue}
     properties = {'name': 'stress_autocorrelations',
                   'metadata':  metadata}
     layer_surface_autocorrelation = (surface_droplet, properties, 'surface')
-
-    # # Fit residues
-    # properties = {'name': 'Spherical harmonics fit residues',
-    #               'edge_width': size,
-    #               'features': {'fit_residue': residue_spherical_harmonics_norm},
-    #               'edge_color': 'fit_residue',
-    #               'edge_colormap': 'twilight'}
-    # layer_spherical_harmonics_residues = (residue_spherical_harmonics, properties, 'vectors')
-
-    # properties = {'name': 'Ellipsoid fit residues',
-    #               'edge_width': size,
-    #               'features': {'fit_residue': residue_ellipsoid_norm},
-    #               'edge_color': 'fit_residue',
-    #               'edge_colormap': 'twilight'}
-    # layer_ellipsoid_residues = (residue_ellipsoid, properties, 'vectors')
 
     return [layer_spherical_harmonics,
             layer_fitted_ellipsoid_points,
