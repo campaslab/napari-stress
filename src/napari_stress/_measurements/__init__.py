@@ -20,7 +20,7 @@ from .geodesics import (geodesic_distance_matrix,
                         correlation_on_surface,
                         local_extrema_analysis)
 
-from .stresses import anisotropic_stress, tissue_stress_tensor, maximal_tissue_anisotropy
+from .stresses import anisotropic_stress, tissue_stress_tensor, maximal_tissue_anisotropy, calculate_anisotropy
 from .toolbox import comprehensive_analysis
 from .measurements import distance_to_k_nearest_neighbors
 from .intensity import sample_intensity_along_vector, measure_intensity_on_surface
