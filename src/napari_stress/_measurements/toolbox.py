@@ -120,9 +120,10 @@ class stress_analysis_toolbox(QWidget):
                                   layer_type=layer[2])
             self.viewer.add_layer(_layer)
 
+
 @frame_by_frame
 def comprehensive_analysis(pointcloud: PointsData,
-                           max_degree: int=5,
+                           max_degree: int = 5,
                            n_quadrature_points: int = 110,
                            maximal_distance: int = None,
                            gamma: float = 26.0,
@@ -170,10 +171,11 @@ def comprehensive_analysis(pointcloud: PointsData,
     from ..types import (_METADATAKEY_MEAN_CURVATURE,
                          _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
                          _METADATAKEY_H_E123_ELLIPSOID,
-                         _METADATAKEY_ANISO_STRESS_TISSUE,
-                         _METADATAKEY_ANISO_STRESS_CELL,
-                         _METADATAKEY_ANISO_STRESS_TOTAL,
-                         _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL,
+                         _METADATAKEY_STRESS_TISSUE,
+                         _METADATAKEY_STRESS_CELL,
+                         _METADATAKEY_STRESS_TOTAL,
+                         _METADATAKEY_STRESS_TISSUE_ANISO,
+                         _METADATAKEY_STRESS_TOTAL_RADIAL,
                          _METADATAKEY_H0_ARITHMETIC,
                          _METADATAKEY_H0_SURFACE_INTEGRAL,
                          _METADATAKEY_S2_VOLUME_INTEGRAL,
@@ -184,7 +186,7 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_GAUSS_BONNET_REL_RAD,
                          _METADATAKEY_STRESS_TENSOR_CART,
                          _METADATAKEY_STRESS_TENSOR_ELLI,
-                         _METADATAKEY_MAX_TISSUE_ANISOTROPY,
+                         _METADATAKEY_STRESS_TISSUE,
                          _METADATAKEY_FIT_RESIDUE,
                          _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
     # =====================================================================
@@ -397,14 +399,14 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     # Quadrature points on ellipsoid
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_ellipsoid,
-                _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
+                _METADATAKEY_STRESS_TISSUE: stress_tissue}
     metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
                 _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal,
-                _METADATAKEY_MAX_TISSUE_ANISOTROPY: max_min_anisotropy}
+                _METADATAKEY_STRESS_TISSUE_ANISO: max_min_anisotropy}
     properties = {'name': 'Result of lebedev quadrature on ellipsoid',
                   'features': features,
                   'metadata': metadata,
-                  'face_color': _METADATAKEY_ANISO_STRESS_TISSUE,
+                  'face_color': _METADATAKEY_STRESS_TISSUE,
                   'face_colormap': 'twilight',
                   'size': size}
     layer_quadrature_ellipsoid =(quadrature_points_ellipsoid, properties, 'points')
@@ -412,9 +414,9 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Curvatures and stresses: Show on droplet surface (points)
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
                 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
-                 _METADATAKEY_ANISO_STRESS_CELL: stress_cell,
-                 _METADATAKEY_ANISO_STRESS_TOTAL: stress_total,
-                 _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL: stress_total_radial}
+                 _METADATAKEY_STRESS_CELL: stress_cell,
+                 _METADATAKEY_STRESS_TOTAL: stress_total,
+                 _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
                 _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
                 _METADATAKEY_GAUSS_BONNET_ABS_RAD: gauss_bonnet_absolute_radial,
@@ -428,7 +430,7 @@ def comprehensive_analysis(pointcloud: PointsData,
                   'features': features,
                   'metadata': metadata,
                   'face_colormap': 'twilight',
-                  'face_color': _METADATAKEY_ANISO_STRESS_CELL,
+                  'face_color': _METADATAKEY_STRESS_CELL,
                   'size': size}
     layer_quadrature = (quadrature_points, properties, 'points')
 
