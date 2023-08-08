@@ -86,6 +86,7 @@ def maximal_tissue_anisotropy(ellipsoid: VectorsData,
     mean_curvature = result[1]['features'][_METADATAKEY_MEAN_CURVATURE]
     return 2 * gamma * (mean_curvature[0] - mean_curvature[-1])
 
+
 def tissue_stress_tensor(ellipsoid: VectorsData,
                          H0_ellipsoid: float,
                          gamma: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -178,10 +179,8 @@ def calculate_anisotropy(df: pd.DataFrame,
                 largest_excluded_value,
                 largest_excluded_value - smallest_excluded_value)
 
-    grouped_df = df.groupby(group_column)
-    anisotropy_df = grouped_df.apply(anisotropy, alpha=alpha, column=column)
-    anisotropy_df = anisotropy_df.rename(columns={0: 'min',
-                                                  1: 'max',
-                                                  2: 'anisotropy'})
+    anisotropy_df = df.groupby(group_column).apply(anisotropy, alpha=alpha, column=column)
+    anisotropy_df = anisotropy_df.apply(pd.Series)
+    anisotropy_df.columns = [column + '_lower', column + '_upper', column+ '_anisotropy']
 
     return anisotropy_df
