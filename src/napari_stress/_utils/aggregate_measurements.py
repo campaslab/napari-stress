@@ -38,7 +38,7 @@ def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
         _METADATAKEY_AUTOCORR_TEMPORAL_TISSUE
     )
 
-    from .temporal_correlation import temporal_autocorrelation
+    from .._measurements.temporal_correlation import temporal_autocorrelation
 
     # Single values over time
     _metadata = [layer[1]['metadata'] for layer in results_stress_analysis if 'metadata' in layer[1].keys()]
