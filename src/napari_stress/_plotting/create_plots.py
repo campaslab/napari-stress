@@ -10,6 +10,7 @@ def draw_chronological_kde_plot(df: pd.DataFrame,
                                 hue: str = 'time',
                                 ax: plt.Axes = None,
                                 colormap: str = 'flare',
+                                legend: bool = True,
                                 grid: bool = True) -> Tuple[plt.Figure, plt.Axes]:
     """
     Draw a KDE plot of the data in df, with x on the x-axis and hue as the
@@ -39,7 +40,10 @@ def draw_chronological_kde_plot(df: pd.DataFrame,
 
     if ax is None:
         fig, ax = plt.subplots()
-    sns.kdeplot(data=df, x=x, hue=hue, ax=ax, palette=colormap)
+    sns.kdeplot(data=df, x=x, hue=hue, ax=ax, palette=colormap, legend=False)
+
+    if legend:
+        ax.legend()
 
     if grid:
         ax.grid(which='both', linestyle='--', alpha=0.5, color='grey')
@@ -97,7 +101,7 @@ def draw_chronological_lineplot_with_errors(
         fig, ax = plt.subplots()
 
     sns.lineplot(data=df, x=x, y=y, hue=hue, ax=ax, estimator=estimator,
-                 errorbar=error, **kwargs)
+                 errorbar=error, marker='o', **kwargs)
 
     if grid:
         ax.grid(which='both', linestyle='--', alpha=0.5, color='grey')
