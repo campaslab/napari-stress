@@ -35,10 +35,16 @@ _METADATAKEY_STRESS_TOTAL_RADIAL = 'stress_total_radial'
 
 
 _METADATAKEY_STRESS_TENSOR_ELLI = 'Tissue_stress_tensor_elliptical'
-_METADATAKEY_STRESS_TENSOR_CART = 'Tissue_stress_tensor_cartesian'
+_METADATAKEY_STRESS_TENSOR_ELLI_E1 = 'Tissue_stress_tensor_elliptical_e1'
+_METADATAKEY_STRESS_TENSOR_ELLI_E2 = 'Tissue_stress_tensor_elliptical_e2'
+_METADATAKEY_STRESS_TENSOR_ELLI_E3 = 'Tissue_stress_tensor_elliptical_e3'
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12 = 'stress_ellipsoid_anisotropy_e12'
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13 = 'stress_ellipsoid_anisotropy_e13'
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23 = 'stress_ellipsoid_anisotropy_e23'
+_METADATAKEY_STRESS_TENSOR_CART = 'Tissue_stress_tensor_cartesian'
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E1 = 'angle_ellipsoid_cartesian_e1_x1'
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E2 = 'angle_ellipsoid_cartesian_e1_x2'
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E3 = 'angle_ellipsoid_cartesian_e1_x3'
 
 _METADATAKEY_FIT_RESIDUE = 'fit_residue'
 _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = 'Elipsoid_deviation_contribution_matrix'

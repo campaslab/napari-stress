@@ -186,7 +186,15 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_GAUSS_BONNET_REL_RAD,
                          _METADATAKEY_STRESS_TENSOR_CART,
                          _METADATAKEY_STRESS_TENSOR_ELLI,
-                         _METADATAKEY_STRESS_TISSUE,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E1,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E2,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E3,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E2,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E3,
                          _METADATAKEY_FIT_RESIDUE,
                          _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
     # =====================================================================
@@ -310,6 +318,13 @@ def comprehensive_analysis(pointcloud: PointsData,
     stress_tensor_ellipsoidal = result[0]
     stress_tensor_cartesian = result[1]
 
+    # calculate angles
+    angles = []
+    for j in range(3):
+        dot_product = np.dot(stress_tensor_cartesian[:, j], stress_tensor_ellipsoidal[:, 0])
+        norm = np.linalg.norm(stress_tensor_cartesian[:, j]) * np.linalg.norm(stress_tensor_ellipsoidal[:, 0])
+        angles.append(np.arccos(dot_product/norm)*180/np.pi)
+
     # =============================================================================
     # Geodesics
     # =============================================================================
@@ -402,6 +417,15 @@ def comprehensive_analysis(pointcloud: PointsData,
                 _METADATAKEY_STRESS_TISSUE: stress_tissue}
     metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
                 _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal,
+                _METADATAKEY_STRESS_TENSOR_ELLI_E1: stress_tensor_ellipsoidal[0, 0],
+                _METADATAKEY_STRESS_TENSOR_ELLI_E2: stress_tensor_ellipsoidal[1, 1],
+                _METADATAKEY_STRESS_TENSOR_ELLI_E3: stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12: stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[1, 1],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23: stress_tensor_ellipsoidal[1, 1] - stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13: stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E1: angles[0],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E2: angles[1],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E3: angles[2],
                 _METADATAKEY_STRESS_TISSUE_ANISO: max_min_anisotropy}
     properties = {'name': 'Result of lebedev quadrature on ellipsoid',
                   'features': features,
