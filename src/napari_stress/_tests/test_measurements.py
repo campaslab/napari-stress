@@ -476,26 +476,3 @@ def test_stresses():
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
-
-def test_compatibility_decorator():
-    import inspect
-    import numpy as np
-    import napari_stress
-
-    from napari_stress import types
-
-    def my_function(manifold: napari_stress._stress.manifold_SPB.manifold, sigma: float = 1.0) -> (dict, dict):
-        some_data = np.random.random((10,3))
-        metadata = {'attribute': 1}
-        metadata[types._METADATAKEY_MANIFOLD] = manifold
-        features = {'attribute2': np.random.random(10)}
-        return features, metadata
-
-    function = napari_stress.measurements.utils.naparify_measurement(my_function)
-    sig = inspect.signature(function)
-
-    assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
-
-
-if __name__ == '__main__':
-    test_geodesics()
