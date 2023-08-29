@@ -1,4 +1,2 @@
 jupyter-book>=0.7.0b
-matplotlib
-numpy
 napari-stress

@@ -12,17 +12,17 @@ jobs:
   deploy-book:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Install dependencies
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.7
+        python-version: 3.9
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r docs/requirements.txt
     # Build the book
     - name: Build the book
       run: |
