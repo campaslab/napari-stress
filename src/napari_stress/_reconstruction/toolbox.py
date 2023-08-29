@@ -169,8 +169,7 @@ def reconstruct_droplet(
     remove_outliers: bool = True,
     outlier_tolerance: float = 1.5,
     sampling_distance: float = 0.5,
-    interpolation_method: str = "cubic",
-    verbose=False,
+    interpolation_method: str = "cubic"
 ) -> List[LayerDataTuple]:
     """
     Reconstruct droplet surface from points layer.
