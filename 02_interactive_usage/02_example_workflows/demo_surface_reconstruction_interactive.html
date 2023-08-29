@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Surface reconstruction &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Spherical harmonics expansion" href="demo_spherical_harmonics_interactive.html" />
     <link rel="prev" title="Ellipse fitting" href="demo_fit_ellipsoid_interactive.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -377,7 +376,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="surface-reconstruction">
-<span id="glossary-surface-reconstruction-interactive"></span><h1>Surface reconstruction<a class="headerlink" href="#surface-reconstruction" title="Permalink to this heading">#</a></h1>
+<span id="glossary-surface-reconstruction-interactive"></span><h1>Surface reconstruction<a class="headerlink" href="#surface-reconstruction" title="Permalink to this headline">#</a></h1>
 <p>This tutorial will explain how to perform a surface reconstruction with napari-stress interactively from the napari viewer. This plugin implements the <a class="reference external" href="https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.reconstructSurface">respective function</a> from the <a class="reference external" href="https://vedo.embl.es">vedo</a> library. To get started, open your own data or use the provided sample data from napari-stress (<a class="reference external" href="https://github.com/campaslab/STRESS">raw data source</a>):</p>
 <p><img alt="" src="../../_images/open_sample_droplet.png" />
 <img alt="" src="../../_images/open_sample_droplet1.png" /></p>
@@ -386,7 +385,7 @@ document.write(`
 <p>This will bring up the plugin widget:</p>
 <p><img alt="" src="../../_images/reconstruct_surface1.png" /></p>
 <section id="results">
-<h2>Results<a class="headerlink" href="#results" title="Permalink to this heading">#</a></h2>
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">radius</span></code> controls the search radius of the algorithm: To reconstruct a surface, the function finds all neighboring points for a given point in the pointcloud to be considered for a surface. Setting this value too low will result in a leaky surface:</p>
 <p><img alt="" src="../../_images/reconstruct_surface2.png" /></p>
 <p>In creasing the value will fix this issue:</p>

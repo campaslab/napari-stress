@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Validation &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -69,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="napari_stress.approximation" href="../../06_API/approximation.html" />
     <link rel="prev" title="Acknowledgement &amp; Citation" href="../Acknowledgement_and_citation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -398,7 +397,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="validation">
-<h1>Validation<a class="headerlink" href="#validation" title="Permalink to this heading">#</a></h1>
+<h1>Validation<a class="headerlink" href="#validation" title="Permalink to this headline">#</a></h1>
 <p>This notebook will perform a theoretical analysis of measured curvatures on an ideal ellipsoid. In the second part, it compares the outputs of measurements done with napari-stress to those of the legacy-version <a class="reference external" href="https://github.com/campaslab/STRESS">STRESS</a> as well as .</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -417,14 +416,14 @@ document.write(`
 </div>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="benchmarking">
-<h1>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h1>
+<h1>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this headline">#</a></h1>
 <p>In this section, we benchmark the performance of napari-stress. This is done by performing two tests on synthetic image data of a blurry ellipsoid:</p>
 <ul class="simple">
 <li><p>We reconstruct the pointcloud with napari-stress. We then measure the deviation of the recovered point cloud from the original pointcloud.</p></li>
 <li><p>We measure the mean curvatures of the ellipsoid with napari-stress. We then compare the measured mean curvatures to the theoretical mean curvatures of the same ellipsoid.</p></li>
 </ul>
 <section id="relative-deviation-of-pointcloud">
-<h2>Relative deviation of pointcloud<a class="headerlink" href="#relative-deviation-of-pointcloud" title="Permalink to this heading">#</a></h2>
+<h2>Relative deviation of pointcloud<a class="headerlink" href="#relative-deviation-of-pointcloud" title="Permalink to this headline">#</a></h2>
 <p>In the next cell, we create a list of major axis lengths for which we want to calculate the theoretical mean curvatures. The different set of major axis lengths is used to test the robustness of the mean curvature calculation and corresponds to ellipsoids of different aspect ratios.</p>
 <p>The relative deviation of the pointcloud is calculated as the average deviation of every traced point from its corresponding correct location in x,y and z divided by the respective point’s true location in x,y and z. In order to calculate the corresponding location of a point on the surface of a given ellipsoid, we transform both te query point and the ellipsoid into a coordinate system where the ellipsoid is centered at the origin and has major axes lengths of 1. In this coordinate system, the location of a point on the surface of the ellipsoid can be found by calculating its coordinates in polar coordinates; its elevation and azimuth can be kept and the radius is replaced by the major axis length of the ellipsoid. The point is then transformed back into the original coordinate system.</p>
 <p>In formulas:</p>
@@ -551,7 +550,7 @@ document.write(`
 </div>
 </section>
 <section id="relative-and-absolute-mean-curvature-deviation">
-<h2>Relative and absolute mean curvature deviation<a class="headerlink" href="#relative-and-absolute-mean-curvature-deviation" title="Permalink to this heading">#</a></h2>
+<h2>Relative and absolute mean curvature deviation<a class="headerlink" href="#relative-and-absolute-mean-curvature-deviation" title="Permalink to this headline">#</a></h2>
 <p>Mean curvature <span class="math notranslate nohighlight">\(H\)</span> on an ellipse is given by the <a class="reference external" href="https://mathworld.wolfram.com/Ellipsoid.html">following formula</a>:</p>
 <p><span class="math notranslate nohighlight">\(H = \frac{a b c [3(a^2+b^2) + 2c^2 + (a^2 + b^2 -2c^2)cos(2\phi) - 2(a^2 - b^2)cos(2\theta)sin^2(\phi)]}{8[a^2b^2cos^2(\phi) + c^2(b^2 cos^2(\theta) + a^2 sin^2 (\theta)) sin^2\phi]^{3/2}}\)</span></p>
 <p>where a, b and c are the major axis length of the ellipsoid. The angles <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span> denote the location on the surface of the ellipsoid in polar coordinates (azimuth <span class="math notranslate nohighlight">\(\theta \in [0, 2\pi]\)</span>, elevation <span class="math notranslate nohighlight">\(\phi \in [0, \pi]\)</span>). We can thus compare all measurements of mean curvature on an ellipsoid to the “true” mean curvature.</p>
@@ -638,7 +637,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="legacy-validation">
-<h2>Legacy validation<a class="headerlink" href="#legacy-validation" title="Permalink to this heading">#</a></h2>
+<h2>Legacy validation<a class="headerlink" href="#legacy-validation" title="Permalink to this headline">#</a></h2>
 <p>In this section, we compare the results of the legacy version of STRESS to the results of napari-stress.</p>
 <p>We compare <strong>three analysis workflows</strong>:</p>
 <ul class="simple">
@@ -653,7 +652,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </ul>
 </section>
 <section id="comparisons">
-<h2>Comparisons:<a class="headerlink" href="#comparisons" title="Permalink to this heading">#</a></h2>
+<h2>Comparisons:<a class="headerlink" href="#comparisons" title="Permalink to this headline">#</a></h2>
 <p>For all workflows, we compare the following quantities:</p>
 <ul class="simple">
 <li><p>The reconstructed pointcloud: Since the reconstructed object should be perfectly spherical, we can convert the reconstructed pointcloud coordinates to <a class="reference external" href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> and compare the distribution of radii of both reconstructions.</p></li>
@@ -670,7 +669,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="sphere">
-<h1>Sphere<a class="headerlink" href="#sphere" title="Permalink to this heading">#</a></h1>
+<h1>Sphere<a class="headerlink" href="#sphere" title="Permalink to this headline">#</a></h1>
 <p>We begin with comparing measurements for the ideal sphere. For this we load the data that was created with all listed measurement approaches:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -688,7 +687,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </div>
 <section id="radii">
-<h2>Radii<a class="headerlink" href="#radii" title="Permalink to this heading">#</a></h2>
+<h2>Radii<a class="headerlink" href="#radii" title="Permalink to this headline">#</a></h2>
 <p>To better compare the two pointcouds visually, we can convert both to relative coordinates by subtracting the pointcloud’s center from every point:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -748,7 +747,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="mean-curvatures">
-<h2>Mean curvatures<a class="headerlink" href="#mean-curvatures" title="Permalink to this heading">#</a></h2>
+<h2>Mean curvatures<a class="headerlink" href="#mean-curvatures" title="Permalink to this headline">#</a></h2>
 <p>Here, we compare the measured mean curvatures for each of the above-described workflows. We can observe that the mean curvatures for the workflows “napari_stress_analysis_and_stress_pointcloud” and “stress_analysis_and_stress_pointcloud” overlap perfectly. This indicates that any differences between the napari-stress implementation and the legacy version of STRESS are due to the reconstruction of the pointcloud.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -779,7 +778,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="compare-stresses">
-<h2>Compare stresses<a class="headerlink" href="#compare-stresses" title="Permalink to this heading">#</a></h2>
+<h2>Compare stresses<a class="headerlink" href="#compare-stresses" title="Permalink to this headline">#</a></h2>
 <p>Here we compare total/cell/tissue stresses for the three workflows:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -822,7 +821,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="ellipsoid">
-<h1>Ellipsoid<a class="headerlink" href="#ellipsoid" title="Permalink to this heading">#</a></h1>
+<h1>Ellipsoid<a class="headerlink" href="#ellipsoid" title="Permalink to this headline">#</a></h1>
 <p>In this section, we repeat the analysis workflow from above for synthetic data of an ellipsoid with major axis lengths of <code class="docutils literal notranslate"><span class="pre">(20,</span> <span class="pre">15,</span> <span class="pre">15)</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -839,7 +838,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </div>
 <section id="id1">
-<h2>Mean curvatures<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<h2>Mean curvatures<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
 <p>We now plot the distribution of mean curvatures on the synthetic ellipsoid for the three experimental workflows described above.  It is not clear whether the process of creating the synthetic image data delivers an ellipsoid image with the same major axis lengths which were used to create the initial pointcloud (see <a class="reference internal" href="create_validation_data.html"><span class="doc std std-doc">this notebook</span></a>).</p>
 <p>Hence, we compare the measured mean curvatures with both the originally used major axis lenghts (<code class="docutils literal notranslate"><span class="pre">20,</span> <span class="pre">15,</span> <span class="pre">15</span></code>) as well as with the axis lengths of the pointclouds that were recovered with the respective methods:</p>
 <div class="cell docutils container">
@@ -885,7 +884,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="total-stress">
-<h2>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this heading">#</a></h2>
+<h2>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this headline">#</a></h2>
 <p>We plot the same curve for total stress:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

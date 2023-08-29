@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Ellipsoid fitting &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -69,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Surface reconstruction" href="demo_surface_reconstruction_code.html" />
     <link rel="prev" title="Other example workflows" href="Readme.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -383,7 +382,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="ellipsoid-fitting">
-<span id="glossary-ellipse-fitting-code"></span><h1>Ellipsoid fitting<a class="headerlink" href="#ellipsoid-fitting" title="Permalink to this heading">#</a></h1>
+<span id="glossary-ellipse-fitting-code"></span><h1>Ellipsoid fitting<a class="headerlink" href="#ellipsoid-fitting" title="Permalink to this headline">#</a></h1>
 <p>Napari-stress implements several algorithms for ellipse fitting. They all have in common that they return a napari <a class="reference external" href="https://napari.org/stable/howtos/layers/vectors.html">vectors layer</a> which represents the three major axes of the fitted ellipsoid. Napari-stress provides some further functionality to project the input pointcloud onto the surface of the fitted ellipsoid.</p>
 <ul class="simple">
 <li><p><span class="xref myst">Napari-stress implementation</span> Least squares ellipsoid fitting</p></li>
@@ -404,7 +403,7 @@ document.write(`
 </div>
 </div>
 <section id="napari-stress-implementation-a-class-anchor-id-napari-stress-a">
-<h2>Napari-stress implementation <a class="anchor" id="napari-stress"></a><a class="headerlink" href="#napari-stress-implementation-a-class-anchor-id-napari-stress-a" title="Permalink to this heading">#</a></h2>
+<h2>Napari-stress implementation <a class="anchor" id="napari-stress"></a><a class="headerlink" href="#napari-stress-implementation-a-class-anchor-id-napari-stress-a" title="Permalink to this headline">#</a></h2>
 <p>This is a <a class="reference external" href="https://en.wikipedia.org/wiki/Least_squares">least-squares</a> approach at ellipse fitting.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -440,7 +439,7 @@ document.write(`
 </div>
 </section>
 <section id="vedo-implementation-a-class-anchor-id-vedo-a">
-<h2>Vedo implementation <a class="anchor" id="vedo"></a><a class="headerlink" href="#vedo-implementation-a-class-anchor-id-vedo-a" title="Permalink to this heading">#</a></h2>
+<h2>Vedo implementation <a class="anchor" id="vedo"></a><a class="headerlink" href="#vedo-implementation-a-class-anchor-id-vedo-a" title="Permalink to this headline">#</a></h2>
 <p>This function re-implements the <a class="reference external" href="https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.pcaEllipsoid">respective function</a> from the vedo library. It applies a <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">PCA-algorithm</a> to a pointcloud to retrieve the major and minor axises of an ellipsoid, that comprises a set fraction of points within its volumne. The <code class="docutils literal notranslate"><span class="pre">inside_fraction</span></code> parameter controls how many points of the pointcloud will be located within the volume of the determined ellipsoid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -476,7 +475,7 @@ document.write(`
 </div>
 </section>
 <section id="fit-quality-quantification-a-class-anchor-id-quality-a">
-<h2>Fit quality quantification <a class="anchor" id="quality"></a><a class="headerlink" href="#fit-quality-quantification-a-class-anchor-id-quality-a" title="Permalink to this heading">#</a></h2>
+<h2>Fit quality quantification <a class="anchor" id="quality"></a><a class="headerlink" href="#fit-quality-quantification-a-class-anchor-id-quality-a" title="Permalink to this headline">#</a></h2>
 <p>Lastly, if you wanted to quantify the fit remainder (i.e., the distance between the input and the fitted points), you can do this with <code class="docutils literal notranslate"><span class="pre">approximation.pairwise_point_distances()</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -505,7 +504,7 @@ document.write(`
 </div>
 </section>
 <section id="mean-curvature-on-ellipsoid-a-class-anchor-id-mean-curvature-a">
-<h2>Mean curvature on ellipsoid <a class="anchor" id="mean_curvature"></a><a class="headerlink" href="#mean-curvature-on-ellipsoid-a-class-anchor-id-mean-curvature-a" title="Permalink to this heading">#</a></h2>
+<h2>Mean curvature on ellipsoid <a class="anchor" id="mean_curvature"></a><a class="headerlink" href="#mean-curvature-on-ellipsoid-a-class-anchor-id-mean-curvature-a" title="Permalink to this headline">#</a></h2>
 <p>Lastly, the curvature on the surface of an ellipsoid can be calculated esily with <code class="docutils literal notranslate"><span class="pre">measurements.curvature_on_ellipsoid</span></code>. <em>Note</em>: The bject returned from this function is of type <code class="docutils literal notranslate"><span class="pre">LayerDataTuple</span></code>, the structure of which is explained in the docstring. Use <code class="docutils literal notranslate"><span class="pre">help(measurements.curvature_on_ellipsoid)</span></code> to show.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -568,7 +567,7 @@ H_ellipsoid_major_medial_minor :  [0.08211623521108381, 0.06563346684864003, 0.0
 </div>
 </section>
 <section id="normals-on-ellispoid">
-<h2>Normals on ellispoid<a class="headerlink" href="#normals-on-ellispoid" title="Permalink to this heading">#</a></h2>
+<h2>Normals on ellispoid<a class="headerlink" href="#normals-on-ellispoid" title="Permalink to this headline">#</a></h2>
 <p>You can also calculate the normals on the ellipsoid:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

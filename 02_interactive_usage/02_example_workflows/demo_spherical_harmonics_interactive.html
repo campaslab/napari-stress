@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Spherical harmonics expansion &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Measure curvature" href="demo_measure_curvature.html" />
     <link rel="prev" title="Surface reconstruction" href="demo_surface_reconstruction_interactive.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -377,7 +376,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="spherical-harmonics-expansion">
-<span id="glossary-spherical-harmonics-interactive"></span><span id="point-and-click-spherical-harmonics-expansion"></span><h1>Spherical harmonics expansion<a class="headerlink" href="#spherical-harmonics-expansion" title="Permalink to this heading">#</a></h1>
+<span id="glossary-spherical-harmonics-interactive"></span><span id="point-and-click-spherical-harmonics-expansion"></span><h1>Spherical harmonics expansion<a class="headerlink" href="#spherical-harmonics-expansion" title="Permalink to this headline">#</a></h1>
 <p>This tutorial will explain how to perform a spherical harmonics surface expansion with napari-stress interactively from the napari viewer. To get started, open your own data or use the provided sample data from napari-stress (<a class="reference external" href="https://github.com/campaslab/STRESS">raw data source</a>):</p>
 <p><img alt="" src="../../_images/open_sample_droplet.png" />
 <img alt="" src="../../_images/open_sample_droplet1.png" /></p>
@@ -393,7 +392,7 @@ document.write(`
 <li><p><code class="docutils literal notranslate"><span class="pre">expansion</span> <span class="pre">type</span></code>: Controls whether the points should be approximated in a cartesian (<em>recommended</em>) or radial (=spherical) coordinate system.</p></li>
 </ul>
 <section id="results">
-<h2>Results<a class="headerlink" href="#results" title="Permalink to this heading">#</a></h2>
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline">#</a></h2>
 <p>Applying a spherical harmonics expansion of <code class="docutils literal notranslate"><span class="pre">max_degree</span> <span class="pre">=</span> <span class="pre">5</span></code> will lead to the following result. The colorcoding of the fitted points corresponds to the fit remainder of the spherical harmonics expansion.</p>
 <p><img alt="" src="../../_images/fit_spherical_harmonics2.png" /></p>
 <p>Lowering the value to <code class="docutils literal notranslate"><span class="pre">max_degree</span> <span class="pre">=</span> <span class="pre">1</span></code> will lead to only the first <em>mode</em> of spherical harmonics being used, which corresponds to fitting a sphere to the pointcloud:</p>

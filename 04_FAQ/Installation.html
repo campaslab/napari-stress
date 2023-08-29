@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Installation issues &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Acknowledgement &amp; Citation" href="Acknowledgement_and_citation.html" />
     <link rel="prev" title="Analyzing spherical harmonics" href="../03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -379,10 +378,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="installation-issues">
-<span id="faq-installation"></span><h1>Installation issues<a class="headerlink" href="#installation-issues" title="Permalink to this heading">#</a></h1>
+<span id="faq-installation"></span><h1>Installation issues<a class="headerlink" href="#installation-issues" title="Permalink to this headline">#</a></h1>
 <p>In this section you find some known installation issues and how to fix them.</p>
 <section id="installation-failing-on-mac">
-<h2>Installation failing on Mac<a class="headerlink" href="#installation-failing-on-mac" title="Permalink to this heading">#</a></h2>
+<h2>Installation failing on Mac<a class="headerlink" href="#installation-failing-on-mac" title="Permalink to this headline">#</a></h2>
 <p id="faq-installation-xcode">When pip-installing napari-stress on M1 or M2 Macs, you may encounter the following error message (<a class="reference external" href="https://forum.image.sc/t/napari-stress-problem-loading-some-dependancies/73758">link to report</a>):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ImportError:<span class="w"> </span>dlopen<span class="o">(</span>/Users/manon/opt/anaconda3/envs/napari-stress/lib/python3.9/site-packages/open3d/cpu/pybind.cpython-39-darwin.so,<span class="w"> </span>0x0002<span class="o">)</span>:<span class="w"> </span>Library<span class="w"> </span>not<span class="w"> </span>loaded:<span class="w"> </span><span class="s1">&#39;/usr/local/opt/libomp/lib/libomp.dylib&#39;</span>
 Referenced<span class="w"> </span>from:<span class="w"> </span><span class="s1">&#39;/Users/xxxx/opt/anaconda3/envs/napari-stress/lib/python3.9/site-packages/open3d/cpu/pybind.cpython-39-darwin.so&#39;</span>
@@ -392,7 +391,7 @@ Reason:<span class="w"> </span>tried:<span class="w"> </span><span class="s1">&#
 <p>In order to fix this issue, please update the XCode tools on your Mac as described <a class="reference external" href="https://stackoverflow.com/questions/52522565/git-is-not-working-after-macos-update-xcrun-error-invalid-active-developer-pa">here</a>.</p>
 </section>
 <section id="pygeodesic-installation-fail">
-<h2>Pygeodesic installation fail<a class="headerlink" href="#pygeodesic-installation-fail" title="Permalink to this heading">#</a></h2>
+<h2>Pygeodesic installation fail<a class="headerlink" href="#pygeodesic-installation-fail" title="Permalink to this headline">#</a></h2>
 <p>On some Macs, the <code class="docutils literal notranslate"><span class="pre">pygeodesic</span></code> package fails to install with this error message:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>building<span class="w"> </span>‘pygeodesic.geodesic’<span class="w"> </span>extension
 creating<span class="w"> </span>build/temp.macosx-10.9-x86_64-cpython-39
@@ -415,7 +414,7 @@ hint:<span class="w"> </span>See<span class="w"> </span>above<span class="w"> </
 <p>Similar to <a class="reference internal" href="#faq-installation-xcode"><span class="std std-ref">this issue</span></a>, this problem can be fixed by updating the XCode command line tools on your Mac as described above.</p>
 </section>
 <section id="oserror-windows-during-installation">
-<h2>OSError (Windows) during installation<a class="headerlink" href="#oserror-windows-during-installation" title="Permalink to this heading">#</a></h2>
+<h2>OSError (Windows) during installation<a class="headerlink" href="#oserror-windows-during-installation" title="Permalink to this headline">#</a></h2>
 <p>This describes how to fix the following error:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ERROR: Could not install packages due to an OSError: [WinError 5] Access is denied: &#39;C:\\Users\\xxx\\AppData\\Local\\Temp\\pip-uninstall-f7qla__t\\jupyter-trust.exe&#39;
 Consider using the `--user` option or check the permissions.

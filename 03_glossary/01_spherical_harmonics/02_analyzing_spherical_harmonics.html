@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Analyzing spherical harmonics &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -69,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Installation issues" href="../../04_FAQ/Installation.html" />
     <link rel="prev" title="Spherical harmonics" href="01_spherical_harmonics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -381,10 +380,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analyzing-spherical-harmonics">
-<span id="glossary-spherical-harmonics-mathematical-basics2"></span><span id="spherical-harmonics-measurements"></span><h1>Analyzing spherical harmonics<a class="headerlink" href="#analyzing-spherical-harmonics" title="Permalink to this heading">#</a></h1>
+<span id="glossary-spherical-harmonics-mathematical-basics2"></span><span id="spherical-harmonics-measurements"></span><h1>Analyzing spherical harmonics<a class="headerlink" href="#analyzing-spherical-harmonics" title="Permalink to this headline">#</a></h1>
 <p>Performing a spherical harmonics expansion on a given pointcloud yields a number of properties which can be used to analyze the obtained expansion (and thus, the original pointcloud) quantitiatively. This section describes the nature of the available measurements in napari stress.</p>
 <section id="spherical-harmonics-expansion-fit-residue">
-<span id="spherical-harmonics-measurements-fit-residue"></span><h2>Spherical harmonics expansion fit residue<a class="headerlink" href="#spherical-harmonics-expansion-fit-residue" title="Permalink to this heading">#</a></h2>
+<span id="spherical-harmonics-measurements-fit-residue"></span><h2>Spherical harmonics expansion fit residue<a class="headerlink" href="#spherical-harmonics-expansion-fit-residue" title="Permalink to this headline">#</a></h2>
 <p>In practice, a spherical harmonics expansion only uses contributions up to a defined degree <span class="math notranslate nohighlight">\(l\)</span> (the order <span class="math notranslate nohighlight">\(m\)</span> is constrained by <span class="math notranslate nohighlight">\(-l &lt; m &lt; l\)</span>). This can have various reasons: For once, using high degrees for the expansion can lead to high computational expense whereas using only the first few orders may already lead to acceptable results. On the other hand, using high orders can lead to <a class="reference external" href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a> - using an infinitely high degree will lead to an expansion that describes each point perfectly, but does not capture the overall shape well anymore.</p>
 <p>Depending on the highest used degree for the expansion, the expansion will lead to a residual error <span class="math notranslate nohighlight">\(\Delta\)</span>:</p>
 <p><span class="math notranslate nohighlight">\(\Delta = \vec{x}_i - f(\theta_i, \phi_i)\)</span></p>
@@ -394,7 +393,7 @@ document.write(`
 <p>The orange points show the input pointcloud consisting of points <span class="math notranslate nohighlight">\(\vec{x}_i\)</span>, the color-coded points show the results of the spherical harmonics expansion with <span class="math notranslate nohighlight">\(l&lt;=1\)</span> - which corresponds to only the basic modes of spherical harmonics being used - which in turn corresponds to a sphere. The color scale of the resulting sphere corresponds to the fit residue of the expansion for every point <span class="math notranslate nohighlight">\(\Delta_i\)</span>.</p>
 </section>
 <section id="mean-curvature">
-<span id="spherical-harmonics-measurements-mean-curvature"></span><h2>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this heading">#</a></h2>
+<span id="spherical-harmonics-measurements-mean-curvature"></span><h2>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this headline">#</a></h2>
 <p>An interesting parameter that can be obtained from a spherical harmonics expansion is the <a class="reference external" href="https://en.wikipedia.org/wiki/Mean_curvature">mean curvature</a>. The concept is tightly linked to differntial geometry and allows several calculations. Napari-stress allows to calculate the mean curvature <span class="math notranslate nohighlight">\(H_i\)</span> at every point on the surface of a spherical harmonics expansion as well as calculating the globally averaged curvatures <span class="math notranslate nohighlight">\(H_0\)</span>. The two implemented concepts for global curvatures include:</p>
 <ul class="simple">
 <li><p>The arithmetic average <span class="math notranslate nohighlight">\(H_{0, arithmetic~avg}\)</span>: This is simply the averaged curvature at every point: <span class="math notranslate nohighlight">\(H_{0, arithmetic~avg} = \frac{1}{N}\sum^N_{i=0} H_i\)</span> where <span class="math notranslate nohighlight">\(H_i\)</span> is the curvature at a given point.</p></li>
@@ -403,7 +402,7 @@ document.write(`
 <p>The <a class="reference external" href="https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract">stress paper</a> uses the second definition (<span class="math notranslate nohighlight">\(H_{0, surf~int}\)</span>) for the description of curvatures oon the surface.</p>
 </section>
 <section id="gauss-bonnet-test">
-<span id="spherical-harmonics-measurements-gauss-bonnet"></span><h2>Gauss-Bonnet test<a class="headerlink" href="#gauss-bonnet-test" title="Permalink to this heading">#</a></h2>
+<span id="spherical-harmonics-measurements-gauss-bonnet"></span><h2>Gauss-Bonnet test<a class="headerlink" href="#gauss-bonnet-test" title="Permalink to this headline">#</a></h2>
 <p>The Gauss-Bonnet theorem allows to evaluate the quality of the obtained surface expansion quantitatively.</p>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem">From Wikipedia</a>: <em>In the simplest application, the case of a triangle on a plane, the sum of its angles is 180 degrees. The Gauss–Bonnet theorem extends this to more complicated shapes and curved surfaces, connecting the local and global geometries.</em></p>
 <p>In other words, the Gauss-Bonnet test gives you the possibility to measure whether the obtained surface expansion retains the required mathematical properties for such objects. This will be the case for simple shapes. However, trying to acquire a spherical harmonics expansion for highly irregular surfaces may well lead to high relative errors. Napari-stress offers the <em>absolute</em> <span class="math notranslate nohighlight">\(\Delta_{Gauss-Bonnet, abs}\)</span> and the <em>relative</em> <span class="math notranslate nohighlight">\(\Delta_{Gauss-Bonnet, rel}\)</span> value of this criterion; The relative error compares the absolute measured value to the respective result of an ideal sphere:</p>

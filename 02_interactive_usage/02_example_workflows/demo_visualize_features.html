@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Visualize measurements &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Spherical harmonics" href="../../03_glossary/01_spherical_harmonics/Readme.html" />
     <link rel="prev" title="Measure curvature" href="demo_measure_curvature.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -379,14 +378,14 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="visualize-measurements">
-<span id="utility-visualize-features"></span><span id="point-and-click-visualize-features"></span><h1>Visualize measurements<a class="headerlink" href="#visualize-measurements" title="Permalink to this heading">#</a></h1>
+<span id="utility-visualize-features"></span><span id="point-and-click-visualize-features"></span><h1>Visualize measurements<a class="headerlink" href="#visualize-measurements" title="Permalink to this headline">#</a></h1>
 <p>Napari-stress offers functionality to visualize measured data interactively in the napari viewer. This tutorial provides guidance on how to use these.</p>
 <ul class="simple">
 <li><p><span class="xref myst">Visualizing features</span></p></li>
 <li><p><span class="xref myst">Export data</span></p></li>
 </ul>
 <section id="sample-data">
-<h2>Sample data<a class="headerlink" href="#sample-data" title="Permalink to this heading">#</a></h2>
+<h2>Sample data<a class="headerlink" href="#sample-data" title="Permalink to this headline">#</a></h2>
 <p>To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (<code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Open</span> <span class="pre">Sample</span> <span class="pre">&gt;</span> <span class="pre">napari-stress:</span> <span class="pre">Droplet</span> <span class="pre">pointcloud</span></code>).</p>
 <p><img alt="" src="../../_images/open_sample_droplet2.png" /></p>
 <p><img alt="" src="../../_images/open_sample_droplet11.png" /></p>
@@ -394,7 +393,7 @@ document.write(`
 <p><img alt="" src="../../_images/demo_visualize_features1.png" /></p>
 </section>
 <section id="visualize-features-a-class-anchor-id-visualize-features-a">
-<h2>Visualize features <a class="anchor" id="visualize-features"></a><a class="headerlink" href="#visualize-features-a-class-anchor-id-visualize-features-a" title="Permalink to this heading">#</a></h2>
+<h2>Visualize features <a class="anchor" id="visualize-features"></a><a class="headerlink" href="#visualize-features-a-class-anchor-id-visualize-features-a" title="Permalink to this headline">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Features</span></code> in the napari ecosystem are measurements that are assigned to a single Point (<code class="docutils literal notranslate"><span class="pre">Points</span></code> layer), label (<code class="docutils literal notranslate"><span class="pre">Labels</span></code> layer), or Surface vertex (<code class="docutils literal notranslate"><span class="pre">Surface</span></code> layer). In the context of napari-stress, such measurements include point-wise spherical harmonics expansion errors, curvature, etc. To do so for the created sample data, open the widget for this from <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Utilities</span> <span class="pre">&gt;</span> <span class="pre">Visualize</span> <span class="pre">pointcloud</span> <span class="pre">features</span> <span class="pre">(n-Stress)</span></code>.</p>
 <p><img alt="" src="../../_images/demo_visualize_features2.png" /></p>
 <p>In the dropdown labelled <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">axis</span> <span class="pre">key</span></code>, you’ll see all available measurements for the selected layer - in this case, the feature to be visualized is called <code class="docutils literal notranslate"><span class="pre">error</span></code> and corresponds to the fit residue of the spherical harmonics expansion. By changing the number of bins (<code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">bins</span></code>) and clicking on <code class="docutils literal notranslate"><span class="pre">Update</span></code> you can change the number of bins of the histogram and apply the changes:</p>
@@ -407,7 +406,7 @@ document.write(`
 <p>To plot a different feature, select it from the dropdown and click <code class="docutils literal notranslate"><span class="pre">Update</span></code> to apply.</p>
 </section>
 <section id="export-data-a-class-anchor-id-export-data-a">
-<h2>Export data <a class="anchor" id="export-data"></a><a class="headerlink" href="#export-data-a-class-anchor-id-export-data-a" title="Permalink to this heading">#</a></h2>
+<h2>Export data <a class="anchor" id="export-data"></a><a class="headerlink" href="#export-data-a-class-anchor-id-export-data-a" title="Permalink to this headline">#</a></h2>
 <p>Lastly, you can export the displayed (histogram) data as a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file using the <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">plot</span> <span class="pre">as</span> <span class="pre">csv</span></code> button.</p>
 </section>
 </section>

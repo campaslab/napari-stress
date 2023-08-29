@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Measureing intensity on vectors and surfaces &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -65,7 +64,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -378,7 +377,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="measureing-intensity-on-vectors-and-surfaces">
-<h1>Measureing intensity on vectors and surfaces<a class="headerlink" href="#measureing-intensity-on-vectors-and-surfaces" title="Permalink to this heading">#</a></h1>
+<h1>Measureing intensity on vectors and surfaces<a class="headerlink" href="#measureing-intensity-on-vectors-and-surfaces" title="Permalink to this headline">#</a></h1>
 <p>Often, we want to measure the intensity of a signal on a vector or surface. This can be done using the measure_intensity_on_vectors() function. This function takes a vector or surface as input and returns the intensity of the signal on the vector or surface.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -392,7 +391,7 @@ document.write(`
 </div>
 </div>
 <section id="segmentation-of-sample-data">
-<h2>Segmentation of sample data<a class="headerlink" href="#segmentation-of-sample-data" title="Permalink to this heading">#</a></h2>
+<h2>Segmentation of sample data<a class="headerlink" href="#segmentation-of-sample-data" title="Permalink to this headline">#</a></h2>
 <p>We use <a class="reference external" href="https://www.napari-hub.org/plugins/napari-segment-blobs-and-things-with-membranes">napari-segment-blobs-and-things-with-membranes</a> to segment the sample data. By using the <code class="docutils literal notranslate"><span class="pre">frame_by_frame</span></code> option, we can segment each frame individually without having to write for-loops.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -411,7 +410,7 @@ document.write(`
 </div>
 </section>
 <section id="create-surface">
-<h2>Create surface<a class="headerlink" href="#create-surface" title="Permalink to this heading">#</a></h2>
+<h2>Create surface<a class="headerlink" href="#create-surface" title="Permalink to this headline">#</a></h2>
 <p>To create a surface from the rescaled and binarized droplet data, we use <a class="reference external" href="https://www.napari-hub.org/plugins/napari-process-points-and-surfaces">napari-process-points-and-surfaces</a>, which provides the marching-cubes algorithm to create a surface from a binary image.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -435,7 +434,7 @@ document.write(`
 </div>
 </section>
 <section id="measureing-intensity">
-<h2>Measureing intensity<a class="headerlink" href="#measureing-intensity" title="Permalink to this heading">#</a></h2>
+<h2>Measureing intensity<a class="headerlink" href="#measureing-intensity" title="Permalink to this headline">#</a></h2>
 <p>We now calculate the surface normals of the surface and use them to measure the intensity of the signal on the surface. To be able to measure intensity in a rregion around the surface, we can pass the <code class="docutils literal notranslate"><span class="pre">length_multiplier</span></code> value to the function, which will create a vector with the length of the surface normal multiplied by the <code class="docutils literal notranslate"><span class="pre">length_multiplier</span></code> value. The intensity of the signal on the vector is then measured.</p>
 <p>Moreover, the <code class="docutils literal notranslate"><span class="pre">center</span></code> parameter determines whether the vector is centered on the surface or not. If <code class="docutils literal notranslate"><span class="pre">center</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the vector is centered on the surface. If <code class="docutils literal notranslate"><span class="pre">center</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the vector can point outwards or inwards, depending on the sign of the <code class="docutils literal notranslate"><span class="pre">length_multiplier</span></code> parameter.</p>
 <div class="cell docutils container">
@@ -455,7 +454,7 @@ document.write(`
 </div>
 </section>
 <section id="projecting-vector-measurements-on-surface">
-<h2>Projecting vector measurements on surface<a class="headerlink" href="#projecting-vector-measurements-on-surface" title="Permalink to this heading">#</a></h2>
+<h2>Projecting vector measurements on surface<a class="headerlink" href="#projecting-vector-measurements-on-surface" title="Permalink to this headline">#</a></h2>
 <p>Lastly, we can project the vector measurements on the surface. The measurements are stored in a <code class="docutils literal notranslate"><span class="pre">features</span></code> table that is attached to the last added vectors layer:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

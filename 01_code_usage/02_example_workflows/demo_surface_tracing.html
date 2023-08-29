@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Trace refining a surface &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Spherical harmonics" href="demo_spherical_harmonics_code.html" />
     <link rel="prev" title="Surface reconstruction" href="demo_surface_reconstruction_code.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -381,7 +380,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="trace-refining-a-surface">
-<span id="glossary-surface-tracing-code"></span><h1>Trace refining a surface<a class="headerlink" href="#trace-refining-a-surface" title="Permalink to this heading">#</a></h1>
+<span id="glossary-surface-tracing-code"></span><h1>Trace refining a surface<a class="headerlink" href="#trace-refining-a-surface" title="Permalink to this headline">#</a></h1>
 <p>The idea of trace-refining a surface is to modify an existing surface that was derived from an intensity image in such a way that it represents the border of an object in the intensity image to the highest-possible degree. This notebook illustrates how it works and what the set parameters will do to the result.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -429,7 +428,7 @@ document.write(`
 </div>
 </div>
 <section id="surface-creation">
-<h2>Surface creation<a class="headerlink" href="#surface-creation" title="Permalink to this heading">#</a></h2>
+<h2>Surface creation<a class="headerlink" href="#surface-creation" title="Permalink to this headline">#</a></h2>
 <p>We now create a surface from this data by thresholding and marching cubes surface reconstruction:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -507,7 +506,7 @@ document.write(`
 </div>
 </section>
 <section id="creating-trace-vectors">
-<h2>Creating trace vectors<a class="headerlink" href="#creating-trace-vectors" title="Permalink to this heading">#</a></h2>
+<h2>Creating trace vectors<a class="headerlink" href="#creating-trace-vectors" title="Permalink to this headline">#</a></h2>
 <p>To address this, we first calculate normal vectors on the surface that are multiplied by a set factor, the <code class="docutils literal notranslate"><span class="pre">trace_length</span></code> parameter. The higher this parameter, the longer the cast normal vector along the surface will be</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -546,7 +545,7 @@ document.write(`
 </div>
 </section>
 <section id="measuring-intensity-along-the-normals">
-<h2>Measuring intensity along the normals<a class="headerlink" href="#measuring-intensity-along-the-normals" title="Permalink to this heading">#</a></h2>
+<h2>Measuring intensity along the normals<a class="headerlink" href="#measuring-intensity-along-the-normals" title="Permalink to this headline">#</a></h2>
 <p>In order to find the “true” border of our object in the intensity image, we need to measure the intensity along each of these vectors. You can control the amount of sampled intensities along the ray using the <code class="docutils literal notranslate"><span class="pre">sampling_distance</span></code> parameter. Setting this parameter - for instance - to <code class="docutils literal notranslate"><span class="pre">sampling_distance</span> <span class="pre">=</span> <span class="pre">1</span></code> for a normal vector of <code class="docutils literal notranslate"><span class="pre">trace_length</span> <span class="pre">=</span> <span class="pre">10</span></code> would mean that intensity is measured 10 times along the normal with a distance of <code class="docutils literal notranslate"><span class="pre">1</span></code> between each sampled intensity. In other words: Making this parameter small, will make the following procedure more accurate, but also slower.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -604,7 +603,7 @@ document.write(`
 </div>
 </section>
 <section id="estimate-surface-by-fit-function">
-<h2>Estimate surface by fit function<a class="headerlink" href="#estimate-surface-by-fit-function" title="Permalink to this heading">#</a></h2>
+<h2>Estimate surface by fit function<a class="headerlink" href="#estimate-surface-by-fit-function" title="Permalink to this headline">#</a></h2>
 <p>In this step, we fit a given function to the intensity profile. We demonstrate this with a <a class="reference external" href="https://en.wikipedia.org/wiki/Sigmoid_function">sigmoidal funtion</a>, which is suitable to approximate the intensity of fully fluorescently labeld objects. Other fit functions (e.g., a <a class="reference external" href="https://en.wikipedia.org/wiki/Gaussian_function">gaussian normal distribution</a>) can also deal with objects which are labelled fluorescently only on the surface.</p>
 <p>For the fit to work, we first need to estimate some good parameters for the sigmoidal function to start with. We can have a closer look at what parameters the sigmoidal function expects:</p>
 <div class="cell docutils container">
@@ -684,7 +683,7 @@ New point location:  [21.0943737  46.87596929 49.56764171]
 </div>
 </section>
 <section id="using-the-implemented-function">
-<h2>Using the implemented function<a class="headerlink" href="#using-the-implemented-function" title="Permalink to this heading">#</a></h2>
+<h2>Using the implemented function<a class="headerlink" href="#using-the-implemented-function" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">napari_stress.trace_refinement_of_surface()</span></code> function allows you to repeat this process for every point on the surface and filter the determined points according to the derived fit errors, if you want.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

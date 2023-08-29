@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Analyze everything &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -67,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Other example workflows" href="../02_example_workflows/Readme.html" />
     <link rel="prev" title="Anisotropic stresses" href="demo_anisotropic_stresses.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -408,7 +407,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analyze-everything">
-<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this heading">#</a></h1>
+<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this headline">#</a></h1>
 <p>This notebook demonstrates how to run a complete STRESS analysis and produce all relevant output graphs. If you want to download this notebook and execute it locally on your machine, download this file as a <code class="docutils literal notranslate"><span class="pre">ipynb</span></code> Jupyter notebook file and run it in your local python environment using the download button at the top of this page.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -442,7 +441,7 @@ document.write(`
 </div>
 </div>
 <section id="load-the-data">
-<h2>Load the data<a class="headerlink" href="#load-the-data" title="Permalink to this heading">#</a></h2>
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Permalink to this headline">#</a></h2>
 <p>Replace the following code with the commented out part (and remove the rest) below to load your own data for analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -458,7 +457,7 @@ document.write(`
 </div>
 </div>
 <section id="data-dimensions">
-<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this heading">#</a></h3>
+<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this headline">#</a></h3>
 <p>You need to set a few parameters pertaining to your data:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -473,7 +472,7 @@ document.write(`
 </div>
 </section>
 <section id="analysis-parameters">
-<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this heading">#</a></h3>
+<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this headline">#</a></h3>
 <p>In case you ran the reconstruction previously interactively from the napari viewer (as explained <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>) and exported the settings, you can import the settings here, too. To do so, simply uncomment the line below (remove the <code class="docutils literal notranslate"><span class="pre">#</span></code>) and provide the path to the saved settings file:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -525,7 +524,7 @@ document.write(`
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="analysis">
-<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this heading">#</a></h1>
+<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -725,7 +724,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="visualization">
-<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h1>
+<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">#</a></h1>
 <p>In this section, we will plot some interesting results and save the data to disk. The file location will be at the</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -749,7 +748,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </div>
 <section id="fit-errors">
-<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Permalink to this heading">#</a></h2>
+<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Permalink to this headline">#</a></h2>
 <p>We first show all the errors that were calculated during the pointcloud refinement:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1020,9 +1019,9 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="spherical-harmonics">
-<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this heading">#</a></h2>
+<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">#</a></h2>
 <section id="fit-residue">
-<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Permalink to this heading">#</a></h3>
+<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Permalink to this headline">#</a></h3>
 <p>We now show the errors made when approximating the reconstructed pointcloud with the spherical harmonics:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1049,7 +1048,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="fit-quality">
-<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Permalink to this heading">#</a></h3>
+<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Permalink to this headline">#</a></h3>
 <p>We can quantify the quality of the extracted pointcloud by using the absolute and relative Gauss-Bonnet errors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1073,7 +1072,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </section>
 </section>
 <section id="curvature">
-<h2>Curvature<a class="headerlink" href="#curvature" title="Permalink to this heading">#</a></h2>
+<h2>Curvature<a class="headerlink" href="#curvature" title="Permalink to this headline">#</a></h2>
 <p>We next show mean curvature histograms and averages over time:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1100,7 +1099,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </div>
 <section id="total-stress">
-<h3>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this heading">#</a></h3>
+<h3>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span>
@@ -1155,7 +1154,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="cell-scale-stress">
-<h3>Cell-scale stress<a class="headerlink" href="#cell-scale-stress" title="Permalink to this heading">#</a></h3>
+<h3>Cell-scale stress<a class="headerlink" href="#cell-scale-stress" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span>
@@ -1211,7 +1210,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </section>
 </section>
 <section id="tissue-scale-stresses">
-<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this heading">#</a></h2>
+<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tissue_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
@@ -1244,7 +1243,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="stress-along-axes">
-<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this heading">#</a></h2>
+<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tissue_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
@@ -1299,7 +1298,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="geodesics">
-<h2>Geodesics<a class="headerlink" href="#geodesics" title="Permalink to this heading">#</a></h2>
+<h2>Geodesics<a class="headerlink" href="#geodesics" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extrema_cell_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
@@ -1354,7 +1353,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="autocorrelations-spatial">
-<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this heading">#</a></h2>
+<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">autocorrelations_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
@@ -1433,7 +1432,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="autocorrelations-temporal">
-<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this heading">#</a></h2>
+<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surface_total_stress_radial</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -1474,7 +1473,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="ellipsoid-deviation">
-<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ellipsoid_deviation_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1506,7 +1505,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="droplet-movement">
-<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Permalink to this heading">#</a></h2>
+<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Permalink to this headline">#</a></h2>
 <p>This analyzes how much the center of the droplet moves over time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1529,7 +1528,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </section>
 <section id="export-data">
-<h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this heading">#</a></h2>
+<h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this headline">#</a></h2>
 <p>We first agregate the data from the spatial autocorrelations in a separate dataframe. This dataframe has a column for autocorrelations of total, cell and tissue-scale stresses.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

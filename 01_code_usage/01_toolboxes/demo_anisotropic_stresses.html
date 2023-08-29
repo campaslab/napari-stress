@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Anisotropic stresses &#8212; Napari-stress documentation</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -69,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Analyze everything" href="demo_analyze_everything.html" />
     <link rel="prev" title="Droplet reconstruction from code" href="demo_droplet_reconstruction_toolbox_code.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -382,7 +381,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="anisotropic-stresses">
-<span id="toolboxes-stress-toolbox-stresses"></span><h1>Anisotropic stresses<a class="headerlink" href="#anisotropic-stresses" title="Permalink to this heading">#</a></h1>
+<span id="toolboxes-stress-toolbox-stresses"></span><h1>Anisotropic stresses<a class="headerlink" href="#anisotropic-stresses" title="Permalink to this headline">#</a></h1>
 <p>This notebook demonstrates the calculation of anisotropic stresses of injected oil droplets. The measure properties included the following:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\sigma^A(\vec{x}_s)\)</span>: anisotropic stress on surface</p></li>
@@ -401,7 +400,7 @@ document.write(`
 </div>
 </div>
 <section id="config">
-<h2>config<a class="headerlink" href="#config" title="Permalink to this heading">#</a></h2>
+<h2>config<a class="headerlink" href="#config" title="Permalink to this headline">#</a></h2>
 <p>We need to set some parameters:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">max_degree</span></code>: Degree of the spherical harmonics expansion. See also <a class="reference internal" href="../../03_glossary/01_spherical_harmonics/01_spherical_harmonics.html#spherical-harmonics-mathematical-basics-degree"><span class="std std-ref">glossary</span></a>.</p></li>
@@ -450,7 +449,7 @@ document.write(`
 </div>
 </section>
 <section id="ellipsoid-fit">
-<h2>Ellipsoid fit<a class="headerlink" href="#ellipsoid-fit" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsoid fit<a class="headerlink" href="#ellipsoid-fit" title="Permalink to this headline">#</a></h2>
 <p>First, we fit an ellipsoid to the pointcloud. The ellipsoid represents the tissue-scale stresses.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -527,7 +526,7 @@ done with lbdv rotation vals
 </div>
 </section>
 <section id="spherical-harmonics-expansion">
-<h2>Spherical harmonics expansion<a class="headerlink" href="#spherical-harmonics-expansion" title="Permalink to this heading">#</a></h2>
+<h2>Spherical harmonics expansion<a class="headerlink" href="#spherical-harmonics-expansion" title="Permalink to this headline">#</a></h2>
 <p>We now do a spherical harmonics expansion of the raw pointcloud. This also captures the higher orders of curvature on the surface of the droplet.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -555,7 +554,7 @@ done with lbdv rotation vals
 </div>
 </section>
 <section id="stresses">
-<h2>Stresses<a class="headerlink" href="#stresses" title="Permalink to this heading">#</a></h2>
+<h2>Stresses<a class="headerlink" href="#stresses" title="Permalink to this headline">#</a></h2>
 <p>We first calculate the tissue stress tensors along the ajor axes of the ellipsoid and the cartesian cardinal directions (x/y/z):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
