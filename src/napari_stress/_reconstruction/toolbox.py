@@ -172,6 +172,58 @@ def reconstruct_droplet(
     interpolation_method: str = "cubic",
     verbose=False,
 ) -> List[LayerDataTuple]:
+    """
+    Reconstruct droplet surface from points layer.
+
+    Parameters
+    ----------
+    image : ImageData
+        Image data.
+    voxelsize : np.ndarray, optional
+        Voxel size of image. The default is None.
+    target_voxelsize : float, optional
+        Target voxel size for reconstruction. The default is 1.0.
+    smoothing_sigma : float, optional
+        Sigma for gaussian smoothing. The default is 1.0.
+    n_smoothing_iterations : int, optional
+        Number of smoothing iterations. The default is 10.
+    n_points : int, optional
+        Number of points to be sampled. The default is 256.
+    n_tracing_iterations : int, optional
+        Number of tracing iterations. The default is 1.
+    resampling_length : float, optional
+        Distance between sampled point locations. The default is 5.
+        Choose smaller values for more accurate reconstruction.
+    fit_type : str, optional
+        Type of fit to be used. The default is "fancy". Can also be "quick".
+    edge_type : str, optional
+        Type of edge to be used. The default is "interior". Can also be "surface".
+    trace_length : float, optional
+        Length of traces along which to measure intensity. The default is 10.
+    remove_outliers : bool, optional
+        Whether to remove outliers. The default is True.
+    outlier_tolerance : float, optional
+        Tolerance for outlier removal. The default is 1.5.
+    sampling_distance : float, optional
+        Distance between points sampled on traces. The default is 0.5.
+    interpolation_method : str, optional
+        Interpolation method to be used. The default is "cubic". Can also be "linear".
+        "cubic" is more accurate but slower.
+    use_dask: bool, optional
+        Whether to use dask for parallelization. The default is False.
+
+    Returns
+    -------
+    List[LayerDataTuple]
+        List of napari layers:
+            - rescaled image: image rescaled to target voxel size
+            - label image: connected components of rescaled image
+            - points first guess: points sampled on fibonacci grid
+            - traced points: points after tracing
+            - trace vectors: vectors along which intensity was measured
+            - droplet center: center of droplet
+
+    """
     import copy
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
