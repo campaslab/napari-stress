@@ -1,5 +1,5 @@
-`napari_stress.approximation`
-=============================
+`napari_stress`
+===============
 
 .. autosummary::
    :toctree: _autosummary
