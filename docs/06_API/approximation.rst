@@ -1,6 +1,8 @@
 `napari_stress.approximation`
 =============================
 
-.. automodule:: napari_stress.approximation
-    :members:
-    :imported-members:
+.. autosummary::
+   :toctree: _autosummary
+   :recursive:
+
+   napari_stress
