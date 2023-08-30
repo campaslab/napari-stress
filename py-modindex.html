@@ -213,16 +213,32 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="06_API/approximation.html"><cite>napari_stress.approximation</cite></a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="06_API/_autosummary/napari_stress.html">napari_stress</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.types.html">napari_stress.types</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="06_API/api.html"><cite>napari_stress.approximation</cite></a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_API/_autosummary/napari_stress.vectors.html">napari_stress.vectors</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="06_API/_autosummary/napari_stress.approximation.html">napari_stress.approximation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.approximation.fit_ellipsoid.html">napari_stress.approximation.fit_ellipsoid</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.html">napari_stress.measurements</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.curvature.html">napari_stress.measurements.curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.deviation_analysis.html">napari_stress.measurements.deviation_analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.geodesics.html">napari_stress.measurements.geodesics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.intensity.html">napari_stress.measurements.intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.measurements.html">napari_stress.measurements.measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.stresses.html">napari_stress.measurements.stresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.temporal_correlation.html">napari_stress.measurements.temporal_correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.toolbox.html">napari_stress.measurements.toolbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.measurements.utils.html">napari_stress.measurements.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="06_API/_autosummary/napari_stress.reconstruction.html">napari_stress.reconstruction</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.reconstruction.reconstruct_surface.html">napari_stress.reconstruction.reconstruct_surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.reconstruction.refine_surfaces.html">napari_stress.reconstruction.refine_surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_API/_autosummary/napari_stress.reconstruction.toolbox.html">napari_stress.reconstruction.toolbox</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="06_API/vectors.html"><cite>napari_stress.vectors</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_API/measurements.html"><cite>napari_stress.measurements</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_API/reconstruction.html"><cite>napari_stress.reconstruction</cite></a></li>
 </ul>
 
     </div>
@@ -338,27 +354,92 @@ document.write(`
        <td><img src="_static/minus.png" class="toggler"
               id="toggle-1" style="display: none" alt="-" /></td>
        <td>
-       <a href="06_API/_autosummary/napari_stress.html#module-napari_stress"><code class="xref">napari_stress</code></a></td><td>
+       <code class="xref">napari_stress</code></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="06_API/measurements.html#module-napari_stress.measurements"><code class="xref">napari_stress.measurements</code></a></td><td>
+       <a href="06_API/_autosummary/napari_stress.approximation.html#module-napari_stress.approximation"><code class="xref">napari_stress.approximation</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="06_API/reconstruction.html#module-napari_stress.reconstruction"><code class="xref">napari_stress.reconstruction</code></a></td><td>
+       <a href="06_API/_autosummary/napari_stress.approximation.fit_ellipsoid.html#module-napari_stress.approximation.fit_ellipsoid"><code class="xref">napari_stress.approximation.fit_ellipsoid</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="06_API/_autosummary/napari_stress.types.html#module-napari_stress.types"><code class="xref">napari_stress.types</code></a></td><td>
+       <a href="06_API/_autosummary/napari_stress.measurements.html#module-napari_stress.measurements"><code class="xref">napari_stress.measurements</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="06_API/vectors.html#module-napari_stress.vectors"><code class="xref">napari_stress.vectors</code></a></td><td>
+       <a href="06_API/_autosummary/napari_stress.measurements.curvature.html#module-napari_stress.measurements.curvature"><code class="xref">napari_stress.measurements.curvature</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.deviation_analysis.html#module-napari_stress.measurements.deviation_analysis"><code class="xref">napari_stress.measurements.deviation_analysis</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.geodesics.html#module-napari_stress.measurements.geodesics"><code class="xref">napari_stress.measurements.geodesics</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.intensity.html#module-napari_stress.measurements.intensity"><code class="xref">napari_stress.measurements.intensity</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.measurements.html#module-napari_stress.measurements.measurements"><code class="xref">napari_stress.measurements.measurements</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.stresses.html#module-napari_stress.measurements.stresses"><code class="xref">napari_stress.measurements.stresses</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.temporal_correlation.html#module-napari_stress.measurements.temporal_correlation"><code class="xref">napari_stress.measurements.temporal_correlation</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.toolbox.html#module-napari_stress.measurements.toolbox"><code class="xref">napari_stress.measurements.toolbox</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.measurements.utils.html#module-napari_stress.measurements.utils"><code class="xref">napari_stress.measurements.utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.reconstruction.html#module-napari_stress.reconstruction"><code class="xref">napari_stress.reconstruction</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.reconstruction.reconstruct_surface.html#module-napari_stress.reconstruction.reconstruct_surface"><code class="xref">napari_stress.reconstruction.reconstruct_surface</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.reconstruction.refine_surfaces.html#module-napari_stress.reconstruction.refine_surfaces"><code class="xref">napari_stress.reconstruction.refine_surfaces</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.reconstruction.toolbox.html#module-napari_stress.reconstruction.toolbox"><code class="xref">napari_stress.reconstruction.toolbox</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="06_API/_autosummary/napari_stress.vectors.html#module-napari_stress.vectors"><code class="xref">napari_stress.vectors</code></a></td><td>
        <em></em></td></tr>
    </table>
 

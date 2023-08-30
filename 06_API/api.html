@@ -60,10 +60,10 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '06_API/approximation';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06_API/api';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="napari_stress" href="_autosummary/napari_stress.html" />
+    <link rel="next" title="napari_stress.vectors" href="_autosummary/napari_stress.vectors.html" />
     <link rel="prev" title="Validation" href="../04_FAQ/02_validation/analyze_validation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
@@ -214,15 +214,31 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#"><cite>napari_stress.approximation</cite></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/napari_stress.html">napari_stress</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.types.html">napari_stress.types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/napari_stress.vectors.html">napari_stress.vectors</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/napari_stress.approximation.html">napari_stress.approximation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.approximation.fit_ellipsoid.html">napari_stress.approximation.fit_ellipsoid</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/napari_stress.measurements.html">napari_stress.measurements</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.curvature.html">napari_stress.measurements.curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.deviation_analysis.html">napari_stress.measurements.deviation_analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.geodesics.html">napari_stress.measurements.geodesics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.intensity.html">napari_stress.measurements.intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.measurements.html">napari_stress.measurements.measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.stresses.html">napari_stress.measurements.stresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.temporal_correlation.html">napari_stress.measurements.temporal_correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.toolbox.html">napari_stress.measurements.toolbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.measurements.utils.html">napari_stress.measurements.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/napari_stress.reconstruction.html">napari_stress.reconstruction</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.reconstruction.reconstruct_surface.html">napari_stress.reconstruction.reconstruct_surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.reconstruction.refine_surfaces.html">napari_stress.reconstruction.refine_surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.reconstruction.toolbox.html">napari_stress.reconstruction.toolbox</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>napari_stress.vectors</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="measurements.html"><cite>napari_stress.measurements</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="reconstruction.html"><cite>napari_stress.reconstruction</cite></a></li>
 </ul>
 
     </div>
@@ -277,7 +293,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/06_API/approximation.rst" target="_blank"
+      <li><a href="../_sources/06_API/api.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -379,7 +395,16 @@ document.write(`
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/napari_stress.html#module-napari_stress" title="napari_stress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">napari_stress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/napari_stress.vectors.html#module-napari_stress.vectors" title="napari_stress.vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">napari_stress.vectors</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/napari_stress.approximation.html#module-napari_stress.approximation" title="napari_stress.approximation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">napari_stress.approximation</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/napari_stress.measurements.html#module-napari_stress.measurements" title="napari_stress.measurements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">napari_stress.measurements</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/napari_stress.reconstruction.html#module-napari_stress.reconstruction" title="napari_stress.reconstruction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">napari_stress.reconstruction</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -427,11 +452,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="_autosummary/napari_stress.html"
+       href="_autosummary/napari_stress.vectors.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">napari_stress</p>
+        <p class="prev-next-title">napari_stress.vectors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
