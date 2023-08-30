@@ -64,7 +64,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="napari_stress.measurements" href="measurements.html" />
-    <link rel="prev" title="napari_stress.approximation" href="approximation.html" />
+    <link rel="prev" title="napari_stress.types" href="_autosummary/napari_stress.types.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
   </head>
@@ -213,7 +213,13 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="approximation.html"><cite>napari_stress.approximation</cite></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximation.html"><cite>napari_stress.approximation</cite></a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/napari_stress.html">napari_stress</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/napari_stress.types.html">napari_stress.types</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#"><cite>napari_stress.vectors</cite></a></li>
 <li class="toctree-l1"><a class="reference internal" href="measurements.html"><cite>napari_stress.measurements</cite></a></li>
 <li class="toctree-l1"><a class="reference internal" href="reconstruction.html"><cite>napari_stress.reconstruction</cite></a></li>
@@ -365,8 +371,160 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="napari-stress-vectors">
-<h1><cite>napari_stress.vectors</cite><a class="headerlink" href="#napari-stress-vectors" title="Permalink to this headline">#</a></h1>
+  <section id="module-napari_stress.vectors">
+<span id="napari-stress-vectors"></span><h1><cite>napari_stress.vectors</cite><a class="headerlink" href="#module-napari_stress.vectors" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stress.vectors.Annotated">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">Annotated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.vectors.Annotated" title="Permalink to this definition">#</a></dt>
+<dd><p>Add context specific metadata to a type.</p>
+<p>Example: Annotated[int, runtime_check.Unsigned] indicates to the
+hypothetical runtime_check module that this type is an unsigned int.
+Every other consumer of this type can ignore this metadata and treat
+this type as int.</p>
+<p>The first argument to Annotated must be a valid type.</p>
+<p>Details:</p>
+<ul>
+<li><p>It’s an error to call <cite>Annotated</cite> with less than two arguments.</p></li>
+<li><p>Nested Annotated are flattened:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Annotated</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Ann1</span><span class="p">,</span> <span class="n">Ann2</span><span class="p">],</span> <span class="n">Ann3</span><span class="p">]</span> <span class="o">==</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Ann1</span><span class="p">,</span> <span class="n">Ann2</span><span class="p">,</span> <span class="n">Ann3</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Instantiating an annotated type is equivalent to instantiating the</p></li>
+</ul>
+<p>underlying type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Annotated</span><span class="p">[</span><span class="n">C</span><span class="p">,</span> <span class="n">Ann1</span><span class="p">](</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="n">C</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p>Annotated can be used as a generic type alias:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Optimized</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">runtime</span><span class="o">.</span><span class="n">Optimize</span><span class="p">()]</span>
+<span class="n">Optimized</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">==</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">runtime</span><span class="o">.</span><span class="n">Optimize</span><span class="p">()]</span>
+
+<span class="n">OptimizedList</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">runtime</span><span class="o">.</span><span class="n">Optimize</span><span class="p">()]</span>
+<span class="n">OptimizedList</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">==</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">runtime</span><span class="o">.</span><span class="n">Optimize</span><span class="p">()]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.vectors.absolute_move_points_along_vector">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">absolute_move_points_along_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointwise_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.vectors.absolute_move_points_along_vector" title="Permalink to this definition">#</a></dt>
+<dd><p>Move points along vectors by an absolute value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>napari.types.PointsData</em>) – Points</p></li>
+<li><p><strong>vectors</strong> (<em>napari.types.VectorsData</em>) – Vectors</p></li>
+<li><p><strong>position</strong> (<em>float</em><em>, </em><em>optional</em>) – Position along vector. Defaults to 1.0.</p></li>
+<li><p><strong>pointwise_position</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Position for each point.
+Defaults to None. If given, this overrides the <cite>position</cite> argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Moved points</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>napari.types.PointsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.vectors.normal_vectors_on_pointcloud">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">normal_vectors_on_pointcloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.vectors.normal_vectors_on_pointcloud" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate normal vectors on pointcloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>PointsData</em>) – </p></li>
+<li><p><strong>length_multiplier</strong> (<em>float</em><em>, </em><em>optional</em>) – Length multiplier for normal vectors, by default 1.0</p></li>
+<li><p><strong>center</strong> (<em>bool</em><em>, </em><em>optional</em>) – Center normal vectors on surface, by default True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Normal vectors</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>VectorsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.vectors.normal_vectors_on_surface">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">normal_vectors_on_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.vectors.normal_vectors_on_surface" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate normal vectors on surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>surface</strong> (<em>SurfaceData</em>) – </p></li>
+<li><p><strong>length_multiplier</strong> (<em>float</em><em>, </em><em>optional</em>) – Length multiplier for normal vectors, by default 1.0</p></li>
+<li><p><strong>center</strong> (<em>bool</em><em>, </em><em>optional</em>) – Center normal vectors on surface, by default True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Normal vectors</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>VectorsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.vectors.pairwise_point_distances">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">pairwise_point_distances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.vectors.pairwise_point_distances" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate pairwise distance vectors between pointclouds.</p>
+<p>For this to work, the two pointclouds must have the same
+number of points. This can be the case, for example, when
+one pointcloud is a fitted ellipsoid and the other is the
+original pointcloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>PointsData</em>) – </p></li>
+<li><p><strong>fitted_points</strong> (<em>PointsData</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Both pointclouds must have the same number of points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>VectorsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.vectors.relative_move_points_along_vector">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.vectors.</span></span><span class="sig-name descname"><span class="pre">relative_move_points_along_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointwise_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.vectors.relative_move_points_along_vector" title="Permalink to this definition">#</a></dt>
+<dd><p>Move points along vectors by a relative factor.</p>
+<p>This function moves points along vectors by a relative factor.
+The position argument determines the relative position along the
+vector. For example, a position of 0.5 moves the points to the
+middle of the vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>napari.types.PointsData</em>) – Points</p></li>
+<li><p><strong>vectors</strong> (<em>napari.types.VectorsData</em>) – Vectors</p></li>
+<li><p><strong>position</strong> (<em>float</em><em>, </em><em>optional</em>) – Position along vector. Defaults to 0.5.</p></li>
+<li><p><strong>pointwise_position</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Position for each point.
+Defaults to None. If given, this overrides the <cite>position</cite> argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Moved points</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>napari.types.PointsData</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -401,12 +559,12 @@ document.write(`
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="approximation.html"
+       href="_autosummary/napari_stress.types.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><cite>napari_stress.approximation</cite></p>
+        <p class="prev-next-title">napari_stress.types</p>
       </div>
     </a>
     <a class="right-next"
