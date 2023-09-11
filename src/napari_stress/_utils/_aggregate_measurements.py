@@ -4,6 +4,32 @@ from typing import List
 from napari.types import LayerDataTuple
 
 
+def find_metadata_in_layers(layers: list, name: str
+                            ) -> "napari.layers.Layer":
+    """
+    Find the layer in the viewer that contains specific metadata or feature.
+
+    Parameters
+    ----------
+    viewer : napari.Viewer
+        Napari viewer
+    name : str
+        Name of the metadata or feature to find
+        
+    Returns
+    -------
+    layer : napari.types.LayerDataTuple
+        Layer containing the metadata or feature
+    """
+    import pandas as pd
+    for layer in layers:
+        if 'metadata' in layer[1].keys():
+            if name in pd.DataFrame(layer[1]['metadata']).columns:
+                return pd.DataFrame(layer[1]['metadata'])
+        if 'features' in layer[1].keys():
+            if name in pd.DataFrame(layer[1]['features']).columns:
+                return pd.DataFrame(layer[1]['features'])
+
 def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
                               n_frames: int,
                               time_step: float) -> pd.DataFrame:
@@ -141,8 +167,8 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
     df_nearest_pair = pd.DataFrame(
         {'frame': frames,
          'time': frames * time_step,
-         'nearest_pair_distance': min_max_pair_distances,
-         'nearest_pair_anisotropy': min_max_pair_anisotropies})
+         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST: min_max_pair_distances,
+         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO: min_max_pair_anisotropies})
 
     # Find layer with ALL PAIR EXTREMA data
     for layer in results_stress_analysis:
@@ -165,8 +191,8 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
     df_all_pair = pd.DataFrame(
         {'frame': frames,
          'time': frames * time_step,
-         'all_pair_distance': all_pair_distances,
-         'all_pair_anisotropy': all_pair_anisotropies})
+         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST: all_pair_distances,
+         _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO: all_pair_anisotropies})
 
     return df_nearest_pair, df_all_pair
 
@@ -224,7 +250,7 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
     df_autocorrelations_total = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
          'distances': np.concatenate(distances).squeeze(),
-         'autocorrelation_total': np.concatenate(normalized_autocorrelation_total).squeeze()
+         _METADATAKEY_AUTOCORR_SPATIAL_TOTAL: np.concatenate(normalized_autocorrelation_total).squeeze()
          })
 
     # CELL STRESS
@@ -236,7 +262,7 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
     df_autocorrelations_cell = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
          'distances': np.concatenate(distances).squeeze(),
-         'autocorrelation_cell': np.concatenate(normalized_autocorrelation_cell).squeeze()
+         _METADATAKEY_AUTOCORR_SPATIAL_CELL: np.concatenate(normalized_autocorrelation_cell).squeeze()
          })
 
     # TISSUE STRESS
@@ -248,7 +274,7 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
     df_autocorrelations_tissue = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
          'distances': np.concatenate(distances).squeeze(),
-         'autocorrelation_tissue': np.concatenate(normalized_autocorrelation_tissue).squeeze()
+         _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: np.concatenate(normalized_autocorrelation_tissue).squeeze()
          })
 
     df_autocorrelations = pd.merge(
