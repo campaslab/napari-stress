@@ -320,16 +320,27 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     widget._run()
     widget.checkBox_export.setChecked(False)
     widget.checkBox_export.setChecked(True)
-    directory = widget.lineEdit_export.text()
 
     # test that the directory is created
-    assert os.path.isdir(directory)
+    assert os.path.isdir(widget.save_directory)
 
     # test that the files are created
-    assert os.path.isfile(os.path.join(directory, 'stress_data.csv'))
-    assert os.path.isfile(os.path.join(directory, 'nearest_pairs.csv'))
-    assert os.path.isfile(os.path.join(directory, 'autocorrelations.csv'))
-    assert os.path.isfile(os.path.join(directory, 'all_pairs.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'stress_data.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'nearest_pairs.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'autocorrelations.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'all_pairs.csv'))
+
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_spatial_all_pairs.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_spatial_nearest_pairs.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_temporal.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Ellipsoid_contribution.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'fit_residues.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'gauss_bonnet_errors.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'mean_curvatures.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stress_tensor.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_cell.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_tissue.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_total.png'))
 
 
 def test_curvature(make_napari_viewer):
@@ -489,3 +500,7 @@ def test_stresses():
                                     H_i_ellipsoid, H0_ellipsoid,
                                     gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
+
+if __name__ == '__main__':
+    import napari
+    test_comprehensive_stress_toolbox_4d(napari.Viewer)
