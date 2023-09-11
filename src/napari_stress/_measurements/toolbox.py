@@ -167,6 +167,7 @@ class stress_analysis_toolbox(QWidget):
             draw_chronological_kde_plot
         )
         import matplotlib.pyplot as plt
+        import matplotlib as mpl
         from .. import types
         from .. import measurements
         import datetime
@@ -206,23 +207,23 @@ class stress_analysis_toolbox(QWidget):
 
         # export raw data to csv
         now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        save_directory = os.path.join(
+        self.save_directory = os.path.join(
             self.lineEdit_export_location.text(),
             'stress_analysis_' + now)
-        os.makedirs(save_directory, exist_ok=True)
+        os.makedirs(self.save_directory, exist_ok=True)
         df_over_time.to_csv(
-            os.path.join(save_directory, 'stress_data.csv'))
+            os.path.join(self.save_directory, 'stress_data.csv'))
         df_nearest_pairs.to_csv(
-            os.path.join(save_directory, 'nearest_pairs.csv'))
+            os.path.join(self.save_directory, 'nearest_pairs.csv'))
         df_all_pairs.to_csv(
-            os.path.join(save_directory, 'all_pairs.csv'))
+            os.path.join(self.save_directory, 'all_pairs.csv'))
         df_autocorrelations.to_csv(
-            os.path.join(save_directory, 'autocorrelations.csv'))
+            os.path.join(self.save_directory, 'autocorrelations.csv'))
         
         # # Export droplet/ellipsoid/spherical harmonics as vtp files with vedo
-        # filename_droplet_lebedev = os.path.join(save_directory, 'droplet_lebedev.vtp')
-        # filename_droplet_sph_harm = os.path.join(save_directory, 'droplet_spherical_harmonics.vtp')
-        # filename_droplet_ellipsoid = os.path.join(save_directory, 'droplet_ellipsoid.vtp')
+        # filename_droplet_lebedev = os.path.join(self.save_directory, 'droplet_lebedev.vtp')
+        # filename_droplet_sph_harm = os.path.join(self.save_directory, 'droplet_spherical_harmonics.vtp')
+        # filename_droplet_ellipsoid = os.path.join(self.save_directory, 'droplet_ellipsoid.vtp')
 
         # droplet_lebedev = results_stress_analysis[4]
         # droplet_lebedev_vedo = vedo.Points(droplet_lebedev[0])
@@ -237,6 +238,7 @@ class stress_analysis_toolbox(QWidget):
         # droplet_ellipsoid = results_stress_analysis[2]
 
         # PLOTS
+        mpl.style.use('default')
         # Fit residue
         df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_FIT_RESIDUE)
         df['time'] = df['frame'] * self.spinBox_timeframe.value()
@@ -331,11 +333,22 @@ class stress_analysis_toolbox(QWidget):
             ax.set_ylabel('Order')
             ax.set_title(f'Time-step: {t}')
 
-        for fig in [fig_residue, fig_GaussBonnet_error, fig_mean_curvature, fig_total_stress, fig_cell_stress,
-                    fig_tissue_stress, fig_stress_tensor, fig_all_pairs, fig_spatial_autocorrelation,
-                    fig_temporal_autocorrelation, fig_ellipsoid_contribution]:
+        figures = {
+            fig_residue: 'fit_residues.png',
+            fig_GaussBonnet_error: 'gauss_bonnet_errors.png',
+            fig_mean_curvature: 'mean_curvatures',
+            fig_total_stress: 'Stresses_total.png',
+            fig_cell_stress: 'Stresses_cell.png',
+            fig_tissue_stress: 'Stresses_tissue.png',
+            fig_stress_tensor: 'Stress_tensor.png',
+            fig_all_pairs: 'Autocorrelations_spatial_all_pairs.png',
+            fig_spatial_autocorrelation: 'Autocorrelations_spatial_nearest_pairs.png',
+            fig_temporal_autocorrelation: 'Autocorrelations_temporal.png',
+            fig_ellipsoid_contribution: 'Ellipsoid_contribution.png'}
+        
+        for fig in figures.keys():
             fig.tight_layout()
-            fig.savefig(os.path.join(save_directory, fig.canvas.get_window_title() + '.png'))
+            fig.savefig(os.path.join(self.save_directory, figures[fig]))
 
 
 @frame_by_frame
