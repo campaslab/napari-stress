@@ -284,7 +284,14 @@ class TimelapseConverter:
         else:
             # Stack features
             if 'features' in properties[0].keys():
-                features = self._list_of_dictionaries_to_dictionary([frame['features'] for frame in properties])
+                # concatenate features and add time column
+                features = pd.concat(
+                    [pd.DataFrame(frame['features']) for frame in properties]
+                    )
+                features['frame'] = np.concatenate(
+                    [[t] * len(pd.DataFrame(frame['features']))
+                        for t, frame in enumerate(properties)]
+                        )
                 _properties['features'] = features
                 [frame.pop('features') for frame in properties]
 
