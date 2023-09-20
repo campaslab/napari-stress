@@ -10,6 +10,7 @@ __pycache__/
 *.pdf  
 *.vtp
 *.mat
+results_*/
 
 # C extensions
 *.so
