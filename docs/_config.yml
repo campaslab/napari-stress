@@ -1,6 +1,6 @@
 # In _config.yml
 title: Napari-stress documentation
-author: Johannes Müller
+author: Johannes Soltwedel
 logo: logo.png
 execute:
   execute_notebooks: off
