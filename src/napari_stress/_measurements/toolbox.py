@@ -156,49 +156,15 @@ class stress_analysis_toolbox(QWidget):
 
     def _export(self, results_stress_analysis):
         """Export results to csv file."""
-        from .._utils._aggregate_measurements import (
-            aggregate_singular_values,
-            aggregate_extrema_results,
-            aggregate_spatial_autocorrelations_results,
-            find_metadata_in_layers
-        )
         from .. import types
         from .. import measurements
-        from .._plotting.create_plots import create_all_stress_plots
+        from .. import plotting
+        from .. import utils
         import datetime
-        df_over_time = aggregate_singular_values(
-            results_stress_analysis,
-            n_frames=self.n_frames,
-            time_step=self.spinBox_timeframe.value()
-            )
-        df_nearest_pairs, df_all_pairs = aggregate_extrema_results(
-            results_stress_analysis,
-            n_frames=self.n_frames,
-            time_step=self.spinBox_timeframe.value()
-            )
-        df_autocorrelations = aggregate_spatial_autocorrelations_results(
-            results_stress_analysis,
-            n_frames=self.n_frames,
-            time_step=self.spinBox_timeframe.value()
-            )
-
-        # Calculate anisotropies: Total
-        df = find_metadata_in_layers(results_stress_analysis,
-                                     types._METADATAKEY_STRESS_TOTAL)
-        result = measurements.calculate_anisotropy(
-            df, types._METADATAKEY_STRESS_TOTAL,
-            alpha=0.05,
-            group_column='time')
-        df_over_time[types._METADATAKEY_STRESS_TOTAL_ANISO] = result[types._METADATAKEY_STRESS_TOTAL + '_anisotropy'].values
-
-        # Calculate anisotropies: Cell
-        df = find_metadata_in_layers(results_stress_analysis,
-                                     types._METADATAKEY_STRESS_CELL)
-        result = measurements.calculate_anisotropy(
-            df, types._METADATAKEY_STRESS_CELL,
-            alpha=0.05,
-            group_column='time')
-        df_over_time[types._METADATAKEY_STRESS_CELL_ANISO] = result[types._METADATAKEY_STRESS_CELL + '_anisotropy'].values
+        
+        # Compile data
+        df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations = utils.compile_data_from_layers(
+            results_stress_analysis)
 
         # export raw data to csv
         now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -216,7 +182,7 @@ class stress_analysis_toolbox(QWidget):
             os.path.join(self.save_directory, 'autocorrelations.csv'))
 
         # Export figures
-        figures_dict = create_all_stress_plots(
+        figures_dict = plotting.create_all_stress_plots(
             results_stress_analysis,
             df_over_time=df_over_time,
             df_nearest_pairs=df_nearest_pairs,

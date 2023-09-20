@@ -3,6 +3,101 @@ import numpy as np
 from typing import List
 from napari.types import LayerDataTuple
 
+def compile_data_from_layers(results_stress_analysis: list,
+                             n_frames: int,
+                             time_step: float) -> list:
+    """
+    Compile data from the results of the stress analysis into a list of
+    dataframes.
+
+    Parameters
+    ----------
+    results_stress_analysis : list
+        List of tuples containing the results of the stress analysis
+    n_frames : int
+        Number of frames in the data
+    time_step : float
+        Time step between frames
+
+    Returns
+    -------
+    df_over_time : pd.DataFrame
+        Dataframe containing the singular values results, e.g. results
+        from the stress analysis that refer to a single value per frame.
+        Columns:
+            time : float
+                Time of the frame
+            etc.
+    df_nearest_pairs : pd.DataFrame
+        Dataframe containing the nearest pair extrema results.
+        Columns:
+            time : float
+                Time of the frame
+            nearest_pair_distance : float
+                Distance between the nearest pairs of extrema
+            nearest_pair_anisotropy : float
+                Stress Anisotropy of the nearest pair
+    df_all_pairs : pd.DataFrame
+        Dataframe containing the all pair extrema results.
+        Columns:
+            time : float
+                Time of the frame
+            all_pair_distance : float
+                Distance between all pairs of extrema
+            all_pair_anisotropy : float
+                Stress Anisotropy of all pairs
+    df_autocorrelations : pd.DataFrame
+        Dataframe containing the spatial autocorrelation results.
+        Columns:
+            time : float
+                Time of the frame
+            distances : float
+                Distances at which the autocorrelation was calculated
+            autocorrelation_total : float
+                Autocorrelation of the total stress
+            autocorrelation_cell : float
+                Autocorrelation of the cell stress
+            autocorrelation_tissue : float
+                Autocorrelation of the tissue stress
+    """
+    from .. import measurements
+    from .. import types
+    df_over_time = aggregate_singular_values(
+        results_stress_analysis,
+        n_frames=n_frames,
+        time_step=time_step,
+        )
+    df_nearest_pairs, df_all_pairs = aggregate_extrema_results(
+        results_stress_analysis,
+        n_frames=n_frames,
+        time_step=time_step
+        )
+    df_autocorrelations = aggregate_spatial_autocorrelations_results(
+        results_stress_analysis,
+        n_frames=n_frames,
+        time_step=time_step
+        )
+
+    # Calculate anisotropies: Total
+    df = find_metadata_in_layers(results_stress_analysis,
+                                    types._METADATAKEY_STRESS_TOTAL)
+    result = measurements.calculate_anisotropy(
+        df, types._METADATAKEY_STRESS_TOTAL,
+        alpha=0.05,
+        group_column='time')
+    df_over_time[types._METADATAKEY_STRESS_TOTAL_ANISO] = result[types._METADATAKEY_STRESS_TOTAL + '_anisotropy'].values
+
+    # Calculate anisotropies: Cell
+    df = find_metadata_in_layers(results_stress_analysis,
+                                    types._METADATAKEY_STRESS_CELL)
+    result = measurements.calculate_anisotropy(
+        df, types._METADATAKEY_STRESS_CELL,
+        alpha=0.05,
+        group_column='time')
+    df_over_time[types._METADATAKEY_STRESS_CELL_ANISO] = result[types._METADATAKEY_STRESS_CELL + '_anisotropy'].values
+
+    return df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations
+
 
 def find_metadata_in_layers(layers: list, name: str
                             ) -> "napari.layers.Layer":

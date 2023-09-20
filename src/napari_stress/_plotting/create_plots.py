@@ -112,16 +112,18 @@ def draw_chronological_lineplot_with_errors(
 
 def create_all_stress_plots(
         results_stress_analysis: list,
-        df_over_time: pd.DataFrame,
-        df_all_pairs: pd.DataFrame,
-        df_nearest_pairs: pd.DataFrame,
-        df_autocorrelations: pd.DataFrame,
         time_step: float,
         n_frames: int
 ) -> dict:
     import matplotlib as mpl
     from .._utils._aggregate_measurements import find_metadata_in_layers
     from .. import types
+    from .. import measurements
+    from .._utils._aggregate_measurements import compile_data_from_layers
+
+    # Compile data
+    df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations = compile_data_from_layers(
+        results_stress_analysis, time_step=time_step, n_frames=n_frames)
 
     # PLOTS
     mpl.style.use('default')
@@ -138,7 +140,7 @@ def create_all_stress_plots(
     draw_chronological_lineplot_with_errors(df_over_time, y=types._METADATAKEY_GAUSS_BONNET_ABS, ax=axes[1])
 
     # Curvature
-    df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_MEAN_CURVATURE)
+    df = find_metadata_in_layers([results_stress_analysis[4]], types._METADATAKEY_MEAN_CURVATURE)
     df['time'] = df['frame'] * time_step
     fig_mean_curvature, axes = plt.subplots(ncols=2, figsize=(10, 5))
     draw_chronological_kde_plot(df, x=types._METADATAKEY_MEAN_CURVATURE, hue='time', ax=axes[0], colormap='flare')
