@@ -1,20 +1,12 @@
 (spherical_harmonics.glossary_intro)=
 
-# About
+# Glossary
 
-Welcome to the napari-stress functions overview. This section will give you an overview about (modular) functionality that is covered by napari-stress.
+Welcome to the napari-stress glossary. This section will provide introduction into some of the more general concepts and principles used in the package. In general, all necessary information to understand the acquired data is available in the paper:
 
-* [Surface reconstruction](./01_surface_reconstruction/Readme.md)
-* [Surface refinement](./02_surface_tracing/Readme.md)
-* [Spherical harmonics](./03_spherical_harmonics/Readme.md)
-* [Fit ellipsoid](./04_fit_ellipsoid/Readme.md)
-* [Measure curvature](./05_measure_curvature/Readme.md)
+* [Gross et al. (2021): STRESS, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1)
 
-## Gallery
+The following topics are currently covered:
 
-|Function| Links |
-| --- | --- |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/spherical_harmonics.gif" width="80%"> |[Fit spherical harmonics](03_spherical_harmonics/Readme.md) |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/viewer_screenshots/surface_tracing1.png" width="80%"> |[Surface tracingd](02_surface_tracing/01_demo_surface_tracing.ipynb) |
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/surface_reconstruction.gif" width="80%">|[Reconstruct surface](01_surface_reconstruction/Readme.md)|
-|<img src="https://github.com/BiAPoL/napari-stress/raw/main/docs/imgs/function_gifs/ellipse_fitting.gif" width="80%">|[Fit ellipsoid](04_fit_ellipsoid/Readme.md)|
+* [Spherical harmonics](./01_spherical_harmonics/01_spherical_harmonics.md)
+* [Analyzing spherical harmonics](./01_spherical_harmonics/02_analyzing_spherical_harmonics.md)
