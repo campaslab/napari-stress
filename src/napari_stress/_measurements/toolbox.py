@@ -164,7 +164,7 @@ class stress_analysis_toolbox(QWidget):
         
         # Compile data
         df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations = utils.compile_data_from_layers(
-            results_stress_analysis)
+            results_stress_analysis, n_frames=self.n_frames, time_step=self.spinBox_timeframe.value())
 
         # export raw data to csv
         now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
