@@ -162,14 +162,9 @@ class stress_analysis_toolbox(QWidget):
             aggregate_spatial_autocorrelations_results,
             find_metadata_in_layers
         )
-        from .._plotting import (
-            draw_chronological_lineplot_with_errors,
-            draw_chronological_kde_plot
-        )
-        import matplotlib.pyplot as plt
-        import matplotlib as mpl
         from .. import types
         from .. import measurements
+        from .._plotting.create_plots import create_all_stress_plots
         import datetime
         df_over_time = aggregate_singular_values(
             results_stress_analysis,
@@ -219,136 +214,21 @@ class stress_analysis_toolbox(QWidget):
             os.path.join(self.save_directory, 'all_pairs.csv'))
         df_autocorrelations.to_csv(
             os.path.join(self.save_directory, 'autocorrelations.csv'))
-        
-        # # Export droplet/ellipsoid/spherical harmonics as vtp files with vedo
-        # filename_droplet_lebedev = os.path.join(self.save_directory, 'droplet_lebedev.vtp')
-        # filename_droplet_sph_harm = os.path.join(self.save_directory, 'droplet_spherical_harmonics.vtp')
-        # filename_droplet_ellipsoid = os.path.join(self.save_directory, 'droplet_ellipsoid.vtp')
 
-        # droplet_lebedev = results_stress_analysis[4]
-        # droplet_lebedev_vedo = vedo.Points(droplet_lebedev[0])
-        # droplet_lebedev_vedo['pointdata'] = droplet_lebedev[1]['features']
-        # vedo.write(droplet_lebedev_vedo, filename_droplet_lebedev)
-
-        # droplet_sph_harm = results_stress_analysis[0]
-        # droplet_sph_harm_vedo = vedo.Points(droplet_sph_harm[0])
-        # droplet_sph_harm_vedo['pointdata'] = droplet_sph_harm[1]['features']
-        # vedo.write(droplet_sph_harm_vedo, filename_droplet_sph_harm)
-
-        # droplet_ellipsoid = results_stress_analysis[2]
-
-        # PLOTS
-        mpl.style.use('default')
-        # Fit residue
-        df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_FIT_RESIDUE)
-        df['time'] = df['frame'] * self.spinBox_timeframe.value()
-        fig_residue, axes = plt.subplots(ncols=2, figsize=(10, 5))
-        draw_chronological_kde_plot(df, x='fit_residue', hue='time', ax=axes[0])
-        draw_chronological_lineplot_with_errors(df, y='fit_residue', ax=axes[1], error='sd')
-
-        # Fit quality
-        fig_GaussBonnet_error, axes = plt.subplots(ncols=2, figsize=(10, 5))
-        draw_chronological_lineplot_with_errors(df_over_time, y=types._METADATAKEY_GAUSS_BONNET_REL, ax=axes[0])
-        draw_chronological_lineplot_with_errors(df_over_time, y=types._METADATAKEY_GAUSS_BONNET_ABS, ax=axes[1])
-
-        # Curvature
-        df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_MEAN_CURVATURE)
-        df['time'] = df['frame'] * self.spinBox_timeframe.value()
-        fig_mean_curvature, axes = plt.subplots(ncols=2, figsize=(10, 5))
-        draw_chronological_kde_plot(df, x=types._METADATAKEY_MEAN_CURVATURE, hue='time', ax=axes[0], colormap='flare')
-        draw_chronological_lineplot_with_errors(df, y=types._METADATAKEY_MEAN_CURVATURE, x='time', ax=axes[1], error='sd')
-
-        # Total stress
-        df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_STRESS_TOTAL)
-        df['time'] = df['frame'] * self.spinBox_timeframe.value()
-        fig_total_stress, axes = plt.subplots(ncols=3, figsize=(13, 5))
-        axes = axes.flatten()
-        draw_chronological_kde_plot(df=df, x=types._METADATAKEY_STRESS_TOTAL, ax=axes[0], legend=False)
-        draw_chronological_lineplot_with_errors(df=df, x='time', y=types._METADATAKEY_STRESS_TOTAL, ax=axes[1], error='sd')
-        draw_chronological_lineplot_with_errors(df=df_over_time, x='time', y=types._METADATAKEY_STRESS_TOTAL_ANISO, ax=axes[2], error='sd')
-
-        # Cell-scale
-        df = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_STRESS_CELL)
-        df['time'] = df['frame'] * self.spinBox_timeframe.value()
-        fig_cell_stress, axes = plt.subplots(ncols=3, figsize=(13, 5))
-        axes = axes.flatten()
-        draw_chronological_kde_plot(df=df, x=types._METADATAKEY_STRESS_CELL, ax=axes[0], legend=False)
-        draw_chronological_lineplot_with_errors(df=df, x='time', y=types._METADATAKEY_STRESS_CELL, ax=axes[1], error='sd')
-        draw_chronological_lineplot_with_errors(df=df_over_time, x='time', y=types._METADATAKEY_STRESS_CELL_ANISO, ax=axes[2], error='sd')
-
-        # Tissue-scale (only anisotropy)
-        fig_tissue_stress, ax = plt.subplots()
-        draw_chronological_lineplot_with_errors(df=df_over_time, x='time', y=types._METADATAKEY_STRESS_TISSUE_ANISO, ax=ax, error='sd')
-
-        # ellipsoidal stress tensor
-        fig_stress_tensor, axes = plt.subplots(ncols=3, figsize=(13, 5))
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E1, ax=axes[0])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E2, ax=axes[0])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E3, ax=axes[0])
-
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_ELLIPSOID_ANISO_E12, ax=axes[1])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_ELLIPSOID_ANISO_E13, ax=axes[1])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_STRESS_ELLIPSOID_ANISO_E23, ax=axes[1])
-
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E1, ax=axes[2])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E2, ax=axes[2])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E3, ax=axes[2])
-
-        # All pairs
-        fig_all_pairs, axes = plt.subplots(ncols=4, figsize=(20, 5))
-        draw_chronological_kde_plot(df_all_pairs, x=types._METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
-                                    ax=axes[0], legend=False)
-        draw_chronological_kde_plot(df_all_pairs, types._METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO,
-                                    ax=axes[1], legend=False)
-        draw_chronological_kde_plot(df_nearest_pairs, types._METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
-                                    ax=axes[2], legend=False)
-        draw_chronological_kde_plot(df_nearest_pairs, types._METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
-                                    ax=axes[3])
-
-        # Spatial autocorrelations
-        fig_spatial_autocorrelation, axes = plt.subplots(ncols=3, figsize=(15, 5))
-        draw_chronological_lineplot_with_errors(df=df_autocorrelations, x='distances', y=types._METADATAKEY_AUTOCORR_SPATIAL_TOTAL,
-                                                hue='time', ax=axes[0], markersize=0)
-        draw_chronological_lineplot_with_errors(df=df_autocorrelations, x='distances', y=types._METADATAKEY_AUTOCORR_SPATIAL_CELL,
-                                                hue='time', ax=axes[1], markersize=0)
-        draw_chronological_lineplot_with_errors(df=df_autocorrelations, x='distances', y=types._METADATAKEY_AUTOCORR_SPATIAL_TISSUE,
-                                                hue='time', ax=axes[2], markersize=0)
-
-        # Temoral correlations
-        fig_temporal_autocorrelation, axes = plt.subplots(ncols=3, figsize=(15, 5))
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_AUTOCORR_TEMPORAL_TOTAL, ax=axes[0])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_AUTOCORR_TEMPORAL_CELL, ax=axes[1])
-        draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_AUTOCORR_TEMPORAL_TISSUE, ax=axes[2])
-
-        # Ellipsoid contribution
-        data = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
-        fig_ellipsoid_contribution, axes = plt.subplots(ncols=4, nrows=self.n_frames//4 + 1, figsize=(12, self.n_frames))
-        for t, ax in enumerate(axes.flatten()):
-            if t >= self.n_frames:
-                ax.axis('off')
-                continue
-            ax.imshow(np.triu(data[types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB].values[t]), cmap='inferno')
-            ax.tick_params(labelbottom=False, labeltop=True, labelleft=False, labelright=True)
-            ax.set_xlabel('Degree')
-            ax.set_ylabel('Order')
-            ax.set_title(f'Time-step: {t}')
-
-        figures = {
-            fig_residue: 'fit_residues.png',
-            fig_GaussBonnet_error: 'gauss_bonnet_errors.png',
-            fig_mean_curvature: 'mean_curvatures',
-            fig_total_stress: 'Stresses_total.png',
-            fig_cell_stress: 'Stresses_cell.png',
-            fig_tissue_stress: 'Stresses_tissue.png',
-            fig_stress_tensor: 'Stress_tensor.png',
-            fig_all_pairs: 'Autocorrelations_spatial_all_pairs.png',
-            fig_spatial_autocorrelation: 'Autocorrelations_spatial_nearest_pairs.png',
-            fig_temporal_autocorrelation: 'Autocorrelations_temporal.png',
-            fig_ellipsoid_contribution: 'Ellipsoid_contribution.png'}
-        
-        for fig in figures.keys():
+        # Export figures
+        figures_dict = create_all_stress_plots(
+            results_stress_analysis,
+            df_over_time=df_over_time,
+            df_nearest_pairs=df_nearest_pairs,
+            df_all_pairs=df_all_pairs,
+            df_autocorrelations=df_autocorrelations,
+            time_step=self.spinBox_timeframe.value(),
+            n_frames=self.n_frames
+        )
+            
+        for fig in figures_dict.keys():
             fig.tight_layout()
-            fig.savefig(os.path.join(self.save_directory, figures[fig]))
+            fig.savefig(os.path.join(self.save_directory, figures_dict[fig]))
 
 
 @frame_by_frame
