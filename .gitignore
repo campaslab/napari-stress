@@ -11,6 +11,8 @@ __pycache__/
 *.vtp
 *.mat
 results_*/
+stress_analysis_*/
+Pickled_LBDV_*/
 
 # C extensions
 *.so
