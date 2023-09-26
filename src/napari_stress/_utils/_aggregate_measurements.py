@@ -119,7 +119,7 @@ def find_metadata_in_layers(layers: list, name: str
     import pandas as pd
     for layer in layers:
         if 'metadata' in layer[1].keys():
-            if name in pd.DataFrame(layer[1]['metadata']).columns:
+            if name in layer[1]['metadata'].keys():
                 return pd.DataFrame(layer[1]['metadata'])
         if 'features' in layer[1].keys():
             if name in pd.DataFrame(layer[1]['features']).columns:
@@ -180,9 +180,8 @@ def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
     # Single values over time
     _metadata = [layer[1]['metadata'] for layer in results_stress_analysis if 'metadata' in layer[1].keys()]
     _metadata = [flatten_dictionary(d) for d in _metadata]
-    df_over_time = pd.DataFrame(_metadata[0])
-    for d in _metadata[1:]:
-        df_over_time = df_over_time.merge(pd.DataFrame(d), on='frame', how='inner')
+    df_over_time = pd.concat([pd.DataFrame(x) for x in _metadata], axis=1)
+    df_over_time = df_over_time.loc[:,~df_over_time.columns.duplicated()].copy()
 
     # Find layer with stress_tissue in features
     for layer in results_stress_analysis:
@@ -198,11 +197,11 @@ def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
 
     df_over_time['time'] = df_over_time['frame'] * time_step
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = temporal_autocorrelation(
-        df_total_stress, 'stress_total_radial', frame_column_name='time')
+        df_total_stress, 'stress_total_radial', frame_column_name='frame')
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = temporal_autocorrelation(
-        df_total_stress, 'stress_cell', frame_column_name='time')
+        df_total_stress, 'stress_cell', frame_column_name='frame')
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TISSUE] = temporal_autocorrelation(
-        df_tissue_stress, 'stress_tissue', frame_column_name='time')
+        df_tissue_stress, 'stress_tissue', frame_column_name='frame')
 
     return df_over_time
 
@@ -259,14 +258,20 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
 
     # stack keys of metadata into dataframe and add frame column
     metadata = layer[1]['metadata']
-    frames = np.concatenate(
-        [[i] * len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO][i]
-                   ) for i in range(n_frames)]
-        ) * time_step
-    min_max_pair_distances = np.concatenate(
-        metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST])
-    min_max_pair_anisotropies = np.concatenate(
-        metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO])
+    if n_frames > 1:
+        frames = np.concatenate(
+            [[i] * len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO][i]
+                    ) for i in range(n_frames)]
+            ) * time_step
+        min_max_pair_distances = np.concatenate(
+            metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST])
+        min_max_pair_anisotropies = np.concatenate(
+            metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO])
+    else:
+        frames = np.array([0])
+        min_max_pair_distances = [metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]]
+        min_max_pair_anisotropies = [metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO]]
+    
 
     df_nearest_pair = pd.DataFrame(
         {'frame': frames,
@@ -283,14 +288,19 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
 
     # stack keys of metadata into dataframe and add frame column
     metadata = layer[1]['metadata']
-    frames = np.concatenate(
-        [[i] * len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO][i]
-                     ) for i in range(n_frames)]
-        ) * time_step
-    all_pair_distances = np.concatenate(
-        metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST])
-    all_pair_anisotropies = np.concatenate(
-        metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO])
+    if n_frames > 1:
+        frames = np.concatenate(
+            [[i] * len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO][i]
+                        ) for i in range(n_frames)]
+            ) * time_step
+        all_pair_distances = np.concatenate(
+            metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST])
+        all_pair_anisotropies = np.concatenate(
+            metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO])
+    else:
+        frames = np.array([0])
+        all_pair_distances = [metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST]]
+        all_pair_anisotropies = [metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]]
 
     df_all_pair = pd.DataFrame(
         {'frame': frames,
@@ -347,9 +357,14 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
 
     # TOTAL STRESS
     metadata = layer[1]['metadata'][_METADATAKEY_AUTOCORR_SPATIAL_TOTAL]
-    distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
-    normalized_autocorrelation_total = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
-    frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    if n_frames > 1:
+        distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
+        normalized_autocorrelation_total = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
+        frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    else:
+        distances = [metadata['auto_correlations_distances']]
+        normalized_autocorrelation_total = [metadata['auto_correlations_averaged_normalized']]
+        frames = [[0] * len(metadata['auto_correlations_averaged_normalized'])]
 
     df_autocorrelations_total = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
@@ -359,9 +374,14 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
 
     # CELL STRESS
     metadata = layer[1]['metadata'][_METADATAKEY_AUTOCORR_SPATIAL_CELL]
-    distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
-    normalized_autocorrelation_cell = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
-    frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    if n_frames > 1:
+        distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
+        normalized_autocorrelation_cell = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
+        frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    else:
+        distances = [metadata['auto_correlations_distances']]
+        normalized_autocorrelation_cell = [metadata['auto_correlations_averaged_normalized']]
+        frames = [[0] * len(metadata['auto_correlations_averaged_normalized'])]
 
     df_autocorrelations_cell = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
@@ -371,9 +391,14 @@ def aggregate_spatial_autocorrelations_results(results_stress_analysis: List[Lay
 
     # TISSUE STRESS
     metadata = layer[1]['metadata'][_METADATAKEY_AUTOCORR_SPATIAL_TISSUE]
-    distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
-    normalized_autocorrelation_tissue = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
-    frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    if n_frames > 1:
+        distances = [metadata[t]['auto_correlations_distances'] for t in range(n_frames)]
+        normalized_autocorrelation_tissue = [metadata[t]['auto_correlations_averaged_normalized'] for t in range(n_frames)]
+        frames = [[t] * len(metadata[t]['auto_correlations_averaged_normalized']) for t in range(n_frames)]
+    else:
+        distances = [metadata['auto_correlations_distances']]
+        normalized_autocorrelation_tissue = [metadata['auto_correlations_averaged_normalized']]
+        frames = [[0] * len(metadata['auto_correlations_averaged_normalized'])]
 
     df_autocorrelations_tissue = pd.DataFrame(
         {'time': np.concatenate(frames).squeeze() * time_step,
