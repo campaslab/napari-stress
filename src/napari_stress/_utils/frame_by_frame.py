@@ -279,8 +279,10 @@ class TimelapseConverter:
         if len(data) == 1:
             if 'features' in properties[0].keys():
                 _properties['features'] = data[0][1]['features']
+                _properties['features']['frame'] = np.zeros(len(data[0][0]), dtype=int)
             if 'metadata' in properties[0].keys():
                 _properties['metadata'] = data[0][1]['metadata']
+                _properties['metadata']['frame'] = [0]
         else:
             # Stack features
             if 'features' in properties[0].keys():
@@ -302,6 +304,7 @@ class TimelapseConverter:
                 for key in metadata_list[0].keys():
                     new_metadata[key] = [frame[key] for frame in metadata_list]
 
+                new_metadata['frame'] = [t for t in range(len(metadata_list))]
                 _properties['metadata'] = new_metadata
                 [frame.pop('metadata') for frame in properties]
 
