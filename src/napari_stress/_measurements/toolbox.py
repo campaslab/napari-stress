@@ -184,10 +184,6 @@ class stress_analysis_toolbox(QWidget):
         # Export figures
         figures_dict = plotting.create_all_stress_plots(
             results_stress_analysis,
-            df_over_time=df_over_time,
-            df_nearest_pairs=df_nearest_pairs,
-            df_all_pairs=df_all_pairs,
-            df_autocorrelations=df_autocorrelations,
             time_step=self.spinBox_timeframe.value(),
             n_frames=self.n_frames
         )
