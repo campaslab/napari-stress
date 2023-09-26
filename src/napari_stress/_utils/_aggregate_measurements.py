@@ -84,7 +84,7 @@ def compile_data_from_layers(results_stress_analysis: list,
     result = measurements.calculate_anisotropy(
         df, types._METADATAKEY_STRESS_TOTAL,
         alpha=0.05,
-        group_column='time')
+        group_column='frame')
     df_over_time[types._METADATAKEY_STRESS_TOTAL_ANISO] = result[types._METADATAKEY_STRESS_TOTAL + '_anisotropy'].values
 
     # Calculate anisotropies: Cell
@@ -93,7 +93,7 @@ def compile_data_from_layers(results_stress_analysis: list,
     result = measurements.calculate_anisotropy(
         df, types._METADATAKEY_STRESS_CELL,
         alpha=0.05,
-        group_column='time')
+        group_column='frame')
     df_over_time[types._METADATAKEY_STRESS_CELL_ANISO] = result[types._METADATAKEY_STRESS_CELL + '_anisotropy'].values
 
     return df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations
@@ -161,20 +161,28 @@ def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
 
     from .._measurements.temporal_correlation import temporal_autocorrelation
 
+    def flatten_dictionary(input_dict, parent_key_prefix='', separator='_'):
+        """Flatten a nested dictionary and convert singleton values to lists."""
+        flat_dict = {}
+        for key, value in input_dict.items():
+            current_key = f"{parent_key_prefix}{separator}{key}" if parent_key_prefix else key
+            
+            if isinstance(value, dict):
+                flat_dict.update(flatten_dictionary(value, current_key, separator=separator))
+            else:
+                # Convert scalar values to lists
+                if not isinstance(value, list):
+                    value = [value]
+                flat_dict[current_key] = value
+                
+        return flat_dict
+
     # Single values over time
     _metadata = [layer[1]['metadata'] for layer in results_stress_analysis if 'metadata' in layer[1].keys()]
-    df_over_time = {}
-    df_over_time['frame'] = np.arange(n_frames)
-    for meta in _metadata:
-        for key in meta.keys():
-            if type(meta[key][0]) == dict:
-                for key2 in meta[key][0].keys():
-                    v = [dic[key2] for dic in meta[key]]
-                    df_over_time[key2] = v
-            else:
-                df_over_time[key] = meta[key]
-    df_over_time = pd.DataFrame(df_over_time)
-    df_over_time['time'] = df_over_time['frame'].values * time_step
+    _metadata = [flatten_dictionary(d) for d in _metadata]
+    df_over_time = pd.DataFrame(_metadata[0])
+    for d in _metadata[1:]:
+        df_over_time = df_over_time.merge(pd.DataFrame(d), on='frame', how='inner')
 
     # Find layer with stress_tissue in features
     for layer in results_stress_analysis:
@@ -188,6 +196,7 @@ def aggregate_singular_values(results_stress_analysis: List[LayerDataTuple],
             df_tissue_stress = pd.DataFrame(layer[1]['features'])
             df_tissue_stress['time'] = layer[0][:, 0] * time_step
 
+    df_over_time['time'] = df_over_time['frame'] * time_step
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = temporal_autocorrelation(
         df_total_stress, 'stress_total_radial', frame_column_name='time')
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = temporal_autocorrelation(
