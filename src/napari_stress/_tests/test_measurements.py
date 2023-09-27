@@ -308,6 +308,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     from napari_stress import (get_droplet_point_cloud_4d, measurements)
     import napari_stress
+    import os
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
@@ -317,6 +318,29 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     viewer.window.add_dock_widget(widget)
 
     widget._run()
+    widget.checkBox_export.setChecked(False)
+    widget.checkBox_export.setChecked(True)
+
+    # test that the directory is created
+    assert os.path.isdir(widget.save_directory)
+
+    # test that the files are created
+    assert os.path.isfile(os.path.join(widget.save_directory, 'stress_data.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'nearest_pairs.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'autocorrelations.csv'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'all_pairs.csv'))
+
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_spatial_all_pairs.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_spatial_nearest_pairs.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Autocorrelations_temporal.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Ellipsoid_contribution.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'fit_residues.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'gauss_bonnet_errors.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'mean_curvatures.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stress_tensor.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_cell.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_tissue.png'))
+    assert os.path.isfile(os.path.join(widget.save_directory, 'Stresses_total.png'))
 
 
 def test_curvature(make_napari_viewer):
@@ -477,25 +501,6 @@ def test_stresses():
                                     gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
 
-def test_compatibility_decorator():
-    import inspect
-    import numpy as np
-    import napari_stress
-
-    from napari_stress import types
-
-    def my_function(manifold: napari_stress._stress.manifold_SPB.manifold, sigma: float = 1.0) -> (dict, dict):
-        some_data = np.random.random((10,3))
-        metadata = {'attribute': 1}
-        metadata[types._METADATAKEY_MANIFOLD] = manifold
-        features = {'attribute2': np.random.random(10)}
-        return features, metadata
-
-    function = napari_stress.measurements.utils.naparify_measurement(my_function)
-    sig = inspect.signature(function)
-
-    assert sig.parameters[types._METADATAKEY_MANIFOLD].annotation == 'napari.layers.Points'
-
-
 if __name__ == '__main__':
-    test_geodesics()
+    import napari
+    test_comprehensive_stress_toolbox_4d(napari.Viewer)

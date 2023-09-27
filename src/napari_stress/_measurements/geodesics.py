@@ -358,10 +358,10 @@ def local_extrema_analysis(
 
     features = {"local_max_and_min": local_max_and_min}
     metadata = {
-        "nearest_min_max_dists": nearest_min_max_dists,
-        "nearest_min_max_anisotropies": delta_feature_nearest_min_max,
-        "min_max_pair_distances": min_max_pair_distances,
-        "min_max_pair_anisotropies": min_max_pair_anisotropies,
+        "nearest_pair_distance": nearest_min_max_dists,
+        "nearest_pair_anisotropy": delta_feature_nearest_min_max,
+        "all_pair_distance": min_max_pair_distances,
+        "all_pair_anisotropy": min_max_pair_anisotropies,
     }
     properties = {
         "features": features,

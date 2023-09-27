@@ -24,7 +24,8 @@ from .._spherical_harmonics.spherical_harmonics import (
 from .._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_dock_widget
 
-@register_dock_widget(menu = 'Measurement > Measure stresses on droplet pointcloud (n-STRESS)')
+
+@register_dock_widget(menu='Measurement > Measure stresses on droplet pointcloud (n-STRESS)')
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -55,6 +56,9 @@ class stress_analysis_toolbox(QWidget):
         self.spinBox_max_degree.valueChanged.connect(self._check_minimal_point_number)
         self.pushButton_import.clicked.connect(self._import_settings)
         self.pushButton_export.clicked.connect(self._export_settings)
+        self.lineEdit_export_location.setText(os.getcwd())
+        self.pushButton_browse_export_location.clicked.connect(self._browse_export_location)
+        self.checkBox_export.stateChanged.connect(self._on_checkbox_export)
 
     def _import_settings(self, file_name: str = None):
         """
@@ -80,6 +84,25 @@ class stress_analysis_toolbox(QWidget):
                     'gamma': self.doubleSpinBox_gamma.value()}
         export_settings(settings, parent=self, file_name=file_name)
 
+    def _browse_export_location(self):
+        """Browse export location."""
+        from qtpy.QtWidgets import QFileDialog
+
+        file_name = QFileDialog.getExistingDirectory(
+            self, 'Select export location', os.getcwd())
+
+        if file_name:
+            self.lineEdit_export_location.setText(file_name)
+
+    def _on_checkbox_export(self):
+        """Enable/disable export location."""
+        if self.checkBox_export.isChecked():
+            self.lineEdit_export_location.setEnabled(True)
+            self.pushButton_browse_export_location.setEnabled(True)
+        else:
+            self.lineEdit_export_location.setEnabled(False)
+            self.pushButton_browse_export_location.setEnabled(False)
+
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
         if event.type() == QEvent.ParentChange:
@@ -104,6 +127,13 @@ class stress_analysis_toolbox(QWidget):
         from .. import stress_backend
         _ = stress_backend.lbdv_info(Max_SPH_Deg=self.spinBox_max_degree.value(),
                                      Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()))
+        from napari_stress import TimelapseConverter
+
+        # calculate number of frames
+        Converter = TimelapseConverter()
+        list_of_points = Converter.data_to_list_of_data(self.layer_select.value.data,
+                                                        layertype='napari.types.PointsData')
+        self.n_frames = len(list_of_points)
 
         # Run analysis
         results = comprehensive_analysis(
@@ -120,9 +150,53 @@ class stress_analysis_toolbox(QWidget):
                                   layer_type=layer[2])
             self.viewer.add_layer(_layer)
 
+        # Export results
+        if self.checkBox_export.isChecked():
+            self._export(results)
+
+    def _export(self, results_stress_analysis):
+        """Export results to csv file."""
+        from .. import types
+        from .. import measurements
+        from .. import plotting
+        from .. import utils
+        import datetime
+        
+        # Compile data
+        df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations = utils.compile_data_from_layers(
+            results_stress_analysis, n_frames=self.n_frames, time_step=self.spinBox_timeframe.value())
+
+        # export raw data to csv
+        now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        self.save_directory = os.path.join(
+            self.lineEdit_export_location.text(),
+            'stress_analysis_' + now)
+        os.makedirs(self.save_directory, exist_ok=True)
+        df_over_time.to_csv(
+            os.path.join(self.save_directory, 'stress_data.csv'))
+        df_nearest_pairs.to_csv(
+            os.path.join(self.save_directory, 'nearest_pairs.csv'))
+        df_all_pairs.to_csv(
+            os.path.join(self.save_directory, 'all_pairs.csv'))
+        df_autocorrelations.to_csv(
+            os.path.join(self.save_directory, 'autocorrelations.csv'))
+
+        # Export figures
+        figures_dict = plotting.create_all_stress_plots(
+            results_stress_analysis,
+            time_step=self.spinBox_timeframe.value(),
+            n_frames=self.n_frames
+        )
+            
+        for fig in figures_dict.keys():
+            figure = figures_dict[fig]
+            figure['figure'].tight_layout()
+            figure['figure'].savefig(os.path.join(self.save_directory, figure['path']))
+
+
 @frame_by_frame
 def comprehensive_analysis(pointcloud: PointsData,
-                           max_degree: int=5,
+                           max_degree: int = 5,
                            n_quadrature_points: int = 110,
                            maximal_distance: int = None,
                            gamma: float = 26.0,
@@ -170,10 +244,11 @@ def comprehensive_analysis(pointcloud: PointsData,
     from ..types import (_METADATAKEY_MEAN_CURVATURE,
                          _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
                          _METADATAKEY_H_E123_ELLIPSOID,
-                         _METADATAKEY_ANISO_STRESS_TISSUE,
-                         _METADATAKEY_ANISO_STRESS_CELL,
-                         _METADATAKEY_ANISO_STRESS_TOTAL,
-                         _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL,
+                         _METADATAKEY_STRESS_TISSUE,
+                         _METADATAKEY_STRESS_CELL,
+                         _METADATAKEY_STRESS_TOTAL,
+                         _METADATAKEY_STRESS_TISSUE_ANISO,
+                         _METADATAKEY_STRESS_TOTAL_RADIAL,
                          _METADATAKEY_H0_ARITHMETIC,
                          _METADATAKEY_H0_SURFACE_INTEGRAL,
                          _METADATAKEY_S2_VOLUME_INTEGRAL,
@@ -184,7 +259,24 @@ def comprehensive_analysis(pointcloud: PointsData,
                          _METADATAKEY_GAUSS_BONNET_REL_RAD,
                          _METADATAKEY_STRESS_TENSOR_CART,
                          _METADATAKEY_STRESS_TENSOR_ELLI,
-                         _METADATAKEY_MAX_TISSUE_ANISOTROPY,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E1,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E2,
+                         _METADATAKEY_STRESS_TENSOR_ELLI_E3,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23,
+                         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E2,
+                         _METADATAKEY_ANGLE_ELLIPSOID_CART_E3,
+                         _METADATAKEY_EXTREMA_CELL_STRESS,
+                         _METADATAKEY_EXTREMA_TOTAL_STRESS,
+                         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
+                         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
+                         _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO,
+                         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
+                         _METADATAKEY_AUTOCORR_SPATIAL_CELL,
+                         _METADATAKEY_AUTOCORR_SPATIAL_TISSUE,
+                         _METADATAKEY_AUTOCORR_SPATIAL_TOTAL,
                          _METADATAKEY_FIT_RESIDUE,
                          _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
     # =====================================================================
@@ -308,6 +400,13 @@ def comprehensive_analysis(pointcloud: PointsData,
     stress_tensor_ellipsoidal = result[0]
     stress_tensor_cartesian = result[1]
 
+    # calculate angles
+    angles = []
+    for j in range(3):
+        dot_product = np.dot(stress_tensor_cartesian[:, j], stress_tensor_ellipsoidal[:, 0])
+        norm = np.linalg.norm(stress_tensor_cartesian[:, j]) * np.linalg.norm(stress_tensor_ellipsoidal[:, 0])
+        angles.append(np.arccos(dot_product/norm)*180/np.pi)
+
     # =============================================================================
     # Geodesics
     # =============================================================================
@@ -370,16 +469,13 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     size = 0.5
     # spherical harmonics expansion
-    properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree}',
+    properties = {'name': f'Result of fit spherical harmonics (deg = {max_degree})',
                   'features': {'fit_residue': residue_spherical_harmonics_norm},
                   'metadata': {_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB: deviation_heatmap},
                   'face_colormap': 'inferno',
                   'face_color': 'fit_residue',
                   'size': size}
     layer_spherical_harmonics = (fitted_pointcloud, properties, 'points')
-
-    properties = {'name': 'Result of lebedev quadrature',
-                  'size': size}
 
     # ellipsoid expansion
     features = {_METADATAKEY_FIT_RESIDUE: residue_ellipsoid_norm}
@@ -397,14 +493,23 @@ def comprehensive_analysis(pointcloud: PointsData,
 
     # Quadrature points on ellipsoid
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_ellipsoid,
-                _METADATAKEY_ANISO_STRESS_TISSUE: stress_tissue}
+                _METADATAKEY_STRESS_TISSUE: stress_tissue}
     metadata = {_METADATAKEY_STRESS_TENSOR_CART: stress_tensor_cartesian,
                 _METADATAKEY_STRESS_TENSOR_ELLI: stress_tensor_ellipsoidal,
-                _METADATAKEY_MAX_TISSUE_ANISOTROPY: max_min_anisotropy}
+                _METADATAKEY_STRESS_TENSOR_ELLI_E1: stress_tensor_ellipsoidal[0, 0],
+                _METADATAKEY_STRESS_TENSOR_ELLI_E2: stress_tensor_ellipsoidal[1, 1],
+                _METADATAKEY_STRESS_TENSOR_ELLI_E3: stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12: stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[1, 1],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23: stress_tensor_ellipsoidal[1, 1] - stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13: stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[2, 2],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E1: angles[0],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E2: angles[1],
+                _METADATAKEY_ANGLE_ELLIPSOID_CART_E3: angles[2],
+                _METADATAKEY_STRESS_TISSUE_ANISO: max_min_anisotropy}
     properties = {'name': 'Result of lebedev quadrature on ellipsoid',
                   'features': features,
                   'metadata': metadata,
-                  'face_color': _METADATAKEY_ANISO_STRESS_TISSUE,
+                  'face_color': _METADATAKEY_STRESS_TISSUE,
                   'face_colormap': 'twilight',
                   'size': size}
     layer_quadrature_ellipsoid =(quadrature_points_ellipsoid, properties, 'points')
@@ -412,9 +517,11 @@ def comprehensive_analysis(pointcloud: PointsData,
     # Curvatures and stresses: Show on droplet surface (points)
     features = {_METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
                 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
-                 _METADATAKEY_ANISO_STRESS_CELL: stress_cell,
-                 _METADATAKEY_ANISO_STRESS_TOTAL: stress_total,
-                 _METADATAKEY_ANISO_STRESS_TOTAL_RADIAL: stress_total_radial}
+                _METADATAKEY_STRESS_CELL: stress_cell,
+                _METADATAKEY_STRESS_TOTAL: stress_total,
+                _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial,
+                _METADATAKEY_EXTREMA_CELL_STRESS: extrema_cellular_stress[1]['features']['local_max_and_min'],
+                _METADATAKEY_EXTREMA_TOTAL_STRESS: extrema_total_stress[1]['features']['local_max_and_min']}
     metadata = {_METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
                 _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
                 _METADATAKEY_GAUSS_BONNET_ABS_RAD: gauss_bonnet_absolute_radial,
@@ -422,56 +529,38 @@ def comprehensive_analysis(pointcloud: PointsData,
                 _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
                 _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
                 _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
-                _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet}
+                _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet,
+                _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO: extrema_cellular_stress[1]['metadata']['nearest_pair_anisotropy'],
+                _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST: extrema_cellular_stress[1]['metadata']['nearest_pair_distance'],
+                _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO: extrema_cellular_stress[1]['metadata']['all_pair_anisotropy'],
+                _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST: extrema_cellular_stress[1]['metadata']['all_pair_distance'],
+                }
 
     properties = {'name': 'Result of lebedev quadrature (droplet)',
                   'features': features,
                   'metadata': metadata,
                   'face_colormap': 'twilight',
-                  'face_color': _METADATAKEY_ANISO_STRESS_CELL,
+                  'face_color': _METADATAKEY_STRESS_CELL,
                   'size': size}
     layer_quadrature = (quadrature_points, properties, 'points')
-
-    # Geodesics and autocorrelations
-    layer_extrema_total_stress = extrema_total_stress
-    layer_extrema_total_stress[1]['name'] = 'Extrema total stress'
-    layer_extrema_cellular_stress = extrema_cellular_stress
-    layer_extrema_cellular_stress[1]['name'] = 'Extrema cell stress'
 
     max_min_geodesics_total[1]['name'] = 'Total stress: ' + max_min_geodesics_total[1]['name']
     min_max_geodesics_total[1]['name'] = 'Total stress: ' + min_max_geodesics_total[1]['name']
     max_min_geodesics_cell[1]['name'] = 'Cell stress: ' + max_min_geodesics_cell[1]['name']
     min_max_geodesics_cell[1]['name'] = 'Cell stress: ' + min_max_geodesics_cell[1]['name']
 
-    metadata = {'autocorrelations_total': autocorrelations_total,
-                'autocorrelations_cell': autocorrelations_cell,
-                'autocorrelations_tissue': autocorrelations_tissue}
+    metadata = {_METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
+                _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
+                _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue}
     properties = {'name': 'stress_autocorrelations',
                   'metadata':  metadata}
     layer_surface_autocorrelation = (surface_droplet, properties, 'surface')
-
-    # # Fit residues
-    # properties = {'name': 'Spherical harmonics fit residues',
-    #               'edge_width': size,
-    #               'features': {'fit_residue': residue_spherical_harmonics_norm},
-    #               'edge_color': 'fit_residue',
-    #               'edge_colormap': 'twilight'}
-    # layer_spherical_harmonics_residues = (residue_spherical_harmonics, properties, 'vectors')
-
-    # properties = {'name': 'Ellipsoid fit residues',
-    #               'edge_width': size,
-    #               'features': {'fit_residue': residue_ellipsoid_norm},
-    #               'edge_color': 'fit_residue',
-    #               'edge_colormap': 'twilight'}
-    # layer_ellipsoid_residues = (residue_ellipsoid, properties, 'vectors')
 
     return [layer_spherical_harmonics,
             layer_fitted_ellipsoid_points,
             layer_fitted_ellipsoid,
             layer_quadrature_ellipsoid,
             layer_quadrature,
-            layer_extrema_total_stress,
-            layer_extrema_cellular_stress,
             max_min_geodesics_total,
             min_max_geodesics_total,
             max_min_geodesics_cell,

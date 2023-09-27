@@ -4,6 +4,7 @@ from . import _measurements as measurements
 from . import _approximation as approximation
 from . import _reconstruction as reconstruction
 from . import _sample_data as sample_data
+from . import _plotting as plotting
 from . import _utils as utils
 from . import _stress as stress_backend
 
