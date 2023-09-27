@@ -209,29 +209,52 @@ def create_all_stress_plots(
     draw_chronological_lineplot_with_errors(df_over_time, types._METADATAKEY_AUTOCORR_TEMPORAL_TISSUE, ax=axes[2])
 
     # Ellipsoid contribution
-    data = find_metadata_in_layers(results_stress_analysis, types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB)
+    data = df_over_time[types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB].values
     fig_ellipsoid_contribution, axes = plt.subplots(ncols=4, nrows=n_frames//4 + 1, figsize=(12, n_frames))
     for t, ax in enumerate(axes.flatten()):
         if t >= n_frames:
             ax.axis('off')
             continue
-        ax.imshow(np.triu(data[types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB].values[t]), cmap='inferno')
+        ax.imshow(np.triu(data[t]), cmap='inferno')
         ax.tick_params(labelbottom=False, labeltop=True, labelleft=False, labelright=True)
         ax.set_xlabel('Degree')
         ax.set_ylabel('Order')
         ax.set_title(f'Time-step: {t}')
 
     figures = {
-        fig_residue: 'fit_residues.png',
-        fig_GaussBonnet_error: 'gauss_bonnet_errors.png',
-        fig_mean_curvature: 'mean_curvatures',
-        fig_total_stress: 'Stresses_total.png',
-        fig_cell_stress: 'Stresses_cell.png',
-        fig_tissue_stress: 'Stresses_tissue.png',
-        fig_stress_tensor: 'Stress_tensor.png',
-        fig_all_pairs: 'Autocorrelations_spatial_all_pairs.png',
-        fig_spatial_autocorrelation: 'Autocorrelations_spatial_nearest_pairs.png',
-        fig_temporal_autocorrelation: 'Autocorrelations_temporal.png',
-        fig_ellipsoid_contribution: 'Ellipsoid_contribution.png'}
+        'Figure_reside': {
+            'figure': fig_residue,
+            'path': 'fit_residues.png'},
+        'fig_GaussBonnet_error': {
+            'figure': fig_GaussBonnet_error,
+            'path': 'gauss_bonnet_errors.png'},
+        'fig_mean_curvature': {
+            'figure': fig_mean_curvature,
+            'path': 'mean_curvatures.png'},
+        'fig_total_stress': {
+            'figure': fig_total_stress,
+            'path': 'Stresses_total.png'},
+        'fig_cell_stress': {
+            'figure': fig_cell_stress,
+            'path': 'Stresses_cell.png'},
+        'fig_tissue_stress': {
+            'figure': fig_tissue_stress,
+            'path': 'Stresses_tissue.png'},
+        'fig_stress_tensor': {
+            'figure': fig_stress_tensor,
+            'path': 'Stress_tensor.png'},
+        'fig_all_pairs': {
+            'figure': fig_all_pairs,
+            'path': 'Autocorrelations_spatial_all_pairs.png'},
+        'fig_spatial_autocorrelation': {
+            'figure': fig_spatial_autocorrelation,
+            'path': 'Autocorrelations_spatial_nearest_pairs.png'},
+        'fig_temporal_autocorrelation': {
+            'figure': fig_temporal_autocorrelation,
+            'path': 'Autocorrelations_temporal.png'},
+        'fig_ellipsoid_contribution': {
+            'figure': fig_ellipsoid_contribution,
+            'path': 'Ellipsoid_contribution.png'}
+        }
     
     return figures

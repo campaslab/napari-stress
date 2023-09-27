@@ -189,8 +189,9 @@ class stress_analysis_toolbox(QWidget):
         )
             
         for fig in figures_dict.keys():
-            fig.tight_layout()
-            fig.savefig(os.path.join(self.save_directory, figures_dict[fig]))
+            figure = figures_dict[fig]
+            figure['figure'].tight_layout()
+            figure['figure'].savefig(os.path.join(self.save_directory, figure['path']))
 
 
 @frame_by_frame
