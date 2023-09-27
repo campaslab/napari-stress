@@ -26,17 +26,12 @@ def least_squares_ellipsoid(points: PointsData
     VectorsData: Major/minor axis of the ellipsoid
     """
     from .._utils.coordinate_conversion import polynomial_to_parameters3D
-    coefficients = _solve_ellipsoid_polynomial(points)
+    coefficients = _solve_ellipsoid_polynomial(points)    
 
     # convert results to VectorsData
     center, axes, R, R_inverse = polynomial_to_parameters3D(
         coefficients=coefficients)
     direction = R * axes[:, None]
-
-    # sort from longest to shortes vector
-    direction = direction[np.argsort(np.linalg.norm(direction, axis=1))][::-1]
-
-    # assemble vector
     origin = np.stack(3 * [center])  # cheap repeat
     vector = np.stack([origin, direction]).transpose((1, 0, 2))
 
