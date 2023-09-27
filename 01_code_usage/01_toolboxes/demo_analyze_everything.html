@@ -401,14 +401,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-quality">Fit quality</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature">Curvature</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-stress">Total stress</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-scale-stress">Cell-scale stress</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature">Curvature</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tissue-scale-stresses">Tissue-scale stresses</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-along-axes">Stress along axes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geodesics">Geodesics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extrema-analysis">Extrema analysis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelations-spatial">Autocorrelations: Spatial</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelations-temporal">Autocorrelations: Temporal</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid-deviation">Ellipsoid deviation</a></li>
@@ -436,13 +432,11 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">napari_stress</span>
 <span class="kn">import</span> <span class="nn">napari</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">TimelapseConverter</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">stress_backend</span>
+<span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">TimelapseConverter</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">stress_backend</span><span class="p">,</span> <span class="n">plotting</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
-
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
@@ -487,7 +481,7 @@ document.write(`
 <span class="n">voxel_size_y</span> <span class="o">=</span> <span class="mf">2.078</span>  <span class="c1"># microns</span>
 <span class="n">voxel_size_z</span> <span class="o">=</span> <span class="mf">3.998</span>  <span class="c1"># microns</span>
 <span class="n">target_voxel_size</span> <span class="o">=</span> <span class="mf">2.078</span>  <span class="c1"># microns</span>
-<span class="n">time_step</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># seconds</span>
+<span class="n">time_step</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># minutes</span>
 </pre></div>
 </div>
 </div>
@@ -529,6 +523,7 @@ document.write(`
 <span class="n">max_degree</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># spherical harmonics degree</span>
 <span class="n">n_quadrature_points</span> <span class="o">=</span> <span class="mi">434</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
 <span class="n">gamma</span> <span class="o">=</span> <span class="mf">3.3</span>  <span class="c1"># interfacial tension of droplet</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
 </pre></div>
 </div>
 </div>
@@ -566,7 +561,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x204bb797be0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x26613f0b9d0&gt;
 </pre></div>
 </div>
 </div>
@@ -610,13 +605,12 @@ document.write(`
 <p>We run the reconstruction and the stress analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span>
-                                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:5289&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -632,20 +626,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pickling This LBDV data:
-
-generating basis vals
-generated basis vals
-generating dphi/ dphi_phi vals
-done with dphi/ dphi_phi vals
-
-
-Pickling This LBDV  Chart data:
-
-generating lbdv rotation vals
-done with lbdv rotation vals
-
-Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:5289&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -674,18 +655,32 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--&gt; Result of fit spherical harmonics (deg = 20
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--&gt; Result of fit spherical harmonics (deg = 20)
 	 Metadata:  Elipsoid_deviation_contribution_matrix
+	 Metadata:  frame
 	 Features:  fit_residue
+	 Features:  frame
 --&gt; Result of expand points on ellipsoid
 	 Features:  fit_residue
+	 Features:  frame
 --&gt; Result of least squares ellipsoid
 --&gt; Result of lebedev quadrature on ellipsoid
 	 Metadata:  Tissue_stress_tensor_cartesian
 	 Metadata:  Tissue_stress_tensor_elliptical
-	 Metadata:  max_issue_stress_anisotropy
+	 Metadata:  Tissue_stress_tensor_elliptical_e1
+	 Metadata:  Tissue_stress_tensor_elliptical_e2
+	 Metadata:  Tissue_stress_tensor_elliptical_e3
+	 Metadata:  stress_ellipsoid_anisotropy_e12
+	 Metadata:  stress_ellipsoid_anisotropy_e23
+	 Metadata:  stress_ellipsoid_anisotropy_e13
+	 Metadata:  angle_ellipsoid_cartesian_e1_x1
+	 Metadata:  angle_ellipsoid_cartesian_e1_x2
+	 Metadata:  angle_ellipsoid_cartesian_e1_x3
+	 Metadata:  stress_tissue_anisotropy
+	 Metadata:  frame
 	 Features:  mean_curvature
-	 Features:  anisotropic_stress_tissue
+	 Features:  stress_tissue
+	 Features:  frame
 --&gt; Result of lebedev quadrature (droplet)
 	 Metadata:  Gauss_Bonnet_relative_error
 	 Metadata:  Gauss_Bonnet_error
@@ -695,51 +690,38 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 	 Metadata:  H0_arithmetic
 	 Metadata:  H0_surface_integral
 	 Metadata:  S2_volume_integral
+	 Metadata:  stress_cell_nearest_pair_anisotropy
+	 Metadata:  stress_cell_nearest_pair_distance
+	 Metadata:  stress_cell_all_pair_anisotropy
+	 Metadata:  stress_cell_all_pair_distance
+	 Metadata:  frame
 	 Features:  mean_curvature
 	 Features:  difference_mean_curvature_cartesian_radial_manifold
-	 Features:  anisotropic_stress_cell
-	 Features:  anisotropic_stress
-	 Features:  anisotropic_stress_total_radial
---&gt; Extrema total stress
-	 Metadata:  nearest_min_max_dists
-	 Metadata:  nearest_min_max_anisotropies
-	 Metadata:  min_max_pair_distances
-	 Metadata:  min_max_pair_anisotropies
-	 Features:  local_max_and_min
---&gt; Extrema cell stress
-	 Metadata:  nearest_min_max_dists
-	 Metadata:  nearest_min_max_anisotropies
-	 Metadata:  min_max_pair_distances
-	 Metadata:  min_max_pair_anisotropies
-	 Features:  local_max_and_min
+	 Features:  stress_cell
+	 Features:  stress_total
+	 Features:  stress_total_radial
+	 Features:  stress_cell_extrema
+	 Features:  stress_total_extrema
+	 Features:  frame
 --&gt; Total stress: Geodesics maxima -&gt; nearest minima
 --&gt; Total stress: Geodesics minima -&gt; nearest maxima
 --&gt; Cell stress: Geodesics maxima -&gt; nearest minima
 --&gt; Cell stress: Geodesics minima -&gt; nearest maxima
 --&gt; stress_autocorrelations
-	 Metadata:  autocorrelations_total
-	 Metadata:  autocorrelations_cell
-	 Metadata:  autocorrelations_tissue
+	 Metadata:  autocorrelations_spatial_total
+	 Metadata:  autocorrelations_spatial_cell
+	 Metadata:  autocorrelations_spatial_tissue
+	 Metadata:  frame
 </pre></div>
 </div>
 </div>
 </div>
-<p>To make handling further down easier, we store all metadata in a single dataframe if its length corresponds to the number of frames in the data:</p>
+<p>To make handling further down easier, we store all data and metadata in a few simple dataframes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">results_stress_analysis</span> <span class="k">if</span> <span class="s1">&#39;metadata&#39;</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
-<span class="n">df_over_time</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">_metadata</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span> <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
-                <span class="n">df_over_time</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">df_over_time</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-<span class="n">df_over_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_over_time</span><span class="p">)</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">time_step</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile data</span>
+<span class="n">df_over_time</span><span class="p">,</span> <span class="n">df_nearest_pairs</span><span class="p">,</span> <span class="n">df_all_pairs</span><span class="p">,</span> <span class="n">df_autocorrelations</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compile_data_from_layers</span><span class="p">(</span>
+    <span class="n">results_stress_analysis</span><span class="p">,</span> <span class="n">n_frames</span><span class="o">=</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -750,20 +732,27 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <p>In this section, we will plot some interesting results and save the data to disk. The file location will be at the</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
-<span class="n">colormap</span> <span class="o">=</span> <span class="s1">&#39;seismic&#39;</span>
-<span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">filename_without_ending</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">filename_without_ending</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
-<span class="k">else</span><span class="p">:</span> 
-    <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;results_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+<span class="n">figures_dict</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">create_all_stress_plots</span><span class="p">(</span>
+    <span class="n">results_stress_analysis</span><span class="p">,</span>
+    <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
+    <span class="n">n_frames</span><span class="o">=</span><span class="n">n_frames</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_directory</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+<span class="n">colormap_time</span> <span class="o">=</span> <span class="s1">&#39;flare&#39;</span>
+<span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">filename_without_ending</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">filename_without_ending</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span> 
+    <span class="n">save_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;results_&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_directory</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_directory</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -813,6 +802,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <th>fraction_variance_unexplained</th>
       <th>fraction_variance_unexplained_log</th>
       <th>idx_of_border</th>
+      <th>frame</th>
     </tr>
   </thead>
   <tbody>
@@ -833,6 +823,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.000078</td>
       <td>-9.460465</td>
       <td>10.081819</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>1</th>
@@ -849,8 +840,9 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>1.025464</td>
       <td>0.000036</td>
       <td>0.000430</td>
-      <td>-7.751092</td>
+      <td>-7.751091</td>
       <td>9.997145</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>2</th>
@@ -867,13 +859,14 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>1.044057</td>
       <td>0.000038</td>
       <td>0.000473</td>
-      <td>-7.655380</td>
+      <td>-7.655381</td>
       <td>10.019467</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>10.058297</td>
-      <td>-0.705460</td>
+      <td>-0.705459</td>
       <td>0.580484</td>
       <td>-0.002987</td>
       <td>0.678742</td>
@@ -887,15 +880,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.000090</td>
       <td>-9.319205</td>
       <td>10.058297</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>9.994609</td>
+      <td>9.994608</td>
       <td>-0.733188</td>
       <td>0.628733</td>
       <td>-0.001073</td>
       <td>0.722375</td>
-      <td>0.056920</td>
+      <td>0.056921</td>
       <td>0.014856</td>
       <td>0.015583</td>
       <td>0.001559</td>
@@ -904,7 +898,8 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.000220</td>
       <td>0.002569</td>
       <td>-5.964267</td>
-      <td>9.994609</td>
+      <td>9.994608</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>...</th>
@@ -923,16 +918,17 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>15926</th>
+      <th>752</th>
       <td>9.985638</td>
       <td>-0.665616</td>
       <td>0.638497</td>
       <td>-0.000195</td>
       <td>0.664523</td>
-      <td>0.057745</td>
-      <td>0.013784</td>
+      <td>0.057744</td>
+      <td>0.013783</td>
       <td>0.016346</td>
       <td>0.001452</td>
       <td>0.003766</td>
@@ -941,15 +937,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.002983</td>
       <td>-5.814902</td>
       <td>9.985638</td>
+      <td>20</td>
     </tr>
     <tr>
-      <th>15927</th>
-      <td>10.034801</td>
-      <td>-0.688489</td>
+      <th>753</th>
+      <td>10.034802</td>
+      <td>-0.688490</td>
       <td>0.639655</td>
       <td>0.000048</td>
       <td>0.689812</td>
-      <td>0.065848</td>
+      <td>0.065847</td>
       <td>0.016203</td>
       <td>0.018504</td>
       <td>0.001720</td>
@@ -957,14 +954,15 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.989689</td>
       <td>0.000309</td>
       <td>0.004026</td>
-      <td>-5.515095</td>
-      <td>10.034801</td>
+      <td>-5.515093</td>
+      <td>10.034802</td>
+      <td>20</td>
     </tr>
     <tr>
-      <th>15928</th>
-      <td>9.993327</td>
-      <td>-0.637167</td>
-      <td>0.652894</td>
+      <th>754</th>
+      <td>9.993330</td>
+      <td>-0.637168</td>
+      <td>0.652893</td>
       <td>-0.000147</td>
       <td>0.635390</td>
       <td>0.070049</td>
@@ -975,12 +973,13 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>1.074969</td>
       <td>0.000087</td>
       <td>0.001272</td>
-      <td>-6.667318</td>
-      <td>9.993327</td>
+      <td>-6.667313</td>
+      <td>9.993330</td>
+      <td>20</td>
     </tr>
     <tr>
-      <th>15929</th>
-      <td>9.962992</td>
+      <th>755</th>
+      <td>9.962993</td>
       <td>-0.677188</td>
       <td>0.639055</td>
       <td>0.000683</td>
@@ -994,16 +993,17 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.000293</td>
       <td>0.003885</td>
       <td>-5.550508</td>
-      <td>9.962992</td>
+      <td>9.962993</td>
+      <td>20</td>
     </tr>
     <tr>
-      <th>15930</th>
+      <th>756</th>
       <td>9.948624</td>
-      <td>-0.676930</td>
-      <td>0.636113</td>
+      <td>-0.676929</td>
+      <td>0.636114</td>
       <td>-0.000832</td>
       <td>0.669345</td>
-      <td>0.053738</td>
+      <td>0.053737</td>
       <td>0.013056</td>
       <td>0.015239</td>
       <td>0.001367</td>
@@ -1013,10 +1013,11 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
       <td>0.002506</td>
       <td>-5.989060</td>
       <td>9.948624</td>
+      <td>20</td>
     </tr>
   </tbody>
 </table>
-<p>15931 rows × 15 columns</p>
+<p>15931 rows × 16 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1036,7 +1037,7 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/44129bf86e398e376d09f1b8c7ffeb639482682a030f8ee3aae745b1aeaa2982.png" src="../../_images/44129bf86e398e376d09f1b8c7ffeb639482682a030f8ee3aae745b1aeaa2982.png" />
+<img alt="../../_images/2bdd0b4ab32359d0e4c10feff3bc1f03e448a3f5fb1e6dcf12196663b455372c.png" src="../../_images/2bdd0b4ab32359d0e4c10feff3bc1f03e448a3f5fb1e6dcf12196663b455372c.png" />
 </div>
 </div>
 </section>
@@ -1047,25 +1048,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <p>We now show the errors made when approximating the reconstructed pointcloud with the spherical harmonics:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spherical_harmonics_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">spherical_harmonics_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spherical_harmonics_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;fit_residue&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;fit_residue&#39;</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Average fit residue (95% CI)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;Figure_reside&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;fit_error_spherical_harmonics.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/74e504026c9241e47555e3ec1b90e30b92e19766bb09794449b86df9f510bfa5.png" src="../../_images/74e504026c9241e47555e3ec1b90e30b92e19766bb09794449b86df9f510bfa5.png" />
+<img alt="../../_images/07c9e3bdaf55d7064dff38740c1540e7749b0b495c75f1bf3f1bf6a3fe3b3315.png" src="../../_images/07c9e3bdaf55d7064dff38740c1540e7749b0b495c75f1bf3f1bf6a3fe3b3315.png" />
 </div>
 </div>
 </section>
@@ -1074,21 +1066,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <p>We can quantify the quality of the extracted pointcloud by using the absolute and relative Gauss-Bonnet errors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Gauss_Bonnet_relative_error&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Relative error&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Gauss_Bonnet_error&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Absolute error&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_GaussBonnet_error&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;fit_error_gauss_bonnet.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/7deb3b66658bd6017a70607ff8e7d75642f80781b3f9b5b5dc162bc3fc561dba.png" src="../../_images/7deb3b66658bd6017a70607ff8e7d75642f80781b3f9b5b5dc162bc3fc561dba.png" />
+<img alt="../../_images/a9cfb8487b8c78eb50fdb7e3e633bfaef4cc6407985bebfdd8638cbec6c18cae.png" src="../../_images/a9cfb8487b8c78eb50fdb7e3e633bfaef4cc6407985bebfdd8638cbec6c18cae.png" />
 </div>
 </div>
 </section>
@@ -1098,169 +1085,66 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <p>We next show mean curvature histograms and averages over time:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_curvature_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mean_curvature_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_curvature_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;mean_curvature&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;mean_curvature&#39;</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Average mean curvature (95% CI)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_mean_curvature&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;mean_curvature.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Mean curvature [$mm^{-1}$]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Mean curvature [$mm^{-1}$]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [min]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/75d289376103930305633909167902df68838a1dfbd04b3fc56467b005acc884.png" src="../../_images/75d289376103930305633909167902df68838a1dfbd04b3fc56467b005acc884.png" />
-</div>
-</div>
-<section id="total-stress">
-<h3>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this headline">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span>
-</pre></div>
-</div>
+<img alt="../../_images/34a0d5e26aadc02da83ea54c8336ab331ae0de5a51f1e5ef9d340439076e4f58.png" src="../../_images/34a0d5e26aadc02da83ea54c8336ab331ae0de5a51f1e5ef9d340439076e4f58.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-<span class="n">df_total_stress</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">total_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
-<span class="n">df_total_stress</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_anisotropic_stress_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">time_step</span>
-
-<span class="n">total_stress_anisotropy</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
-    <span class="n">subset_t</span> <span class="o">=</span> <span class="n">df_total_stress</span><span class="p">[</span><span class="n">df_total_stress</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">t</span><span class="o">*</span><span class="n">time_step</span><span class="p">][</span><span class="s1">&#39;anisotropic_stress&#39;</span><span class="p">]</span>
-    <span class="n">hist_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">subset_t</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">hist_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_histogram</span><span class="p">(</span><span class="n">hist_data</span><span class="p">)</span>
-    
-    <span class="n">smallest_excluded_value</span> <span class="o">=</span> <span class="n">hist_dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-    <span class="n">largest_excluded_value</span> <span class="o">=</span> <span class="n">hist_dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span>
-    <span class="n">total_stress_anisotropy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">largest_excluded_value</span> <span class="o">-</span> <span class="n">smallest_excluded_value</span><span class="p">)</span>
-
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;total_stress_anisotropy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_stress_anisotropy</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">13</span><span class="p">))</span>
-<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">_ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress&#39;</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Average total stress (95% CI)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Histogram (all frames combined)&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">_ax2</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Cumulative density function (all frames combined)&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;total_stress_anisotropy&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Total stress ($\sigma^A_M -  \sigma^A_N$)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_total_stress&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_anisotropy_total.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1bba051890ed62a370dedaecd9ac5b1c7097fe9c79d5a08f122f388645f7654b.png" src="../../_images/1bba051890ed62a370dedaecd9ac5b1c7097fe9c79d5a08f122f388645f7654b.png" />
-</div>
-</div>
-</section>
-<section id="cell-scale-stress">
-<h3>Cell-scale stress<a class="headerlink" href="#cell-scale-stress" title="Permalink to this headline">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span>
-</pre></div>
-</div>
+<img alt="../../_images/3c6670ceda6cf1518809389e04b97d18401f43f6c94301e5b47a1f838441d185.png" src="../../_images/3c6670ceda6cf1518809389e04b97d18401f43f6c94301e5b47a1f838441d185.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-<span class="n">df_cell_stress</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">total_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
-<span class="n">df_cell_stress</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_anisotropic_stress_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">time_step</span>
-
-<span class="n">cell_stress_anisotropy</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
-    <span class="n">subset_t</span> <span class="o">=</span> <span class="n">df_cell_stress</span><span class="p">[</span><span class="n">df_cell_stress</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">t</span><span class="o">*</span><span class="n">time_step</span><span class="p">][</span><span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">]</span>
-    <span class="n">hist_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">subset_t</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">hist_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_histogram</span><span class="p">(</span><span class="n">hist_data</span><span class="p">)</span>
-    
-    <span class="n">smallest_excluded_value</span> <span class="o">=</span> <span class="n">hist_dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-    <span class="n">largest_excluded_value</span> <span class="o">=</span> <span class="n">hist_dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span>
-    <span class="n">cell_stress_anisotropy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">largest_excluded_value</span> <span class="o">-</span> <span class="n">smallest_excluded_value</span><span class="p">)</span>
-
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;cell_stress_anisotropy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_stress_anisotropy</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">13</span><span class="p">))</span>
-<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">_ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_cell_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_cell_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Average total stress (95% CI)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_cell_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Histogram (all frames combined)&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_cell_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">_ax2</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Cumulative density function (all frames combined)&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;cell_stress_anisotropy&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Cell stress ($\sigma^A_{C,M} -  \sigma^A_{C,N}$)&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_cell_stress&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_anisotropy_cell.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/33e9611975556b9a201de4ab715e7ddbf28eae4acbcbadc0624e4d6bfc0eb4d0.png" src="../../_images/33e9611975556b9a201de4ab715e7ddbf28eae4acbcbadc0624e4d6bfc0eb4d0.png" />
+<img alt="../../_images/ab75978cf45f8bd8460e0a070289192ad12e3b694a142ec94168724da8534a97.png" src="../../_images/ab75978cf45f8bd8460e0a070289192ad12e3b694a142ec94168724da8534a97.png" />
 </div>
 </div>
-</section>
 </section>
 <section id="tissue-scale-stresses">
 <h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tissue_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="n">df_tissue_stress</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tissue_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
-<span class="n">df_tissue_stress</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_anisotropic_stress_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">time_step</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;max_tissue_stress_anisotropy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tissue_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;max_issue_stress_anisotropy&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
-<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_tissue_stress</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;anisotropic_stress_tissue&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;max_tissue_stress_anisotropy&#39;</span><span class="p">,</span>
-             <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tissue stress anisotropy $\sigma^A_T$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_tissue_stress&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_anisotropy_tissue.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/590b6e64cd08532c72756a8dd1b88c57a5e8413c1991d6a4c83fd68d0a914bfb.png" src="../../_images/590b6e64cd08532c72756a8dd1b88c57a5e8413c1991d6a4c83fd68d0a914bfb.png" />
+<img alt="../../_images/a177de31262af3fa8ede437521d523786339734e017bb762d558cd3a8a439913.png" src="../../_images/a177de31262af3fa8ede437521d523786339734e017bb762d558cd3a8a439913.png" />
 </div>
 </div>
 </section>
@@ -1268,109 +1152,33 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tissue_anisotropic_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="n">tissue_tensor_elliptical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">tissue_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;Tissue_stress_tensor_elliptical&#39;</span><span class="p">])</span>
-<span class="n">tissue_tensor_cartesian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">tissue_anisotropic_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;Tissue_stress_tensor_cartesian&#39;</span><span class="p">])</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tissue_tensor_elliptical</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tissue_tensor_elliptical</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tissue_tensor_elliptical</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_anisotropy_e13&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e3&#39;</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_anisotropy_e12&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e2&#39;</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_anisotropy_e23&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e2&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;stress_along_e3&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_frames</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
-    <span class="n">_tissue_tensor_elliptical</span> <span class="o">=</span> <span class="n">tissue_tensor_elliptical</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">_tissue_tensor_cartesian</span> <span class="o">=</span> <span class="n">tissue_tensor_cartesian</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-        <span class="n">dot_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_tissue_tensor_cartesian</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">_tissue_tensor_elliptical</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">_tissue_tensor_cartesian</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">_tissue_tensor_elliptical</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-        <span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">dot_product</span><span class="o">/</span><span class="n">norm</span><span class="p">)</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
-
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;angle_x1_e1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;angle_x2_e1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;angle_x3_e1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;stress_anisotropy_e13&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tissue stress $\sigma^A_</span><span class="si">{TT}</span><span class="s1">(</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_1, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_3)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;stress_anisotropy_e12&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tissue stress $\sigma^A_</span><span class="si">{TT}</span><span class="s1">(</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_1, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_2)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;stress_anisotropy_e23&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tissue stress $\sigma^A_</span><span class="si">{TT}</span><span class="s1">(</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_2, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_3)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;angle_x1_e1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">theta (</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_1, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{x}</span><span class="s1">_1)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;angle_x2_e1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">theta (</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_1, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{x}</span><span class="s1">_2)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;angle_x3_e1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">theta (</span><span class="se">\\</span><span class="s1">vec</span><span class="si">{e}</span><span class="s1">_1, </span><span class="se">\\</span><span class="s1">vec</span><span class="si">{x}</span><span class="s1">_3)$&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_stress_tensor&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_anisotropy_tissue_eigenvectors.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/d8259ead597513b3f96c0abfdc6c6cd2fa07d19ffe565af2b68d9787f2ab2727.png" src="../../_images/d8259ead597513b3f96c0abfdc6c6cd2fa07d19ffe565af2b68d9787f2ab2727.png" />
+<img alt="../../_images/3a3a0332d9b90271420393ae33ad46c3469b2eba1750b1995df9a3343a8ab903.png" src="../../_images/3a3a0332d9b90271420393ae33ad46c3469b2eba1750b1995df9a3343a8ab903.png" />
 </div>
 </div>
 </section>
-<section id="geodesics">
-<h2>Geodesics<a class="headerlink" href="#geodesics" title="Permalink to this headline">#</a></h2>
+<section id="extrema-analysis">
+<h2>Extrema analysis<a class="headerlink" href="#extrema-analysis" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extrema_cell_stress_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">extrema_cell_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;min_max_pair_distances&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)])</span> <span class="o">*</span> <span class="n">time_step</span>
-<span class="n">min_max_pair_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">extrema_cell_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;min_max_pair_distances&#39;</span><span class="p">])</span>
-<span class="n">min_max_pair_anisotropies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">extrema_cell_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;min_max_pair_anisotropies&#39;</span><span class="p">])</span>
-<span class="n">df_all_pairs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">frames</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">min_max_pair_distances</span><span class="p">,</span> <span class="n">min_max_pair_anisotropies</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;min_max_pair_distances&#39;</span><span class="p">,</span> <span class="s1">&#39;min_max_pair_anisotropies&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;nearest_min_max_dists&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)])</span> <span class="o">*</span> <span class="n">time_step</span>
-<span class="n">nearest_min_max_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">extrema_cell_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;nearest_min_max_dists&#39;</span><span class="p">])</span>
-<span class="n">nearest_min_max_anisotropies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">extrema_cell_stress_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;nearest_min_max_anisotropies&#39;</span><span class="p">])</span>
-<span class="n">df_nearest_extrema_pairs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">frames</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">nearest_min_max_distances</span><span class="p">,</span> <span class="n">nearest_min_max_anisotropies</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;nearest_min_max_dists&#39;</span><span class="p">,</span> <span class="s1">&#39;nearest_min_max_anisotropies&#39;</span><span class="p">])</span>
-<span class="n">df_nearest_extrema_pairs</span> <span class="o">=</span> <span class="n">df_nearest_extrema_pairs</span><span class="p">[</span><span class="n">df_nearest_extrema_pairs</span><span class="p">[</span><span class="s1">&#39;nearest_min_max_dists&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_all_pairs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;min_max_pair_distances&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_all_pairs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;min_max_pair_anisotropies&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_nearest_extrema_pairs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;nearest_min_max_dists&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_nearest_extrema_pairs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;nearest_min_max_anisotropies&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">leg</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span>
-<span class="n">leg</span><span class="o">.</span><span class="n">set_bbox_to_anchor</span><span class="p">(</span><span class="n">bbox</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">))</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_all_pairs&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_anisotropy_nearest_extrema_pairs.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/80d068d7c0e92646c312defa717e064af06ed59635baca656bb6a4242145daff.png" src="../../_images/80d068d7c0e92646c312defa717e064af06ed59635baca656bb6a4242145daff.png" />
+<img alt="../../_images/a4019794959ef68a496964bb8875e9c7d3434f1cb97e3bd3ca604cd6fed22f0d.png" src="../../_images/a4019794959ef68a496964bb8875e9c7d3434f1cb97e3bd3ca604cd6fed22f0d.png" />
 </div>
 </div>
 </section>
@@ -1378,78 +1186,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">autocorrelations_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">autocorrelations_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_total&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_distances&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">normalized_autocorrelation_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_total&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">frames</span> <span class="o">=</span> <span class="p">[[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_total&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-
-<span class="n">df_autocorrelations_total</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">,</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">normalized_autocorrelation_total</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                                         <span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="s1">&#39;autocorrelation_total&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_cell&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_distances&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">normalized_autocorrelation_cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_cell&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">frames</span> <span class="o">=</span> <span class="p">[[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_cell&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-
-<span class="n">df_autocorrelations_cell</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">,</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">normalized_autocorrelation_cell</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                                         <span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="s1">&#39;autocorrelation_cell&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_tissue&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_distances&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">normalized_autocorrelation_tissue</span> <span class="o">=</span> <span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_tissue&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-<span class="n">frames</span> <span class="o">=</span> <span class="p">[[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autocorrelations_tissue&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;auto_correlations_averaged_normalized&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)]</span>
-
-<span class="n">df_autocorrelations_tissue</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">,</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">normalized_autocorrelation_tissue</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-                                         <span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>  <span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="s1">&#39;normalized_autocorrelation_tissue&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;dark_background&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_total</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;autocorrelation_total&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_cell</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;autocorrelation_cell&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_autocorrelations_tissue</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;distances&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;normalized_autocorrelation_tissue&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-
-<span class="n">leg</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span>
-<span class="n">leg</span><span class="o">.</span><span class="n">set_bbox_to_anchor</span><span class="p">(</span><span class="n">bbox</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Geodesic distances, s ($\mu m$)&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Spatial autocorrelation&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_spatial_autocorrelation&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_autocorrelations_spatial.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/6d7cbf5cbda16e5265a1ad1da14743e873abb30151562264b6669d3ca6c7d13a.png" src="../../_images/6d7cbf5cbda16e5265a1ad1da14743e873abb30151562264b6669d3ca6c7d13a.png" />
+<img alt="../../_images/2bd708f6404c319f454d99e593460d68a00556cc96fc11409d877bfcc120d0ab.png" src="../../_images/2bd708f6404c319f454d99e593460d68a00556cc96fc11409d877bfcc120d0ab.png" />
 </div>
 </div>
 </section>
@@ -1457,40 +1203,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surface_total_stress_radial</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">surface_total_stress_radial</span> <span class="o">+=</span> <span class="p">[</span><span class="n">df_total_stress</span><span class="p">[</span><span class="s1">&#39;anisotropic_stress_total_radial&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;temporal_autocorrelation_stress_total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">temporal_autocorrelation</span><span class="p">(</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="s1">&#39;anisotropic_stress_total_radial&#39;</span><span class="p">,</span> <span class="n">frame_column_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;temporal_autocorrelation_stress_cell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">temporal_autocorrelation</span><span class="p">(</span><span class="n">df_total_stress</span><span class="p">,</span> <span class="s1">&#39;anisotropic_stress_cell&#39;</span><span class="p">,</span> <span class="n">frame_column_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-<span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;temporal_autocorrelation_stress_tissue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">temporal_autocorrelation</span><span class="p">(</span><span class="n">df_tissue_stress</span><span class="p">,</span> <span class="s1">&#39;anisotropic_stress_tissue&#39;</span><span class="p">,</span> <span class="n">frame_column_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;temporal_autocorrelation_stress_total&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;temporal_autocorrelation_stress_cell&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_over_time</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;temporal_autocorrelation_stress_tissue&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_temporal_autocorrelation&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_autocorrelations_temporal.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/c6901d2d4b672a72b3155e80d53a77ccb8e8c66e875fbb480cc573a8c94e7cfc.png" src="../../_images/c6901d2d4b672a72b3155e80d53a77ccb8e8c66e875fbb480cc573a8c94e7cfc.png" />
+<img alt="../../_images/4acdac489d65fbb005b075715c1d48a1bdd70c4d522fd81493f780c78ba69a6c.png" src="../../_images/4acdac489d65fbb005b075715c1d48a1bdd70c4d522fd81493f780c78ba69a6c.png" />
 </div>
 </div>
 </section>
@@ -1498,31 +1220,16 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ellipsoid_deviation_data</span> <span class="o">=</span> <span class="n">results_stress_analysis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">ellipsoid_deviation_data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="n">n_frames</span><span class="o">//</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;Elipsoid_deviation_contribution_matrix&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labeltop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Degree&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Order&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time-step: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_ellipsoid_contribution&#39;</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">save_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;stress_ellipsoid_deviation_contribution_matrix.png&#39;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">figure</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">[</span><span class="s1">&#39;figure&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/a42aa79e2a0c7ba1d8b3d7593caaea65a8dfceb10222a213dcc53869fba8ac09.png" src="../../_images/a42aa79e2a0c7ba1d8b3d7593caaea65a8dfceb10222a213dcc53869fba8ac09.png" />
+<img alt="../../_images/6df707493ab7275fafb713db82835bd9ee79f83746af8a3a35a86063c9461370.png" src="../../_images/6df707493ab7275fafb713db82835bd9ee79f83746af8a3a35a86063c9461370.png" />
 </div>
 </div>
 </section>
@@ -1545,31 +1252,13 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/57be3adfbb7f4b4609cfada1c1b241bbae2120983991c57b1e87ac54fc510442.png" src="../../_images/57be3adfbb7f4b4609cfada1c1b241bbae2120983991c57b1e87ac54fc510442.png" />
+<img alt="../../_images/bc1c99eb78bca9b784d56931ebcf8272a62afd92e7de43439a64893aa540671d.png" src="../../_images/bc1c99eb78bca9b784d56931ebcf8272a62afd92e7de43439a64893aa540671d.png" />
 </div>
 </div>
 </section>
 <section id="export-data">
 <h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this headline">#</a></h2>
 <p>We first agregate the data from the spatial autocorrelations in a separate dataframe. This dataframe has a column for autocorrelations of total, cell and tissue-scale stresses.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_autocorrelations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-    <span class="n">df_autocorrelations_total</span><span class="p">,</span>
-    <span class="n">df_autocorrelations_tissue</span><span class="p">,</span>
-    <span class="s1">&#39;left&#39;</span><span class="p">,</span>
-    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;distances&#39;</span><span class="p">],)</span>
-<span class="n">df_autocorrelations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-    <span class="n">df_autocorrelations</span><span class="p">,</span>
-    <span class="n">df_autocorrelations_cell</span><span class="p">,</span> 
-    <span class="s1">&#39;left&#39;</span><span class="p">,</span>
-    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;distances&#39;</span><span class="p">])</span>
-
-<span class="n">df_autocorrelations</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;results_autocorrelations.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_to_export</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
@@ -1679,14 +1368,10 @@ Dask client already running &lt;Client: &#39;tcp://127.0.0.1:55617&#39; processe
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fit-quality">Fit quality</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature">Curvature</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-stress">Total stress</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-scale-stress">Cell-scale stress</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvature">Curvature</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tissue-scale-stresses">Tissue-scale stresses</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-along-axes">Stress along axes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geodesics">Geodesics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extrema-analysis">Extrema analysis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelations-spatial">Autocorrelations: Spatial</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autocorrelations-temporal">Autocorrelations: Temporal</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid-deviation">Ellipsoid deviation</a></li>
