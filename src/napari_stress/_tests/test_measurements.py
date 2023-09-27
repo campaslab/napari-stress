@@ -316,6 +316,7 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
+    widget.spinBox_max_degree.setValue(21)
 
     widget._run()
     widget.checkBox_export.setChecked(False)
