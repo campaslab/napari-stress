@@ -268,9 +268,9 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
         min_max_pair_anisotropies = np.concatenate(
             metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO])
     else:
-        frames = np.array([0])
-        min_max_pair_distances = [metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]]
-        min_max_pair_anisotropies = [metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO]]
+        frames = np.zeros(len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]))
+        min_max_pair_distances = metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]
+        min_max_pair_anisotropies = metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO]
     
 
     df_nearest_pair = pd.DataFrame(
@@ -298,9 +298,9 @@ def aggregate_extrema_results(results_stress_analysis: List[LayerDataTuple],
         all_pair_anisotropies = np.concatenate(
             metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO])
     else:
-        frames = np.array([0])
-        all_pair_distances = [metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST]]
-        all_pair_anisotropies = [metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]]
+        frames = np.zeros(len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]))
+        all_pair_distances = metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST]
+        all_pair_anisotropies = metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]
 
     df_all_pair = pd.DataFrame(
         {'frame': frames,
