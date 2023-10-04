@@ -97,6 +97,8 @@ class TimelapseConverter:
             VectorsData: self._vectors_to_list_of_vectors,
             Points: self._layer_to_list_of_layers,
             'napari.types.VectorsData': self._vectors_to_list_of_vectors,
+            LayerDataTuple: self._ldtuple_to_list_of_ldtuple,
+            'napari.types:LayerDataTuple': self._ldtuple_to_list_of_ldtuple,
             str: None}
 
     # Supported list data types
@@ -224,6 +226,9 @@ class TimelapseConverter:
                 features = tuple_data[1]['features']
                 list_of_features = [
                     x for _, x in features.groupby(tuple_data[0][:, 0])]
+                
+            else:
+                list_of_features = [None] * len(list_of_data)
 
             # unstack metadata
             if 'metadata' in tuple_data[1].keys():
@@ -231,6 +236,8 @@ class TimelapseConverter:
                 list_of_metadata = [
                     {key : value[i] for key, value in metadata.items()}
                     for i in range(len(list_of_data))]
+            else:
+                list_of_metadata = [None] * len(list_of_data)
 
         list_of_props = [{'features': features, 'metadata': metadata}
                          for features, metadata in zip(
