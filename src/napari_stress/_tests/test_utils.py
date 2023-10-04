@@ -35,23 +35,34 @@ def test_decorator_points():
 
 def test_decorator_points_layerdatatuple():
     from napari_stress import TimelapseConverter, get_droplet_point_cloud
+    import pandas as pd
+    from copy import deepcopy
+    np.random.seed(42)
 
     Converter = TimelapseConverter()
     list_of_ldtuples = []
     for i in range(10):
         points = list(get_droplet_point_cloud()[0])
-        features = {'feature1': np.random.random(len(points[0]))}
+        features = pd.DataFrame({'feature1': np.random.random(len(points[0]))})
         metadata = {'data1': f'test_{i}'}
 
         points[0] = points[0][:, 1:]
         points[1]['features'] = features
         points[1]['metadata'] = metadata
         list_of_ldtuples.append(points)
+    
+    list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
     ldtuple_4d = Converter.list_of_data_to_data(list_of_ldtuples, layertype=LayerDataTuple)
 
     assert 'data1' in ldtuple_4d[1]['metadata'].keys()
     assert ldtuple_4d[0][-1, 0] == 9
+
+    list_of_ldtuples_conv = Converter.data_to_list_of_data(ldtuple_4d, layertype='napari.types:LayerDataTuple')
+    for ldt, _ldt in zip(list_of_ldtuples_copy, list_of_ldtuples_conv):
+        assert np.array_equal(ldt[0], _ldt[0])
+        assert np.array_equal(ldt[1]['features']['feature1'], _ldt[1]['features']['feature1'])
+        assert np.array_equal(ldt[1]['metadata']['data1'], _ldt[1]['metadata']['data1'])
 
 def test_decorator_points_layers():
 
@@ -133,3 +144,6 @@ def test_frame_by_frame_vectors():
     vectors_data = Converter.list_of_data_to_data(vectors_list, VectorsData)
 
     assert np.array_equal(vectors_data, vectors_4d)
+
+if __name__ == '__main__':
+    test_decorator_points_layerdatatuple()
