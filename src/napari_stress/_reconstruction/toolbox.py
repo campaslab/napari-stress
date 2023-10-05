@@ -227,51 +227,17 @@ def reconstruct_droplet(
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
-
-    try:
-        import pyclesperanto_prototype as cle
-        cle.get_device()  # run to check whether GPU exists
-
-        cle_installed = True
-    except Exception:
-        cle_installed = False
-        from skimage import filters, transform
+    from skimage import filters, transform
 
     scaling_factors = voxelsize / target_voxelsize
-
-    # rescale
-    if cle_installed:
-        rescaled_image = np.asarray(
-            cle.scale(
-                image,
-                None,
-                factor_z=scaling_factors[0],
-                factor_y=scaling_factors[1],
-                factor_x=scaling_factors[2],
-                auto_size=True,
-                )
-            ).squeeze()
-
-        # Blur
-        rescaled_image = np.asarray(
-            cle.gaussian_blur(
-                rescaled_image,
-                sigma_x=smoothing_sigma,
-                sigma_y=smoothing_sigma,
-                sigma_z=smoothing_sigma,
-            )
-        )
-        binarized_image = cle.threshold_otsu(rescaled_image)
-
-    else:
-        rescaled_image = transform.rescale(
-            image,
-            scaling_factors)
-        rescaled_image = filters.gaussian(
-            rescaled_image,
-            sigma=smoothing_sigma)
-        threshold = filters.threshold_otsu(rescaled_image)
-        binarized_image = rescaled_image > threshold
+    rescaled_image = transform.rescale(
+        image,
+        scaling_factors)
+    rescaled_image = filters.gaussian(
+        rescaled_image,
+        sigma=smoothing_sigma)
+    threshold = filters.threshold_otsu(rescaled_image)
+    binarized_image = rescaled_image > threshold
 
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
