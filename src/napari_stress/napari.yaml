@@ -92,11 +92,6 @@ contributions:
       python_name: napari_stress._vectors:absolute_move_points_along_vector
       title: Move points along vector (absolute)
 
-    # Plotting
-    - id: napari-stress.features_histogram
-      python_name: napari_stress:FeaturesHistogramWidget
-      title: Visualize features (histogram)
-
     - id: napari-stress.fit_lsq_ellipsoid
       python_name: napari_stress.approximation:least_squares_ellipsoid
       title: Fit least squares ellipsoid
@@ -181,10 +176,6 @@ contributions:
     - command: napari-stress.pairwise_distance
       autogenerate: true
       display_name: Pairwise point distance
-
-    # Plotting
-    - command: napari-stress.features_histogram
-      display_name: Visualize features (histogram)
 
     # Vectors
     - command: napari-stress.normal_vectors_on_pointcloud
