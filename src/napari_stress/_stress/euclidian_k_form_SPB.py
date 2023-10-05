@@ -529,41 +529,6 @@ def Tangent_Projection(Vectors_at_Quad, lbdv, Manny):
     return Tangent_Vecs_at_Quad
 
 
-"""
-# Uses above code to get Normal direction in both charts:
-def Normal_Dirs_Manny(lbdv, Manny):
-
-	num_quad_pts = lbdv.lbdv_quad_pts
-	Normal_Dirs_at_Quad = np.zeros(( num_quad_pts, 3 ))
-
-	sigma_theta_A_pts = Manny.Sigma_Theta_A_Pts
-	sigma_theta_B_pts = Manny.Sigma_Theta_B_Pts
-
-	sigma_phi_A_pts = Manny.Sigma_Phi_A_Pts
-	sigma_phi_B_pts = Manny.Sigma_Phi_B_Pts
-
-
-	for quad_pt in range(num_quad_pts):
-
-		Normal_Vec_pt = []
-
-		# Chart A:
-		if(lbdv.Chart_of_Quad_Pts[quad_pt] > 0):
-
-			Normal_Vec_pt = np.cross(sigma_theta_A_pts[quad_pt, :].flatten(), sigma_phi_A_pts[quad_pt, :].flatten())
-
-		# Chart B:
-		else:
-			quad_pt_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pt)
-			Normal_Vec_pt = np.cross(sigma_theta_B_pts[quad_pt_rot, :].flatten(), sigma_phi_B_pts[quad_pt_rot, :].flatten())
-
-		Normal_Vec_pt_Mag = np.sqrt( np.dot(Normal_Vec_pt, Normal_Vec_pt) )
-
-		Normal_Dirs_at_Quad[quad_pt, :] = Normal_Vec_pt.reshape(1,3)/Normal_Vec_pt_Mag
-
-	return  Normal_Dirs_at_Quad #np.hstack(( lbdv.X, lbdv.Y, lbdv.Z ))
-"""
-
 # Returns Riemannian Inner Product of 1-Forms input, returns Integral of
 def Riemann_L2_Inner_Product_One_Form(One_Form_pts_1, One_Form_pts_2, lbdv, manny):
 
