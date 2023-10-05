@@ -47,7 +47,7 @@ Lastly, you can measure mean curvature on the surface of this ellipse. To do so,
 
 ![](imgs/demo_fit_ellipsoid7.png)
 
-You can also use the built-in [feature visualization widget](utility:visualize_features) to show, for instance, a hiostogram of the curvature on the surface.
+You can also use [napari-matplotlib](https://napari-matplotlib.github.io/index.html) [feature visualization widget](point_and_click:visualize_features) to show, for instance, a hiostogram of the curvature on the surface.
 
 (fit_ellipsoid:normal_vectors)=
 ## Distances between pointcloud and approximation
