@@ -1,16 +1,14 @@
+import numpy as np
 from napari.types import ImageData
 from skimage import transform
 
-from skimage import transform
-
-import numpy as np
 from ._utils.frame_by_frame import frame_by_frame
 
+
 @frame_by_frame
-def rescale(image: ImageData,
-            scale_x: float = 1.0,
-            scale_y: float = 1.0,
-            scale_z: float = 1.0) -> ImageData:
+def rescale(
+    image: ImageData, scale_x: float = 1.0, scale_y: float = 1.0, scale_z: float = 1.0
+) -> ImageData:
     """
     Rescale an image by a given set of scale factors.
 
