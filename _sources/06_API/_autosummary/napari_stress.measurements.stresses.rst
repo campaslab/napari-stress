@@ -14,6 +14,7 @@ napari\_stress.measurements.stresses
    .. autosummary::
    
       anisotropic_stress
+      calculate_anisotropy
       maximal_tissue_anisotropy
       tissue_stress_tensor
    

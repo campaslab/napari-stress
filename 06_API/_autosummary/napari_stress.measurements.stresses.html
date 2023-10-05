@@ -228,7 +228,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">napari_stress.measurements.stresses</a></li>
 <li class="toctree-l3"><a class="reference internal" href="napari_stress.measurements.temporal_correlation.html">napari_stress.measurements.temporal_correlation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="napari_stress.measurements.toolbox.html">napari_stress.measurements.toolbox</a></li>
-<li class="toctree-l3"><a class="reference internal" href="napari_stress.measurements.utils.html">napari_stress.measurements.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="napari_stress.reconstruction.html">napari_stress.reconstruction</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -399,10 +398,13 @@ document.write(`
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">anisotropic_stress</span></code>(mean_curvature_droplet, ...)</p></td>
 <td><p>Calculate anisotropic stress from mean and averaged curvatures.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximal_tissue_anisotropy</span></code>(ellipsoid[, gamma])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_anisotropy</span></code>(df, column[, alpha, ...])</p></td>
+<td><p>Calculate anisotropy of a column in a dataframe.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximal_tissue_anisotropy</span></code>(ellipsoid[, gamma])</p></td>
 <td><p>Calculate maximaum stress anisotropy on ellipsoid.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tissue_stress_tensor</span></code>(ellipsoid, ...)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tissue_stress_tensor</span></code>(ellipsoid, ...)</p></td>
 <td><p>Calculate tissue stress tensor(s).</p></td>
 </tr>
 </tbody>

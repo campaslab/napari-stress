@@ -35,5 +35,4 @@
    napari_stress.measurements.stresses
    napari_stress.measurements.temporal_correlation
    napari_stress.measurements.toolbox
-   napari_stress.measurements.utils
 
