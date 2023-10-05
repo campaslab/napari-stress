@@ -1,18 +1,21 @@
+from typing import Annotated
+
 import numpy as np
 from napari_tools_menu import register_function
-from ._utils.frame_by_frame import frame_by_frame
 
-from typing import Annotated
+from ._utils.frame_by_frame import frame_by_frame
 
 
 @register_function(
-        menu="Points > Move point along vectors by absolute value (n-STRESS)")
+    menu="Points > Move point along vectors by absolute value (n-STRESS)"
+)
 @frame_by_frame
-def absolute_move_points_along_vector(points: "napari.types.PointsData",
-                                      vectors: "napari.types.VectorsData",
-                                      position: float = 1,
-                                      pointwise_position: np.ndarray = None
-                             ) -> "napari.types.PointsData":
+def absolute_move_points_along_vector(
+    points: "napari.types.PointsData",
+    vectors: "napari.types.VectorsData",
+    position: float = 1,
+    pointwise_position: np.ndarray = None,
+) -> "napari.types.PointsData":
     """
     Move points along vectors by an absolute value.
 
@@ -32,13 +35,15 @@ def absolute_move_points_along_vector(points: "napari.types.PointsData",
 
 
 @register_function(
-        menu="Points > Move point along vectors by relative factor (n-STRESS)")
+    menu="Points > Move point along vectors by relative factor (n-STRESS)"
+)
 @frame_by_frame
-def relative_move_points_along_vector(points: "napari.types.PointsData",
-                                      vectors: "napari.types.VectorsData",
-                                      position: float = 0.5,
-                                      pointwise_position: np.ndarray = None
-                             ) -> "napari.types.PointsData":
+def relative_move_points_along_vector(
+    points: "napari.types.PointsData",
+    vectors: "napari.types.VectorsData",
+    position: float = 0.5,
+    pointwise_position: np.ndarray = None,
+) -> "napari.types.PointsData":
     """
     Move points along vectors by a relative factor.
 
@@ -60,12 +65,11 @@ def relative_move_points_along_vector(points: "napari.types.PointsData",
     return points + position * vectors[:, 1]
 
 
-@register_function(
-        menu="Points > Calculate pairwise distance vectors (n-STRESS)")
+@register_function(menu="Points > Calculate pairwise distance vectors (n-STRESS)")
 @frame_by_frame
-def pairwise_point_distances(points: 'napari.types.PointsData',
-                             fitted_points: 'napari.types.PointsData'
-                             ) -> 'napari.types.VectorsData':
+def pairwise_point_distances(
+    points: "napari.types.PointsData", fitted_points: "napari.types.PointsData"
+) -> "napari.types.VectorsData":
     """
     Calculate pairwise distance vectors between pointclouds.
 
@@ -90,22 +94,24 @@ def pairwise_point_distances(points: 'napari.types.PointsData',
 
     """
     if not len(points) == len(fitted_points):
-        raise ValueError('Both pointclouds must have same length, but had'
-                         f'{len(points)} and {len(fitted_points)}.')
+        raise ValueError(
+            "Both pointclouds must have same length, but had"
+            f"{len(points)} and {len(fitted_points)}."
+        )
 
     delta = points - fitted_points
     return np.stack([fitted_points, delta]).transpose((1, 0, 2))
 
 
 @register_function(
-        menu="Points > Calculate normal vectors on pointcloud (n-STRESS, vedo)",
-        )
+    menu="Points > Calculate normal vectors on pointcloud (n-STRESS, vedo)",
+)
 @frame_by_frame
 def normal_vectors_on_pointcloud(
     points: "napari.types.PointsData",
-    length_multiplier: Annotated[float, {'max': 100, 'min': -100}] = 1.0,
+    length_multiplier: Annotated[float, {"max": 100, "min": -100}] = 1.0,
     center: bool = True,
-    ) -> "napari.types.VectorsData":
+) -> "napari.types.VectorsData":
     """
     Calculate normal vectors on pointcloud.
 
@@ -138,13 +144,14 @@ def normal_vectors_on_pointcloud(
 
 
 @register_function(
-        menu="Surfaces > Calculate normal vectors on surface (n-STRESS, vedo)")
+    menu="Surfaces > Calculate normal vectors on surface (n-STRESS, vedo)"
+)
 @frame_by_frame
 def normal_vectors_on_surface(
     surface: "napari.types.SurfaceData",
-    length_multiplier: Annotated[float, {'max': 100, 'min': -100}] = 1.0,
+    length_multiplier: Annotated[float, {"max": 100, "min": -100}] = 1.0,
     center: bool = True,
-    ) -> "napari.types.VectorsData":
+) -> "napari.types.VectorsData":
     """
     Calculate normal vectors on surface.
 

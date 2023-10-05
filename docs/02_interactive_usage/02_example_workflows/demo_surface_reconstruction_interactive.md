@@ -29,7 +29,3 @@ Such surfaces typically consist of a large ammount of vertices. This behaviour c
 ![](../../imgs/viewer_screenshots/reconstruct_surface4.png)
 
 If you are interested in doing this from code, check out this [example notebook](glossary:surface_reconstruction:code)=
-
-
-
-
