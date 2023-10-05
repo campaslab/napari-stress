@@ -175,6 +175,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_spherical_harmonics_code.html">Spherical harmonics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_timelapse_processing.html">Timelapse processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_measure_intensity_on_surface.html">Measureing intensity on a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_measure_intensity_on_vectors.html">Measureing intensity on vectors and surfaces</a></li>
 </ul>
 </li>
 </ul>
@@ -190,7 +191,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_surface_reconstruction_interactive.html">Surface reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_spherical_harmonics_interactive.html">Spherical harmonics expansion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_measure_curvature.html">Measure curvature</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_visualize_features.html">Visualize measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/visualize_measurements_in_viewer.html">Visualize measurements</a></li>
 </ul>
 </li>
 </ul>
@@ -420,7 +421,7 @@ document.write(`
 </section>
 <section id="analyzing-the-output">
 <h2>Analyzing the output<a class="headerlink" href="#analyzing-the-output" title="Permalink to this headline">#</a></h2>
-<p>The toolbox creates a number of layers when finished, some with attached features that can be displayed using the <a class="reference internal" href="../02_example_workflows/demo_visualize_features.html#point-and-click-visualize-features"><span class="std std-ref">feature visualization utilities</span></a> from napari-stress. These include:</p>
+<p>The toolbox creates a number of layers when finished, some with attached features that can be displayed using the <a class="reference internal" href="../02_example_workflows/visualize_measurements_in_viewer.html#point-and-click-visualize-features"><span class="std std-ref">feature visualization utilities</span></a> from napari-stress. These include:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Result</span> <span class="pre">of</span> <span class="pre">fit</span> <span class="pre">spherical</span> <span class="pre">harmonics</span></code>: Result of the spherical harmonics expansion. Contains the <code class="docutils literal notranslate"><span class="pre">fit_residues</span></code> feature which denotes the residual distances between the raw points and the input points.
 <img alt="" src="../../_images/demo_stress_toolbox7.png" /></p></li>

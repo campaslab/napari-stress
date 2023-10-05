@@ -173,6 +173,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_spherical_harmonics_code.html">Spherical harmonics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_timelapse_processing.html">Timelapse processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_measure_intensity_on_surface.html">Measureing intensity on a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../01_code_usage/02_example_workflows/demo_measure_intensity_on_vectors.html">Measureing intensity on vectors and surfaces</a></li>
 </ul>
 </li>
 </ul>
@@ -188,7 +189,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="demo_surface_reconstruction_interactive.html">Surface reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="demo_spherical_harmonics_interactive.html">Spherical harmonics expansion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="demo_measure_curvature.html">Measure curvature</a></li>
-<li class="toctree-l3"><a class="reference internal" href="demo_visualize_features.html">Visualize measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="visualize_measurements_in_viewer.html">Visualize measurements</a></li>
 </ul>
 </li>
 </ul>
@@ -428,7 +429,7 @@ This section describes the implementation taken from the <a class="reference ext
 <span id="fit-ellipsoid-mean-curvature"></span><h2>Mean curvature<a class="headerlink" href="#mean-curvature" title="Permalink to this headline">#</a></h2>
 <p>Lastly, you can measure mean curvature on the surface of this ellipse. To do so, use the <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Measurement</span> <span class="pre">&gt;</span> <span class="pre">Mean</span> <span class="pre">curvature</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code> plugin from the tools menu. As input, you should select the fitted ellipsoid as well as a set of points on the surface of the ellipsoid. You can use the previously obtained points (<code class="docutils literal notranslate"><span class="pre">Expand</span> <span class="pre">point</span> <span class="pre">locations</span> <span class="pre">on</span> <span class="pre">ellipsoid</span> <span class="pre">(n-STRESS)</span></code>) as input. The result will be the following:</p>
 <p><img alt="" src="../../_images/demo_fit_ellipsoid7.png" /></p>
-<p>You can also use the built-in <a class="reference internal" href="demo_visualize_features.html#utility-visualize-features"><span class="std std-ref">feature visualization widget</span></a> to show, for instance, a hiostogram of the curvature on the surface.</p>
+<p>You can also use <a class="reference external" href="https://napari-matplotlib.github.io/index.html">napari-matplotlib</a> <a class="reference internal" href="visualize_measurements_in_viewer.html#point-and-click-visualize-features"><span class="std std-ref">feature visualization widget</span></a> to show, for instance, a hiostogram of the curvature on the surface.</p>
 </section>
 <section id="distances-between-pointcloud-and-approximation">
 <span id="fit-ellipsoid-normal-vectors"></span><h2>Distances between pointcloud and approximation<a class="headerlink" href="#distances-between-pointcloud-and-approximation" title="Permalink to this headline">#</a></h2>
