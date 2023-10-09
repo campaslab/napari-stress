@@ -1,26 +1,27 @@
-# -*- coding: utf-8 -*-
-import numpy as np
-from napari.types import PointsData, SurfaceData, ImageData, LabelsData, LayerDataTuple, VectorsData
-from napari.layers import Points, Layer
-
+import inspect
+from functools import wraps
 from typing import List
 
-from functools import wraps
-import inspect
-from dask.distributed import Client, get_client
-
+import numpy as np
 import pandas as pd
 import tqdm
+from dask.distributed import Client, get_client
+from napari.layers import Layer, Points
+from napari.types import (
+    ImageData,
+    LabelsData,
+    LayerDataTuple,
+    PointsData,
+    SurfaceData,
+    VectorsData,
+)
 
 
 def frame_by_frame(function: callable, progress_bar: bool = False):
-
     @wraps(function)
     def wrapper(*args, **kwargs):
-
         sig = inspect.signature(function)
-        annotations = [
-            sig.parameters[key].annotation for key in sig.parameters.keys()]
+        annotations = [sig.parameters[key].annotation for key in sig.parameters.keys()]
 
         converter = TimelapseConverter()
 
@@ -29,9 +30,9 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
 
         # Inspect arguments and check if `use_dask` is passed as keyword argument
         use_dask = False
-        if 'use_dask' in kwargs.keys():
-            use_dask = kwargs['use_dask']
-            del kwargs['use_dask']
+        if "use_dask" in kwargs.keys():
+            use_dask = kwargs["use_dask"]
+            del kwargs["use_dask"]
 
         # Convert 4D data to list(s) of 3D data for every supported argument
         # and store the list in the same place as the original 4D data
@@ -51,10 +52,18 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
         if use_dask:
             try:
                 client = get_client()
-                print('Dask client already running', client, f' Log: {client.dashboard_link}')
+                print(
+                    "Dask client already running",
+                    client,
+                    f" Log: {client.dashboard_link}",
+                )
             except ValueError:
                 client = Client()
-                print('Dask client up and running', client, f' Log: {client.dashboard_link}')
+                print(
+                    "Dask client up and running",
+                    client,
+                    f" Log: {client.dashboard_link}",
+                )
             jobs = []
 
         for t in frames:
@@ -65,7 +74,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
                 _args[idx] = _args[idx][t]
 
             if use_dask:
-                #args_futures = [client.scatter(arg) for arg in _args]
+                # args_futures = [client.scatter(arg) for arg in _args]
                 jobs.append(client.submit(function, *_args, **kwargs))
             else:
                 results[t] = function(*_args, **kwargs)
@@ -75,6 +84,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
             results = client.gather(jobs)
 
         return converter.list_of_data_to_data(results, sig.return_annotation)
+
     return wrapper
 
 
@@ -82,49 +92,54 @@ class TimelapseConverter:
     """
     This class allows converting napari 4D layer data between different formats.
     """
-    def __init__(self):
 
+    def __init__(self):
         # Supported LayerData types
         self.data_to_list_conversion_functions = {
             PointsData: self._points_to_list_of_points,
-            'napari.types.PointsData': self._points_to_list_of_points,
+            "napari.types.PointsData": self._points_to_list_of_points,
             SurfaceData: self._surface_to_list_of_surfaces,
-            'napari.types.SurfaceData': self._surface_to_list_of_surfaces,
+            "napari.types.SurfaceData": self._surface_to_list_of_surfaces,
             ImageData: self._image_to_list_of_images,
-            'napari.types.ImageData': self._image_to_list_of_images,
+            "napari.types.ImageData": self._image_to_list_of_images,
             LabelsData: self._image_to_list_of_images,
-            'napari.types.LabelsData': self._image_to_list_of_images,
+            "napari.types.LabelsData": self._image_to_list_of_images,
             VectorsData: self._vectors_to_list_of_vectors,
             Points: self._layer_to_list_of_layers,
-            'napari.types.VectorsData': self._vectors_to_list_of_vectors,
+            "napari.types.VectorsData": self._vectors_to_list_of_vectors,
             LayerDataTuple: self._ldtuple_to_list_of_ldtuple,
-            'napari.types:LayerDataTuple': self._ldtuple_to_list_of_ldtuple,
-            str: None}
+            "napari.types:LayerDataTuple": self._ldtuple_to_list_of_ldtuple,
+            str: None,
+        }
 
-    # Supported list data types
+        # Supported list data types
         self.list_to_data_conversion_functions = {
             Layer: self._list_of_layers_to_layer,
             PointsData: self._list_of_points_to_points,
-            'napari.types.PointsData': self._list_of_points_to_points,
+            "napari.types.PointsData": self._list_of_points_to_points,
             SurfaceData: self._list_of_surfaces_to_surface,
-            'napari.types.SurfaceData': self._list_of_surfaces_to_surface,
+            "napari.types.SurfaceData": self._list_of_surfaces_to_surface,
             ImageData: self._list_of_images_to_image,
-            'napari.types.ImageData': self._list_of_images_to_image,
+            "napari.types.ImageData": self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
-            'napari.types.LabelsData': self._list_of_images_to_image,
+            "napari.types.LabelsData": self._list_of_images_to_image,
             LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
-            List[LayerDataTuple]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
+            List[
+                LayerDataTuple
+            ]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
             VectorsData: self._list_of_vectors_to_vectors,
-            'napari.types.VectorsData': self._list_of_vectors_to_vectors,
-            Points: self._list_of_layers_to_layer}
+            "napari.types.VectorsData": self._list_of_vectors_to_vectors,
+            Points: self._list_of_layers_to_layer,
+        }
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
         self.tuple_aliases = {
-            'points': PointsData,
-            'surface': SurfaceData,
-            'image': ImageData,
-            'labels': LabelsData,
-            'vectors': VectorsData}
+            "points": PointsData,
+            "surface": SurfaceData,
+            "image": ImageData,
+            "labels": LabelsData,
+            "vectors": VectorsData,
+        }
 
         self.supported_data = list(self.list_to_data_conversion_functions.keys())
 
@@ -150,7 +165,9 @@ class TimelapseConverter:
 
         """
         if layertype not in list(self.data_to_list_conversion_functions.keys()):
-            raise TypeError(f'{layertype} data to list conversion currently not supported.')
+            raise TypeError(
+                f"{layertype} data to list conversion currently not supported."
+            )
 
         conversion_function = self.data_to_list_conversion_functions[layertype]
         return conversion_function(data)
@@ -177,7 +194,9 @@ class TimelapseConverter:
 
         """
         if layertype not in self.supported_data:
-            raise TypeError(f'{layertype} list to data conversion currently not supported.')
+            raise TypeError(
+                f"{layertype} list to data conversion currently not supported."
+            )
         conversion_function = self.list_to_data_conversion_functions[layertype]
         return conversion_function(data)
 
@@ -188,11 +207,13 @@ class TimelapseConverter:
     def _list_of_layers_to_layer(self, layer_list: list) -> Layer:
         """Convert a list of layers to single layer."""
         list_of_layerdatatuples = [layer.as_layerdatatuple() for layer in layer_list]
-        layerdatatuple = self.list_of_layerdatatuple_to_layerdatatuple(list_of_layerdatatuples)
+        layerdatatuple = self.list_of_layerdatatuple_to_layerdatatuple(
+            list_of_layerdatatuples
+        )
 
-        converted_layer = Layer.create(layerdatatuple[0],
-                                       meta=layerdatatuple[1],
-                                       layer_type=layerdatatuple[2])
+        converted_layer = Layer.create(
+            layerdatatuple[0], meta=layerdatatuple[1], layer_type=layerdatatuple[2]
+        )
 
         return converted_layer
 
@@ -201,7 +222,9 @@ class TimelapseConverter:
         ldtuple = layer.as_layer_data_tuple()
         list_of_ldtuples = self._ldtuple_to_list_of_ldtuple(ldtuple)
 
-        list_of_layers = [Layer.create(ldt[0], ldt[1], ldt[2]) for ldt in list_of_ldtuples]
+        list_of_layers = [
+            Layer.create(ldt[0], ldt[1], ldt[2]) for ldt in list_of_ldtuples
+        ]
         return list_of_layers
 
     # =============================================================================
@@ -212,45 +235,47 @@ class TimelapseConverter:
         """Convert single 4D layerdatatuple to list of layerdatatuples."""
         layertype = self.tuple_aliases[tuple_data[-1]]
 
-        list_of_data = self.data_to_list_of_data(tuple_data[0],
-                                                 layertype=layertype)
+        list_of_data = self.data_to_list_of_data(tuple_data[0], layertype=layertype)
 
         if len(list_of_data) == 1:
-            list_of_features = [tuple_data[1]['features']]
-            list_of_metadata = [tuple_data[1]['metadata']]
+            list_of_features = [tuple_data[1]["features"]]
+            list_of_metadata = [tuple_data[1]["metadata"]]
 
         else:
             # unstack features
-            if 'features' in tuple_data[1].keys():
+            if "features" in tuple_data[1].keys():
                 # group features by time-stamp
-                features = tuple_data[1]['features']
-                list_of_features = [
-                    x for _, x in features.groupby(tuple_data[0][:, 0])]
-                
+                features = tuple_data[1]["features"]
+                list_of_features = [x for _, x in features.groupby(tuple_data[0][:, 0])]
+
             else:
                 list_of_features = [None] * len(list_of_data)
 
             # unstack metadata
-            if 'metadata' in tuple_data[1].keys():
-                metadata = tuple_data[1]['metadata']
+            if "metadata" in tuple_data[1].keys():
+                metadata = tuple_data[1]["metadata"]
                 list_of_metadata = [
-                    {key : value[i] for key, value in metadata.items()}
-                    for i in range(len(list_of_data))]
+                    {key: value[i] for key, value in metadata.items()}
+                    for i in range(len(list_of_data))
+                ]
             else:
                 list_of_metadata = [None] * len(list_of_data)
 
-        list_of_props = [{'features': features, 'metadata': metadata}
-                         for features, metadata in zip(
-            list_of_features, list_of_metadata)]
+        list_of_props = [
+            {"features": features, "metadata": metadata}
+            for features, metadata in zip(list_of_features, list_of_metadata)
+        ]
 
-        list_of_ldtuples = [(data, props, layertype)
-                            for data, props in zip(list_of_data, list_of_props)]
+        list_of_ldtuples = [
+            (data, props, layertype) for data, props in zip(list_of_data, list_of_props)
+        ]
 
         return list_of_ldtuples
 
-    def _list_of_multiple_ldtuples_to_multiple_ldt_tuples(self,
-                                                          tuple_data: list,
-                                                          ) -> List[LayerDataTuple]:
+    def _list_of_multiple_ldtuples_to_multiple_ldt_tuples(
+        self,
+        tuple_data: list,
+    ) -> List[LayerDataTuple]:
         """If a function returns a list of LayerDataTuple"""
 
         # Convert data to array with dimensions [frame, results, data]
@@ -265,13 +290,14 @@ class TimelapseConverter:
         for idx, res_type in enumerate(layertypes):
             tuples_to_convert = data[:, idx]
             converted_tuples.append(
-                self._list_of_layerdatatuple_to_layerdatatuple(list(tuples_to_convert)))
+                self._list_of_layerdatatuple_to_layerdatatuple(list(tuples_to_convert))
+            )
 
         return converted_tuples
 
-    def _list_of_layerdatatuple_to_layerdatatuple(self,
-                                                  tuple_data: list
-                                                  ) -> LayerDataTuple:
+    def _list_of_layerdatatuple_to_layerdatatuple(
+        self, tuple_data: list
+    ) -> LayerDataTuple:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """
@@ -284,50 +310,54 @@ class TimelapseConverter:
         # If data was only 3D
         _properties = {}
         if len(data) == 1:
-            if 'features' in properties[0].keys():
-                _properties['features'] = data[0][1]['features']
-                _properties['features']['frame'] = np.zeros(len(data[0][0]), dtype=int)
-            if 'metadata' in properties[0].keys():
-                _properties['metadata'] = data[0][1]['metadata']
-                _properties['metadata']['frame'] = [0]
+            if "features" in properties[0].keys():
+                _properties["features"] = data[0][1]["features"]
+                _properties["features"]["frame"] = np.zeros(len(data[0][0]), dtype=int)
+            if "metadata" in properties[0].keys():
+                _properties["metadata"] = data[0][1]["metadata"]
+                _properties["metadata"]["frame"] = [0]
         else:
             # Stack features
-            if 'features' in properties[0].keys():
+            if "features" in properties[0].keys():
                 # concatenate features and add time column
                 features = pd.concat(
-                    [pd.DataFrame(frame['features']) for frame in properties]
-                    )
-                features['frame'] = np.concatenate(
-                    [[t] * len(pd.DataFrame(frame['features']))
-                        for t, frame in enumerate(properties)]
-                        )
-                _properties['features'] = features
-                [frame.pop('features') for frame in properties]
+                    [pd.DataFrame(frame["features"]) for frame in properties]
+                )
+                features["frame"] = np.concatenate(
+                    [
+                        [t] * len(pd.DataFrame(frame["features"]))
+                        for t, frame in enumerate(properties)
+                    ]
+                )
+                _properties["features"] = features
+                [frame.pop("features") for frame in properties]
 
             # Stack metadata
-            if 'metadata' in properties[0].keys():
-                metadata_list = [frame['metadata'] for frame in properties]
+            if "metadata" in properties[0].keys():
+                metadata_list = [frame["metadata"] for frame in properties]
                 new_metadata = {}
                 for key in metadata_list[0].keys():
                     new_metadata[key] = [frame[key] for frame in metadata_list]
 
-                new_metadata['frame'] = [t for t in range(len(metadata_list))]
-                _properties['metadata'] = new_metadata
-                [frame.pop('metadata') for frame in properties]
+                new_metadata["frame"] = [t for t in range(len(metadata_list))]
+                _properties["metadata"] = new_metadata
+                [frame.pop("metadata") for frame in properties]
 
         # Stack the other properties
         layer_props = self._list_of_dictionaries_to_dictionary(properties)
 
         # exclude 'scale' from stacked metadata
-        if 'scale' in layer_props.keys() and len(data) != 1:
-            layer_props['scale'] = properties[0]['scale']
+        if "scale" in layer_props.keys() and len(data) != 1:
+            layer_props["scale"] = properties[0]["scale"]
 
         for key in layer_props.keys():
             _properties[key] = layer_props[key]
 
         dtype = data[0, -1]
         result = [None] * 3
-        result[0] = self.list_to_data_conversion_functions[layertype]([x for x in data[:, 0]])
+        result[0] = self.list_to_data_conversion_functions[layertype](
+            [x for x in data[:, 0]]
+        )
         result[1] = _properties
         result[2] = dtype
 
@@ -338,14 +368,17 @@ class TimelapseConverter:
         for key in dictionaries[-1].keys():
             if isinstance(dictionaries[-1][key], dict):
                 _dictionary[key] = self._list_of_dictionaries_to_dictionary(
-                    [frame[key] for frame in dictionaries])
+                    [frame[key] for frame in dictionaries]
+                )
                 continue
             elif isinstance(dictionaries[-1][key], str):
                 _dictionary[key] = dictionaries[-1][key]
                 continue
 
-            if hasattr(dictionaries[-1][key], '__len__'):
-                _dictionary[key] = np.concatenate([frame[key] for frame in dictionaries]).squeeze()
+            if hasattr(dictionaries[-1][key], "__len__"):
+                _dictionary[key] = np.concatenate(
+                    [frame[key] for frame in dictionaries]
+                ).squeeze()
             else:
                 _dictionary[key] = dictionaries[-1][key]
         return _dictionary
@@ -361,8 +394,9 @@ class TimelapseConverter:
         layers = []
 
         for ldt in list_of_layerdatatuples:
-            layers.append(Layer.create(data=ldt[0], meta=ldt[1],
-                                       layer_type=ldtuple[-1]))
+            layers.append(
+                Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldtuple[-1])
+            )
         return layers
 
     # =============================================================================
@@ -392,7 +426,9 @@ class TimelapseConverter:
         vector_list = self._points_to_list_of_points(vectors)
 
         output_vectors = [
-            np.stack([pt, vec]).transpose((1, 0, 2)) for pt, vec in zip(point_list, vector_list)]
+            np.stack([pt, vec]).transpose((1, 0, 2))
+            for pt, vec in zip(point_list, vector_list)
+        ]
         return output_vectors
 
     def _list_of_vectors_to_vectors(self, vectors: list) -> VectorsData:
@@ -430,19 +466,22 @@ class TimelapseConverter:
 
         # find out at which index in the point array a new timeframe begins
         frame_of_face = [points[face[0], 0] for face in faces]
-        idx_face_new_frame = list(np.argwhere(np.diff(frame_of_face) != 0).flatten() + 1)
+        idx_face_new_frame = list(
+            np.argwhere(np.diff(frame_of_face) != 0).flatten() + 1
+        )
         idx_face_new_frame = [0] + idx_face_new_frame + [len(faces)]
 
         # Fill list of frames with correct points and corresponding faces
         # as previously determined
         surfaces = [None] * n_frames
         for t in range(n_frames):
-
             # Find points with correct frame index
             _points = points[points[:, 0] == t, 1:]
 
             # Get parts of faces array that correspond to this frame
-            _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t + 1]] - sum(points_per_frame[:t])
+            _faces = faces[idx_face_new_frame[t] : idx_face_new_frame[t + 1]] - sum(
+                points_per_frame[:t]
+            )
 
             # Get values that correspond to this frame
             if has_values:
@@ -465,7 +504,9 @@ class TimelapseConverter:
 
         # Surfaces do not necessarily have values - check if this is the case
         if len(surfaces[0]) == 3:
-            values = np.concatenate([surface[2] for surface in surfaces])  # retrieve values if existant
+            values = np.concatenate(
+                [surface[2] for surface in surfaces]
+            )  # retrieve values if existant
         else:
             values = None
 
@@ -473,7 +514,6 @@ class TimelapseConverter:
 
         n_vertices = 0
         for idx, surface in enumerate(surfaces):
-
             # Offset indices in faces list by previous amount of points
             faces[idx] = n_vertices + np.array(faces[idx])
 
@@ -521,7 +561,6 @@ class TimelapseConverter:
         # Fill the respective entries in the list with coordinates in the
         # original data where time-coordinate matches the current frame
         for t in range(n_frames):
-
             # Find points with correct frame index
             points_out[t] = points[points[:, 0] == t, 1:]
 

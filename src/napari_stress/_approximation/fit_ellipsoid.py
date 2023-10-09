@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
-
-from napari.types import PointsData, VectorsData
-from .._utils.frame_by_frame import frame_by_frame
-from napari_tools_menu import register_function
 import numpy as np
+from napari.types import PointsData, VectorsData
+from napari_tools_menu import register_function
+
+from .._utils.frame_by_frame import frame_by_frame
 
 
 @register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
 @frame_by_frame
-def least_squares_ellipsoid(points: PointsData
-                            ) -> VectorsData:
+def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     """
     Fit ellipsoid to points with a last-squares approach.
 
@@ -26,11 +24,11 @@ def least_squares_ellipsoid(points: PointsData
     VectorsData: Major/minor axis of the ellipsoid
     """
     from .._utils.coordinate_conversion import polynomial_to_parameters3D
-    coefficients = _solve_ellipsoid_polynomial(points)    
+
+    coefficients = _solve_ellipsoid_polynomial(points)
 
     # convert results to VectorsData
-    center, axes, R, R_inverse = polynomial_to_parameters3D(
-        coefficients=coefficients)
+    center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=coefficients)
     direction = R * axes[:, None]
     origin = np.stack(3 * [center])  # cheap repeat
     vector = np.stack([origin, direction]).transpose((1, 0, 2))
@@ -58,26 +56,27 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
     coefficients = _solve_ellipsoid_polynomial(points)
 
     A = coefficients.flatten()[0]
-    B = coefficients.flatten()[1]	
-    C = coefficients.flatten()[2]	
-    D = coefficients.flatten()[3]	
-    E = coefficients.flatten()[4]	
-    F = coefficients.flatten()[5]	
-    G = coefficients.flatten()[6]	
-    H = coefficients.flatten()[7]	
-    I = coefficients.flatten()[8]		
+    B = coefficients.flatten()[1]
+    C = coefficients.flatten()[2]
+    D = coefficients.flatten()[3]
+    E = coefficients.flatten()[4]
+    F = coefficients.flatten()[5]
+    G = coefficients.flatten()[6]
+    H = coefficients.flatten()[7]
+    I = coefficients.flatten()[8]
 
     xx = points[:, 0][:, None]
     yy = points[:, 1][:, None]
     zz = points[:, 2][:, None]
 
-    grad_F_x = 2.*A*xx + D*yy + E*zz + G
-    grad_F_y = 2.*B*yy + D*xx + F*zz + H
-    grad_F_z = 2.*C*zz + E*xx + F*yy + I
+    grad_F_x = 2.0 * A * xx + D * yy + E * zz + G
+    grad_F_y = 2.0 * B * yy + D * xx + F * zz + H
+    grad_F_z = 2.0 * C * zz + E * xx + F * yy + I
 
     grad_F_X = np.hstack((grad_F_x, grad_F_y, grad_F_z))
-    Vec_Norms = np.sqrt(
-        np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)).reshape(len(xx), 1)
+    Vec_Norms = np.sqrt(np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)).reshape(
+        len(xx), 1
+    )
     grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
 
     return np.stack([points, grad_F_X_normed]).transpose((1, 0, 2))
@@ -124,12 +123,11 @@ def _solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
     return eansa
 
 
-@register_function(
-        menu="Points > Expand point locations on ellipsoid (n-STRESS)"
-        )
+@register_function(menu="Points > Expand point locations on ellipsoid (n-STRESS)")
 @frame_by_frame
-def expand_points_on_ellipse(fitted_ellipsoid: VectorsData,
-                             pointcloud: PointsData) -> PointsData:
+def expand_points_on_ellipse(
+    fitted_ellipsoid: VectorsData, pointcloud: PointsData
+) -> PointsData:
     """
     Expand a pointcloud on the surface of a fitted ellipse.
 
@@ -150,11 +148,10 @@ def expand_points_on_ellipse(fitted_ellipsoid: VectorsData,
     """
     from .._utils.coordinate_conversion import (
         cartesian_to_elliptical,
-        elliptical_to_cartesian
-        )
+        elliptical_to_cartesian,
+    )
 
     U, V = cartesian_to_elliptical(fitted_ellipsoid, pointcloud)
     points_on_fitted_ellipse = elliptical_to_cartesian(U, V, fitted_ellipsoid)
 
     return points_on_fitted_ellipse
-

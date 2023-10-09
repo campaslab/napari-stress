@@ -16,12 +16,12 @@ The settings require the following input:
 
 * `Input pointcloud`: Layer of a reconstructed droplet. Can be 3D or 4D.
 * `Degree`: Degree of the spherical harmonics expansion fitted to the pointcloud. The higher the degree, the better the fit. For mor details, see [glossary](spherical_harmonics:mathematical_basics:degree).
-* `Number of quadrature points`: Number of points on which curvature will be evaluated. 
+* `Number of quadrature points`: Number of points on which curvature will be evaluated.
 
     *Note 1*: High values (>1000) can lead to signiicant computational expense on first time run.
-    
+
     *Note 2*: Using high-order spherical harmonics requires a specific minimal number of quadrature points. The number of quadrature points can be higher than this number, but not lower.
-    
+
 * `Interfacial surface tension [mN/m]`: Surface tension in mN/m of the evaluated droplet.
 
 

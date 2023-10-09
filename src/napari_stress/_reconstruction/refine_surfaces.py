@@ -147,7 +147,6 @@ def trace_refinement_of_surface(
 
     # Iterate over all provided target points
     for idx in range(n_points):
-
         array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
@@ -196,9 +195,9 @@ def trace_refinement_of_surface(
         intensity_along_vector = intensity_along_vector[good_points]
 
     # remove NaNs from reconstructed points
-    no_nan_idx = ~np.isnan(
-        np.stack(fit_data["start_points"].to_numpy()).squeeze()).any(
-            axis=1)
+    no_nan_idx = ~np.isnan(np.stack(fit_data["start_points"].to_numpy()).squeeze()).any(
+        axis=1
+    )
     fit_data = fit_data[no_nan_idx]
     intensity_along_vector = intensity_along_vector[no_nan_idx]
 
@@ -243,8 +242,7 @@ def trace_refinement_of_surface(
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data["start_points"].to_numpy()).squeeze()
     trace_vectors = trace_vectors[fit_data.index.to_numpy()]
-    trace_vectors = np.stack(
-        [start_points, trace_vectors]).transpose((1, 0, 2))
+    trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
 
     properties = {"name": "Normals"}
     layer_normals = (trace_vectors, properties, "vectors")
@@ -330,7 +328,6 @@ def _fancy_edge_fit(
     array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
-
             # trim begin of trace to get rid of rising intensity slope
             ind_max = np.argmax(array)
             array = array[ind_max:]
