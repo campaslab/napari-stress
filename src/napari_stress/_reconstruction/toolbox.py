@@ -294,9 +294,6 @@ def reconstruct_droplet(
         "points",
     )
 
-    properties = {"name": "Rescaled image", "scale": [target_voxelsize] * 3}
-    layer_image_rescaled = (rescaled_image, properties, "image")
-
     properties = {"name": "Label image", "scale": [target_voxelsize] * 3}
     layer_label_image = (label_image, properties, "labels")
 
@@ -310,7 +307,6 @@ def reconstruct_droplet(
     droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
 
     return [
-        layer_image_rescaled,
         layer_label_image,
         layer_points_first_guess,
         traced_points,
