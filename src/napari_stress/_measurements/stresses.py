@@ -7,12 +7,14 @@ import pandas as pd
 
 from napari_stress.types import _METADATAKEY_MEAN_CURVATURE
 
-def anisotropic_stress(mean_curvature_droplet: np.ndarray,
-                       H0_droplet: float,
-                       mean_curvature_ellipsoid: np.ndarray,
-                       H0_ellipsoid: float,
-                       gamma: float = 26.0,
-                       ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+
+def anisotropic_stress(
+    mean_curvature_droplet: np.ndarray,
+    H0_droplet: float,
+    mean_curvature_ellipsoid: np.ndarray,
+    H0_ellipsoid: float,
+    gamma: float = 26.0,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate anisotropic stress from mean and averaged curvatures.
 
@@ -54,8 +56,8 @@ def anisotropic_stress(mean_curvature_droplet: np.ndarray,
 
     return stress, stress_tissue, stress_droplet
 
-def maximal_tissue_anisotropy(ellipsoid: VectorsData,
-                              gamma: float = 26.0) -> float:
+
+def maximal_tissue_anisotropy(ellipsoid: VectorsData, gamma: float = 26.0) -> float:
     """
     Calculate maximaum stress anisotropy on ellipsoid.
 
@@ -73,6 +75,7 @@ def maximal_tissue_anisotropy(ellipsoid: VectorsData,
     from .._utils.coordinate_conversion import _axes_lengths_from_ellipsoid
     from .._approximation import expand_points_on_ellipse
     from .._measurements import curvature_on_ellipsoid
+
     lengths = _axes_lengths_from_ellipsoid(ellipsoid)
 
     # sort ellipsoid axes according to lengths
@@ -83,13 +86,13 @@ def maximal_tissue_anisotropy(ellipsoid: VectorsData,
     points_on_ellipsoid = expand_points_on_ellipse(ellipsoid, points)
 
     result = curvature_on_ellipsoid(ellipsoid, points_on_ellipsoid)
-    mean_curvature = result[1]['features'][_METADATAKEY_MEAN_CURVATURE]
+    mean_curvature = result[1]["features"][_METADATAKEY_MEAN_CURVATURE]
     return 2 * gamma * (mean_curvature[0] - mean_curvature[-1])
 
 
-def tissue_stress_tensor(ellipsoid: VectorsData,
-                         H0_ellipsoid: float,
-                         gamma: float) -> Tuple[np.ndarray, np.ndarray]:
+def tissue_stress_tensor(
+    ellipsoid: VectorsData, H0_ellipsoid: float, gamma: float
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Calculate tissue stress tensor(s).
 
@@ -124,24 +127,26 @@ def tissue_stress_tensor(ellipsoid: VectorsData,
     sigma_33_e = 2 * gamma * (cardinal_curvatures[2] - H0_ellipsoid)
 
     # tissue stress tensor (elliptical coordinates)
-    Tissue_Stress_Tensor_elliptical = np.zeros((3,3))
-    Tissue_Stress_Tensor_elliptical[0,0] = sigma_11_e
-    Tissue_Stress_Tensor_elliptical[1,1] = sigma_22_e
-    Tissue_Stress_Tensor_elliptical[2,2] = sigma_33_e
+    Tissue_Stress_Tensor_elliptical = np.zeros((3, 3))
+    Tissue_Stress_Tensor_elliptical[0, 0] = sigma_11_e
+    Tissue_Stress_Tensor_elliptical[1, 1] = sigma_22_e
+    Tissue_Stress_Tensor_elliptical[2, 2] = sigma_33_e
 
     # cartesian tissue stress tensor:
     Tissue_Stress_Tensor_cartesian = np.dot(
-        np.dot(orientation_matrix.T ,Tissue_Stress_Tensor_elliptical),
-        orientation_matrix)
+        np.dot(orientation_matrix.T, Tissue_Stress_Tensor_elliptical),
+        orientation_matrix,
+    )
 
     return Tissue_Stress_Tensor_elliptical, Tissue_Stress_Tensor_cartesian
 
 
-def calculate_anisotropy(df: pd.DataFrame,
-                         column: str,
-                         alpha: float = 0.05,
-                         group_column: str = 'time',
-                         ) -> pd.DataFrame:
+def calculate_anisotropy(
+    df: pd.DataFrame,
+    column: str,
+    alpha: float = 0.05,
+    group_column: str = "time",
+) -> pd.DataFrame:
     """
     Calculate anisotropy of a column in a dataframe. The dataframe is assumed
     to contain multiple groups, which are defined by the values in the
@@ -168,19 +173,30 @@ def calculate_anisotropy(df: pd.DataFrame,
 
     """
     # write a function to apply to every group in the dataframe
-    def anisotropy(df: pd.DataFrame, alpha: float = 0.05, column: str = 'anisotropic_stress'):
+    def anisotropy(
+        df: pd.DataFrame, alpha: float = 0.05, column: str = "anisotropic_stress"
+    ):
         from scipy import stats
-        hist_data = np.histogram(df[column], bins='auto', density=True)
+
+        hist_data = np.histogram(df[column], bins="auto", density=True)
         hist_dist = stats.rv_histogram(hist_data)
 
         smallest_excluded_value = hist_dist.ppf(alpha)
-        largest_excluded_value = hist_dist.ppf(1. - alpha)
-        return (smallest_excluded_value,
-                largest_excluded_value,
-                largest_excluded_value - smallest_excluded_value)
+        largest_excluded_value = hist_dist.ppf(1.0 - alpha)
+        return (
+            smallest_excluded_value,
+            largest_excluded_value,
+            largest_excluded_value - smallest_excluded_value,
+        )
 
-    anisotropy_df = df.groupby(group_column).apply(anisotropy, alpha=alpha, column=column)
+    anisotropy_df = df.groupby(group_column).apply(
+        anisotropy, alpha=alpha, column=column
+    )
     anisotropy_df = anisotropy_df.apply(pd.Series)
-    anisotropy_df.columns = [column + '_lower', column + '_upper', column+ '_anisotropy']
+    anisotropy_df.columns = [
+        column + "_lower",
+        column + "_upper",
+        column + "_anisotropy",
+    ]
 
     return anisotropy_df
