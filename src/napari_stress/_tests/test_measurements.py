@@ -62,7 +62,7 @@ def test_mean_curvature_on_ellipsoid():
         # calculate each point's distance to the surface of the ellipsoid
         distances = []
         ellipse_points = []
-        for pt in results_reconstruction[3][0]:
+        for pt in results_reconstruction[2][0]:
             ellipse_points.append(
                 project_point_on_ellipse_surface(
                     pt,
@@ -77,7 +77,7 @@ def test_mean_curvature_on_ellipsoid():
 
         # relative position error in x, y and z direction
         relative_position_error = (
-            np.abs(results_reconstruction[3][0] - ellipse_points) / ellipse_points
+            np.abs(results_reconstruction[2][0] - ellipse_points) / ellipse_points
         )
         relative_position_error = relative_position_error.flatten()
 
@@ -88,7 +88,7 @@ def test_mean_curvature_on_ellipsoid():
         # average relative mean curvature error must be < 10%
         if 1 < a / b and a / b < 1.4:
             results_measurement = measurements.comprehensive_analysis(
-                results_reconstruction[3][0],
+                results_reconstruction[2][0],
                 max_degree=20,
                 n_quadrature_points=434,
                 gamma=5,
