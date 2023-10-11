@@ -10,7 +10,7 @@ from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
-from qtpy.QtWidgets import QWidget, QFileDialog
+from qtpy.QtWidgets import QWidget
 
 from .._utils.frame_by_frame import frame_by_frame
 
@@ -70,22 +70,27 @@ class droplet_reconstruction_toolbox(QWidget):
         from .._utils.import_export_settings import export_settings
 
         reconstruction_parameters = {
-            'voxelsize': np.asarray([self.doubleSpinBox_voxelsize_z.value(),
-                                     self.doubleSpinBox_voxelsize_y.value(),
-                                     self.doubleSpinBox_voxelsize_x.value()]),
-            'target_voxelsize': self.doubleSpinBox_target_voxelsize.value(),
-            'smoothing_sigma': self.doubleSpinBox_gaussian_blur.value(),
-            'n_smoothing_iterations': self.spinBox_n_smoothing.value(),
-            'n_points': self.spinBox_n_vertices.value(),
-            'n_tracing_iterations': self.spinBox_n_refinement_steps.value(),
-            'resampling_length': self.doubleSpinBox_sampling_length.value(),
-            'fit_type': self.comboBox_fittype.currentText(),
-            'edge_type': self.comboBox_fluorescence_type.currentText(),
-            'trace_length': self.doubleSpinBox_trace_length.value(),
-            'sampling_distance': self.doubleSpinBox_sampling_distance.value(),
-            'interpolation_method': self.comboBox_interpolation_method.currentText(),
-            'outlier_tolerance': self.doubleSpinBox_outlier_tolerance.value(),
-            'remove_outliers': self.checkBox_remove_outliers.isChecked()}
+            "voxelsize": np.asarray(
+                [
+                    self.doubleSpinBox_voxelsize_z.value(),
+                    self.doubleSpinBox_voxelsize_y.value(),
+                    self.doubleSpinBox_voxelsize_x.value(),
+                ]
+            ),
+            "target_voxelsize": self.doubleSpinBox_target_voxelsize.value(),
+            "smoothing_sigma": self.doubleSpinBox_gaussian_blur.value(),
+            "n_smoothing_iterations": self.spinBox_n_smoothing.value(),
+            "n_points": self.spinBox_n_vertices.value(),
+            "n_tracing_iterations": self.spinBox_n_refinement_steps.value(),
+            "resampling_length": self.doubleSpinBox_sampling_length.value(),
+            "fit_type": self.comboBox_fittype.currentText(),
+            "edge_type": self.comboBox_fluorescence_type.currentText(),
+            "trace_length": self.doubleSpinBox_trace_length.value(),
+            "sampling_distance": self.doubleSpinBox_sampling_distance.value(),
+            "interpolation_method": self.comboBox_interpolation_method.currentText(),
+            "outlier_tolerance": self.doubleSpinBox_outlier_tolerance.value(),
+            "remove_outliers": self.checkBox_remove_outliers.isChecked(),
+        }
 
         export_settings(reconstruction_parameters, self, file_name=file_name)
 
@@ -97,22 +102,50 @@ class droplet_reconstruction_toolbox(QWidget):
 
         reconstruction_parameters = import_settings(self, file_name=file_name)
 
-        self.doubleSpinBox_voxelsize_z.setValue(reconstruction_parameters['voxelsize'][0])
-        self.doubleSpinBox_voxelsize_y.setValue(reconstruction_parameters['voxelsize'][1])
-        self.doubleSpinBox_voxelsize_x.setValue(reconstruction_parameters['voxelsize'][2])
-        self.doubleSpinBox_target_voxelsize.setValue(reconstruction_parameters['target_voxelsize'])
-        self.doubleSpinBox_gaussian_blur.setValue(reconstruction_parameters['smoothing_sigma'])
-        self.spinBox_n_smoothing.setValue(reconstruction_parameters['n_smoothing_iterations'])
-        self.spinBox_n_vertices.setValue(reconstruction_parameters['n_points'])
-        self.spinBox_n_refinement_steps.setValue(reconstruction_parameters['n_tracing_iterations'])
-        self.doubleSpinBox_sampling_length.setValue(reconstruction_parameters['resampling_length'])
-        self.comboBox_fittype.setCurrentText(reconstruction_parameters['fit_type'])
-        self.comboBox_fluorescence_type.setCurrentText(reconstruction_parameters['edge_type'])
-        self.doubleSpinBox_trace_length.setValue(reconstruction_parameters['trace_length'])
-        self.doubleSpinBox_sampling_distance.setValue(reconstruction_parameters['sampling_distance'])
-        self.comboBox_interpolation_method.setCurrentText(reconstruction_parameters['interpolation_method'])
-        self.doubleSpinBox_outlier_tolerance.setValue(reconstruction_parameters['outlier_tolerance'])
-        self.checkBox_remove_outliers.setChecked(reconstruction_parameters['remove_outliers'])        
+        self.doubleSpinBox_voxelsize_z.setValue(
+            reconstruction_parameters["voxelsize"][0]
+        )
+        self.doubleSpinBox_voxelsize_y.setValue(
+            reconstruction_parameters["voxelsize"][1]
+        )
+        self.doubleSpinBox_voxelsize_x.setValue(
+            reconstruction_parameters["voxelsize"][2]
+        )
+        self.doubleSpinBox_target_voxelsize.setValue(
+            reconstruction_parameters["target_voxelsize"]
+        )
+        self.doubleSpinBox_gaussian_blur.setValue(
+            reconstruction_parameters["smoothing_sigma"]
+        )
+        self.spinBox_n_smoothing.setValue(
+            reconstruction_parameters["n_smoothing_iterations"]
+        )
+        self.spinBox_n_vertices.setValue(reconstruction_parameters["n_points"])
+        self.spinBox_n_refinement_steps.setValue(
+            reconstruction_parameters["n_tracing_iterations"]
+        )
+        self.doubleSpinBox_sampling_length.setValue(
+            reconstruction_parameters["resampling_length"]
+        )
+        self.comboBox_fittype.setCurrentText(reconstruction_parameters["fit_type"])
+        self.comboBox_fluorescence_type.setCurrentText(
+            reconstruction_parameters["edge_type"]
+        )
+        self.doubleSpinBox_trace_length.setValue(
+            reconstruction_parameters["trace_length"]
+        )
+        self.doubleSpinBox_sampling_distance.setValue(
+            reconstruction_parameters["sampling_distance"]
+        )
+        self.comboBox_interpolation_method.setCurrentText(
+            reconstruction_parameters["interpolation_method"]
+        )
+        self.doubleSpinBox_outlier_tolerance.setValue(
+            reconstruction_parameters["outlier_tolerance"]
+        )
+        self.checkBox_remove_outliers.setChecked(
+            reconstruction_parameters["remove_outliers"]
+        )
 
     def _run(self):
         """Call analysis function."""
@@ -145,7 +178,7 @@ class droplet_reconstruction_toolbox(QWidget):
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
             interpolation_method=self.comboBox_interpolation_method.currentText(),
-            use_dask=self.checkBox_use_dask.isChecked()
+            use_dask=self.checkBox_use_dask.isChecked(),
         )
 
         for layer in results:
@@ -169,7 +202,7 @@ def reconstruct_droplet(
     remove_outliers: bool = True,
     outlier_tolerance: float = 1.5,
     sampling_distance: float = 0.5,
-    interpolation_method: str = "cubic"
+    interpolation_method: str = "cubic",
 ) -> List[LayerDataTuple]:
     """
     Reconstruct droplet surface from points layer.
@@ -224,18 +257,16 @@ def reconstruct_droplet(
 
     """
     import copy
+
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
-    from napari_stress import reconstruction
     from skimage import filters, transform
 
+    from napari_stress import reconstruction
+
     scaling_factors = voxelsize / target_voxelsize
-    rescaled_image = transform.rescale(
-        image,
-        scaling_factors)
-    rescaled_image = filters.gaussian(
-        rescaled_image,
-        sigma=smoothing_sigma)
+    rescaled_image = transform.rescale(image, scaling_factors)
+    rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     threshold = filters.threshold_otsu(rescaled_image)
     binarized_image = rescaled_image > threshold
 

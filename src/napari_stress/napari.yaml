@@ -135,7 +135,7 @@ contributions:
     - command: napari-stress.stress_analysis_toolbox
       autogenerate: false
       display_name: Stress analysis toolbox
-    
+
     # Other measurementrs
     - command: napari-stress.curvature_on_ellipsoid
       autogenerate: true

@@ -1,27 +1,29 @@
-# -*- coding: utf-8 -*-
-
-import pandas as pd
-from napari.types import LayerDataTuple
 import os
 from pathlib import Path
 
-DATA_ROOT  = os.path.join(Path(__file__).parent)
+import pandas as pd
+from napari.types import LayerDataTuple
+
+DATA_ROOT = os.path.join(Path(__file__).parent)
+
 
 def get_droplet_point_cloud() -> LayerDataTuple:
     """Generates a sample point cloud of a droplet surface"""
 
-    df = pd.read_csv(os.path.join(DATA_ROOT, 'dropplet_point_cloud.csv'), sep=',')
-    coordinates = df[['axis-0', 'axis-1', 'axis-2', 'axis-3']].to_numpy()
+    df = pd.read_csv(os.path.join(DATA_ROOT, "dropplet_point_cloud.csv"), sep=",")
+    coordinates = df[["axis-0", "axis-1", "axis-2", "axis-3"]].to_numpy()
 
-    return [(coordinates, {'size': 0.5, 'face_color': 'orange'}, 'points')]
+    return [(coordinates, {"size": 0.5, "face_color": "orange"}, "points")]
+
 
 def get_droplet_point_cloud_4d() -> LayerDataTuple:
     """Generates a sample 4d point cloud of a droplet surface"""
 
-    df = pd.read_csv(os.path.join(DATA_ROOT, 'dropplet_point_cloud_4d.csv'), sep=',')
-    coordinates = df[['axis-0', 'axis-1', 'axis-2', 'axis-3']].to_numpy()
+    df = pd.read_csv(os.path.join(DATA_ROOT, "dropplet_point_cloud_4d.csv"), sep=",")
+    coordinates = df[["axis-0", "axis-1", "axis-2", "axis-3"]].to_numpy()
 
-    return [(coordinates, {'size': 0.5, 'face_color': 'orange'}, 'points')]
+    return [(coordinates, {"size": 0.5, "face_color": "orange"}, "points")]
+
 
 def get_droplet_4d() -> LayerDataTuple:
     """
@@ -31,17 +33,18 @@ def get_droplet_4d() -> LayerDataTuple:
     """
     from skimage import io
 
-    image = io.imread(os.path.join(DATA_ROOT, 'ExampleTifSequence.tif'))
+    image = io.imread(os.path.join(DATA_ROOT, "ExampleTifSequence.tif"))
 
-    return [(image, {}, 'image')]
+    return [(image, {}, "image")]
 
 
 def make_blurry_ellipsoid(
-        axis_length_a: float = 0.7,
-        axis_length_b: float = 0.3,
-        axis_length_c: float = 0.3,
-        size: int = 64,
-        definition_width: int = 5) -> LayerDataTuple:
+    axis_length_a: float = 0.7,
+    axis_length_b: float = 0.3,
+    axis_length_c: float = 0.3,
+    size: int = 64,
+    definition_width: int = 5,
+) -> LayerDataTuple:
     """Generates a blurry ellipsoid.
 
     Parameters
@@ -71,13 +74,16 @@ def make_blurry_ellipsoid(
     def sigmoid(x, a):
         return 1 / (1 + np.exp(-a * x))
 
-    x, y, z = np.meshgrid(np.linspace(-1, 1, size),
-                          np.linspace(-1, 1, size),
-                          np.linspace(-1, 1, size), indexing='ij')
+    x, y, z = np.meshgrid(
+        np.linspace(-1, 1, size),
+        np.linspace(-1, 1, size),
+        np.linspace(-1, 1, size),
+        indexing="ij",
+    )
 
-    ellipsoid = (x/axis_length_a)**2 +\
-        (y/axis_length_b)**2 +\
-        (z/axis_length_c)**2
+    ellipsoid = (
+        (x / axis_length_a) ** 2 + (y / axis_length_b) ** 2 + (z / axis_length_c) ** 2
+    )
 
     blurry_image = 1 - sigmoid(ellipsoid - 1, definition_width)
-    return (blurry_image, {'name': 'blurry_ellipsoid'}, 'image')
+    return (blurry_image, {"name": "blurry_ellipsoid"}, "image")
