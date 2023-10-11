@@ -24,7 +24,5 @@ from ._spherical_harmonics.spherical_harmonics import lebedev_quadrature, create
 
 from ._sample_data.sample_data import get_droplet_point_cloud, get_droplet_point_cloud_4d, get_droplet_4d
 
-from ._plotting.features_histogram import FeaturesHistogramWidget
-
 from . import types
 from . import _vectors as vectors

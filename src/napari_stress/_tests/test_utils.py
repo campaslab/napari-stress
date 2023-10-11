@@ -20,6 +20,7 @@ def test_fit_functions():
     argmax = _detect_maxima(y)
     assert 49 <= argmax <= 51
 
+
 def test_decorator_points():
     from napari_stress import TimelapseConverter
     from vedo import Sphere
@@ -27,11 +28,13 @@ def test_decorator_points():
     Converter = TimelapseConverter()
 
     points_list = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
-    points_array = Converter.list_of_data_to_data(points_list, PointsData)
-    points_list_conv = Converter.data_to_list_of_data(points_array, PointsData)
+    points_array_4d = Converter.list_of_data_to_data(points_list, PointsData)
+    points_array_3d = Converter.list_of_data_to_data([points_list[0]], PointsData)
+    points_list_conv = Converter.data_to_list_of_data(points_array_4d, PointsData)
 
     for pts, _pts in zip(points_list, points_list_conv):
         assert np.array_equal(points_list, points_list_conv)
+
 
 def test_decorator_points_layerdatatuple():
     from napari_stress import TimelapseConverter, get_droplet_point_cloud
@@ -53,7 +56,10 @@ def test_decorator_points_layerdatatuple():
     
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
+    list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
+
     ldtuple_4d = Converter.list_of_data_to_data(list_of_ldtuples, layertype=LayerDataTuple)
+    ldtuple_3d = Converter.list_of_data_to_data([list_of_ldtuples[0]], layertype=PointsData)
 
     assert 'data1' in ldtuple_4d[1]['metadata'].keys()
     assert ldtuple_4d[0][-1, 0] == 9
@@ -83,6 +89,7 @@ def test_decorator_points_layers():
     layer_4d = Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldt[2])
     list_of_layers = Converter.data_to_list_of_data(layer_4d, layertype=Points)
 
+
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame
     from napari_process_points_and_surfaces import sample_points_from_surface
@@ -97,17 +104,20 @@ def test_decorator_surfaces():
          np.asarray(Sphere().faces()),
          k * np.ones(Sphere().N())) for k in np.arange(1.9, 2.1, 0.1)
         ]
-    surface_array = Converter.list_of_data_to_data(surface_list, SurfaceData)
-    assert len(surface_array) == 3
+    surface_array_4d = Converter.list_of_data_to_data(surface_list, SurfaceData)
+    surface_array_3d = Converter.list_of_data_to_data([surface_list[0]], SurfaceData)
 
-    surface_list_conv = Converter.data_to_list_of_data(surface_array, SurfaceData)
+    assert len(surface_array_4d) == 3
+
+    surface_list_conv = Converter.data_to_list_of_data(surface_array_4d, SurfaceData)
 
     for surf, _surf in zip(surface_list, surface_list_conv):
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-    points = frame_by_frame(sample_points_from_surface)(surface_array)
+    points = frame_by_frame(sample_points_from_surface)(surface_array_4d)
     points = frame_by_frame(sample_points_from_surface)(surface_list[0])
+
 
 def test_decorator_images():
 
@@ -118,13 +128,15 @@ def test_decorator_images():
     image = np.random.random(size=(50,50,50))
     image_list = [k * image for k in np.arange(0.1, 1, 0.1)]
 
-    image_array = Converter.list_of_data_to_data(image_list, ImageData)
+    image_array_4d = Converter.list_of_data_to_data(image_list, ImageData)
+    image_array_3d = Converter.list_of_data_to_data([image_list[0]], ImageData)
 
-    assert image_array.shape[0] == len(image_list)
+    assert image_array_4d.shape[0] == len(image_list)
 
-    image_list_conv = Converter.list_of_data_to_data(image_array, ImageData)
+    image_list_conv = Converter.list_of_data_to_data(image_array_4d, ImageData)
     for img, _img in zip(image_list, image_list_conv):
         assert np.array_equiv(img, _img)
+
 
 def test_frame_by_frame_vectors():
 
@@ -141,9 +153,7 @@ def test_frame_by_frame_vectors():
     vectors_4d = np.stack((points, vectors)).transpose((1,0,2))
 
     vectors_list = Converter.data_to_list_of_data(vectors_4d, VectorsData)
-    vectors_data = Converter.list_of_data_to_data(vectors_list, VectorsData)
+    vectors_data_4d = Converter.list_of_data_to_data(vectors_list, VectorsData)
+    vectors_data_3d = Converter.list_of_data_to_data([vectors_list[0]], VectorsData)
 
-    assert np.array_equal(vectors_data, vectors_4d)
-
-if __name__ == '__main__':
-    test_decorator_points_layerdatatuple()
+    assert np.array_equal(vectors_data_4d, vectors_4d)
