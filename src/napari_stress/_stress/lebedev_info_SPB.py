@@ -185,8 +185,7 @@ def Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta, Phi):  # M_Coef < 0 Corresonds to Z^
                 Der_Phi_Val += (
                     sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
-                            (np.exp(-1j * Theta))
-                            * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        (np.exp(-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
                     ).imag
                 )
 
@@ -200,8 +199,7 @@ def Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta, Phi):  # M_Coef < 0 Corresonds to Z^
                 Der_Phi_Val += (
                     sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
-                            (np.exp(-1j * Theta))
-                            * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        (np.exp(-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
                     ).real
                 )
 
@@ -227,9 +225,7 @@ def Der_Phi_Phi_Basis_Fn(
                 sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                 * (2 * m_sph + 1)
                 * mpmath.cot(Phi)
-                * (
-                    (e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
-                ).imag
+                * ((e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)).imag
             )
 
         if m_sph < (N_Coef - 1):
@@ -240,9 +236,7 @@ def Der_Phi_Phi_Basis_Fn(
                     * (N_Coef + m_sph + 1)
                     * (N_Coef + m_sph + 2)
                 )
-                * (
-                    (e ** (-2j * Theta)) * sph_harm(m_sph + 2, N_Coef, Theta, Phi)
-                ).imag
+                * ((e ** (-2j * Theta)) * sph_harm(m_sph + 2, N_Coef, Theta, Phi)).imag
             )
 
     else:  # M_Coef >= 0
@@ -258,9 +252,7 @@ def Der_Phi_Phi_Basis_Fn(
                 sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                 * (2 * m_sph + 1)
                 * mpmath.cot(Phi)
-                * (
-                    (e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
-                ).real
+                * ((e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi)).real
             )
         if m_sph < (N_Coef - 1):
             Der_Phi_Phi_Val += (
@@ -270,9 +262,7 @@ def Der_Phi_Phi_Basis_Fn(
                     * (N_Coef + m_sph + 1)
                     * (N_Coef + m_sph + 2)
                 )
-                * (
-                    (e ** (-2j * Theta)) * sph_harm(m_sph + 2, N_Coef, Theta, Phi)
-                ).real
+                * ((e ** (-2j * Theta)) * sph_harm(m_sph + 2, N_Coef, Theta, Phi)).real
             )
 
     return Der_Phi_Phi_Val
