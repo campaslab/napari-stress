@@ -28,7 +28,7 @@ If you want to retrieve a pointcloud on the surface of the fitted ellipsoid, you
 ![](imgs/demo_fit_ellipsoid6.png)
 
 **Vedo**
-This section describes the implementation taken from the [vedo repository](https://vedo.embl.es/). It uses a [pca-algorithm](https://en.wikipedia.org/wiki/Principal_component_analysis) to calculate the minor/major axes. Use it via `Tools > Points > Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)`. As an additional parameter, it requires you to set which percentage of the input points should be contained by the surface of the fitted ellipse, which is controlled by the `inside fraction` parameter.
+This section describes the implementation taken from the [vedo repository](https://vedo.embl.es/). It uses a [pca-algorithm](https://en.wikipedia.org/wiki/Principal_component_analysis) to calculate the minor/major axes. Use it via `Tools > Points > Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)`. As an additional parameter, it requires you to set which percentage of the input points should be contained by the surface of the fitted ellipse, which is controlled by the `inside fraction` parameter. 
 
 ![](imgs/demo_fit_ellipsoid1.png)
 

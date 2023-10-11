@@ -1,9 +1,6 @@
 import pandas as pd
 
-
-def distance_to_k_nearest_neighbors(
-    points: "napari.types.PointsData", k=5
-) -> pd.DataFrame:
+def distance_to_k_nearest_neighbors(points: "napari.types.PointsData", k=5) -> pd.DataFrame:
     """Calculate the distance to the k nearest neighbors for each point.
 
     Parameters
@@ -19,6 +16,7 @@ def distance_to_k_nearest_neighbors(
         The distance to the k nearest neighbors for each point.
     """
     from scipy.spatial import KDTree
+    import numpy as np
 
     tree = KDTree(points)
     dist, _ = tree.query(points, k=k + 1)
@@ -28,8 +26,7 @@ def distance_to_k_nearest_neighbors(
     dist, _ = tree.query(points, k=5)
 
     # calculate the mean distance to the k nearest neighbors
-    df = pd.DataFrame(
-        dist[:, 1:].mean(axis=1),
-        columns=[f"distance_to_{k}_nearest_neighbor"],
-    )
+    df = pd.DataFrame(dist[:, 1:].mean(axis=1),
+                      columns=['distance_to_{k}_nearest_neighbor'.format(k=k)])
     return df
+    

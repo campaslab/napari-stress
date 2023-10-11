@@ -31,7 +31,7 @@ If you use napari-stress in your research, please check the [acknowledgements an
 
 ## Issues
 
-If you encounter any issues during installation, please
+If you encounter any issues during installation, please 
 
 * browse the [FAQ section](FAQ:installation) for known issues
 * file an [issue on github](https://github.com/BiAPoL/napari-stress/issues)

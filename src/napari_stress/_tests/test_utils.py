@@ -1,15 +1,9 @@
 import numpy as np
+from napari.types import LayerData, PointsData, SurfaceData, ImageData, VectorsData, LayerDataTuple
 from napari.layers import Layer, Points
-from napari.types import ImageData, LayerDataTuple, PointsData, VectorsData
-
 
 def test_fit_functions():
-    from napari_stress._utils.fit_utils import (
-        _detect_max_gradient,
-        _detect_maxima,
-        _gaussian,
-        _sigmoid,
-    )
+    from napari_stress._utils.fit_utils import _sigmoid, _gaussian, _detect_maxima, _detect_max_gradient
 
     x = np.arange(0, 100, 1)
 
@@ -28,9 +22,8 @@ def test_fit_functions():
 
 
 def test_decorator_points():
-    from vedo import Sphere
-
     from napari_stress import TimelapseConverter
+    from vedo import Sphere
 
     Converter = TimelapseConverter()
 
@@ -44,47 +37,36 @@ def test_decorator_points():
 
 
 def test_decorator_points_layerdatatuple():
-    from copy import deepcopy
-
-    import pandas as pd
-
     from napari_stress import TimelapseConverter, get_droplet_point_cloud
-
+    import pandas as pd
+    from copy import deepcopy
     np.random.seed(42)
 
     Converter = TimelapseConverter()
     list_of_ldtuples = []
     for i in range(10):
         points = list(get_droplet_point_cloud()[0])
-        features = pd.DataFrame({"feature1": np.random.random(len(points[0]))})
-        metadata = {"data1": f"test_{i}"}
+        features = pd.DataFrame({'feature1': np.random.random(len(points[0]))})
+        metadata = {'data1': f'test_{i}'}
 
         points[0] = points[0][:, 1:]
-        points[1]["features"] = features
-        points[1]["metadata"] = metadata
+        points[1]['features'] = features
+        points[1]['metadata'] = metadata
         list_of_ldtuples.append(points)
 
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
-    ldtuple_4d = Converter.list_of_data_to_data(
-        list_of_ldtuples, layertype=LayerDataTuple
-    )
-    ldtuple_3d = Converter.list_of_data_to_data(
-        [list_of_ldtuples[0]], layertype=PointsData
-    )
+    ldtuple_4d = Converter.list_of_data_to_data(list_of_ldtuples, layertype=LayerDataTuple)
+    ldtuple_3d = Converter.list_of_data_to_data([list_of_ldtuples[0]], layertype=PointsData)
 
-    assert "data1" in ldtuple_4d[1]["metadata"].keys()
+    assert 'data1' in ldtuple_4d[1]['metadata'].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
-    list_of_ldtuples_conv = Converter.data_to_list_of_data(
-        ldtuple_4d, layertype="napari.types:LayerDataTuple"
-    )
+    list_of_ldtuples_conv = Converter.data_to_list_of_data(ldtuple_4d, layertype='napari.types:LayerDataTuple')
     for ldt, _ldt in zip(list_of_ldtuples_copy, list_of_ldtuples_conv):
         assert np.array_equal(ldt[0], _ldt[0])
-        assert np.array_equal(
-            ldt[1]["features"]["feature1"], _ldt[1]["features"]["feature1"]
-        )
-        assert np.array_equal(ldt[1]["metadata"]["data1"], _ldt[1]["metadata"]["data1"])
+        assert np.array_equal(ldt[1]['features']['feature1'], _ldt[1]['features']['feature1'])
+        assert np.array_equal(ldt[1]['metadata']['data1'], _ldt[1]['metadata']['data1'])
 
 
 def test_decorator_points_layers():
@@ -96,31 +78,31 @@ def test_decorator_points_layers():
     n_frames = int(ldt[0][:, 0].max()) + 1
 
     # create some dummy metadata
-    metadata = {"key1": [f"data_{i}" for i in range(n_frames)]}
-    ldt[1]["metadata"] = metadata
+    metadata = {'key1': [f'data_{i}' for i in range(n_frames)]}
+    ldt[1]['metadata'] = metadata
 
     # create some dummy features
     features = np.random.random(len(ldt[0]))
-    ldt[1]["features"] = features
+    ldt[1]['features'] = features
 
     layer_4d = Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldt[2])
     list_of_layers = Converter.data_to_list_of_data(layer_4d, layertype=Points)
 
 
 def test_decorator_surfaces():
-    from napari.types import SurfaceData
-    from napari_process_points_and_surfaces import sample_points_from_surface
-    from vedo import Sphere
-
     from napari_stress import TimelapseConverter, frame_by_frame
+    from napari_process_points_and_surfaces import sample_points_from_surface
+    from napari.types import SurfaceData
+    from vedo import Sphere
 
     Converter = TimelapseConverter()
 
     # create a list of surfaces with points/faces/values
     surface_list = [
-        (Sphere().points() * k, np.asarray(Sphere().faces()), k * np.ones(Sphere().N()))
-        for k in np.arange(1.9, 2.1, 0.1)
-    ]
+        (Sphere().points() * k,
+         np.asarray(Sphere().faces()),
+         k * np.ones(Sphere().N())) for k in np.arange(1.9, 2.1, 0.1)
+        ]
     surface_array_4d = Converter.list_of_data_to_data(surface_list, SurfaceData)
     surface_array_3d = Converter.list_of_data_to_data([surface_list[0]], SurfaceData)
 
@@ -142,7 +124,7 @@ def test_decorator_images():
 
     Converter = TimelapseConverter()
 
-    image = np.random.random(size=(50, 50, 50))
+    image = np.random.random(size=(50,50,50))
     image_list = [k * image for k in np.arange(0.1, 1, 0.1)]
 
     image_array_4d = Converter.list_of_data_to_data(image_list, ImageData)
@@ -158,7 +140,6 @@ def test_decorator_images():
 def test_frame_by_frame_vectors():
 
     from napari_stress import TimelapseConverter
-
     Converter = TimelapseConverter()
 
     # make some points
@@ -168,7 +149,7 @@ def test_frame_by_frame_vectors():
     points[:, 0] = np.arange(0, 5, 1).repeat(200)
     vectors[:, 0] = np.arange(0, 5, 1).repeat(200)
 
-    vectors_4d = np.stack((points, vectors)).transpose((1, 0, 2))
+    vectors_4d = np.stack((points, vectors)).transpose((1,0,2))
 
     vectors_list = Converter.data_to_list_of_data(vectors_4d, VectorsData)
     vectors_data_4d = Converter.list_of_data_to_data(vectors_list, VectorsData)
@@ -176,6 +157,5 @@ def test_frame_by_frame_vectors():
 
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     test_decorator_points()

@@ -7,7 +7,7 @@ __pycache__/
 /data
 
 # STRESS outputs
-*.pdf
+*.pdf  
 *.vtp
 *.mat
 results_*/
@@ -94,5 +94,6 @@ venv/
 # written by setuptools_scm
 **/_version.py
 
-# Dask
+# Dask 
 dask-worker-space/
+

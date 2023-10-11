@@ -6,7 +6,7 @@ In this notebook you will learn about [spherical harmonics](https://en.wikipedia
 
 ## Polar coordinates
 
-Generally speaking, spherical harmonics provide a mathematical framework to tackle problems that are best described in polar coordinates. When we use polar coordinates, we describe the location of a point in space in terms of
+Generally speaking, spherical harmonics provide a mathematical framework to tackle problems that are best described in polar coordinates. When we use polar coordinates, we describe the location of a point in space in terms of 
 
 * latitude $\theta$
 * longitude $\phi$
@@ -42,7 +42,7 @@ $f(\theta, \phi) = \sum_{l=0}^{\inf} \sum_{m=-l}^{l} f_l^m Y_l^m(\theta, \phi)$
 
 where $f_l^m$ are the coefficients that determine how much each degree and order of the spherical harmonics functions $Y_l^m(\theta, \phi)$ contribute to the sum. In other words, you can use this superposition to approximate the value of any function that depends on latitude and longitude as inputs. It is important to understand that this definition is assuming spheres of radius $r=1$ - the result of $f(\theta, \phi)$ can represent any property on the surface of this sphere. The Wikipedia page features a nice [visualization](https://en.wikipedia.org/wiki/Spherical_harmonics#/media/File:Rotating_spherical_harmonics.gif) for the contributions of spherical harmonics of specific degree and order on the surface of a sphere.
 
-Using this framework has several desirable characteristics:
+Using this framework has several desirable characteristics: 
 
 - Any real function on the surface of a sphere can be approximated with a spherical harmonics expansion
 - An obtained spherical harmonics expansion can be described entirely by the coefficients $f_l^m$

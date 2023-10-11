@@ -12,7 +12,7 @@ parts:
   - caption: Usage
     chapters:
     - file: 01_code_usage/code_usage
-      sections:
+      sections: 
       - file: 01_code_usage/01_toolboxes/Readme
         sections:
         - file: 01_code_usage/01_toolboxes/demo_droplet_reconstruction_toolbox_code

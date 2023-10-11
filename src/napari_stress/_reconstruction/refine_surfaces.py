@@ -196,9 +196,9 @@ def trace_refinement_of_surface(
         intensity_along_vector = intensity_along_vector[good_points]
 
     # remove NaNs from reconstructed points
-    no_nan_idx = ~np.isnan(np.stack(fit_data["start_points"].to_numpy()).squeeze()).any(
-        axis=1
-    )
+    no_nan_idx = ~np.isnan(
+        np.stack(fit_data["start_points"].to_numpy()).squeeze()).any(
+            axis=1)
     fit_data = fit_data[no_nan_idx]
     intensity_along_vector = intensity_along_vector[no_nan_idx]
 
@@ -243,7 +243,8 @@ def trace_refinement_of_surface(
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data["start_points"].to_numpy()).squeeze()
     trace_vectors = trace_vectors[fit_data.index.to_numpy()]
-    trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
+    trace_vectors = np.stack(
+        [start_points, trace_vectors]).transpose((1, 0, 2))
 
     properties = {"name": "Normals"}
     layer_normals = (trace_vectors, properties, "vectors")
