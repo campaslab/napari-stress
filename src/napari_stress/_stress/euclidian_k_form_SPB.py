@@ -527,6 +527,7 @@ def Tangent_Projection(Vectors_at_Quad, lbdv, Manny):
 
     return Tangent_Vecs_at_Quad
 
+
 # Returns Riemannian Inner Product of 1-Forms input, returns Integral of
 def Riemann_L2_Inner_Product_One_Form(One_Form_pts_1, One_Form_pts_2, lbdv, manny):
 
