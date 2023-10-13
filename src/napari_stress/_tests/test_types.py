@@ -3,11 +3,17 @@ from napari import layers
 import numpy as np
 import magicgui
 
+
 def test_custom_types(make_napari_viewer):
     from napari_stress.types import manifold, _METADATAKEY_MEAN_CURVATURE
-    from napari_stress import (measurements, get_droplet_point_cloud,
-                               fit_spherical_harmonics)
-    from napari_stress._spherical_harmonics.spherical_harmonics_napari import perform_lebedev_quadrature
+    from napari_stress import (
+        measurements,
+        get_droplet_point_cloud,
+        fit_spherical_harmonics,
+    )
+    from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
+        perform_lebedev_quadrature,
+    )
 
     def test_function(argument: manifold) -> manifold:
 
@@ -41,6 +47,7 @@ def test_custom_types(make_napari_viewer):
     assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features.keys()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import napari
+
     test_custom_types(napari.Viewer)

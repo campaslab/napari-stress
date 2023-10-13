@@ -29,7 +29,7 @@ An interesting parameter that can be obtained from a spherical harmonics expansi
 
 * The surface integrated curvature $H_{0, surf~int}$: This is the ratio of the area of the obtained expansion and the surface of a unit sphere $H_{0, surf~int} = \frac{A_{manifold}}{A_{Sphere}}$
 
-The [stress paper](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract) uses the second definition ($H_{0, surf~int}$) for the description of curvatures oon the surface. 
+The [stress paper](https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.abstract) uses the second definition ($H_{0, surf~int}$) for the description of curvatures oon the surface.
 
 (spherical_harmonics:measurements:gauss_bonnet)=
 ## Gauss-Bonnet test

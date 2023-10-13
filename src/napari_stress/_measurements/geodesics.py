@@ -37,24 +37,21 @@ def geodesic_distance_matrix(
     points = surface[0]
 
     if show_progress:
-        iterator = tqdm.tqdm(enumerate(points), desc='Calculating geodesic distances')
+        iterator = tqdm.tqdm(enumerate(points), desc="Calculating geodesic distances")
     else:
         iterator = enumerate(points)
 
     for idx, pt in iterator:
-        distances, _ = geoalg.geodesicDistances(
-            [idx], np.arange(idx + 1, n_points))
-        distance_matrix[idx, idx + 1:] = distances
-        distance_matrix[idx + 1:, idx] = distances
+        distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
+        distance_matrix[idx, idx + 1 :] = distances
+        distance_matrix[idx + 1 :, idx] = distances
 
     return distance_matrix
 
 
 @register_function(menu="Surfaces > Geodesic path (pygeodesics, n-STRESS)")
 @frame_by_frame
-def geodesic_path(surface: SurfaceData,
-                  index_1: int,
-                  index_2: int) -> VectorsData:
+def geodesic_path(surface: SurfaceData, index_1: int, index_2: int) -> VectorsData:
     """
     Calculate the geodesic path between two index-defined surface vertices .
 
@@ -134,8 +131,7 @@ def correlation_on_surface(
 
     # calculate autocorrelation for all points
     # norm, so auto-corrs are 1 at \delta (= |x - x'|) = 0
-    auto_corr_norm = np.average(
-        np.diag(Corr_outer_prod_mat_pts).flatten(), axis=0)
+    auto_corr_norm = np.average(np.diag(Corr_outer_prod_mat_pts).flatten(), axis=0)
 
     avg_mean_curv_auto_corrs = []
     dists_used = []
@@ -159,12 +155,10 @@ def correlation_on_surface(
 
     # We get (geodesic) distances we calculate correlations on,
     # using bump fn averages around these distances:
-    auto_corrs_microns_dists = np.array(
-        dists_used, dtype=np.dtype("d")).reshape(
+    auto_corrs_microns_dists = np.array(dists_used, dtype=np.dtype("d")).reshape(
         num_dists_used, 1
     )
-    auto_corrs_avg = np.array(
-        avg_mean_curv_auto_corrs, dtype=np.dtype("d")).reshape(
+    auto_corrs_avg = np.array(avg_mean_curv_auto_corrs, dtype=np.dtype("d")).reshape(
         num_dists_used, 1
     )
     auto_corrs_avg_normed = auto_corrs_avg / auto_corr_norm
@@ -197,14 +191,12 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
     )
 
     sum_weights = np.sum(weights.flatten())
-    sum_pts_within_1 = np.sum(
-        np.multiply(pts_vals_within_1, weights).flatten())
+    sum_pts_within_1 = np.sum(np.multiply(pts_vals_within_1, weights).flatten())
 
     return sum_pts_within_1, sum_weights
 
 
-@register_function(
-        menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)")
+@register_function(menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)")
 def local_extrema_analysis(
     surface: SurfaceData, distance_matrix: np.ndarray = None
 ) -> List[LayerDataTuple]:
@@ -305,10 +297,8 @@ def local_extrema_analysis(
             min_max_pair_anisotropies.append(Anisotropy_max_min_pts)
             min_max_pair_distances.append(dist_max_min_pt)
 
-    min_max_pair_anisotropies = np.array(
-        min_max_pair_anisotropies, dtype=np.dtype("d"))
-    min_max_pair_distances = np.array(
-        min_max_pair_distances, dtype=np.dtype("d"))
+    min_max_pair_anisotropies = np.array(min_max_pair_anisotropies, dtype=np.dtype("d"))
+    min_max_pair_distances = np.array(min_max_pair_distances, dtype=np.dtype("d"))
 
     pt_num_of_nearest_min = []
     geodesic_paths_nearest_max_min = []
@@ -325,8 +315,7 @@ def local_extrema_analysis(
         ind_in_list_of_nearest_min = np.argwhere(
             local_min_dists_to_pt == min_dist_to_local_min
         )
-        pt_num_of_nearest_min = local_min_inds[
-            ind_in_list_of_nearest_min][0, 0]
+        pt_num_of_nearest_min = local_min_inds[ind_in_list_of_nearest_min][0, 0]
 
         delta_feature_nearest_min_max[pt_max_num] = (
             feature[pt_max_num] - feature[pt_num_of_nearest_min]
@@ -347,8 +336,7 @@ def local_extrema_analysis(
         ind_in_list_of_nearest_max = np.argwhere(
             local_max_dists_to_pt == max_dist_to_local_min
         )
-        pt_num_of_nearest_max = local_max_inds[
-            ind_in_list_of_nearest_max][0, 0]
+        pt_num_of_nearest_max = local_max_inds[ind_in_list_of_nearest_max][0, 0]
         delta_feature_nearest_min_max[pt_min_num] = (
             feature[pt_num_of_nearest_max] - feature[pt_min_num]
         )
