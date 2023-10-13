@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from cmath import exp
 from napari.types import LayerDataTuple, PointsData
 from napari.layers import Points
 import numpy as np
@@ -51,8 +50,9 @@ def fit_spherical_harmonics(
         Which implementation to use for spherical harmonics fit (stress or pyshtools).
         Default is `spherical_harmonics_methods.stress`
     expansion_type: expansion_type
-        Which coordinate to use for expansion. Can be `cartesian` or `radial`. For cartesian
-        expansion, x/y/z will be approximated separately with a spherical harmonics expansion
+        Which coordinate to use for expansion. Can be `cartesian` or
+        `radial`. For cartesian expansion, x/y/z will be approximated
+        separately with a spherical harmonics expansion
         or radial for radial approximation.
 
 
@@ -126,9 +126,10 @@ def perform_lebedev_quadrature(
     """
     metadata = points.metadata
 
-    if not "spherical_harmonics_coefficients" in metadata.keys():
+    if "spherical_harmonics_coefficients" not in metadata.keys():
         raise ValueError(
-            "Missing spherical harmonics coefficients. Use spherical harmonics expansion first"
+            "Missing spherical harmonics coefficients. " +
+            "Use spherical harmonics expansion first"
         )
 
     max_degree = metadata["spherical_harmonics_coefficients"].shape[-1] - 1

@@ -21,10 +21,12 @@ from .._stress import lebedev_info_SPB as lebedev_info
 
 
 def shtools_spherical_harmonics_expansion(
-    points: PointsData, max_degree: int = 5, expansion_type: str = "radial"
+    points: PointsData,
+    max_degree: int = 5,
+    expansion_type: str = "radial"
 ) -> Tuple[PointsData, np.ndarray]:
     """
-    Approximate a surface by spherical harmonics expansion with pyshtools implementation.
+    Approximate surface by spherical harmonics with pyshtools implementation.
 
     Parameters
     ----------
@@ -251,7 +253,8 @@ def lebedev_quadrature(
         sph_f.spherical_harmonics_function(x, max_degree) for x in coefficients
     ]
 
-    # Get {Z/Y/X} Coordinates at lebedev points, so we can leverage our code more efficiently (and uniformly) on surface:
+    # Get {Z/Y/X} Coordinates at lebedev points, so we can
+    # leverage our code more efficiently (and uniformly) on surface:
     LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
     lebedev_points = [
         euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
@@ -358,7 +361,8 @@ def calculate_mean_curvature_on_manifold(
     points = manifold.get_coordinates()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
-    # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
+    # Makre sure orientation is inward, so H is positive
+    # (for Ellipsoid, and small deviations):
     Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
