@@ -178,7 +178,3 @@ def test_frame_by_frame_vectors():
     vectors_data_3d = Converter.list_of_data_to_data([vectors_list[0]], VectorsData)
 
     assert np.array_equal(vectors_data_4d, vectors_4d)
-
-
-if __name__ == "__main__":
-    test_decorator_points()
