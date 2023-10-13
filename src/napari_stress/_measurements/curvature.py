@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from statistics import mean
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from napari_tools_menu import register_function
 import numpy as np
 
-from napari.types import PointsData, VectorsData, LayerDataTuple
 from napari.layers import Layer
-from napari import Viewer
 
 from .._utils import coordinate_conversion as conversion
 from .._utils.frame_by_frame import frame_by_frame
@@ -33,8 +30,9 @@ from typing import Tuple
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 @frame_by_frame
 def curvature_on_ellipsoid(
-    ellipsoid: VectorsData, sample_points: PointsData
-) -> LayerDataTuple:
+    ellipsoid: 'napari.types.VectorsData',
+    sample_points: 'napari.types.PointsData'
+) -> 'napari.types.LayerDataTuple':
     """
     Calculate curvature at sample points on the surface of an ellipse.
 
@@ -107,7 +105,8 @@ def curvature_on_ellipsoid(
     return (sample_points, properties, "points")
 
 
-def mean_curvature_on_ellipse_cardinal_points(ellipsoid: VectorsData) -> list:
+def mean_curvature_on_ellipse_cardinal_points(
+        ellipsoid: 'napari.types.VectorsData') -> list:
     """
     Calculate mean points on major axes tip points of ellipsoid.
 
@@ -144,7 +143,8 @@ def mean_curvature_on_ellipse_cardinal_points(ellipsoid: VectorsData) -> list:
     menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS"
 )
 def gauss_bonnet_test(
-    input_manifold: manifold, viewer: Viewer = None
+    input_manifold: manifold,
+    viewer: 'napari.Viewer' = None
 ) -> Tuple[float, float]:
     """
     Use Gauss-Bonnet theorem to measure resolution on manifold.
@@ -319,20 +319,26 @@ def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
     return curvatures.flatten().mean()
 
 
-def surface_integrated_mean_curvature(mean_curvatures: np.ndarray, manifold: manifold):
+def surface_integrated_mean_curvature(mean_curvatures: np.ndarray,
+                                      manifold: manifold):
     """Calculate mean curvature by integrating surface area."""
     Integral_on_surface = euc_kf.Integral_on_Manny(
         mean_curvatures, manifold, manifold.lebedev_info
     )
     Integral_on_sphere = euc_kf.Integral_on_Manny(
-        np.ones_like(mean_curvatures).astype(float), manifold, manifold.lebedev_info
+        np.ones_like(mean_curvatures).astype(float),
+        manifold,
+        manifold.lebedev_info
     )
 
     return Integral_on_surface / Integral_on_sphere
 
 
-def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
-    """Determine volume and averaged mean curvature by integrating over radii."""
+def volume_integrated_mean_curvature(
+        input_manifold: manifold) -> float:
+    """
+    Determine volume and averaged mean curvature by integrating over radii.
+    """
     from .._stress.sph_func_SPB import S2_Integral
 
     assert input_manifold.manifold_type == "radial"
@@ -346,7 +352,8 @@ def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
     return volume, H0_from_Vol_Int
 
 
-def radial_surface_averaged_mean_curvature(input_manifold: manifold) -> float:
+def radial_surface_averaged_mean_curvature(
+        input_manifold: manifold) -> float:
     """
      Eestimate H0 on Radial Manifold.
 
@@ -371,7 +378,8 @@ def radial_surface_averaged_mean_curvature(input_manifold: manifold) -> float:
     return H0
 
 
-def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
+def mean_curvature_on_radial_manifold(
+        input_manifold: manifold) -> np.ndarray:
     """
     Calculate mean curvature on radial manifold
 
@@ -381,7 +389,8 @@ def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
     Returns:
         np.ndarray: mean curvature
     """
-    mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
+    mean_curvature, _, _ = calculate_mean_curvature_on_manifold(
+        input_manifold)
     H0 = radial_surface_averaged_mean_curvature(input_manifold)
 
     mean_curvature_radial = mean_curvature * abs(H0) / H0
@@ -389,7 +398,8 @@ def mean_curvature_on_radial_manifold(input_manifold: manifold) -> np.ndarray:
 
 
 def mean_curvature_differences_radial_cartesian_manifolds(
-    manifold_cartesian: manifold, manifold_radial: manifold
+    manifold_cartesian: manifold,
+    manifold_radial: manifold
 ) -> np.ndarray:
     """
     Calculate difference of radial and cartesian mean curvature calculation
