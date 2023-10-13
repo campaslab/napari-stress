@@ -129,6 +129,7 @@ class TimelapseConverter:
             LabelsData: self._list_of_images_to_image,
             "napari.types.LabelsData": self._list_of_images_to_image,
             LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
+            "napari.types.LayerDataTuple": self._list_of_layerdatatuple_to_layerdatatuple,
             List[
                 LayerDataTuple
             ]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
