@@ -78,18 +78,18 @@ def spatio_temporal_autocorrelation(
             inner_product[i, j, :] = result["auto_correlations_average"].flatten()
 
     # sum vals of cols for each row, gives us a matrix
-    summed_inner_product = np.squeeze(np.sum(inner_product, axis=1))
+    sum_inner_product = np.squeeze(np.sum(inner_product, axis=1))
     num_tau_samples = (np.arange(n_frames) + 1)[::-1].reshape(n_frames, 1)
 
-    avg_summed_inner_product = np.divide(summed_inner_product, num_tau_samples)
-    norm_t_0 = np.sum(summed_inner_product[0, :].flatten())
+    avg_sum_inner_product = np.divide(sum_inner_product, num_tau_samples)
+    norm_t_0 = np.sum(sum_inner_product[0, :].flatten())
 
-    normed_avg_summed_inner_product = avg_summed_inner_product / norm_t_0
+    normed_avg_sum_inner_product = avg_sum_inner_product / norm_t_0
 
     results = {
-        "summed_spatiotemporal_correlations": summed_inner_product,
-        "avg_summed_spatiotemporal_correlations": avg_summed_inner_product,
-        "normed_avg_summed_spatiotemporal_correlations": normed_avg_summed_inner_product,
+        "summed_spatiotemporal_correlations": sum_inner_product,
+        "avg_summed_spatiotemporal_correlations": avg_sum_inner_product,
+        "normed_avg_summed_spatiotemporal_correlations": normed_avg_sum_inner_product,
     }
 
     return results
