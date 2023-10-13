@@ -169,8 +169,6 @@ class stress_analysis_toolbox(QWidget):
 
     def _export(self, results_stress_analysis):
         """Export results to csv file."""
-        from .. import types
-        from .. import measurements
         from .. import plotting
         from .. import utils
         import datetime
