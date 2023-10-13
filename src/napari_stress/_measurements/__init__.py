@@ -59,5 +59,5 @@ __all__ = [
     "comprehensive_analysis",
     "distance_to_k_nearest_neighbors",
     "sample_intensity_along_vector",
-    "measure_intensity_on_surface"
+    "measure_intensity_on_surface",
 ]
