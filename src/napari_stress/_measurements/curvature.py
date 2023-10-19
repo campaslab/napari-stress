@@ -30,8 +30,7 @@ from typing import Tuple
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 @frame_by_frame
 def curvature_on_ellipsoid(
-    ellipsoid: "napari.types.VectorsData",
-    sample_points: "napari.types.PointsData"
+    ellipsoid: "napari.types.VectorsData", sample_points: "napari.types.PointsData"
 ) -> "napari.types.LayerDataTuple":
     """
     Calculate curvature at sample points on the surface of an ellipse.
