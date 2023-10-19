@@ -3,9 +3,11 @@
 
 import numpy as np
 from . import sph_func_SPB as sph_f
-from .manifold_SPB import (Polar_Two_Form_to_Euc_dx_dy,
-                            Polar_Two_Form_to_Euc_dx_dz,
-                            Polar_Two_Form_to_Euc_dy_dz)
+from .manifold_SPB import (
+    Polar_Two_Form_to_Euc_dx_dy,
+    Polar_Two_Form_to_Euc_dx_dz,
+    Polar_Two_Form_to_Euc_dy_dz,
+)
 
 
 # Create Array of zeros to store vals at quad pts
@@ -436,7 +438,7 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
             met_fac_over_sin_phi_pts_A, met_fac_over_sin_phi_pts_B, lbdv
         ),
         vals_at_quad_pts,
-    )  
+    )
 
     Jacobian_Int_On_Manny = sph_f.S2_Integral(Jacobian_Integrand, lbdv)
 
@@ -589,11 +591,7 @@ class euc_k_form(object):
     # K_form copy constuctor
     def copy(self):
         return euc_k_form(
-            self.k_value,
-            self.Q_value,
-            self.P_degree,
-            self.Manifold,
-            self.quad_pt_array
+            self.k_value, self.Q_value, self.P_degree, self.Manifold, self.quad_pt_array
         )
 
     # Adds k_forms together (of same degree):
@@ -1086,13 +1084,9 @@ class euc_k_form(object):
             f_B_pts = self.quad_pt_array[quad_pts_inv_rot]
 
             # metric factor, at each point, within Chart
-            met_fac_A_pts = (
-                self.Manifold.Metric_Factor_A_pts
-            )
+            met_fac_A_pts = self.Manifold.Metric_Factor_A_pts
 
-            met_fac_B_pts = (
-                self.Manifold.Metric_Factor_B_pts
-            )
+            met_fac_B_pts = self.Manifold.Metric_Factor_B_pts
 
             # Do Hodge Star:
             star_f_dtheta_dphi_A_pts = np.multiply(f_A_pts, met_fac_A_pts)
@@ -1471,9 +1465,7 @@ class euc_k_form(object):
             )
 
         else:
-            print(
-                "Error: Zero Forms needed for this to work "
-            )
+            print("Error: Zero Forms needed for this to work ")
 
     # div(v) = -\delta v^{\flat}
     def Divergence_1_Form(self, lbdv, debug_mode=False):
@@ -1644,9 +1636,7 @@ class euc_k_form(object):
                 )
             )
             Vec_dPhi_A_pts = np.hstack(
-                (Vec_X_A_dPhi_quad_vals,
-                 Vec_Y_A_dPhi_quad_vals,
-                 Vec_Z_A_dPhi_quad_vals)
+                (Vec_X_A_dPhi_quad_vals, Vec_Y_A_dPhi_quad_vals, Vec_Z_A_dPhi_quad_vals)
             )
 
             Vec_dTheta_B_pts = np.hstack(
@@ -1657,9 +1647,7 @@ class euc_k_form(object):
                 )
             )
             Vec_dPhi_B_pts = np.hstack(
-                (Vec_X_B_dPhi_quad_vals,
-                 Vec_Y_B_dPhi_quad_vals,
-                 Vec_Z_B_dPhi_quad_vals)
+                (Vec_X_B_dPhi_quad_vals, Vec_Y_B_dPhi_quad_vals, Vec_Z_B_dPhi_quad_vals)
             )
 
             # derivatives of metric factor, over metric factor:
