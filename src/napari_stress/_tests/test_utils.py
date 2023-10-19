@@ -189,5 +189,6 @@ def test_frame_by_frame_vectors():
     assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_decorator_images()
