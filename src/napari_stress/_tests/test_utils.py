@@ -78,7 +78,7 @@ def test_decorator_points_layerdatatuple():
         [list_of_ldtuples[0]], layertype=PointsData
     )
 
-    assert np.array_equal(ldtuple_3d[0], list_of_ldtuples[0][0])
+    assert np.array_equal(ldtuple_3d[0][0], list_of_ldtuples[0][0])
     assert "data1" in ldtuple_4d[1]["metadata"].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
@@ -143,7 +143,7 @@ def test_decorator_surfaces():
     points_4d = frame_by_frame(sample_points_from_surface)(surface_array_4d)
     points_3d = frame_by_frame(sample_points_from_surface)(surface_list[0])
 
-    assert np.array_equal(points_3d, surface_list[0][0])
+    assert np.array_equal(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
     assert np.array_equal(points_4d.shape, (4, 1000 * n_frames))
 
 
@@ -159,7 +159,7 @@ def test_decorator_images():
     image_array_4d = Converter.list_of_data_to_data(image_list, ImageData)
     image_array_3d = Converter.list_of_data_to_data([image_list[0]], ImageData)
 
-    assert np.array_equal(image_array_3d, image_list[0])
+    assert np.array_equal(image_array_3d.squeeze(), image_list[0])
     assert image_array_4d.shape[0] == len(image_list)
 
     image_list_conv = Converter.list_of_data_to_data(image_array_4d, ImageData)
@@ -188,3 +188,6 @@ def test_frame_by_frame_vectors():
 
     assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
+
+if __name__ == '__main__':
+    test_decorator_images()

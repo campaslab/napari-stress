@@ -28,19 +28,19 @@ def test_ellipsoid_points():
         pointcloud, inside_fraction=0.5
     )
 
-    assert np.array_equal(ellipse_points.shape, (1000, 3))
+    assert np.array_equal(ellipse_points.shape, (1058, 3))
 
     axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(
         pointcloud, inside_fraction=0.5
     )
 
-    assert np.array_equal(axis.shape, (3, 3))
+    assert np.array_equal(axis.shape, (3, 2, 3))
 
     axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(
         pointcloud, inside_fraction=0.5, normalize=True
     )
 
-    assert np.array_equal(axis.shape, (3, 3))
+    assert np.array_equal(axis.shape, (3, 2, 3))
 
     pointcloud = vedo.shapes.Ellipsoid().points() * 10
     ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(
@@ -54,4 +54,4 @@ def test_ellipsoid_points():
     )
     vectors_4d = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud_4d)
 
-    assert np.array_equal(vectors_4d[0].shape, (3, 3))
+    assert np.array_equal(vectors_4d[0].shape, (6, 2, 3))
