@@ -1681,10 +1681,6 @@ class euc_k_form(object):
             V_local_coors_theta_dtheta_V_B = np.zeros((self.Q_value, 1))
             V_local_coors_phi_dphi_V_B = np.zeros((self.Q_value, 1))
 
-            manny_MF_tol = self.Manifold.Tol
-            met_fac_A_pts = self.Manifold.Metric_Factor_A_pts
-            met_fac_B_pts = self.Manifold.Metric_Factor_B_pts
-
             # for testing A^-1:
             g_inv_theta_theta_A_pts = self.Manifold.g_Inv_Theta_Theta_A_Pts
             g_inv_theta_phi_A_pts = self.Manifold.g_Inv_Theta_Phi_A_Pts
