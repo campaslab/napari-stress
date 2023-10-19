@@ -3,6 +3,9 @@
 
 import numpy as np
 from . import sph_func_SPB as sph_f
+from .manifold_SPB import (Polar_Two_Form_to_Euc_dx_dy,
+                            Polar_Two_Form_to_Euc_dx_dz,
+                            Polar_Two_Form_to_Euc_dy_dz)
 
 
 # Create Array of zeros to store vals at quad pts
@@ -289,18 +292,15 @@ def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
         dx_dy_comp = Cross_of_Basis[2]
     else:
 
-        # Cross_of_Basis = Manny.Normal_Dir_Quad_Pts(lbdv, Chart) #Manny.Normal_Dir(theta_pt, phi_pt, Chart)
+        # Cross_of_Basis = Manny.Normal_Dir_Quad_Pts(lbdv, Chart)
+        # Manny.Normal_Dir(theta_pt, phi_pt, Chart)
 
         # BJG: New Change:
 
         Cross_of_Basis = Manny.Normal_Dir(quad_pt, Chart)
 
-        # print("quad_pt = "+str(quad_pt)+", Cross_of_Basis.shape = "+str(Cross_of_Basis.shape)+", Cross_of_Basis = "+str(Cross_of_Basis))
-
         dy_dz_comp, neg_dx_dz_comp, dx_dy_comp = np.hsplit(Cross_of_Basis, 3)
         dx_dz_comp = -1.0 * neg_dx_dz_comp
-
-        # print("dy_dz_comp = "+str(dy_dz_comp)+"\n"+"dx_dz_comp = "+str(dx_dz_comp)+"\n"+"dx_dy_comp = "+str(dx_dy_comp)+"\n")
 
         # dy_dz_comp = Cross_of_Basis[:, :, 0].T
         # dx_dz_comp = -1*Cross_of_Basis[:, :, 1].T
@@ -428,12 +428,15 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
     )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
     rotated_vals_at_quad_pts = vals_at_quad_pts[quad_pts_rot]
 
+    # Combine_Chart_Quad_Vals(np.multiply(met_fac_over_sin_phi_pts_A, vals_at_quad_pts),
+    # np.multiply(met_fac_over_sin_phi_pts_B, rotated_vals_at_quad_pts),
+    # lbdv)
     Jacobian_Integrand = np.multiply(
         Combine_Chart_Quad_Vals(
             met_fac_over_sin_phi_pts_A, met_fac_over_sin_phi_pts_B, lbdv
         ),
         vals_at_quad_pts,
-    )  # Combine_Chart_Quad_Vals(np.multiply(met_fac_over_sin_phi_pts_A, vals_at_quad_pts), np.multiply(met_fac_over_sin_phi_pts_B, rotated_vals_at_quad_pts), lbdv)
+    )  
 
     Jacobian_Int_On_Manny = sph_f.S2_Integral(Jacobian_Integrand, lbdv)
 
@@ -586,7 +589,11 @@ class euc_k_form(object):
     # K_form copy constuctor
     def copy(self):
         return euc_k_form(
-            self.k_value, self.Q_value, self.P_degree, self.Manifold, self.quad_pt_array
+            self.k_value,
+            self.Q_value,
+            self.P_degree,
+            self.Manifold,
+            self.quad_pt_array
         )
 
     # Adds k_forms together (of same degree):
@@ -627,7 +634,8 @@ class euc_k_form(object):
     # def Flat(self, deriv, Matrix_Fn_Quad_pt, lbdv):
     def Flat(self, G_deriv, A_inv_deriv, lbdv):
         # Deriv = '', for G, 'theta' to use G_theta, 'phi' to use G_phi
-        # Matrix_Fn_Quad_pt is a 3x3 matrix function of the quad_pt, Chart (Could be eye(3))
+        # Matrix_Fn_Quad_pt is a 3x3 matrix function of the quad_pt,
+        # Chart (Could be eye(3))
 
         # Store the value of one_form comps, before combining:
         One_Form_Theta_Comp_A_vals = zero_quad_array(self.Q_value)
@@ -753,7 +761,8 @@ class euc_k_form(object):
                 0,
             )
 
-            # Use sharp function above to convert 1-form components to euclidean vector field
+            # Use sharp function above to convert 1-form
+            # components to euclidean vector field
             return Sharp(
                 f_dtheta_A_quad_vals,
                 f_dphi_A_quad_vals,
@@ -838,7 +847,7 @@ class euc_k_form(object):
                 alpha_sharp_z_SPH_B_dtheta, lbdv, "B"
             )
 
-            # Quad Vals of phi derivatives functions for alpha_sharp_X comps (within Charts):
+            # Quad Vals of phi derivatives functions for alpha_sharp_X comps:
             alpha_sharp_x_A_dphi_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
                 alpha_sharp_x_SPH_A, lbdv, "A"
             )
@@ -938,7 +947,10 @@ class euc_k_form(object):
                 return np.linalg.solve(Basis_Mat.T, -1 * dBasis_Mat_deriv.T).T
 
             # Values of components, in each chart:
-            # alpha_Sharp_X.Flat() gives us: (alpha_theta_comp_A_vals, alpha_theta_comp_B_vals, alpha_phi_comp_A_vals, alpha_phi_comp_B_vals)
+            # alpha_Sharp_X.Flat() gives us: (alpha_theta_comp_A_vals,
+            # alpha_theta_comp_B_vals,
+            # alpha_phi_comp_A_vals,
+            # alpha_phi_comp_B_vals)
 
             # print("d_1: created needed 1-forms vecs")
 
@@ -1076,18 +1088,15 @@ class euc_k_form(object):
             # metric factor, at each point, within Chart
             met_fac_A_pts = (
                 self.Manifold.Metric_Factor_A_pts
-            )  # np.where(lbdv.Chart_of_Quad_Pts > 0, self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'A'), 0)
+            )
+
             met_fac_B_pts = (
                 self.Manifold.Metric_Factor_B_pts
-            )  # np.where(lbdv.Chart_of_Quad_Pts > 0, self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'B'), 0)
+            )
 
             # Do Hodge Star:
             star_f_dtheta_dphi_A_pts = np.multiply(f_A_pts, met_fac_A_pts)
             star_f_dtheta_dphi_B_pts = np.multiply(f_B_pts, met_fac_B_pts)
-
-            # Convert to Euclidean Coors:
-            # dx_dy_A_vals, dx_dz_A_vals, dy_dz_A_vals = Two_Form_Conv_to_Euc_pt(quad_pts, lbdv, 'A', self.Manifold)
-            # dx_dy_B_vals, dx_dz_B_vals, dy_dz_B_vals = Two_Form_Conv_to_Euc_pt(quad_pts, lbdv, 'B', self.Manifold)
 
             dx_dy_A_vals = self.Manifold.dx_dy_A_Vals_From_Polar
             dx_dz_A_vals = self.Manifold.dx_dz_A_Vals_From_Polar
@@ -1210,13 +1219,7 @@ class euc_k_form(object):
             quad_pts = range(self.Q_value)
             quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pts)
 
-            # inv metric factor, at each point, within Chart
-
-            # inv_met_fac_A_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'A'), 0)
-            # inv_met_fac_B_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'B'), 0)
-
             # BJG: new change:
-
             inv_met_fac_A_pts = np.where(
                 lbdv.Chart_of_Quad_Pts > 0, 1.0 / self.Manifold.Metric_Factor_A_pts, 0
             )
@@ -1224,7 +1227,8 @@ class euc_k_form(object):
                 lbdv.Chart_of_Quad_Pts > 0, 1.0 / self.Manifold.Metric_Factor_B_pts, 0
             )
 
-            # values at (theta_C, phi_C) = (theta_i, phi_i), given q_i, Difffernt points on manifold!
+            # values at (theta_C, phi_C) = (theta_i, phi_i),
+            # given q_i, Difffernt points on manifold!
             beta_dx_dy_A_pts, beta_dx_dz_A_pts, beta_dy_dz_A_pts = np.hsplit(
                 self.quad_pt_array[quad_pts], 3
             )
@@ -1371,7 +1375,13 @@ class euc_k_form(object):
                 neg_star_df_B_theta_pts,
                 neg_star_df_B_phi_pts,
             )
-            # Sharp(star_alpha_A_theta_pts, star_alpha_A_phi_pts, star_alpha_B_theta_pts, star_alpha_B_phi_pts, self.P_degree, lbdv, self.Manifold)
+            # Sharp(star_alpha_A_theta_pts,
+            # star_alpha_A_phi_pts,
+            # star_alpha_B_theta_pts,
+            # star_alpha_B_phi_pts,
+            # self.P_degree,
+            # lbdv,
+            # self.Manifold)
 
         else:
             print("Error: Zero Forms needed for this inner-product fn to work")
@@ -1462,7 +1472,7 @@ class euc_k_form(object):
 
         else:
             print(
-                "Error: Zero Forms needed for this to work (Will implement 1-forms next)"
+                "Error: Zero Forms needed for this to work "
             )
 
     # div(v) = -\delta v^{\flat}
@@ -1634,7 +1644,9 @@ class euc_k_form(object):
                 )
             )
             Vec_dPhi_A_pts = np.hstack(
-                (Vec_X_A_dPhi_quad_vals, Vec_Y_A_dPhi_quad_vals, Vec_Z_A_dPhi_quad_vals)
+                (Vec_X_A_dPhi_quad_vals,
+                 Vec_Y_A_dPhi_quad_vals,
+                 Vec_Z_A_dPhi_quad_vals)
             )
 
             Vec_dTheta_B_pts = np.hstack(
@@ -1645,7 +1657,9 @@ class euc_k_form(object):
                 )
             )
             Vec_dPhi_B_pts = np.hstack(
-                (Vec_X_B_dPhi_quad_vals, Vec_Y_B_dPhi_quad_vals, Vec_Z_B_dPhi_quad_vals)
+                (Vec_X_B_dPhi_quad_vals,
+                 Vec_Y_B_dPhi_quad_vals,
+                 Vec_Z_B_dPhi_quad_vals)
             )
 
             # derivatives of metric factor, over metric factor:
@@ -1710,7 +1724,6 @@ class euc_k_form(object):
                     # Change of Basis mats
 
                     A_Mat_pt = self.Manifold.Change_Basis_Mat(quad_pt, "A")
-                    # print("det(A_Mat_pt) = "+str( np.linalg.det(A_Mat_pt) )+", met_fac_A_pts[quad_pt] = "+str(met_fac_A_pts[quad_pt]) +", A_Mat_pt = "+str(A_Mat_pt) )
                     A_theta_Mat_pt = self.Manifold.dChange_Basis_Mat_theta(quad_pt, "A")
                     A_phi_Mat_pt = self.Manifold.dChange_Basis_Mat_phi(quad_pt, "A")
 
@@ -1738,14 +1751,6 @@ class euc_k_form(object):
                     Vec_X_local_coors_A_pt = np.dot(
                         A_inv_from_G_pt, Vec_X_A_pt
                     )  # np.linalg.solve(A_Mat_pt, Vec_X_A_pt)
-
-                    """
-					# test new A^-1:
-					Vec_X_local_coors_A_test_pt = np.dot(A_inv_from_G_pt, Vec_X_A_pt)
-					norm_err_A =  np.linalg.norm(Vec_X_local_coors_A_pt - Vec_X_local_coors_A_test_pt , 2)
-					if( norm_err_A > 1.e-8 and debug_mode == True):
-						print("A_inv test failed at pt: "+str(quad_pt)+", norm_err_A = "+str(norm_err_A))
-					"""
 
                     V_local_coors_theta_A[quad_pt, 0] = Vec_X_local_coors_A_pt[0]
                     V_local_coors_phi_A[quad_pt, 0] = Vec_X_local_coors_A_pt[1]
@@ -1991,7 +1996,9 @@ class euc_k_form(object):
         )
         return euc_k_form(0, self.Q_value, self.P_degree, self.Manifold, LB_quad_pts)
 
-    # Uses curl operators to compute LB of Zero Forms, to test whether we get better convergence this way (by ignoring intermediate k-form stuctures)
+    # Uses curl operators to compute LB of Zero Forms, to test whether
+    # we get better convergence this way
+    # (by ignoring intermediate k-form stuctures)
     def LB_Zero_Form_From_Curl(self, lbdv):
 
         if self.k_value != 0:
@@ -2017,15 +2024,6 @@ class euc_k_form(object):
 
             return neg_LB_f_0_Form.times_const(-1)
 
-    """
-	# Compute Co-Differential: k_form -> (k-1)_form
-	def Co_Diff(self, lbdv):
-		n = 2 #2-D manifold
-		k = self.k_value
-
-		return self.Hodge_Star(lbdv).Ext_Der(lbdv).Hodge_Star(lbdv).times_const((-1)**(n*(k+1)+1)) #Multiply by - 1, result is (k-1)-form
-	"""
-
     # LB: k_form -> k_form (d\delta + \delta d) = (d + \delta)^2
     def Laplace_Beltrami(self, lbdv):
         if self.k_value != 2:
@@ -2042,7 +2040,8 @@ class euc_k_form(object):
             Second_Term = self.Co_Diff(lbdv).Ext_Der(lbdv)
             return Second_Term
 
-    # Returns Riemannian Inner Product of 1-Forms input, returns vector of scalar inner-products at each point
+    # Returns Riemannian Inner Product of 1-Forms input,
+    # returns vector of scalar inner-products at each point
     def Riemann_Inner_Prouct_One_Form(self, One_Form_2, lbdv):
 
         # if we have faulty input
@@ -2052,65 +2051,6 @@ class euc_k_form(object):
 
         else:
             Inner_Product_One_Form_Vals_pts = np.zeros((self.Q_value, 1))
-
-            """
-			# Hard to vectorize matrix solves
-			for quad_pt in range(self.Q_value):
-
-				# If Chart A:
-				if(lbdv.Chart_of_Quad_Pts[quad_pt] > 0):
-
-					alpha_1_sharp_X_A_pt = self.quad_pt_array[quad_pt, :].T
-					alpha_2_sharp_X_A_pt = One_Form_2.quad_pt_array[quad_pt, :].T
-
-					Flat_A_mat = self.Manifold.rho_A_Mats[:, :, quad_pt]
-
-					one_form_comps_A_pt = np.dot(Flat_A_mat, alpha_1_sharp_X_A_pt)
-
-					alpha_1_flat_theta_A_pt = one_form_comps_A_pt[0]
-					alpha_1_flat_phi_A_pt = one_form_comps_A_pt[1]
-
-					A_Mat_pt = self.Manifold.Change_Basis_Mat(quad_pt, lbdv, 'A')
-					alpha_2_sharp_A_pt = np.linalg.solve(A_Mat_pt, alpha_2_sharp_X_A_pt)
-
-					alpha_2_sharp_theta_A_pt = alpha_2_sharp_A_pt[0]
-					alpha_2_sharp_phi_A_pt = alpha_2_sharp_A_pt[1]
-
-					#I_A_mat_pt = self.Manifold.I_Mat_Quad_Pt(quad_pt, lbdv, 'A')
-
-					Inner_Product_A_pt = alpha_2_sharp_theta_A_pt*alpha_1_flat_theta_A_pt + alpha_2_sharp_phi_A_pt*alpha_1_flat_phi_A_pt
-
-					Inner_Product_One_Form_Vals_pts[quad_pt, 0] = Inner_Product_A_pt
-
-				# We fill in other pts with Chart B:
-				else:
-
-					quad_pt_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pt)
-
-					#same index because we more efficiently split the computation, to avoid overlap in calculation
-					alpha_1_sharp_X_B_pt = self.quad_pt_array[quad_pt, :].T
-					alpha_2_sharp_X_B_pt = One_Form_2.quad_pt_array[quad_pt, :].T
-
-					Flat_B_mat = self.Manifold.rho_B_Mats[:, :, quad_pt_rot]
-
-					one_form_comps_B_pt = np.dot(Flat_B_mat, alpha_1_sharp_X_B_pt)
-
-					alpha_1_flat_theta_B_pt = one_form_comps_B_pt[0]
-					alpha_1_flat_phi_B_pt = one_form_comps_B_pt[1]
-
-					B_Mat_pt = self.Manifold.Change_Basis_Mat(quad_pt_rot, lbdv, 'B')
-					alpha_2_sharp_B_pt = np.linalg.solve(B_Mat_pt, alpha_2_sharp_X_B_pt)
-
-					alpha_2_sharp_theta_B_pt = alpha_2_sharp_B_pt[0]
-					alpha_2_sharp_phi_B_pt = alpha_2_sharp_B_pt[1]
-
-					#I_B_mat_pt = self.Manifold.I_Mat_Quad_Pt(quad_pt_rot, lbdv, 'B')
-
-					Inner_Product_B_pt = alpha_2_sharp_theta_B_pt*alpha_1_flat_theta_B_pt + alpha_2_sharp_phi_B_pt*alpha_1_flat_phi_B_pt
-
-					Inner_Product_One_Form_Vals_pts[quad_pt, 0] = Inner_Product_B_pt
-			"""
-
             Inner_Product_One_Form_Vals_pts = (
                 np.dot(self.quad_pt_array, One_Form_2.quad_pt_array.T)
                 .diagonal()
@@ -2119,19 +2059,15 @@ class euc_k_form(object):
 
         return Inner_Product_One_Form_Vals_pts
 
-    # Returns Riemannian Inner Product of 2-Forms with ITSELF input, returns vector of scalar inner-products at each point
+    # Returns Riemannian Inner Product of 2-Forms with ITSELF input,
+    # returns vector of scalar inner-products at each point
     def Riemann_Self_Inner_Prouct_Two_Form(self, lbdv):
 
         # Corresponding quad pt in chart B (in Chart A Coors)
         quad_pts = range(self.Q_value)
         quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pts)
 
-        # inv metric factor, at each point, within Chart
-        # inv_met_fac_A_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'A'), 0)
-        # inv_met_fac_B_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(quad_pts, lbdv, 'B'), 0)
-
         # BJG: New Change:
-
         inv_met_fac_A_pts = np.where(
             lbdv.Chart_of_Quad_Pts > 0, 1.0 / self.Manifold.Metric_Factor_A_pts, 0
         )
@@ -2139,7 +2075,8 @@ class euc_k_form(object):
             lbdv.Chart_of_Quad_Pts > 0, 1.0 / self.Manifold.Metric_Factor_B_pts, 0
         )
 
-        # values at (theta_C, phi_C) = (theta_i, phi_i), given q_i, Difffernt points on manifold!
+        # values at (theta_C, phi_C) = (theta_i, phi_i),
+        # given q_i, Difffernt points on manifold!
         beta_dx_dy_A_pts, beta_dx_dz_A_pts, beta_dy_dz_A_pts = np.hsplit(
             self.quad_pt_array[quad_pts], 3
         )

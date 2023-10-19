@@ -26,13 +26,14 @@ def shtools_spherical_harmonics_expansion(
     expansion_type: str = "radial"
 ) -> Tuple[PointsData, np.ndarray]:
     """
-    Approximate surface by spherical harmonics with pyshtools implementation.
+    Approximate surface with pyshtools implementation.
 
     Parameters
     ----------
     points : PointsData
     max_degree : int, optional
-        Degree of spherical harmonics to fit to the data. The default is 5.
+        Degree of spherical harmonics to fit to the data.
+        The default is 5.
 
     Returns
     -------
@@ -255,7 +256,8 @@ def lebedev_quadrature(
 
     # Get {Z/Y/X} Coordinates at lebedev points, so we can
     # leverage our code more efficiently (and uniformly) on surface:
-    LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
+    LBDV_Fit = lebedev_info.lbdv_info(max_degree,
+                                      number_of_quadrature_points)
     lebedev_points = [
         euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
         for f in fit_functions
@@ -297,10 +299,12 @@ def create_manifold(
     Manny_Dict[
         "use_manifold_name"
     ] = False  # we are NOT using named shapes in these tests
-    Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict  # sph point cloud at lbdv
+    Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
 
     return mnfd.manifold(
-        Manny_Dict, manifold_type=manifold_type, raw_coordinates=points
+        Manny_Dict,
+        manifold_type=manifold_type,
+        raw_coordinates=points
     )
 
 

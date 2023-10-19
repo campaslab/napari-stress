@@ -104,18 +104,19 @@ def perform_lebedev_quadrature(
     viewer: napari.Viewer = None,
 ) -> LayerDataTuple:
     """
-    Perform lebedev quadrature and manifold creaiton on spherical-harmonics expansion.
+    Perform lebedev quadrature on spherical-harmonics expansion.
 
     Parameters
     ----------
     points : Points
     number_of_quadrature_points : int, optional
-        Number of quadrature points to represent the surface. The default is 500.
+        Number of quadrature points to represent the surface.
+        The default is 500.
     use_minimal_point_set : bool, optional
         Whether or not to use the minimally required number of quadrature
         points instead of the number given by `number_of_quadrature_points`.
         Depends on the chosen `max_degree` of the previous spherical harmonics
-        expansion.The default is False.
+        expansion. The default is False.
     viewer : napari.Viewer, optional
 
 

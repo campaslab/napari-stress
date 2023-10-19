@@ -3,9 +3,6 @@
 import numpy as np
 import math
 from scipy import *
-import mpmath
-import cmath
-from scipy.special import sph_harm
 
 #####  Size of Charts: #######
 Chart_Min_Polar = np.pi / 4  # Minimum Phi Val in Chart
@@ -68,6 +65,7 @@ def Bump_Fn(
 
 
 def eta_A(func, Theta, Phi):  # Cutoff fn for phi in [eta_Min_Polar, eta_Max_Polar]
+    # if Phi=< eta_Min_Polar - eta_Polar_Decay or Phi=> eta_Max_Polar + eta_Polar_Decay
     if eta_Min_Polar <= Phi and Phi <= eta_Max_Polar:
         return func(Theta, Phi)
 
@@ -78,7 +76,7 @@ def eta_A(func, Theta, Phi):  # Cutoff fn for phi in [eta_Min_Polar, eta_Max_Pol
         return Bump_Fn(Phi, 1, eta_Min_Polar, eta_Polar_Decay) * func(Theta, Phi)
         # Bump is SYMETRIC around start
     else:
-        return 0  # if Phi=< eta_Min_Polar - eta_Polar_Decay or Phi=> eta_Max_Polar + eta_Polar_Decay
+        return 0  
 
 
 def eta_A_const(
@@ -90,19 +88,17 @@ def eta_A_const(
     elif eta_Max_Polar < Phi and Phi < eta_Max_Polar + eta_Polar_Decay:
         return Bump_Fn(Phi, 1, eta_Max_Polar, eta_Polar_Decay) * const
 
+    # if Phi=< eta_Min_Polar - eta_Polar_Decay or Phi=> eta_Max_Polar + eta_Polar_Decay
     elif eta_Min_Polar - eta_Polar_Decay < Phi and Phi < eta_Min_Polar:
         return Bump_Fn(Phi, 1, eta_Min_Polar, eta_Polar_Decay) * const
         # Bump is SYMETRIC around start
     else:
-        return 0  # if Phi=< eta_Min_Polar - eta_Polar_Decay or Phi=> eta_Max_Polar + eta_Polar_Decay
+        return 0  
 
 
 def eta_B(
     func, Theta_Bar, Phi_Bar
 ):  # Cutoff fn for Phi_Bar in [eta_Min_Polar, eta_Max_Polar]
-
-    # A_Coors = Coor_B_To_A(Theta_Bar, Phi_Bar)
-    # print("Equiv to (Theta, Phi) = "+'('+str(A_Coors[0]/pi)+'pi, '+str(A_Coors[1]/pi)+'pi)')
 
     # func needs to be COUNTER rotated back to phi, theta, to be consistent
     def func_counter_rot(theta_bar, phi_bar):
@@ -114,7 +110,8 @@ def eta_B(
     return eta_A(func_counter_rot, Theta_Bar, Phi_Bar)
 
 
-# NOTE: (Theta, Phi) -> (Theta_Bar, Phi_Bar) by rotating the north pole (0,0) to the east pole (0,pi/2)
+# NOTE: (Theta, Phi) -> 
+# (Theta_Bar, Phi_Bar) by rotating the north pole (0,0) to the east pole (0,pi/2)
 def Coor_A_To_B(Theta, Phi):  # Converts from A to B
 
     X1 = np.cos(Theta) * np.sin(Phi)
@@ -124,8 +121,6 @@ def Coor_A_To_B(Theta, Phi):  # Converts from A to B
     # print("X1= "+str(X1))
     # print("Y1= "+str(Y1))
     # print("Z1= "+str(Z1))
-
-    XYZ1 = [X1, Y1, Z1]
 
     # How Coordinate Axes are rotated
     X_Rot = -Z1
@@ -137,7 +132,9 @@ def Coor_A_To_B(Theta, Phi):  # Converts from A to B
     # Theta_Bar = Bar_Coors[:, 0]
     # Phi_Bar = Bar_Coors[:, 1]
 
-    # XYZ2 = [cos(Phi_Bar) , sin(Theta_Bar)*sin(Phi_Bar), -1*cos(Theta_Bar)*sin(Phi_Bar)]
+    # XYZ2 = [cos(Phi_Bar) , 
+    # sin(Theta_Bar)*sin(Phi_Bar), 
+    # -1*cos(Theta_Bar)*sin(Phi_Bar)]
 
     # print("Orig Cart. = "+str(XYZ1))
     # print("New Cart. = "+str(XYZ2))
@@ -169,7 +166,9 @@ def Coor_B_To_A(Theta_Bar, Phi_Bar):  # Converts from B back to A
     # Theta = A_Coors[:, 0]
     # Phi = A_Coors[:, 1]
 
-    # XYZ1 = [cos(Phi_Bar) , sin(Theta_Bar)*sin(Phi_Bar), -1*cos(Theta_Bar)*sin(Phi_Bar)]
+    # XYZ1 = [cos(Phi_Bar) ,
+    # sin(Theta_Bar)*sin(Phi_Bar), 
+    # -1*cos(Theta_Bar)*sin(Phi_Bar)]
 
     return A_Coors
 
@@ -210,11 +209,15 @@ def Cart_To_Coor_B(x, y, z):
 
     theta_bar = np.arctan2(
         y, -1 * z
-    )  # Actually gives us unit circle angle for theta_bar < pi, theta_bar-2*pi for theta_bar > pi
+    )  
+    # Actually gives us unit circle angle for theta_bar < pi, 
+    # theta_bar-2*pi for theta_bar > pi
 
     theta_bar = np.where(
         theta_bar >= 0, theta_bar, theta_bar + 2 * np.pi
-    )  # return: theta_bar (where theta_bar >= 0), return: theta_bar + 2*pi (where theta_bar < 0)
+    )
+    # return: theta_bar (where theta_bar >= 0),
+    # return: theta_bar + 2*pi (where theta_bar < 0)
 
     phi_bar = np.arccos(np.divide(x, r))  # numpy version has range [0, pi]
 
