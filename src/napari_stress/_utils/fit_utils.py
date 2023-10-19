@@ -1,6 +1,5 @@
 import numpy as np
 import inspect
-from napari.types import PointsData
 
 from .._stress import lebedev_info_SPB as lebedev_info
 

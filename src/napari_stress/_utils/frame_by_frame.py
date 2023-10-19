@@ -128,8 +128,8 @@ class TimelapseConverter:
             "napari.types.ImageData": self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
             "napari.types.LabelsData": self._list_of_images_to_image,
-            LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
-            "napari.types.LayerDataTuple": self._list_of_layerdatatuple_to_layerdatatuple,
+            LayerDataTuple: self._list_of_ldtuple_to_layerdatatuple,
+            "napari.types.LayerDataTuple": self._list_of_ldtuple_to_layerdatatuple,
             List[
                 LayerDataTuple
             ]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
@@ -296,12 +296,12 @@ class TimelapseConverter:
         for idx, res_type in enumerate(layertypes):
             tuples_to_convert = data[:, idx]
             converted_tuples.append(
-                self._list_of_layerdatatuple_to_layerdatatuple(list(tuples_to_convert))
+                self._list_of_ldtuple_to_layerdatatuple(list(tuples_to_convert))
             )
 
         return converted_tuples
 
-    def _list_of_layerdatatuple_to_layerdatatuple(
+    def _list_of_ldtuple_to_layerdatatuple(
         self, tuple_data: list
     ) -> LayerDataTuple:
         """

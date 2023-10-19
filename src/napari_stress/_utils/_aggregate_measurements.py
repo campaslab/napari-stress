@@ -101,7 +101,8 @@ def compile_data_from_layers(
     return df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations
 
 
-def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
+def find_metadata_in_layers(layers: list, name: str
+                            ) -> "napari.layers.Layer":
     """
     Find the layer in the viewer that contains specific metadata or feature.
 
@@ -156,7 +157,6 @@ def aggregate_singular_values(
     from ..types import (
         _METADATAKEY_STRESS_TOTAL,
         _METADATAKEY_STRESS_TISSUE,
-        _METADATAKEY_STRESS_CELL,
         _METADATAKEY_AUTOCORR_TEMPORAL_TOTAL,
         _METADATAKEY_AUTOCORR_TEMPORAL_CELL,
         _METADATAKEY_AUTOCORR_TEMPORAL_TISSUE,
@@ -306,7 +306,7 @@ def aggregate_extrema_results(
 
     # Find layer with ALL PAIR EXTREMA data
     for layer in results_stress_analysis:
-        if not "metadata" in layer[1].keys():
+        if "metadata" not in layer[1].keys():
             continue
         if _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO in layer[1]["metadata"].keys():
             break
