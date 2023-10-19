@@ -38,7 +38,7 @@ def get_quadrature_points_from_sh_function(SPH_Func, lbdv, Chart):
 # Return list of quad vals at each quad pt within Chart (CHART A order)
 def Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
 
-    Extracted_dPhi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
+    # Extracted_dPhi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
     quad_pts = range(lbdv.lbdv_quad_pts)
 
@@ -63,7 +63,7 @@ def Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
 # Return list of quad vals at each quad pt within Chart (CHART A order)
 def Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
 
-    Extracted_dPhi_Phi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
+    # Extracted_dPhi_Phi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
     quad_pts = range(lbdv.lbdv_quad_pts)
 
@@ -341,7 +341,7 @@ def Gen_Curl_1(
 
     # inv metric factor, at each point, within Chart:
     q_val = lbdv.lbdv_quad_pts
-    quad_pts = range(q_val)
+    # quad_pts = range(q_val)
 
     inv_met_fac_A_pts = np.where(
         lbdv.Chart_of_Quad_Pts > 0, 1.0 / Manny.Metric_Factor_A_pts, 0
@@ -417,13 +417,13 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
     num_quad_pts = lbdv.lbdv_quad_pts
 
     # We need to rotate integrand into chart B
-    rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
+    # rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
 
     quad_pts = range(num_quad_pts)
     quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(
         quad_pts
     )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
-    rotated_vals_at_quad_pts = vals_at_quad_pts[quad_pts_rot]
+    # rotated_vals_at_quad_pts = vals_at_quad_pts[quad_pts_rot]
 
     # Combine_Chart_Quad_Vals(np.multiply(met_fac_over_sin_phi_pts_A, vals_at_quad_pts),
     # np.multiply(met_fac_over_sin_phi_pts_B, rotated_vals_at_quad_pts),
@@ -454,8 +454,8 @@ def Lp_Rel_Error_At_Quad_On_Manny(
     approx_f_vals, f_vals, lbdv, p, Manny
 ):  # Assumes f NOT 0
 
-    Lp_Err = 0  # ||self - f||_p
-    Lp_f = 0  # || f ||_p
+    # Lp_Err = 0  # ||self - f||_p
+    # Lp_f = 0  # || f ||_p
 
     pointwise_errs_to_the_p = abs((approx_f_vals - f_vals) ** p)
 

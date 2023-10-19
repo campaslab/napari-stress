@@ -121,7 +121,7 @@ def Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta, Phi):  # M_Coef < 0 Corresonds to Z^
     Der_Phi_Val = []
 
     # For Scalar Case, we use usual vectorization:
-    if isscalar(Theta):
+    if np.isscalar(Theta):
         # COPIED FROM SPH_DER_PHI_FN
         Der_Phi_Val = 0
 
