@@ -541,7 +541,9 @@ def test_curvature2(make_napari_viewer):
     results = measurements.average_mean_curvatures_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
+    assert results is not None
     results = measurements.average_mean_curvatures_on_manifold(results_layer)
+    assert results is not None
 
     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata

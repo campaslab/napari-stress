@@ -414,7 +414,7 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
     met_fac_over_sin_phi_pts_A = Manny.Metric_Factor_A_over_sin_phi_pts
     met_fac_over_sin_phi_pts_B = Manny.Metric_Factor_B_over_sin_phi_bar_pts
 
-    num_quad_pts = lbdv.lbdv_quad_pts
+    # num_quad_pts = lbdv.lbdv_quad_pts
 
     # We need to rotate integrand into chart B
     # rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
