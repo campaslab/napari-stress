@@ -144,7 +144,7 @@ def test_decorator_surfaces():
     points_3d = frame_by_frame(sample_points_from_surface)(surface_list[0])
 
     assert np.array_equal(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
-    assert np.array_equal(points_4d.shape, (4, 3030))
+    assert np.array_equal(points_4d.shape, (4, 1010 * n_frames))
 
 
 def test_decorator_images():
