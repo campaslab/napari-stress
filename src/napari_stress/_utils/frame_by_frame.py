@@ -301,9 +301,7 @@ class TimelapseConverter:
 
         return converted_tuples
 
-    def _list_of_ldtuple_to_layerdatatuple(
-        self, tuple_data: list
-    ) -> LayerDataTuple:
+    def _list_of_ldtuple_to_layerdatatuple(self, tuple_data: list) -> LayerDataTuple:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """

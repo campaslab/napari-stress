@@ -101,8 +101,7 @@ def compile_data_from_layers(
     return df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations
 
 
-def find_metadata_in_layers(layers: list, name: str
-                            ) -> "napari.layers.Layer":
+def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
     """
     Find the layer in the viewer that contains specific metadata or feature.
 
