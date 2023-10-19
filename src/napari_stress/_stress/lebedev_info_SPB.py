@@ -294,9 +294,9 @@ def Lbdv_Cart_To_Sph(
     Cart_Pts_Wts,
 ):  # takes matrix with rows [x,y,z,w] -> [theta, phi, w] (r=1)
 
-    num_lbdv_pts = shape(Cart_Pts_Wts)[0]
+    num_lbdv_pts = np.shape(Cart_Pts_Wts)[0]
 
-    Sph_Pts_Wts = zeros((num_lbdv_pts, 3))
+    Sph_Pts_Wts = np.zeros((num_lbdv_pts, 3))
 
     for pt in range(num_lbdv_pts):
 
@@ -321,8 +321,8 @@ def get_5810_quad_pts():
     euc_quad_pts = Lebedev(5810)
     sph_quad_pts = Lbdv_Cart_To_Sph(euc_quad_pts)
 
-    x_pts, y_pts, z_pts, w_pts = hsplit(euc_quad_pts, 4)
-    theta_pts, phi_pts, w_pts = hsplit(sph_quad_pts, 3)
+    x_pts, y_pts, z_pts, w_pts = np.hsplit(euc_quad_pts, 4)
+    theta_pts, phi_pts, w_pts = np.hsplit(sph_quad_pts, 3)
 
     return x_pts, y_pts, z_pts, theta_pts, phi_pts
 
@@ -354,11 +354,11 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
         #### To see if there are errors in assigning points ###############
         self.Lbdv_Cart_Pts_Quad = Lebedev(self.lbdv_quad_pts)
 
-        self.X, self.Y, self.Z, self.W = hsplit(self.Lbdv_Cart_Pts_Quad, 4)
+        self.X, self.Y, self.Z, self.W = np.hsplit(self.Lbdv_Cart_Pts_Quad, 4)
         ###################################################################
 
         self.Lbdv_Sph_Pts_Quad = Lbdv_Cart_To_Sph(self.Lbdv_Cart_Pts_Quad)
-        self.theta_pts, self.phi_pts, self.weight_pts = hsplit(
+        self.theta_pts, self.phi_pts, self.weight_pts = np.hsplit(
             self.Lbdv_Sph_Pts_Quad, 3
         )
 
@@ -403,11 +403,11 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             print("generating basis vals")
 
             # Store for W_pt*Y^m_n at each point, in same format as coef mat
-            self.SPH_Basis_Wt_At_Quad_Pts = zeros(
+            self.SPH_Basis_Wt_At_Quad_Pts = np.zeros(
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts)
             )  # includes weights
 
-            self.SPH_Basis_At_Quad_Pts = zeros(
+            self.SPH_Basis_At_Quad_Pts = np.zeros(
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts)
             )  # does NOT inculude weights
 
@@ -455,12 +455,12 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             print("generating dphi/ dphi_phi vals")
 
             # Create matrix to store Phi Der of all degrees used
-            self.SPH_Phi_Der_At_Quad_Pts = zeros(
+            self.SPH_Phi_Der_At_Quad_Pts = np.zeros(
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts)
             )
 
             # Create matrix to store 2nd Phi Der of all degrees used
-            self.SPH_Phi_Phi_Der_At_Quad_Pts = zeros(
+            self.SPH_Phi_Phi_Der_At_Quad_Pts = np.zeros(
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts)
             )
 
@@ -537,7 +537,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             print("done with dphi/ dphi_phi vals" + "\n")
 
             ###!!! PICLKLE RESULTS FOR FUTURE USE !!!###
-            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats = zeros(
+            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats = np.zeros(
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts, 4)
             )
 
@@ -581,7 +581,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
                 self.Rot_Lbdv_Quad_vals,
                 self.Inv_Rot_Lbdv_Quad_vals,
                 self.Chart_of_Quad_Pts,
-            ) = np.hsplit(Pickled_LBDV_Charts_Quad_Pts_Mats, 3)
+            ) = np.np.hsplit(Pickled_LBDV_Charts_Quad_Pts_Mats, 3)
 
         else:  # If not pickled, we generate and pickle these files:
 
@@ -591,14 +591,14 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
 
             print("generating lbdv rotation vals")
 
-            self.Rot_Lbdv_Quad_vals = zeros(
+            self.Rot_Lbdv_Quad_vals = np.zeros(
                 (self.lbdv_quad_pts, 1)
             )  # Stores equivlent Quad_pt in Chart B, for input Quad_Pt in Chart A
-            self.Inv_Rot_Lbdv_Quad_vals = zeros(
+            self.Inv_Rot_Lbdv_Quad_vals = np.zeros(
                 (self.lbdv_quad_pts, 1)
             )  # Stores equivlent Quad_pt in Chart A, for input Quad_Pt in Chart B
 
-            self.Chart_of_Quad_Pts = zeros(
+            self.Chart_of_Quad_Pts = np.zeros(
                 (self.lbdv_quad_pts, 1)
             )  # 1 if pt is in Chart A, -1 if not
 
@@ -619,9 +619,9 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
                 # If we are able to identify rotated quad pt in Chart B
                 rot_pt_found = False
 
-                x_pt = self.X[quad_pt]  # cos(theta_pt)*sin(phi_pt)
-                y_pt = self.Y[quad_pt]  # sin(theta_pt)*sin(phi_pt)
-                z_pt = self.Z[quad_pt]  # cos(phi_pt)
+                x_pt = self.X[quad_pt]  # np.cos(theta_pt)*sin(phi_pt)
+                y_pt = self.Y[quad_pt]  # np.sin(theta_pt)*sin(phi_pt)
+                z_pt = self.Z[quad_pt]  # np.cos(phi_pt)
 
                 # Find Rotated Quad Pt at same location:
                 for quad_pt_rot in range(self.lbdv_quad_pts):
@@ -629,21 +629,21 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
                     theta_bar_pt_rot = self.theta_pts[quad_pt_rot]
                     phi_bar_pt_rot = self.phi_pts[quad_pt_rot]
 
-                    x_pt_rot = cos(phi_bar_pt_rot)
-                    y_pt_rot = sin(theta_bar_pt_rot) * sin(phi_bar_pt_rot)
-                    z_pt_rot = -1 * cos(theta_bar_pt_rot) * sin(phi_bar_pt_rot)
+                    x_pt_rot = np.cos(phi_bar_pt_rot)
+                    y_pt_rot = np.sin(theta_bar_pt_rot) * np.sin(phi_bar_pt_rot)
+                    z_pt_rot = -1 * np.cos(theta_bar_pt_rot) * np.sin(phi_bar_pt_rot)
 
                     if abs(x_pt - x_pt_rot) < 1e-7:
                         if abs(y_pt - y_pt_rot) < 1e-7:
                             if abs(z_pt - z_pt_rot) < 1e-7:
-                                if rot_pt_found == False:
+                                if rot_pt_found is False:
 
                                     rot_pt_found = True
 
                                     self.Rot_Lbdv_Quad_vals[quad_pt] = quad_pt_rot
                                     self.Inv_Rot_Lbdv_Quad_vals[quad_pt_rot] = quad_pt
 
-                if rot_pt_found == False:
+                if rot_pt_found is False:
                     print("!!ROTATED QUAD PT NOT FOUND!!")
 
             print("done with lbdv rotation vals" + "\n")
