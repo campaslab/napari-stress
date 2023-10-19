@@ -15,7 +15,7 @@ from .charts_SPB import (eta_A,
 import pickle as pkl
 import os
 
-# Allows us to find appropriate quadrature:
+# Allows us to find appropriate quadrature:s
 quad_deg_lookUp = {
     6: 2,
     14: 3,
@@ -587,7 +587,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
                 self.Rot_Lbdv_Quad_vals,
                 self.Inv_Rot_Lbdv_Quad_vals,
                 self.Chart_of_Quad_Pts,
-            ) = np.np.hsplit(Pickled_LBDV_Charts_Quad_Pts_Mats, 3)
+            ) = np.hsplit(Pickled_LBDV_Charts_Quad_Pts_Mats, 3)
 
         else:  # If not pickled, we generate and pickle these files:
 
