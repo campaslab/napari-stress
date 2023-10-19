@@ -129,7 +129,6 @@ def create_all_stress_plots(
     import matplotlib as mpl
     from .._utils._aggregate_measurements import find_metadata_in_layers
     from .. import types
-    from .. import measurements
     from .._utils._aggregate_measurements import compile_data_from_layers
 
     # Compile data

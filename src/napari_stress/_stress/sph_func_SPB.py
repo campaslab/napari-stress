@@ -8,7 +8,9 @@ from scipy import *
 from scipy.special import sph_harm
 
 from .lebedev_info_SPB import *
-from .charts_SPB import *
+from .charts_SPB import (Chart_Min_Polar,
+                         Chart_Max_Polar,
+                         Coor_B_To_A)
 
 import pyshtools
 
@@ -458,7 +460,7 @@ class spherical_harmonics_function(
     def Eval_SPH_Der_Phi_Coef(self, Quad_Pt, lbdv):
 
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
             return sum(
                 np.multiply(self.sph_coef, lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt))
             )
@@ -466,7 +468,7 @@ class spherical_harmonics_function(
         # For multiple quad pts, we use einstein sumation to
         # output vector of solutions at each point:
         else:
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k",
                 self.sph_coef,
                 lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt),
@@ -477,7 +479,7 @@ class spherical_harmonics_function(
     def Eval_SPH_Der_Phi_Phi_Coef(self, Quad_Pt, lbdv):
 
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
             return sum(
                 np.multiply(
                     self.sph_coef, lbdv.Eval_SPH_Der_Phi_Phi_At_Quad_Pt_Mat(Quad_Pt)
@@ -487,7 +489,7 @@ class spherical_harmonics_function(
         # For multiple quad pts, we use einstein sumation to
         # output vector of solutions at each point:
         else:
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k",
                 self.sph_coef,
                 lbdv.Eval_SPH_Der_Phi_Phi_At_Quad_Pt_Mat(Quad_Pt),
@@ -497,7 +499,7 @@ class spherical_harmonics_function(
     def Eval_SPH_Coef_Mat(self, Quad_Pt, lbdv):
 
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
 
             return sum(np.multiply(self.sph_coef,
                                    lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt)))
@@ -506,14 +508,14 @@ class spherical_harmonics_function(
         # output vector of solutions at each point:
         else:
 
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k", self.sph_coef, lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt)
             ).reshape((len(Quad_Pt), 1))
 
     # Use the fact that Theta Der Formula is EXACT for our basis
     def Quick_Theta_Der(self):
 
-        Der_Coef = np.zeros(shape(self.sph_coef))
+        Der_Coef = np.zeros(np.shape(self.sph_coef))
 
         for n_coef in range(self.sph_deg + 1):
             for m_coef in range(1, n_coef + 1):  # Theta Der of Y^0_n = 0
@@ -644,7 +646,7 @@ class spherical_harmonics_function(
         Vec1 = self.sph_coef.flatten()
         Vec2 = Other_SPH.sph_coef.flatten()
 
-        I_Vec = eye((self.sph_deg + 1) ** 2)
+        I_Vec = np.eye((self.sph_deg + 1) ** 2)
 
         return (
             sum(np.multiply(abs(Vec1), abs(Vec2))) / 2
@@ -653,7 +655,7 @@ class spherical_harmonics_function(
         )
 
     def L2_Norm_SPH(self):
-        return sqrt(self.Inner_Product_SPH(self))
+        return np.sqrt(self.Inner_Product_SPH(self))
 
     def Lp_Rel_Error_in_Chart(self, f, lbdv, p):  # Assumes f NOT 0
 
