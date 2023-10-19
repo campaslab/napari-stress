@@ -7,7 +7,7 @@ import numpy as np
 # for picking manny inv mats
 # import cPickle as pkl # BJG: py2pt7 version
 import pickle as pkl
-import os, sys
+import os
 
 from . import sph_func_SPB as sph_f
 
@@ -302,7 +302,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         return 1.0 + r_0 * np.sin(7 * phi) * np.cos(theta)
 
     elif Manny_Name == "Quint_Spikes":
-        c_shape = 0.5  # distortion magnitude
+        # c_shape = 0.5  # distortion magnitude
         k_shape = 10.0  # inv. length-scale of distortion decay
         tol_shape = 1.0e-3
 

@@ -46,7 +46,6 @@
        1975, pp. 44-51.
 """
 
-from math import *
 import numpy as np
 
 
@@ -4829,7 +4828,7 @@ def Lebedev(n):
     try:
         lebPoints_cart_w = LebFunc[n]()
         return np.array(lebPoints_cart_w)
-    except:
+    except Exception:
         raise "No grid available for %d" % n
     return None
 

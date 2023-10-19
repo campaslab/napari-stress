@@ -1,13 +1,11 @@
 # From https://github.com/campaslab/STRESS
 #! This class Generates All of the quadrature information that sph_func, k_form use
 
-from numpy import *
 import numpy as np
-from scipy import *
 import mpmath
 from scipy.special import sph_harm
 
-from .lebedev_write_SPB import *  # lists all Lebdv quadratures
+from .lebedev_write_SPB import Lebedev  # lists all Lebdv quadratures
 from .charts_SPB import (eta_A,
                          Cart_To_Coor_A,
                          Domain)

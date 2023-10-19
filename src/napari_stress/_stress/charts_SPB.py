@@ -1,7 +1,6 @@
 # From https://github.com/campaslab/STRESS
 import numpy as np
 import math
-from scipy import *
 
 #####  Size of Charts: #######
 Chart_Min_Polar = np.pi / 4  # Minimum Phi Val in Chart

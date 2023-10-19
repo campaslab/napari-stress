@@ -420,10 +420,10 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
     # rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
 
     quad_pts = range(num_quad_pts)
-    quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(
-        quad_pts
-    )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
-    # rotated_vals_at_quad_pts = vals_at_quad_pts[quad_pts_rot]
+    # quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(
+    #     quad_pts
+    # )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
+    # # rotated_vals_at_quad_pts = vals_at_quad_pts[quad_pts_rot]
 
     # Combine_Chart_Quad_Vals(np.multiply(met_fac_over_sin_phi_pts_A, vals_at_quad_pts),
     # np.multiply(met_fac_over_sin_phi_pts_B, rotated_vals_at_quad_pts),

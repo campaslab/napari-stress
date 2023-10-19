@@ -2,12 +2,11 @@
 #! We use spherical_harmonics_function to encapsulate data
 # from SPH Basis of functions, regardless of chart
 
-from numpy import *
 import numpy as np
-from scipy import *
 from scipy.special import sph_harm
 
-from .lebedev_info_SPB import *
+from .lebedev_info_SPB import (Der_Phi_Basis_Fn,
+                               Der_Phi_Phi_Basis_Fn
 from .charts_SPB import (Chart_Min_Polar,
                          Chart_Max_Polar,
                          Coor_B_To_A)

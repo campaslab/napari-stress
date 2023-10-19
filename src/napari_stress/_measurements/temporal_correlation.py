@@ -97,7 +97,8 @@ def spatio_temporal_autocorrelation(
 
 def haversine_distances(degree_lebedev: int, n_lebedev_points: int):
     """
-    Calculate geodesic (Great Circle) distance matrix on unit sphere, from haversine formula.
+    Calculate geodesic (Great Circle) distance matrix on unit sphere,
+    from haversine formula.
 
     See Also
     --------
