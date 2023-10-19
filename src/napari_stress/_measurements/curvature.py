@@ -30,7 +30,8 @@ from typing import Tuple
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 @frame_by_frame
 def curvature_on_ellipsoid(
-    ellipsoid: "napari.types.VectorsData", sample_points: "napari.types.PointsData"
+    ellipsoid: "napari.types.VectorsData",
+    sample_points: "napari.types.PointsData"
 ) -> "napari.types.LayerDataTuple":
     """
     Calculate curvature at sample points on the surface of an ellipse.
@@ -84,7 +85,8 @@ def curvature_on_ellipsoid(
     )
     H_ellps_pts = (num_H_ellps / den_H_ellps).squeeze()
 
-    # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
+    # calculate averaged curvatures H_0: 1st method of H0 computation,
+    # for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
     H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(ellipsoid)

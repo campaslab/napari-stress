@@ -419,7 +419,7 @@ def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
     # We need to rotate integrand into chart B
     # rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
 
-    quad_pts = range(num_quad_pts)
+    # quad_pts = range(num_quad_pts)
     # quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(
     #     quad_pts
     # )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
@@ -1074,7 +1074,8 @@ class euc_k_form(object):
             quad_pts = range(self.Q_value)
             quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pts)
 
-            # values at (theta_C, phi_C) = (theta_i, phi_i), given q_i, Difffernt points on manifold!
+            # values at (theta_C, phi_C) = (theta_i, phi_i),
+            # given q_i, Difffernt points on manifold!
             f_A_pts = self.quad_pt_array[quad_pts]
             f_B_pts = self.quad_pt_array[quad_pts_inv_rot]
 

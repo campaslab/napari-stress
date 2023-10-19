@@ -360,7 +360,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
-    from napari_stress import get_droplet_point_cloud_4d, measurements
+    from napari_stress import get_droplet_point_cloud_4d
     import napari_stress
     import os
 

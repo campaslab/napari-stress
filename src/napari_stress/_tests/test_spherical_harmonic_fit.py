@@ -36,6 +36,7 @@ def test_frontend_spherical_harmonics(make_napari_viewer):
     lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)
     results_layer = viewer.layers[-1]
     assert "manifold" in lebedev_points[1]["metadata"]
+    assert "spherical_harmonics_coefficients" in results_layer.metadata
 
 
 def test_front_spherical_harmonics_4d(make_napari_viewer):

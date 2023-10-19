@@ -78,6 +78,7 @@ def test_decorator_points_layerdatatuple():
         [list_of_ldtuples[0]], layertype=PointsData
     )
 
+    assert np.array_equal(ldtuple_3d[0], list_of_ldtuples[0][0])
     assert "data1" in ldtuple_4d[1]["metadata"].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
