@@ -145,7 +145,10 @@ def Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta, Phi):  # M_Coef < 0 Corresonds to Z^
                 Der_Phi_Val += (
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
-                        ((np.e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi))
+                        (
+                            (np.e ** (-1j * Theta))
+                            * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        )
                     ).imag
                 )
 
@@ -160,7 +163,10 @@ def Der_Phi_Basis_Fn(M_Coef, N_Coef, Theta, Phi):  # M_Coef < 0 Corresonds to Z^
                 Der_Phi_Val += (
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
-                        ((np.e ** (-1j * Theta)) * sph_harm(m_sph + 1, N_Coef, Theta, Phi))
+                        (
+                            (np.e ** (-1j * Theta))
+                            * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        )
                     ).real
                 )
 
@@ -347,7 +353,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             os.makedirs(PICKLE_DIR)
 
         ### GENERATE 5810 Quadrature ONCE #######
-        # print("generating quad pts") 
+        # print("generating quad pts")
         # # BJG: only notify if NEW mats are needed (time-consuming)
         self.lbdv_quad_pts = Num_Quad_Pts  # Needs to be appropriate number up to 5810
 
@@ -362,7 +368,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             self.Lbdv_Sph_Pts_Quad, 3
         )
 
-        # print("quad pts done") 
+        # print("quad pts done")
         # # BJG: only notify if NEW mats are needed (time-consuming)
         #########################################
 
@@ -375,7 +381,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             LBDV_Basis_at_Quad_Pts_Mats_filepath
         ):  # If already pickled, we load it, and split it into the needed arrays:
 
-            # print("\n"+"Loading Pickled LBDV data Mats"+"\n") 
+            # print("\n"+"Loading Pickled LBDV data Mats"+"\n")
             # # BJG: only notify if NEW mats are needed (time-consuming)
 
             Pickled_LBDV_Basis_at_Quad_Pts_Mats = []
@@ -568,7 +574,7 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
             LBDV_Chart_of_Quad_Pts_Mats_filepath
         ):  # If already pickled, we load it, and split it into the needed arrays:
 
-            # print("\n"+"Loading Pickled LBDV Chart Mats"+"\n") 
+            # print("\n"+"Loading Pickled LBDV Chart Mats"+"\n")
             # # BJG: only notify if NEW mats are needed (time-consuming)
 
             Pickled_LBDV_Charts_Quad_Pts_Mats = []
