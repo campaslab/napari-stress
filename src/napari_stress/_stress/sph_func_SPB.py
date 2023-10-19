@@ -8,9 +8,7 @@ from scipy import *
 from scipy.special import sph_harm
 
 from .lebedev_info_SPB import *
-from .charts_SPB import (Chart_Min_Polar,
-                         Chart_Max_Polar,
-                         Coor_B_To_A)
+from .charts_SPB import Chart_Min_Polar, Chart_Max_Polar, Coor_B_To_A
 
 import pyshtools
 
