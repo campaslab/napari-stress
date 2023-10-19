@@ -101,7 +101,7 @@ def Combine_Manny_Gauss_Curvatures(Manny, lbdv, verbose=False):
 
     K_cominbed_A_pts = Combine_Chart_Quad_Vals(Manny.K_A_pts, Manny.K_B_pts, lbdv)
 
-    if verbose == True:
+    if verbose is True:
         print(
             "test of int on manny of K (in euc_kf) = "
             + str(
@@ -273,7 +273,7 @@ def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
     dx_dz_comp = []
     dx_dy_comp = []
 
-    if np.isscalar(quad_pt) == True:
+    if np.isscalar(quad_pt) is True:
 
         theta_pt = np.asscalar(theta_pt)
         phi_pt = np.asscalar(phi_pt)
@@ -1500,7 +1500,7 @@ class euc_k_form(object):
             )
             if (
                 norm_err_Vec_X_A > 1.0e-3 or norm_err_Vec_X_A > 1.0e-3
-            ) and debug_mode == True:
+            ) and debug_mode is True:
                 print(
                     "norm_err_Vec_X_A test failed, norm_err_Vec_X_A = "
                     + str(norm_err_Vec_X_A)
@@ -1560,7 +1560,7 @@ class euc_k_form(object):
             )
             if (
                 norm_err_Vec_Y_A > 1.0e-3 or norm_err_Vec_Y_A > 1.0e-3
-            ) and debug_mode == True:
+            ) and debug_mode is True:
                 print(
                     "norm_err_Vec_Y_A test failed, norm_err_Vec_Y_A = "
                     + str(norm_err_Vec_Y_A)
@@ -1612,7 +1612,7 @@ class euc_k_form(object):
             )
             if (
                 norm_err_Vec_Z_A > 1.0e-3 or norm_err_Vec_Z_A > 1.0e-3
-            ) and debug_mode == True:
+            ) and debug_mode is True:
                 print(
                     "norm_err_Vec_Z_A test failed, norm_err_Vec_Z_A = "
                     + str(norm_err_Vec_Z_A)
@@ -1721,7 +1721,7 @@ class euc_k_form(object):
                     Id_test = np.dot(A_inv_from_G_pt, A_Mat_pt)
                     if (
                         np.linalg.norm(Id_test - np.eye(3), 2) > 1.0e-8
-                        and debug_mode == True
+                        and debug_mode is True
                     ):
                         print(
                             "A_inv test failed at pt: "
@@ -1791,7 +1791,7 @@ class euc_k_form(object):
                     Id_test_B = np.dot(B_inv_from_G_pt, B_Mat_pt)
                     if (
                         np.linalg.norm(Id_test_B - np.eye(3), 2) > 1.0e-8
-                        and debug_mode == True
+                        and debug_mode is True
                     ):
                         print("B_inv test failed at pt: " + str(quad_pt))
                         All_B_inv_successful = False
@@ -1883,7 +1883,7 @@ class euc_k_form(object):
             Debug_Dict["div_V_A_pts"] = div_V_A_pts
             Debug_Dict["div_V_B_pts"] = div_V_B_pts
 
-            if debug_mode == True:
+            if debug_mode is True:
                 print("\n" + "All_A_inv_successful = " + str(All_A_inv_successful))
                 print("All_B_inv_successful = " + str(All_B_inv_successful) + "\n")
                 return Debug_Dict
