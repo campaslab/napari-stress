@@ -327,10 +327,10 @@ def Gen_Curl_1(
     dTheta_phi_C_B_SPH_Fn = phi_C_B_SPH_Fn.Quick_Theta_Der()
 
     # project this azmuthal derivative into local chart ('A' because we dont rotate)
-    dTheta_phi_C_A_quad_pt_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+    dTheta_phi_C_A_quad_pt_vals = get_quadrature_points_from_sh_function(
         dTheta_phi_C_A_SPH_Fn, lbdv, "A"
     )
-    dTheta_phi_C_B_quad_pt_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+    dTheta_phi_C_B_quad_pt_vals = get_quadrature_points_from_sh_function(
         dTheta_phi_C_B_SPH_Fn, lbdv, "A"
     )
 
@@ -826,24 +826,24 @@ class euc_k_form(object):
             # print("d_1: finished projections")
 
             # Quad Vals of theta derivatives functions for alpha_sharp_X comps:
-            alpha_sharp_x_A_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_x_A_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_x_SPH_A_dtheta, lbdv, "A"
             )
-            alpha_sharp_x_B_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_x_B_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_x_SPH_B_dtheta, lbdv, "B"
             )
 
-            alpha_sharp_y_A_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_y_A_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_y_SPH_A_dtheta, lbdv, "A"
             )
-            alpha_sharp_y_B_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_y_B_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_y_SPH_B_dtheta, lbdv, "B"
             )
 
-            alpha_sharp_z_A_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_z_A_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_z_SPH_A_dtheta, lbdv, "A"
             )
-            alpha_sharp_z_B_dtheta_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            alpha_sharp_z_B_dtheta_vals = get_quadrature_points_from_sh_function(
                 alpha_sharp_z_SPH_B_dtheta, lbdv, "B"
             )
 
@@ -1485,7 +1485,7 @@ class euc_k_form(object):
             )
 
             Vec_X_SPH_Fn_dTheta_A = Vec_X_SPH_Fn_A.Quick_Theta_Der()
-            Vec_X_A_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_X_A_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_X_SPH_Fn_dTheta_A, lbdv, "A"
             )
             Vec_X_A_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1496,10 +1496,10 @@ class euc_k_form(object):
             quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(
                 range(self.Manifold.num_quad_pts)
             )
-            Vec_X_SPH_Fn_A_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_X_SPH_Fn_A_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_X_SPH_Fn_A, lbdv, "A"
             )
-            Vec_X_SPH_Fn_B_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_X_SPH_Fn_B_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_X_SPH_Fn_B, lbdv, "A"
             )
             norm_err_Vec_X_A = sph_f.Lp_Rel_Error_At_Quad(
@@ -1524,7 +1524,7 @@ class euc_k_form(object):
                 )
 
             Vec_X_SPH_Fn_dTheta_B = Vec_X_SPH_Fn_B.Quick_Theta_Der()
-            Vec_X_B_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_X_B_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_X_SPH_Fn_dTheta_B, lbdv, "A"
             )
             Vec_X_B_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1537,7 +1537,7 @@ class euc_k_form(object):
             )
 
             Vec_Y_SPH_Fn_dTheta_A = Vec_Y_SPH_Fn_A.Quick_Theta_Der()
-            Vec_Y_A_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Y_A_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_Y_SPH_Fn_dTheta_A, lbdv, "A"
             )
             Vec_Y_A_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1545,7 +1545,7 @@ class euc_k_form(object):
             )
 
             Vec_Y_SPH_Fn_dTheta_B = Vec_Y_SPH_Fn_B.Quick_Theta_Der()
-            Vec_Y_B_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Y_B_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_Y_SPH_Fn_dTheta_B, lbdv, "A"
             )
             Vec_Y_B_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1556,10 +1556,10 @@ class euc_k_form(object):
             quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(
                 range(self.Manifold.num_quad_pts)
             )
-            Vec_Y_SPH_Fn_A_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Y_SPH_Fn_A_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_Y_SPH_Fn_A, lbdv, "A"
             )
-            Vec_Y_SPH_Fn_B_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Y_SPH_Fn_B_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_Y_SPH_Fn_B, lbdv, "A"
             )
             norm_err_Vec_Y_A = sph_f.Lp_Rel_Error_At_Quad(
@@ -1589,7 +1589,7 @@ class euc_k_form(object):
             )
 
             Vec_Z_SPH_Fn_dTheta_A = Vec_Z_SPH_Fn_A.Quick_Theta_Der()
-            Vec_Z_A_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Z_A_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_Z_SPH_Fn_dTheta_A, lbdv, "A"
             )
             Vec_Z_A_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1597,7 +1597,7 @@ class euc_k_form(object):
             )
 
             Vec_Z_SPH_Fn_dTheta_B = Vec_Z_SPH_Fn_B.Quick_Theta_Der()
-            Vec_Z_B_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Z_B_dTheta_quad_vals = get_quadrature_points_from_sh_function(
                 Vec_Z_SPH_Fn_dTheta_B, lbdv, "A"
             )
             Vec_Z_B_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1608,10 +1608,10 @@ class euc_k_form(object):
             quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(
                 range(self.Manifold.num_quad_pts)
             )
-            Vec_Z_SPH_Fn_A_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Z_SPH_Fn_A_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_Z_SPH_Fn_A, lbdv, "A"
             )
-            Vec_Z_SPH_Fn_B_quad_pts_from_SPH = Extract_Quad_Pt_Vals_From_SPH_Fn(
+            Vec_Z_SPH_Fn_B_quad_pts_from_SPH = get_quadrature_points_from_sh_function(
                 Vec_Z_SPH_Fn_B, lbdv, "A"
             )
             norm_err_Vec_Z_A = sph_f.Lp_Rel_Error_At_Quad(
@@ -1922,7 +1922,7 @@ class euc_k_form(object):
         Y_mn_SPH_Fn_dTheta_A = Y_mn_SPH_Fn_A.Quick_Theta_Der()
         Y_mn_SPH_Fn_dTheta_Theta_A = Y_mn_SPH_Fn_A.Quick_Theta_Der().Quick_Theta_Der()
 
-        Y_mn_A_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+        Y_mn_A_dTheta_quad_vals = get_quadrature_points_from_sh_function(
             Y_mn_SPH_Fn_dTheta_A, lbdv, "A"
         )
         Y_mn_A_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1931,7 +1931,7 @@ class euc_k_form(object):
         Y_mn_A_dTheta_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
             Y_mn_SPH_Fn_dTheta_A, lbdv, "A"
         )
-        Y_mn_A_dTheta_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+        Y_mn_A_dTheta_dTheta_quad_vals = get_quadrature_points_from_sh_function(
             Y_mn_SPH_Fn_dTheta_Theta_A, lbdv, "A"
         )
         Y_mn_A_dPhi_dPhi_quad_vals = Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1941,7 +1941,7 @@ class euc_k_form(object):
         Y_mn_SPH_Fn_dTheta_B = Y_mn_SPH_Fn_B.Quick_Theta_Der()
         Y_mn_SPH_Fn_dTheta_Theta_B = Y_mn_SPH_Fn_B.Quick_Theta_Der().Quick_Theta_Der()
 
-        Y_mn_B_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+        Y_mn_B_dTheta_quad_vals = get_quadrature_points_from_sh_function(
             Y_mn_SPH_Fn_dTheta_B, lbdv, "A"
         )
         Y_mn_B_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
@@ -1950,7 +1950,7 @@ class euc_k_form(object):
         Y_mn_B_dTheta_dPhi_quad_vals = Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(
             Y_mn_SPH_Fn_dTheta_B, lbdv, "A"
         )
-        Y_mn_B_dTheta_dTheta_quad_vals = Extract_Quad_Pt_Vals_From_SPH_Fn(
+        Y_mn_B_dTheta_dTheta_quad_vals = get_quadrature_points_from_sh_function(
             Y_mn_SPH_Fn_dTheta_Theta_B, lbdv, "A"
         )
         Y_mn_B_dPhi_dPhi_quad_vals = Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(
