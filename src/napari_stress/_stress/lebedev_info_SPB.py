@@ -8,7 +8,9 @@ import mpmath
 from scipy.special import sph_harm
 
 from .lebedev_write_SPB import *  # lists all Lebdv quadratures
-from .charts_SPB import *  # For Lebedev Point Conversion
+from .charts_SPB import (eta_A,
+                         Cart_To_Coor_A,
+                         Domain)
 
 # for pickling:
 # import cPickle as pkl # BJG: py2pt7 version

@@ -1,5 +1,4 @@
 # From https://github.com/campaslab/STRESS
-# from numpy  import *
 import numpy as np
 import math
 from scipy import *
