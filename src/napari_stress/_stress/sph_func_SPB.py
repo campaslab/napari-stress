@@ -153,7 +153,7 @@ def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
                 I_mn += func_quad_vals[quad_pt] * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(
                     m, n, quad_pt
                 )
-                # Above fn sums basis vals for proj, times func, 
+                # Above fn sums basis vals for proj, times func,
                 # times weight at each quad pt
 
             Proj_mn = I_mn / Mass_Mat_Exact(m, n)
@@ -167,7 +167,7 @@ def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
     return spherical_harmonics_function(Proj_Coef, Proj_Deg)
 
 
-# TAKES VALS AT QUAD PTS, to Approximate 
+# TAKES VALS AT QUAD PTS, to Approximate
 # func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
 def Faster_Double_Proj_Product(func1_quad_vals, func2_quad_vals, Proj_Deg, lbdv):
 
@@ -462,7 +462,9 @@ class spherical_harmonics_function(
         # For Scalar Case, we use usual vectorization:
         if np.isscalar(Quad_Pt):
             return sum(
-                np.multiply(self.sph_coef, lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt))
+                np.multiply(
+                    self.sph_coef, lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt)
+                )
             )
 
         # For multiple quad pts, we use einstein sumation to
@@ -501,8 +503,9 @@ class spherical_harmonics_function(
         # For Scalar Case, we use usual vectorization:
         if np.isscalar(Quad_Pt):
 
-            return sum(np.multiply(self.sph_coef,
-                                   lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt)))
+            return sum(
+                np.multiply(self.sph_coef, lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt))
+            )
 
         # For multiple quad pts, we use einstein sumation to
         # output vector of solutions at each point:
@@ -628,7 +631,7 @@ class spherical_harmonics_function(
                         * self.Eval_SPH_Coef_Mat(quad_pt, lbdv)
                         * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(m, n, quad_pt)
                     )
-                    # Above fn sums basis vals for proj, times func*Coef_Mat, 
+                    # Above fn sums basis vals for proj, times func*Coef_Mat,
                     # times weight at each quad pt
 
                 Proj_Product_mn = I_mn / Mass_Mat_Exact(m, n)
@@ -650,8 +653,12 @@ class spherical_harmonics_function(
 
         return (
             sum(np.multiply(abs(Vec1), abs(Vec2))) / 2
-            + sum(np.multiply(np.multiply(abs(Vec1), I_Vec),
-                              np.multiply(abs(Vec2), I_Vec))) / 2
+            + sum(
+                np.multiply(
+                    np.multiply(abs(Vec1), I_Vec), np.multiply(abs(Vec2), I_Vec)
+                )
+            )
+            / 2
         )
 
     def L2_Norm_SPH(self):
