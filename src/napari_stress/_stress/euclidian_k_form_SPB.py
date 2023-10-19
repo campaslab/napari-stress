@@ -3,11 +3,6 @@
 
 import numpy as np
 from . import sph_func_SPB as sph_f
-from .manifold_SPB import (
-    Polar_Two_Form_to_Euc_dx_dy,
-    Polar_Two_Form_to_Euc_dx_dz,
-    Polar_Two_Form_to_Euc_dy_dz,
-)
 
 
 # Create Array of zeros to store vals at quad pts
@@ -230,40 +225,40 @@ def Sharp(dtheta_A_vals, dphi_A_vals, dtheta_B_vals, dphi_B_vals, p_deg, lbdv, M
     return euc_k_form(1, lbdv.lbdv_quad_pts, p_deg, Manny, Sharped_Quad_Vals)
 
 
-# Converts 2-forms from Polar to Euclidean at a Quad Pt
-def Two_Form_Conv_to_Euc_pt(quad_pt, lbdv, Chart, Manny):
+# # Converts 2-forms from Polar to Euclidean at a Quad Pt
+# def Two_Form_Conv_to_Euc_pt(quad_pt, lbdv, Chart, Manny):
 
-    # BJG: NEED TO CHANGE TO TO SPB FRAME:
-    """
-    x_pt, y_pt, z_pt = Manny.Cart_Coor(quad_pt, lbdv, Chart)
-    r_sq_pt = Manny.R_Sq_Val(quad_pt, Chart)
+#     # BJG: NEED TO CHANGE TO TO SPB FRAME:
+#     """
+#     x_pt, y_pt, z_pt = Manny.Cart_Coor(quad_pt, lbdv, Chart)
+#     r_sq_pt = Manny.R_Sq_Val(quad_pt, Chart)
 
-    if(Chart == 'A'):
+#     if(Chart == 'A'):
 
-            denom_A = (r_pt**2)*np.sqrt(x_pt**2 + y_pt**2)
+#             denom_A = (r_pt**2)*np.sqrt(x_pt**2 + y_pt**2)
 
-            dx_dy_comp = -z_pt/denom_A
-            dx_dz_comp = y_pt/denom_A
-            dy_dz_comp = -x_pt/denom_A
+#             dx_dy_comp = -z_pt/denom_A
+#             dx_dz_comp = y_pt/denom_A
+#             dy_dz_comp = -x_pt/denom_A
 
-            return dx_dy_comp, dx_dz_comp, dy_dz_comp
+#             return dx_dy_comp, dx_dz_comp, dy_dz_comp
 
-    if(Chart == 'B'):
+#     if(Chart == 'B'):
 
-            denom_B = (r_pt**2)*np.sqrt(y_pt**2 + z_pt**2)
+#             denom_B = (r_pt**2)*np.sqrt(y_pt**2 + z_pt**2)
 
-            dx_dy_comp = -z_pt/denom_B
-            dx_dz_comp = y_pt/denom_B
-            dy_dz_comp = -x_pt/denom_B
+#             dx_dy_comp = -z_pt/denom_B
+#             dx_dz_comp = y_pt/denom_B
+#             dy_dz_comp = -x_pt/denom_B
 
-            return dx_dy_comp, dx_dz_comp, dy_dz_comp
-    """
+#             return dx_dy_comp, dx_dz_comp, dy_dz_comp
+#     """
 
-    dx_dy_comp = Polar_Two_Form_to_Euc_dx_dy(quad_pt, Chart)
-    dx_dz_comp = Polar_Two_Form_to_Euc_dx_dz(quad_pt, Chart)
-    dy_dz_comp = Polar_Two_Form_to_Euc_dy_dz(quad_pt, Chart)
+#     dx_dy_comp = Polar_Two_Form_to_Euc_dx_dy(quad_pt, Chart)
+#     dx_dz_comp = Polar_Two_Form_to_Euc_dx_dz(quad_pt, Chart)
+#     dy_dz_comp = Polar_Two_Form_to_Euc_dy_dz(quad_pt, Chart)
 
-    return dx_dy_comp, dx_dz_comp, dy_dz_comp
+#     return dx_dy_comp, dx_dz_comp, dy_dz_comp
 
 
 # Converts 2-forms from Euclidean to Polar at a Quad Pt
@@ -2022,7 +2017,7 @@ class euc_k_form(object):
 
             if self.k_value == 1:
                 Second_Term = self.Co_Diff(lbdv).Ext_Der(lbdv)  # zero for K==0
-                return linear_comb(First_Term, Second_Term, 1, 1)
+                return self.linear_comb(First_Term, Second_Term, 1, 1)
 
         if self.k_value == 2:
             Second_Term = self.Co_Diff(lbdv).Ext_Der(lbdv)
