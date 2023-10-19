@@ -610,7 +610,7 @@ class spherical_harmonics_function(
         return spherical_harmonics_function(Proj_Product_Coef, Proj_Deg)
 
     # Approximate Coef_Mat2(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
-    def Fast_Proj_Product_SPH(self, spherical_harmonics_function2, Proj_Deg, lbdv):
+    def Fast_Proj_Product_SPH(self, SPH_Func2, Proj_Deg, lbdv):
 
         Proj_Product_Coef = np.zeros(
             [Proj_Deg + 1, Proj_Deg + 1]
