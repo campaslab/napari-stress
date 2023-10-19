@@ -54,4 +54,4 @@ def test_ellipsoid_points():
     )
     vectors_4d = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud_4d)
 
-    assert np.array_equal(vectors_4d[0].shape, (6, 2, 3))
+    assert np.array_equal(vectors_4d.shape, (6, 2, 4))
