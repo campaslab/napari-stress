@@ -649,17 +649,15 @@ def Max_Decimal_R0_Array(R0_Values_Array):
 ########################################################################################
 
 
-class manifold(
-    object
-):  
+class manifold(object):
     # This now represents geo of S^2,
     # will later be adapted to other manifolds with same topology
 
     """
     Use Manifold name to automatically load/pickle manny inv mats:
-    Format: Maniold_Official_Name = 
+    Format: Maniold_Official_Name =
     Man_Shape_Name+"R_0_"+R_0_str+"_Pdeg_"+str(deg_basis)+"_Q"+str(num_quad_pts)
-    Filename "Manny_Inv_Mats_" + 
+    Filename "Manny_Inv_Mats_" +
       Maniold_Official_Name + ".p", goes in 'Pickled_Manny_Inv_Mat_Files' sub-directory
     Man_Shape_Name = "S2", "Chew_Toy", "Gen_R0_Pill", "Dog_Shit", etc
     R_0_str = "0pt3", "0pt0" for example.
@@ -670,7 +668,7 @@ class manifold(
         Manifold_Constr_Dict: dict,
         manifold_type: str = "cartesian",
         raw_coordinates: np.ndarray = None,
-    ):  
+    ):
         # BJG: Need to add option to initialize from
         # point cloud of lbdv point vals, and from named manifold
         # old constructor: (self, R_func, R_deg, lbdv, Maniold_Official_Name = [])
@@ -681,7 +679,7 @@ class manifold(
 
         # Threshold for considering a quantity as 0, in terms of where to
         # switch charts (replaces using condtion: lbdv.Chart_of_Quad_Pts > 0 )
-        self.Tol = 1.0e-3  
+        self.Tol = 1.0e-3
         self.pickling = Manifold_Constr_Dict[
             "Pickle_Manny_Data"
         ]  # BJG: May not want to pickle for moving surface and debugging
@@ -692,9 +690,7 @@ class manifold(
         self.Man_SPH_Deg = Manifold_Constr_Dict["Manifold_SPH_deg"]
 
         self.Use_Man_Name = Manifold_Constr_Dict["use_manifold_name"]
-        self.Man_Shape_Dict = Manifold_Constr_Dict[
-            "Maniold_Name_Dict"
-        ] 
+        self.Man_Shape_Dict = Manifold_Constr_Dict["Maniold_Name_Dict"]
         # this is a (possibly trivial) dictionary of manifold name
         # and r_0 value, OR {x,y,z} at quad pts
 
@@ -1640,7 +1636,7 @@ class manifold(
                     # self.K_A_pts[quad_pt] = linalg.det(self.Wein_Map(quad_pt, 'A'))
                     # self.K_B_pts[quad_pt] = linalg.det(self.Wein_Map(quad_pt, 'B'))
 
-            # If we know the name, (and we allow pickling) 
+            # If we know the name, (and we allow pickling)
             # we pickle inv_mats we just generated
             if (
                 Manifold_Constr_Dict["use_manifold_name"] == True
@@ -1676,7 +1672,7 @@ class manifold(
                     pkl.dump(Manny_Info_Dict, f_manny)
             """
             else:
-                #print("NOT pickling Manny Inv Mats for later re-use"+"\n") 
+                #print("NOT pickling Manny Inv Mats for later re-use"+"\n")
                 # BJG: should add verbose option
             """
 
@@ -1933,7 +1929,7 @@ class manifold(
                 W_map[0, 0] * sigma_theta_C_pt + W_map[1, 0] * sigma_phi_C_pt
             )
 
-        # For multiple quad pts, we use einstein sumation 
+        # For multiple quad pts, we use einstein sumation
         # to output vector of solutions at each point:
         else:
             return -1.0 * (
@@ -1954,7 +1950,7 @@ class manifold(
                 W_map[0, 1] * sigma_theta_C_pt + W_map[1, 1] * sigma_phi_C_pt
             )
 
-        # For multiple quad pts, we use einstein 
+        # For multiple quad pts, we use einstein
         # sumation to output vector of solutions at each point:
         else:
             return -1.0 * (
