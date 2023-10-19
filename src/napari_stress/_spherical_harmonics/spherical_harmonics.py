@@ -21,9 +21,7 @@ from .._stress import lebedev_info_SPB as lebedev_info
 
 
 def shtools_spherical_harmonics_expansion(
-    points: PointsData,
-    max_degree: int = 5,
-    expansion_type: str = "radial"
+    points: PointsData, max_degree: int = 5, expansion_type: str = "radial"
 ) -> Tuple[PointsData, np.ndarray]:
     """
     Approximate surface with pyshtools implementation.
@@ -256,8 +254,7 @@ def lebedev_quadrature(
 
     # Get {Z/Y/X} Coordinates at lebedev points, so we can
     # leverage our code more efficiently (and uniformly) on surface:
-    LBDV_Fit = lebedev_info.lbdv_info(max_degree,
-                                      number_of_quadrature_points)
+    LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
     lebedev_points = [
         euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
         for f in fit_functions
@@ -302,9 +299,7 @@ def create_manifold(
     Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
 
     return mnfd.manifold(
-        Manny_Dict,
-        manifold_type=manifold_type,
-        raw_coordinates=points
+        Manny_Dict, manifold_type=manifold_type, raw_coordinates=points
     )
 
 
