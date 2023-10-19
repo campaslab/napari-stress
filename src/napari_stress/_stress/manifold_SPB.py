@@ -30,7 +30,7 @@ def Manny_Fn_Def(theta, phi, r_0, Manny_Name, IsRadial):
 # We may want seperate defs for each coordinate:
 def Manny_Fn_Def_X(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return (
             Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name)
             * np.cos(theta)
@@ -42,7 +42,7 @@ def Manny_Fn_Def_X(theta, phi, r_0, Manny_Name, IsRadial):
 
 def Manny_Fn_Def_Y(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return (
             Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name)
             * np.sin(theta)
@@ -54,7 +54,7 @@ def Manny_Fn_Def_Y(theta, phi, r_0, Manny_Name, IsRadial):
 
 def Manny_Fn_Def_Z(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name) * np.cos(phi)
     else:
         return Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name)
@@ -699,7 +699,7 @@ class manifold(
         # and r_0 value, OR {x,y,z} at quad pts
 
         # BJG: given name and r0 value, we can use function to get points we need:
-        if self.Use_Man_Name == True:
+        if self.Use_Man_Name is True:
 
             self.IsManRad = self.Man_Shape_Dict["Is_Manifold_Radial"]
             self.Man_R0_Val = self.Man_Shape_Dict["Maniold_R0_Value"]
@@ -1505,17 +1505,17 @@ class manifold(
         # If we are given a name for the manifold, we can use pickling
         Manny_Inv_Mats_filepath = []
 
-        if Manifold_Constr_Dict["use_manifold_name"] == True:
+        if Manifold_Constr_Dict["use_manifold_name"] is True:
             Inv_Mats_Name = (
                 "Manny_Inv_Mats_" + self.Man_Official_Name + ".p"
             )  # name of file we dump/load the inv_mats from
             Manny_Inv_Mats_filepath = os.path.join(PICKLE_Manny_DIR, Inv_Mats_Name)
 
         if (
-            Manifold_Constr_Dict["use_manifold_name"] == False
-            or os.path.isfile(Manny_Inv_Mats_filepath) == False
+            Manifold_Constr_Dict["use_manifold_name"] is False
+            or os.path.isfile(Manny_Inv_Mats_filepath) is False
             or self.Man_Official_Name == []
-            or self.pickling == False
+            or self.pickling is False
         ):  # If we need to (re)generate these:
 
             self.rho_A_Mats = zero_vector_of_basis_mats()  # rho = G*(A^-1)
@@ -1643,9 +1643,9 @@ class manifold(
             # If we know the name, (and we allow pickling) 
             # we pickle inv_mats we just generated
             if (
-                Manifold_Constr_Dict["use_manifold_name"] == True
+                Manifold_Constr_Dict["use_manifold_name"] is True
                 and self.Man_Official_Name != []
-                and self.pickling == True
+                and self.pickling is True
             ):
 
                 print("pickling Manny Inv Mats for re-use" + "\n")
@@ -1721,13 +1721,13 @@ class manifold(
 
     ######### Vector (& Derivs) of Manifold, Normals, 2-form Convs #####################
 
-    def Cart_Coors(quad_pt, Chart):
+    def Cart_Coors(self, quad_pt, Chart):
         if Chart == "A":
             return self.Cart_Coors_A[quad_pt, :]
         if Chart == "B":
             return self.Cart_Coors_B[quad_pt, :]
 
-    def R_Sq_Val(quad_pt, Chart):
+    def R_Sq_Val(self, quad_pt, Chart):
         if Chart == "A":
             return self.R_sq_A_Pts[quad_pt, :]
         if Chart == "B":
@@ -2005,7 +2005,7 @@ class manifold(
 
     def dG_Mat_theta(self, quad_pt, Chart):
 
-        G_theta_mat = zeros((3, 3))
+        G_theta_mat = np.zeros((3, 3))
         G_theta_mat[0:2, 0:2] = self.I_theta_Mat(quad_pt, Chart)
 
         return G_theta_mat
