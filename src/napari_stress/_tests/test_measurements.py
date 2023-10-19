@@ -442,7 +442,7 @@ def test_curvature(make_napari_viewer):
     H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
-    
+
     assert H is not None
     assert H0_arithmetic is not None
     assert H0_surface is not None
@@ -475,7 +475,7 @@ def test_curvature(make_napari_viewer):
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
     assert results is not None
-    
+
     results = measurements.average_mean_curvatures_on_manifold(results_layer)
     assert results is not None
 
@@ -576,7 +576,7 @@ def test_stresses():
         measurements,
         approximation,
         get_droplet_point_cloud,
-        create_manifold
+        create_manifold,
     )
     from napari_stress._spherical_harmonics.spherical_harmonics import (
         stress_spherical_harmonics_expansion,

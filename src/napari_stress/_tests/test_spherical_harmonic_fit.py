@@ -93,7 +93,7 @@ def test_interoperatibility():
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
     from napari_stress._stress.sph_func_SPB import (
         convert_coeffcients_stress_to_pyshtools,
-        convert_coefficients_pyshtools_to_stress
+        convert_coefficients_pyshtools_to_stress,
     )
 
     deg = 10
