@@ -16,7 +16,6 @@ def test_custom_types(make_napari_viewer):
     )
 
     def test_function(argument: manifold) -> manifold:
-
         layer = None
         if isinstance(argument, layers.Layer):
             layer = argument

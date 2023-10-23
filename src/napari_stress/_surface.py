@@ -144,7 +144,6 @@ def smooth_sinc(
     feature_angle: float = 60,
     boundary: bool = False,
 ) -> SurfaceData:
-
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.smooth(
         niter=niter,
@@ -161,7 +160,6 @@ def smooth_sinc(
 def smoothMLS2D(
     points: PointsData, factor: float = 0.5, radius: float = None
 ) -> PointsData:
-
     pointcloud = vedo.pointcloud.Points(points)
     pointcloud.smoothMLS2D(f=factor, radius=radius)
 
@@ -174,7 +172,6 @@ def smoothMLS2D(
 @register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
 @frame_by_frame
 def decimate(surface: SurfaceData, fraction: float = 0.1) -> SurfaceData:
-
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
 
     n_vertices = mesh.N()

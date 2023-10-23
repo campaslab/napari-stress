@@ -19,7 +19,6 @@ eta_Polar_Decay = np.pi / 8  # decay interval in cutoff fn
 
 def Domain(Theta, Phi):  # Which coordinates to use
     if Chart_Min_Polar <= Phi and Phi <= Chart_Max_Polar:  # Use Coordinates A
-
         Bar_Coors = Coor_A_To_B(Theta, Phi)
         Phi_Bar = Bar_Coors[1]
 
@@ -37,7 +36,6 @@ def Domain(Theta, Phi):  # Which coordinates to use
 
 def Domain_Unaffected(Theta, Phi):  # Where fns in each chart arent affected by eta fns
     if eta_Min_Polar <= Phi and Phi <= eta_Max_Polar:  # Use Coordinates A
-
         Bar_Coors = Coor_A_To_B(Theta, Phi)
         Phi_Bar = Bar_Coors[1]
 
@@ -100,7 +98,6 @@ def eta_A_const(
 def eta_B(
     func, Theta_Bar, Phi_Bar
 ):  # Cutoff fn for Phi_Bar in [eta_Min_Polar, eta_Max_Polar]
-
     # A_Coors = Coor_B_To_A(Theta_Bar, Phi_Bar)
     # print("Equiv to (Theta, Phi) = "+'('+str(A_Coors[0]/pi)+'pi, '+str(A_Coors[1]/pi)+'pi)')
 
@@ -116,7 +113,6 @@ def eta_B(
 
 # NOTE: (Theta, Phi) -> (Theta_Bar, Phi_Bar) by rotating the north pole (0,0) to the east pole (0,pi/2)
 def Coor_A_To_B(Theta, Phi):  # Converts from A to B
-
     X1 = np.cos(Theta) * np.sin(Phi)
     Y1 = np.sin(Theta) * np.sin(Phi)
     Z1 = np.cos(Phi)
@@ -146,7 +142,6 @@ def Coor_A_To_B(Theta, Phi):  # Converts from A to B
 
 
 def Coor_B_To_A(Theta_Bar, Phi_Bar):  # Converts from B back to A
-
     # X2 = cos(Theta_Bar)*sin(Phi_Bar)
     # Y2 = sin(Theta_Bar)*sin(Phi_Bar)
     # Z2 = cos(Phi_Bar)
@@ -176,14 +171,12 @@ def Coor_B_To_A(Theta_Bar, Phi_Bar):  # Converts from B back to A
 
 # Uses F(theta, phi) to find F_{Rot}(theta_bar, phi_bar)
 def Rotate_Fn(func, Theta_Bar, Phi_Bar):
-
     Theta, Phi = Coor_B_To_A(Theta_Bar, Phi_Bar)
     return func(Theta, Phi)
 
 
 # (x,y,z) -> (theta, phi)
 def Cart_To_Coor_A(x, y, z):
-
     r = np.sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2))
 
     ##Calculate Theta
@@ -203,7 +196,6 @@ def Cart_To_Coor_A(x, y, z):
 
 # (x,y,z) -> (theta_bar, phi_bar)
 def Cart_To_Coor_B(x, y, z):
-
     r = np.sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2))
 
     ##Calculate Theta_Bar

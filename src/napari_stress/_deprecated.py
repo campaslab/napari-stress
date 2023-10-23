@@ -14,7 +14,6 @@ from scipy.interpolate import RBFInterpolator, interp2d
 
 
 def pointcloud_to_vertices4D(surfs: list) -> np.ndarray:
-
     n_vertices = sum([surf.N() for surf in surfs])
     vertices_4d = np.zeros([n_vertices, 4])
 
@@ -26,7 +25,6 @@ def pointcloud_to_vertices4D(surfs: list) -> np.ndarray:
 
 
 def vertices4d_to_pointcloud(vertices: np.ndarray) -> list:
-
     assert vertices.shape[1] == 4
 
     frames = np.unique(vertices[:, 0])
@@ -95,7 +93,6 @@ def _detect_drop(profile, center: float = None):
 
 
 def _func_args_to_list(func: callable) -> list:
-
     sig = inspect.signature(func)
     return list(sig.parameters.keys())
 
@@ -103,7 +100,6 @@ def _func_args_to_list(func: callable) -> list:
 def frame_by_frame(function, progress_bar: bool = False):
     @wraps(function)
     def wrapper(*args, **kwargs):
-
         sig = inspect.signature(function)
         annotations = [sig.parameters[key].annotation for key in sig.parameters.keys()]
 
@@ -265,7 +261,6 @@ def list_of_surfaces_to_surface(surfs: list) -> tuple:
 
     n_verts = 0
     for idx, surf in enumerate(surfs):
-
         # Offset indices in faces list by previous amount of points
         faces[idx] = n_verts + np.array(faces[idx])
 
@@ -281,7 +276,6 @@ def list_of_surfaces_to_surface(surfs: list) -> tuple:
 
 
 def surf_fit(points, Xq, **kwargs):
-
     """
     First interpolates a set of points around a query point with a set of radial
     basis functions in a given sample density. The inteprolated points are then approximated
@@ -372,7 +366,6 @@ def mean_curvature(z, spacing):
 
 
 def poly2d(x, y, coeff=np.ones(9)):
-
     assert len(coeff) == 9
 
     return np.array(

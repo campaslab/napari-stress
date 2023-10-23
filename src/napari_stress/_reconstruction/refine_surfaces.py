@@ -147,7 +147,6 @@ def trace_refinement_of_surface(
 
     # Iterate over all provided target points
     for idx in range(n_points):
-
         array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
@@ -329,7 +328,6 @@ def _fancy_edge_fit(
     array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
-
             # trim begin of trace to get rid of rising intensity slope
             ind_max = np.argmax(array)
             array = array[ind_max:]

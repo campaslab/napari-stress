@@ -89,7 +89,6 @@ def test_spherical_harmonics():
 
 
 def test_interoperatibility():
-
     from napari_stress._spherical_harmonics import spherical_harmonics as sh
     from napari_stress._stress.sph_func_SPB import (
         convert_coeffcients_stress_to_pyshtools,
@@ -144,7 +143,6 @@ def test_interoperatibility():
 
 
 def test_lebedev_points():
-
     from napari_stress._stress.lebedev_write_SPB import LebFunc
 
     for i in [
