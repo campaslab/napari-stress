@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from napari import layers
-import numpy as np
 import magicgui
 
 
@@ -37,17 +36,12 @@ def test_custom_types(make_napari_viewer):
     viewer.add_points(expansion[0], **expansion[1])
 
     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
-    l = layers.Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
-    viewer.add_layer(l)
+    lay = layers.Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(lay)
 
     widget = magicgui.magicgui(test_function)
     viewer.window.add_dock_widget(widget)
     results = widget(viewer.layers[-1])
 
     assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features.keys()
-
-
-if __name__ == "__main__":
-    import napari
-
-    test_custom_types(napari.Viewer)
+    assert isinstance(results, tuple)

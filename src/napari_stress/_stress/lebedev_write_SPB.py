@@ -46,9 +46,7 @@
        1975, pp. 44-51.
 """
 
-from math import *
 import numpy as np
-from numpy import *
 
 
 def genOh_a00(v):
@@ -67,7 +65,7 @@ def genOh_a00(v):
 
 def genOh_aa0(v):
     "(0,a,a) etc, a=1/sqrt(2) (12 points)"
-    a = sqrt(0.5)
+    a = np.sqrt(0.5)
     v = 4.0 * np.pi * v
     return [
         (0, a, a, v),
@@ -87,7 +85,7 @@ def genOh_aa0(v):
 
 def genOh_aaa(v):
     "(a,a,a) etc, a=1/sqrt(3) (8 points)"
-    a = sqrt(1.0 / 3.0)
+    a = np.sqrt(1.0 / 3.0)
     v = 4.0 * np.pi * v
     return [
         (a, a, a, v),
@@ -103,7 +101,7 @@ def genOh_aaa(v):
 
 def genOh_aab(v, a):
     "(a,a,b) etc, b=sqrt(1-2 a^2), a input (24 points)"
-    b = sqrt(1.0 - 2.0 * a * a)
+    b = np.sqrt(1.0 - 2.0 * a * a)
     v = 4.0 * np.pi * v
     return [
         (a, a, b, v),
@@ -135,7 +133,7 @@ def genOh_aab(v, a):
 
 def genOh_ab0(v, a):
     "(a,b,0) etc, b=sqrt(1-a^2), a input (24 points)"
-    b = sqrt(1.0 - a * a)
+    b = np.sqrt(1.0 - a * a)
     v = 4.0 * np.pi * v
     return [
         (a, b, 0, v),
@@ -167,7 +165,7 @@ def genOh_ab0(v, a):
 
 def genOh_abc(v, a, b):
     "(a,b,c) etc, c=sqrt(1-a^2-b^2), a,b input  (48 points)"
-    c = sqrt(1.0 - a * a - b * b)
+    c = np.sqrt(1.0 - a * a - b * b)
     v = 4.0 * np.pi * v
     return [
         (a, b, c, v),
@@ -4830,7 +4828,7 @@ def Lebedev(n):
     try:
         lebPoints_cart_w = LebFunc[n]()
         return np.array(lebPoints_cart_w)
-    except:
+    except Exception:
         raise "No grid available for %d" % n
     return None
 
@@ -4888,7 +4886,7 @@ if __name__ == "__main__":
 #  self.theta  = [];
 #
 # def cart2sph():
-#  self.r = sqrt(self.x**2 + self.y**2 + self.z**2)
+#  self.r = np.sqrt(self.x**2 + self.y**2 + self.z**2)
 #  self.phi = atan(self.y/self.x)
 #  self.theta = atan(self.z/sqrt(self.x**2+self.y**2)
 #

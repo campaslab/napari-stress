@@ -10,6 +10,8 @@ def test_reconstruction():
 
     surface = napari_stress.reconstruct_surface(points)
 
+    assert isinstance(surface, tuple)
+
 
 def test_surface_to_points():
     ellipse = vedo.shapes.Ellipsoid()
@@ -17,18 +19,28 @@ def test_surface_to_points():
     surface = (ellipse.points(), np.asarray(ellipse.faces()))
     points = napari_stress.extract_vertex_points(surface)
 
+    assert isinstance(points, np.ndarray)
+
 
 def test_ellipsoid_points():
     pointcloud = np.random.normal(size=(1000, 3)) * 10 * np.array([1, 2, 3])[None, :]
     ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(
         pointcloud, inside_fraction=0.5
     )
+
+    assert np.array_equal(ellipse_points.shape, (1058, 3))
+
     axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(
         pointcloud, inside_fraction=0.5
     )
+
+    assert np.array_equal(axis.shape, (3, 2, 3))
+
     axis = napari_stress.fit_ellipsoid_to_pointcloud_vectors(
         pointcloud, inside_fraction=0.5, normalize=True
     )
+
+    assert np.array_equal(axis.shape, (3, 2, 3))
 
     pointcloud = vedo.shapes.Ellipsoid().points() * 10
     ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(
@@ -42,11 +54,4 @@ def test_ellipsoid_points():
     )
     vectors_4d = napari_stress.fit_ellipsoid_to_pointcloud_vectors(pointcloud_4d)
 
-    # directions_4d = np.zeros_like(pointcloud_4d)
-    # directions_4d[:, 0] = pointcloud_4d[:, 0]
-    # directions_4d[directions_4d[:,0] == 0, 1:] = pointcloud - pointcloud.mean(axis=0)[None, :]
-    # directions_4d[directions_4d[:,0] == 1, 1:] = pointcloud - (pointcloud + 1).mean(axis=0)[None, :]
-
-
-if __name__ == "__main__":
-    test_ellipsoid_points()
+    assert np.array_equal(vectors_4d.shape, (6, 2, 4))

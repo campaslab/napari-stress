@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData, VectorsData
-from typing import Tuple
-
-from scipy.spatial.transform import Rotation
-
-import vedo
 
 
 def _center_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
@@ -74,7 +69,7 @@ def polynomial_to_parameters3D(coefficients: np.ndarray):
     R = np.dot(Tofs, np.dot(Amat, Tofs.T))
 
     R3 = R[0:3, 0:3]
-    R3test = R3 / R3[0, 0]
+    # R3test = R3 / R3[0, 0]
     # print('normed \n',R3test)
     s1 = -R[3, 3]
     R3S = R3 / s1

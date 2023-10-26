@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from statistics import mean
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from napari_tools_menu import register_function
 import numpy as np
 
-from napari.types import PointsData, VectorsData, LayerDataTuple
 from napari.layers import Layer
-from napari import Viewer
 
 from .._utils import coordinate_conversion as conversion
 from .._utils.frame_by_frame import frame_by_frame
@@ -33,8 +30,8 @@ from typing import Tuple
 @register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
 @frame_by_frame
 def curvature_on_ellipsoid(
-    ellipsoid: VectorsData, sample_points: PointsData
-) -> LayerDataTuple:
+    ellipsoid: "napari.types.VectorsData", sample_points: "napari.types.PointsData"
+) -> "napari.types.LayerDataTuple":
     """
     Calculate curvature at sample points on the surface of an ellipse.
 
@@ -87,7 +84,8 @@ def curvature_on_ellipsoid(
     )
     H_ellps_pts = (num_H_ellps / den_H_ellps).squeeze()
 
-    # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
+    # calculate averaged curvatures H_0: 1st method of H0 computation,
+    # for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
     H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(ellipsoid)
@@ -107,7 +105,9 @@ def curvature_on_ellipsoid(
     return (sample_points, properties, "points")
 
 
-def mean_curvature_on_ellipse_cardinal_points(ellipsoid: VectorsData) -> list:
+def mean_curvature_on_ellipse_cardinal_points(
+    ellipsoid: "napari.types.VectorsData",
+) -> list:
     """
     Calculate mean points on major axes tip points of ellipsoid.
 
@@ -144,7 +144,7 @@ def mean_curvature_on_ellipse_cardinal_points(ellipsoid: VectorsData) -> list:
     menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS"
 )
 def gauss_bonnet_test(
-    input_manifold: manifold, viewer: Viewer = None
+    input_manifold: manifold, viewer: "napari.Viewer" = None
 ) -> Tuple[float, float]:
     """
     Use Gauss-Bonnet theorem to measure resolution on manifold.
@@ -215,7 +215,8 @@ def calculate_mean_curvature_on_manifold(
     points = input_manifold.get_coordinates()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
-    # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
+    # Makre sure orientation is inward,
+    # so H is positive (for Ellipsoid, and small deviations):
     Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
@@ -332,7 +333,9 @@ def surface_integrated_mean_curvature(mean_curvatures: np.ndarray, manifold: man
 
 
 def volume_integrated_mean_curvature(input_manifold: manifold) -> float:
-    """Determine volume and averaged mean curvature by integrating over radii."""
+    """
+    Determine volume and averaged mean curvature by integrating over radii.
+    """
     from .._stress.sph_func_SPB import S2_Integral
 
     assert input_manifold.manifold_type == "radial"

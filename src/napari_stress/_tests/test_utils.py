@@ -1,9 +1,8 @@
 import numpy as np
 from napari.types import (
-    LayerData,
     PointsData,
-    SurfaceData,
     ImageData,
+    SurfaceData,
     VectorsData,
     LayerDataTuple,
 )
@@ -45,8 +44,10 @@ def test_decorator_points():
     points_array_3d = Converter.list_of_data_to_data([points_list[0]], PointsData)
     points_list_conv = Converter.data_to_list_of_data(points_array_4d, PointsData)
 
+    assert np.array_equal(points_array_3d, points_list[0])
+
     for pts, _pts in zip(points_list, points_list_conv):
-        assert np.array_equal(points_list, points_list_conv)
+        assert np.array_equal(pts, _pts)
 
 
 def test_decorator_points_layerdatatuple():
@@ -77,6 +78,7 @@ def test_decorator_points_layerdatatuple():
         [list_of_ldtuples[0]], layertype=PointsData
     )
 
+    assert np.array_equal(ldtuple_3d[0][0], list_of_ldtuples[0][0])
     assert "data1" in ldtuple_4d[1]["metadata"].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
@@ -110,11 +112,12 @@ def test_decorator_points_layers():
     layer_4d = Layer.create(data=ldt[0], meta=ldt[1], layer_type=ldt[2])
     list_of_layers = Converter.data_to_list_of_data(layer_4d, layertype=Points)
 
+    assert len(list_of_layers) == n_frames
+
 
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame
     from napari_process_points_and_surfaces import sample_points_from_surface
-    from napari.types import SurfaceData
     from vedo import Sphere
 
     Converter = TimelapseConverter()
@@ -124,9 +127,11 @@ def test_decorator_surfaces():
         (Sphere().points() * k, np.asarray(Sphere().faces()), k * np.ones(Sphere().N()))
         for k in np.arange(1.9, 2.1, 0.1)
     ]
+    n_frames = len(surface_list)
     surface_array_4d = Converter.list_of_data_to_data(surface_list, SurfaceData)
     surface_array_3d = Converter.list_of_data_to_data([surface_list[0]], SurfaceData)
 
+    assert np.array_equal(surface_array_3d[0], surface_list[0][0])
     assert len(surface_array_4d) == 3
 
     surface_list_conv = Converter.data_to_list_of_data(surface_array_4d, SurfaceData)
@@ -135,8 +140,11 @@ def test_decorator_surfaces():
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-    points = frame_by_frame(sample_points_from_surface)(surface_array_4d)
-    points = frame_by_frame(sample_points_from_surface)(surface_list[0])
+    points_4d = frame_by_frame(sample_points_from_surface)(surface_array_4d)
+    points_3d = frame_by_frame(sample_points_from_surface)(surface_list[0])
+
+    assert np.array_equal(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
+    assert np.array_equal(points_4d.shape, (1010 * n_frames, 4))
 
 
 def test_decorator_images():
@@ -151,6 +159,7 @@ def test_decorator_images():
     image_array_4d = Converter.list_of_data_to_data(image_list, ImageData)
     image_array_3d = Converter.list_of_data_to_data([image_list[0]], ImageData)
 
+    assert np.array_equal(image_array_3d.squeeze(), image_list[0])
     assert image_array_4d.shape[0] == len(image_list)
 
     image_list_conv = Converter.list_of_data_to_data(image_array_4d, ImageData)
@@ -177,8 +186,9 @@ def test_frame_by_frame_vectors():
     vectors_data_4d = Converter.list_of_data_to_data(vectors_list, VectorsData)
     vectors_data_3d = Converter.list_of_data_to_data([vectors_list[0]], VectorsData)
 
+    assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
 
 if __name__ == "__main__":
-    test_decorator_points()
+    test_decorator_surfaces()

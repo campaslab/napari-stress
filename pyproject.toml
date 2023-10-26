@@ -1,3 +1,9 @@
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+ignore = ["F821"]
+
+[tool.ruff.per-file-ignores]
+"_napari_plugin.py" = ["F401"]

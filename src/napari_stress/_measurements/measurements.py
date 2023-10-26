@@ -1,3 +1,4 @@
+# ruff: noqa: F821
 import pandas as pd
 
 
@@ -19,7 +20,6 @@ def distance_to_k_nearest_neighbors(
         The distance to the k nearest neighbors for each point.
     """
     from scipy.spatial import KDTree
-    import numpy as np
 
     tree = KDTree(points)
     dist, _ = tree.query(points, k=k + 1)

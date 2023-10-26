@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData, PointsData, VectorsData
+from napari.types import SurfaceData, PointsData, VectorsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_function
 

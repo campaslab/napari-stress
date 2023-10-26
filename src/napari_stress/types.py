@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from magicgui.widgets._bases import CategoricalWidget
-from typing import List, NewType
+from typing import List
 
 from napari import layers
 from napari.utils._magicgui import find_viewer_ancestor

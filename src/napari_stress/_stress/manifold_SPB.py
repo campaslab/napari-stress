@@ -1,6 +1,5 @@
 # From https://github.com/campaslab/STRESS
 #!!! WILL DEPEND ON DIFF GEO WHEN WE GO OFF SPHERE !!! #
-from numpy import *
 import numpy as np
 
 # import mpmath as mp
@@ -8,7 +7,7 @@ import numpy as np
 # for picking manny inv mats
 # import cPickle as pkl # BJG: py2pt7 version
 import pickle as pkl
-import os, sys
+import os
 
 from . import sph_func_SPB as sph_f
 
@@ -31,7 +30,7 @@ def Manny_Fn_Def(theta, phi, r_0, Manny_Name, IsRadial):
 # We may want seperate defs for each coordinate:
 def Manny_Fn_Def_X(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return (
             Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name)
             * np.cos(theta)
@@ -43,7 +42,7 @@ def Manny_Fn_Def_X(theta, phi, r_0, Manny_Name, IsRadial):
 
 def Manny_Fn_Def_Y(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return (
             Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name)
             * np.sin(theta)
@@ -55,7 +54,7 @@ def Manny_Fn_Def_Y(theta, phi, r_0, Manny_Name, IsRadial):
 
 def Manny_Fn_Def_Z(theta, phi, r_0, Manny_Name, IsRadial):
 
-    if IsRadial == True:
+    if IsRadial is True:
         return Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name) * np.cos(phi)
     else:
         return Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name)
@@ -98,7 +97,7 @@ def Non_Radial_Manifold_X_Def(theta, phi, r_0, Manny_Name):
         )  # normalized arcen up to bottom hemi
         omega = np.pi / (r_0 + np.pi * R)  # normalized speed
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if phi < phi_1:
                 return R * np.sin(phi / (R * omega)) * np.cos(theta)
             elif phi < phi_2:
@@ -161,7 +160,7 @@ def Non_Radial_Manifold_Y_Def(theta, phi, r_0, Manny_Name):
         )  # normalized arcen up to bottom hemi
         omega = np.pi / (r_0 + np.pi * R)  # normalized speed
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if phi < phi_1:
                 return R * np.sin(phi / (R * omega)) * np.sin(theta)
             elif phi < phi_2:
@@ -222,7 +221,7 @@ def Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name):
         )  # normalized arcen up to bottom hemi
         omega = np.pi / (r_0 + np.pi * R)  # normalized speed
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if phi < phi_1:
                 return R * np.cos(phi / (R * omega)) + r_0 / 2.0
             elif phi < phi_2:
@@ -303,7 +302,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         return 1.0 + r_0 * np.sin(7 * phi) * np.cos(theta)
 
     elif Manny_Name == "Quint_Spikes":
-        c_shape = 0.5  # distortion magnitude
+        # c_shape = 0.5  # distortion magnitude
         k_shape = 10.0  # inv. length-scale of distortion decay
         tol_shape = 1.0e-3
 
@@ -487,7 +486,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         phi_1 = np.arctan(R / (r_0 / 2.0))
         phi_2 = np.pi - np.arctan(R / (r_0 / 2.0))
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if phi < phi_1:
                 return (r_0 / 2.0) * np.cos(phi) + np.sqrt(
                     R**2 - ((r_0 / 2) * np.sin(phi)) ** 2
@@ -513,7 +512,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
     elif Manny_Name == "Divet":
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if np.cos(phi) > 0.9:
                 return 1.0 - r_0 * np.exp(
                     -1.0 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0
@@ -532,7 +531,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
     elif Manny_Name == "Double_Divet":
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if np.cos(phi) > 0.9:
                 return 1.0 - r_0 * np.exp(
                     -1.0 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0
@@ -566,7 +565,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
     elif Manny_Name == "Divets_Around_Pimple":
 
-        if isscalar(phi):
+        if np.isscalar(phi):
             if abs(np.cos(phi)) > 0.9:
                 return 1.0 - r_0 * np.exp(
                     -1.0 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0
@@ -618,7 +617,8 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         )
 
 
-# Takes an array of R0 Values and returns string format for Rayleigh Dissipation Studies (!!!!VTU NOT PICKLE!!!!)
+# Takes an array of R0 Values and returns string format
+# for Rayleigh Dissipation Studies (!!!!VTU NOT PICKLE!!!!)
 def Max_Decimal_R0_Array(R0_Values_Array):
 
     max_dec_length = 0
@@ -646,17 +646,19 @@ def Max_Decimal_R0_Array(R0_Values_Array):
     return new_R0_array_labels
 
 
-#######################################################################################################################
+########################################################################################
 
 
-class manifold(
-    object
-):  # This now represents geo of S^2, will later be adapted to other manifolds with same topology
+class manifold(object):
+    # This now represents geo of S^2,
+    # will later be adapted to other manifolds with same topology
 
     """
     Use Manifold name to automatically load/pickle manny inv mats:
-    Format: Maniold_Official_Name = Man_Shape_Name+"R_0_"+R_0_str+"_Pdeg_"+str(deg_basis)+"_Q"+str(num_quad_pts)
-    Filename "Manny_Inv_Mats_" +  Maniold_Official_Name + ".p", goes in 'Pickled_Manny_Inv_Mat_Files' sub-directory
+    Format: Maniold_Official_Name =
+    Man_Shape_Name+"R_0_"+R_0_str+"_Pdeg_"+str(deg_basis)+"_Q"+str(num_quad_pts)
+    Filename "Manny_Inv_Mats_" +
+      Maniold_Official_Name + ".p", goes in 'Pickled_Manny_Inv_Mat_Files' sub-directory
     Man_Shape_Name = "S2", "Chew_Toy", "Gen_R0_Pill", "Dog_Shit", etc
     R_0_str = "0pt3", "0pt0" for example.
     """
@@ -666,14 +668,18 @@ class manifold(
         Manifold_Constr_Dict: dict,
         manifold_type: str = "cartesian",
         raw_coordinates: np.ndarray = None,
-    ):  # BJG: Need to add option to initialize from point cloud of lbdv point vals, and from named manifold
+    ):
+        # BJG: Need to add option to initialize from
+        # point cloud of lbdv point vals, and from named manifold
         # old constructor: (self, R_func, R_deg, lbdv, Maniold_Official_Name = [])
 
         # print("Constructing Manifold") # BJG: should add verbose option
         self.manifold_type = manifold_type
         self.raw_coordinates = raw_coordinates
 
-        self.Tol = 1.0e-3  # Threshold for considering a quantity as 0, in terms of where to switch charts (replaces using condtion: lbdv.Chart_of_Quad_Pts > 0 )
+        # Threshold for considering a quantity as 0, in terms of where to
+        # switch charts (replaces using condtion: lbdv.Chart_of_Quad_Pts > 0 )
+        self.Tol = 1.0e-3
         self.pickling = Manifold_Constr_Dict[
             "Pickle_Manny_Data"
         ]  # BJG: May not want to pickle for moving surface and debugging
@@ -684,12 +690,12 @@ class manifold(
         self.Man_SPH_Deg = Manifold_Constr_Dict["Manifold_SPH_deg"]
 
         self.Use_Man_Name = Manifold_Constr_Dict["use_manifold_name"]
-        self.Man_Shape_Dict = Manifold_Constr_Dict[
-            "Maniold_Name_Dict"
-        ]  # this is a (possibly trivial) dictionary of manifold name and r_0 value, OR {x,y,z} at quad pts
+        self.Man_Shape_Dict = Manifold_Constr_Dict["Maniold_Name_Dict"]
+        # this is a (possibly trivial) dictionary of manifold name
+        # and r_0 value, OR {x,y,z} at quad pts
 
         # BJG: given name and r0 value, we can use function to get points we need:
-        if self.Use_Man_Name == True:
+        if self.Use_Man_Name is True:
 
             self.IsManRad = self.Man_Shape_Dict["Is_Manifold_Radial"]
             self.Man_R0_Val = self.Man_Shape_Dict["Maniold_R0_Value"]
@@ -763,7 +769,8 @@ class manifold(
             self.Z_A_Pts, self.Man_SPH_Deg, lbdv
         )
 
-        # BJG: Lists of Quad Pt Vals, so we can evaluate, with necesary derivatives at these points:
+        # BJG: Lists of Quad Pt Vals, so we can evaluate,
+        # with necesary derivatives at these points:
 
         self.X_theta = self.X.Quick_Theta_Der()
         self.X_theta_A_Pts = self.X_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
@@ -1132,8 +1139,6 @@ class manifold(
             0,
         )
 
-        # d_k(g_ik/met_fac):
-        # self.E_over_Metric_Factor_dTheta_A = np.where(lbdv.Chart_of_Quad_Pts > 0, (self.Metric_Factor_A_pts*self.E_theta_A_pts - self.E_A_pts*self.Metric_Factor_dTheta_A_pts)/self.Metric_Factor_Squared_A, 0)
         self.F_over_Metric_Factor_dTheta_A = np.where(
             lbdv.Chart_of_Quad_Pts > 0,
             (
@@ -1171,9 +1176,7 @@ class manifold(
             / self.Metric_Factor_Squared_A,
             0,
         )
-        # self.G_over_Metric_Factor_dPhi_A = np.where(lbdv.Chart_of_Quad_Pts > 0, (self.Metric_Factor_A_pts*self.G_phi_A_pts - self.G_A_pts*self.Metric_Factor_dPhi_A_pts)/self.Metric_Factor_Squared_A, 0)
 
-        # self.E_over_Metric_Factor_dTheta_B = np.where(lbdv.Chart_of_Quad_Pts > 0, (self.Metric_Factor_B_pts*self.E_theta_B_pts - self.E_B_pts*self.Metric_Factor_dTheta_B_pts)/self.Metric_Factor_Squared_B, 0)
         self.F_over_Metric_Factor_dTheta_B = np.where(
             lbdv.Chart_of_Quad_Pts > 0,
             (
@@ -1211,7 +1214,6 @@ class manifold(
             / self.Metric_Factor_Squared_B,
             0,
         )
-        # self.G_over_Metric_Factor_dPhi_B = np.where(lbdv.Chart_of_Quad_Pts > 0, (self.Metric_Factor_B_pts*self.G_phi_B_pts - self.G_B_pts*self.Metric_Factor_dPhi_B_pts)/self.Metric_Factor_Squared_B, 0)
         ###
 
         ### From Sharp!/*(1-forms):
@@ -1267,7 +1269,8 @@ class manifold(
             (self.X_phi_phi_B_Pts, self.Y_phi_phi_B_Pts, self.Z_phi_phi_B_Pts)
         )
 
-        # Normal Vectors and II can be computed here as well (within Chart, for pickled fields below):
+        # Normal Vectors and II can be computed here as well
+        # (within Chart, for pickled fields below):
         self.Normal_Dir_X_A_Pts = (
             self.Y_theta_A_Pts * self.Z_phi_A_Pts
             - self.Z_theta_A_Pts * self.Y_phi_A_Pts
@@ -1375,7 +1378,8 @@ class manifold(
             + self.Normal_Vec_Z_B_Pts * self.Z_phi_phi_B_Pts
         )
 
-        # We can use this to compute entries of the Weingarten Map Directly, where W = [[W_11, W_12], [W_21, W_22]]:
+        # We can use this to compute entries of the Weingarten Map Directly,
+        # where W = [[W_11, W_12], [W_21, W_22]]:
         self.Wein_11_A_Pts = np.where(
             lbdv.Chart_of_Quad_Pts > 0,
             (self.L_A_Pts * self.G_A_pts - self.M_A_Pts * self.F_A_pts)
@@ -1460,9 +1464,6 @@ class manifold(
             lbdv.Chart_of_Quad_Pts > 0, -self.X_A_Pts / Denom_A, 0
         )
 
-        # print("self.dx_dy_A_Vals_From_Polar_NEW = "+str(self.dx_dy_A_Vals_From_Polar_NEW))
-        # print("self.dx_dy_A_Vals_From_Polar_OLD = "+str(self.dx_dy_A_Vals_From_Polar))
-
         Denom_B = np.multiply(
             (self.R_sq_B_Pts), np.sqrt(self.Y_B_Pts**2 + self.Z_B_Pts**2)
         )
@@ -1500,17 +1501,17 @@ class manifold(
         # If we are given a name for the manifold, we can use pickling
         Manny_Inv_Mats_filepath = []
 
-        if Manifold_Constr_Dict["use_manifold_name"] == True:
+        if Manifold_Constr_Dict["use_manifold_name"] is True:
             Inv_Mats_Name = (
                 "Manny_Inv_Mats_" + self.Man_Official_Name + ".p"
             )  # name of file we dump/load the inv_mats from
             Manny_Inv_Mats_filepath = os.path.join(PICKLE_Manny_DIR, Inv_Mats_Name)
 
         if (
-            Manifold_Constr_Dict["use_manifold_name"] == False
-            or os.path.isfile(Manny_Inv_Mats_filepath) == False
+            Manifold_Constr_Dict["use_manifold_name"] is False
+            or os.path.isfile(Manny_Inv_Mats_filepath) is False
             or self.Man_Official_Name == []
-            or self.pickling == False
+            or self.pickling is False
         ):  # If we need to (re)generate these:
 
             self.rho_A_Mats = zero_vector_of_basis_mats()  # rho = G*(A^-1)
@@ -1590,7 +1591,8 @@ class manifold(
                     G_phi_A_Mat_pt = self.dG_Mat_phi(quad_pt, "A")
                     G_phi_B_Mat_pt = self.dG_Mat_phi(quad_pt, "B")
 
-                    # use these to compute matrcies for flat, and derivative of cotangent components
+                    # use these to compute matrcies for flat,
+                    # and derivative of cotangent components
                     rho_A_pt = np.linalg.solve(A_Mat_pt.T, G_A_Mat_pt.T).T
                     rho_B_pt = np.linalg.solve(B_Mat_pt.T, G_B_Mat_pt.T).T
 
@@ -1634,11 +1636,12 @@ class manifold(
                     # self.K_A_pts[quad_pt] = linalg.det(self.Wein_Map(quad_pt, 'A'))
                     # self.K_B_pts[quad_pt] = linalg.det(self.Wein_Map(quad_pt, 'B'))
 
-            # If we know the name, (and we allow pickling) we pickle inv_mats we just generated
+            # If we know the name, (and we allow pickling)
+            # we pickle inv_mats we just generated
             if (
-                Manifold_Constr_Dict["use_manifold_name"] == True
+                Manifold_Constr_Dict["use_manifold_name"] is True
                 and self.Man_Official_Name != []
-                and self.pickling == True
+                and self.pickling is True
             ):
 
                 print("pickling Manny Inv Mats for re-use" + "\n")
@@ -1657,8 +1660,6 @@ class manifold(
                 To_Pickle_inv_Manny_Mats[:, :, :, 8] = self.xi_phi_A_Mats
                 To_Pickle_inv_Manny_Mats[:, :, :, 9] = self.xi_phi_B_Mats
 
-                # print("To_Pickle_inv_Manny_Mats.shape = "+str(To_Pickle_inv_Manny_Mats.shape))
-
                 Manny_Info_Dict = {}
                 Manny_Info_Dict["Inv_Mats"] = To_Pickle_inv_Manny_Mats
                 Manny_Info_Dict["K_A"] = self.K_A_pts
@@ -1671,7 +1672,8 @@ class manifold(
                     pkl.dump(Manny_Info_Dict, f_manny)
             """
             else:
-                #print("NOT pickling Manny Inv Mats for later re-use"+"\n") # BJG: should add verbose option
+                #print("NOT pickling Manny Inv Mats for later re-use"+"\n")
+                # BJG: should add verbose option
             """
 
         # If we have already pickled the above matricies, we load them:
@@ -1706,44 +1708,22 @@ class manifold(
                 self.xi_phi_B_Mats,
             ) = np.squeeze(np.split(Pickled_inv_Manny_Mats, 10, 3))
 
-            """
-            self.rho_A_Mats = Pickled_Inverse_Mats[:,:,:, 0]
-            self.rho_B_Mats = Pickled_Inverse_Mats[:,:,:, 1]
-            self.rho_theta_A_Mats = Pickled_Inverse_Mats[:,:,:, 2]
-            self.rho_theta_B_Mats = Pickled_Inverse_Mats[:,:,:, 3]
-            self.rho_phi_A_Mats = Pickled_Inverse_Mats[:,:,:, 4]
-            self.rho_phi_B_Mats = Pickled_Inverse_Mats[:,:,:, 5]
-            self.xi_theta_A_Mats = Pickled_Inverse_Mats[:,:,:, 6]
-            self.xi_theta_B_Mats = Pickled_Inverse_Mats[:,:,:, 7]
-            self.xi_phi_A_Mats = Pickled_Inverse_Mats[:,:,:, 8]
-            self.xi_phi_B_Mats = Pickled_Inverse_Mats[:,:,:, 9]
-            """
-
         # print("Done Computing Flat Tensors") # BJG: should add verbose option
-
-        """
-        ### From *(2-forms)
-        inv_met_fac_A_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(self.quad_pts, lbdv, 'A'), 0)
-        inv_met_fac_B_pts = np.where(lbdv.Chart_of_Quad_Pts > 0, 1/self.Manifold.Metric_Factor_Quad_Pt(self.quad_pts, lbdv, 'B'), 0)
-
-        dx_dy_to_dtheta_dphi_A_pts, dx_dz_to_dtheta_dphi_A_pts, dy_dz_to_dtheta_dphi_A_pts = Two_Form_Conv_to_Polar_pt(self.quad_pts, lbdv, self.Manifold, 'A')
-        dx_dy_to_dtheta_dphi_B_pts, dx_dz_to_dtheta_dphi_B_pts, dy_dz_to_dtheta_dphi_B_pts = Two_Form_Conv_to_Polar_pt(self.quad_pts, lbdv, self.Manifold, 'B')
-        """
 
         # print("Manifold Constucted"+"\n") # BJG: should add verbose option
 
     def get_coordinates(self):
         return np.stack([self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts]).transpose()
 
-    ######### Vector (& Derivs) of Manifold, Normals, 2-form Convs ###################################################################################
+    ######### Vector (& Derivs) of Manifold, Normals, 2-form Convs #####################
 
-    def Cart_Coors(quad_pt, Chart):
+    def Cart_Coors(self, quad_pt, Chart):
         if Chart == "A":
             return self.Cart_Coors_A[quad_pt, :]
         if Chart == "B":
             return self.Cart_Coors_B[quad_pt, :]
 
-    def R_Sq_Val(quad_pt, Chart):
+    def R_Sq_Val(self, quad_pt, Chart):
         if Chart == "A":
             return self.R_sq_A_Pts[quad_pt, :]
         if Chart == "B":
@@ -1811,7 +1791,7 @@ class manifold(
         if Chart == "B":
             return self.dy_dz_B_Vals_From_Polar[quad_pt, :]
 
-    ######### Elements of First Fundamental Form and Its Ders, and W: ###################################################################
+    ######### Elements of First Fundamental Form and Its Ders, and W: ##################
 
     def E(self, quad_pt, Chart):
         if Chart == "A":
@@ -1892,7 +1872,7 @@ class manifold(
         if Chart == "B":
             return self.Wein_22_B_Pts[quad_pt, 0]
 
-    ####### Fundamental Forms and Weingarten Map ##########################################################################
+    ####### Fundamental Forms and Weingarten Map ######################################
 
     # First Fundamental Form
     def I_Mat(self, quad_pt, Chart):
@@ -1924,7 +1904,7 @@ class manifold(
             ]
         )
 
-    ##### Weingarten Map/ Change of BASIS #################################################################################
+    ##### Weingarten Map/ Change of BASIS #############################################
 
     # Weingarten Map, derivative of (inward) normal vector
     def Wein_Map(self, quad_pt, Chart):
@@ -1944,15 +1924,14 @@ class manifold(
         sigma_phi_C_pt = self.sigma_phi(quad_pt, Chart)
 
         # For Scalar Case, we use usual vectorization:
-        if isscalar(quad_pt):
+        if np.isscalar(quad_pt):
             return -1.0 * (
                 W_map[0, 0] * sigma_theta_C_pt + W_map[1, 0] * sigma_phi_C_pt
             )
 
-        # For multiple quad pts, we use einstein sumation to output vector of solutions at each point:
+        # For multiple quad pts, we use einstein sumation
+        # to output vector of solutions at each point:
         else:
-            # print("W_map[0,0].shape = "+str( W_map[0,0].shape ))
-            # print("sigma_theta_C_pt.shape = "+str( sigma_theta_C_pt.shape ))
             return -1.0 * (
                 W_map[0, 0].reshape(len(quad_pt), 1) * sigma_theta_C_pt
                 + W_map[1, 0].reshape(len(quad_pt), 1) * sigma_phi_C_pt
@@ -1966,12 +1945,13 @@ class manifold(
         sigma_phi_C_pt = self.sigma_phi(quad_pt, Chart)
 
         # For Scalar Case, we use usual vectorization:
-        if isscalar(quad_pt):
+        if np.isscalar(quad_pt):
             return -1.0 * (
                 W_map[0, 1] * sigma_theta_C_pt + W_map[1, 1] * sigma_phi_C_pt
             )
 
-        # For multiple quad pts, we use einstein sumation to output vector of solutions at each point:
+        # For multiple quad pts, we use einstein
+        # sumation to output vector of solutions at each point:
         else:
             return -1.0 * (
                 W_map[0, 1].reshape(len(quad_pt), 1) * sigma_theta_C_pt
@@ -1981,18 +1961,7 @@ class manifold(
     # Matrix Used to Convert to Polar
     def Change_Basis_Mat(self, quad_pt, Chart):
 
-        Basis_mat = zeros((3, 3))
-        """
-        if(Chart == 'A'):
-            Basis_mat[:, 0] = self.Sigma_Theta_A_Pts[quad_pt, :].T #self.sigma_theta(theta_pt, phi_pt, Chart).T
-            Basis_mat[:, 1] = self.Sigma_Phi_A_Pts[quad_pt, :].T #self.sigma_phi(theta_pt, phi_pt, Chart).T
-            Basis_mat[:, 2] = self.Normal_Vecs_A_Pts[quad_pt, :].T #self.Normal_Vec(theta_pt, phi_pt, Chart).T
-
-        if(Chart == 'B'):
-            Basis_mat[:, 0] = self.Sigma_Theta_B_Pts[quad_pt, :].T
-            Basis_mat[:, 1] = self.Sigma_Phi_B_Pts[quad_pt, :].T
-            Basis_mat[:, 2] = self.Normal_Vecs_B_Pts[quad_pt, :].T
-        """
+        Basis_mat = np.zeros((3, 3))
 
         Basis_mat[:, 0] = self.sigma_theta(quad_pt, Chart).T
         Basis_mat[:, 1] = self.sigma_phi(quad_pt, Chart).T
@@ -2003,7 +1972,7 @@ class manifold(
     # Entry-wise deriv of Basis mat, dtheta
     def dChange_Basis_Mat_theta(self, quad_pt, Chart):
 
-        dBasis_mat_theta = zeros((3, 3))
+        dBasis_mat_theta = np.zeros((3, 3))
 
         dBasis_mat_theta[:, 0] = self.sigma_theta_theta(quad_pt, Chart).T
         dBasis_mat_theta[:, 1] = self.sigma_theta_phi(quad_pt, Chart).T
@@ -2014,7 +1983,7 @@ class manifold(
     # Entry-wise deriv of Basis mat, dphi
     def dChange_Basis_Mat_phi(self, quad_pt, Chart):
 
-        dBasis_mat_phi = zeros((3, 3))
+        dBasis_mat_phi = np.zeros((3, 3))
 
         dBasis_mat_phi[:, 0] = self.sigma_theta_phi(quad_pt, Chart).T
         dBasis_mat_phi[:, 1] = self.sigma_phi_phi(quad_pt, Chart).T
@@ -2025,21 +1994,21 @@ class manifold(
     # I mat is embedded:
     def G_Mat(self, quad_pt, Chart):
 
-        G_mat = zeros((3, 3))
+        G_mat = np.zeros((3, 3))
         G_mat[0:2, 0:2] = self.I_Mat(quad_pt, Chart)
 
         return G_mat
 
     def dG_Mat_theta(self, quad_pt, Chart):
 
-        G_theta_mat = zeros((3, 3))
+        G_theta_mat = np.zeros((3, 3))
         G_theta_mat[0:2, 0:2] = self.I_theta_Mat(quad_pt, Chart)
 
         return G_theta_mat
 
     def dG_Mat_phi(self, quad_pt, Chart):
 
-        G_phi_mat = zeros((3, 3))
+        G_phi_mat = np.zeros((3, 3))
         G_phi_mat[0:2, 0:2] = self.I_phi_Mat(quad_pt, Chart)
 
         return G_phi_mat
