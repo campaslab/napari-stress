@@ -134,28 +134,65 @@ def test_surface_tracing():
     traced_points = results[0][0]
     assert len(traced_points.squeeze()) < len(surf_points)
 
-    # # Now, let's test surface-labelled data
-    # blurry_ring = filters.sobel(image)
+def test_fit_and_create_pointcloud():
+    from .._reconstruction.patches import fit_and_create_pointcloud
+    # Mock input data
+    mock_pointcloud = np.array([[1, 2, 3],
+                                [4, 5, 6],
+                                [7, 8, 9]])
 
-    # surf_points = shapes.Sphere().points()
-    # surf_points += (surf_points * true_radius + 2) + 50
+    # Expected result calculated manually or by a reference implementation
+    # expected_fitting_params = np.array([0, 0, 0, 0, 0, 0]) # Example coefficients
+    expected_fitted_pointcloud = np.array([[1, 2, 3],
+                                           [4, 5, 6],
+                                           [7, 8, 9]]) # Example expected pointcloud
 
-    # fit_type = 'fancy'
-    # results = reconstruction.trace_refinement_of_surface(
-    #     blurry_ring, surf_points,
-    #     trace_length=10,
-    #     sampling_distance=1,
-    #     selected_fit_type=fit_type,
-    #     interpolation_method='linear',
-    #     selected_edge='surface',
-    #     remove_outliers=False)
+    # Call the function to test
+    fitted_pointcloud = fit_and_create_pointcloud(mock_pointcloud)
 
-    # fit_type = 'quick'
-    # results = reconstruction.trace_refinement_of_surface(
-    #     blurry_ring, surf_points,
-    #     trace_length=10,
-    #     sampling_distance=1,
-    #     selected_fit_type=fit_type,
-    #     selected_edge='surface',
-    #     interpolation_method='linear',
-    #     remove_outliers=False)
+    # Assert that the output is as expected
+    np.testing.assert_array_almost_equal(
+        fitted_pointcloud, expected_fitted_pointcloud,
+        decimal=5,
+        err_msg='Fitted pointcloud did not match expected values'
+    )
+
+def test_fit_quadratic_surface():
+    from .._reconstruction.patches import fit_quadratic_surface
+    # Mock input data
+    x_coords = np.array([0, 1, 2])
+    y_coords = np.array([0, 1, 2])
+    z_coords = np.array([1, 1, 1])  # Flat surface along z = 1
+
+    # Expected result (a flat surface would just have the constant term)
+    expected_fitting_params = np.array([1, 0, 0, 0, 0, 0])
+
+    # Call the function to test
+    fitting_params = fit_quadratic_surface(x_coords, y_coords, z_coords)
+
+    # Assert that the output is as expected
+    np.testing.assert_array_almost_equal(
+        fitting_params, expected_fitting_params,
+        decimal=5,
+        err_msg='Fitting parameters did not match expected values'
+    )
+
+def test_create_fitted_coordinates():
+    from .._reconstruction.patches import create_fitted_coordinates
+    # Mock input data
+    x_coords = np.array([0, 1, 2])
+    y_coords = np.array([0, 1, 2])
+    fitting_params = np.array([1, 0, 0, 0, 0, 0])  # Flat surface along z = 1
+
+    # Expected result
+    expected_zyx_pointcloud = np.array([[1, 0, 0], [1, 1, 1], [1, 2, 2]])
+
+    # Call the function to test
+    zyx_pointcloud = create_fitted_coordinates(x_coords, y_coords, fitting_params)
+
+    # Assert that the output is as expected
+    np.testing.assert_array_almost_equal(
+        zyx_pointcloud, expected_zyx_pointcloud,
+        decimal=5,
+        err_msg='Created pointcloud did not match expected values'
+    )
