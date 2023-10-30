@@ -261,9 +261,12 @@ def reconstruct_droplet(
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
     from skimage import filters, transform
+    from .refine_surfaces import resample_pointcloud
 
     scaling_factors = voxelsize / target_voxelsize
-    rescaled_image = transform.rescale(image, scaling_factors)
+    rescaled_image = transform.rescale(image, scaling_factors,
+                                       preserve_range=True,
+                                       anti_aliasing=True)
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     threshold = filters.threshold_otsu(rescaled_image)
     binarized_image = rescaled_image > threshold
@@ -335,113 +338,15 @@ def reconstruct_droplet(
     properties = {"name": "Center", "symbol": "ring", "face_color": "yellow", "size": 3}
     droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
 
+    properties = {"name": "Rescaled image", 'blending': 'additive', 'scale': [target_voxelsize] * 3}
+    layer_rescaled_image = (rescaled_image, properties, "image")
+
     return [
         layer_label_image,
         layer_points_first_guess,
         traced_points,
         trace_vectors,
         droplet_center,
+        layer_rescaled_image
     ]
 
-
-def _fibonacci_sampling(number_of_points: int = 256) -> PointsData:
-    """
-    Sample points on unit sphere according to fibonacci-scheme.
-
-    See Also
-    --------
-    http://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/
-
-    Parameters
-    ----------
-    number_of_points : int, optional
-        Number of points to be sampled. The default is 256.
-
-    Returns
-    -------
-    PointsData
-
-    """
-    goldenRatio = (1 + 5**0.5) / 2
-    i = np.arange(0, number_of_points)
-    theta = 2 * np.pi * i / goldenRatio
-    phi = np.arccos(1 - 2 * (i + 0.5) / number_of_points)
-    x = np.cos(theta) * np.sin(phi)
-    y = np.sin(theta) * np.sin(phi)
-    z = np.cos(phi)
-
-    return np.stack([x, y, z]).T
-
-
-def _resample_pointcloud(points: PointsData, sampling_length: float = 5):
-    """
-    Resampe a spherical-like pointcloud on fibonacci grid.
-
-    Parameters
-    ----------
-    points : PointsData
-    sampling_length : float, optional
-        Distance between sampled point locations. The default is 5.
-
-    Returns
-    -------
-    resampled_points : TYPE
-
-    """
-    from scipy.interpolate import griddata
-
-    # convert to spherical, relative coordinates
-    center = np.mean(points, axis=0)
-    points_centered = points - center
-    points_spherical = vedo.cart2spher(
-        points_centered[:, 0], points_centered[:, 1], points_centered[:, 2]
-    ).T
-
-    # estimate point number according to passed sampling length
-    mean_radius = points_spherical[:, 0].mean()
-    surface_area = mean_radius**2 * 4 * np.pi
-    n = int(surface_area / sampling_length**2)
-
-    # sample points on unit-sphere according to fibonacci-scheme
-    sampled_points = _fibonacci_sampling(n)
-    sampled_points = vedo.utils.cart2spher(
-        sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2]
-    ).T
-
-    # interpolate cartesian coordinates on (theta, phi) grid
-    theta_interpolation = np.concatenate(
-        [points_spherical[:, 1], points_spherical[:, 1], points_spherical[:, 1]]
-    )
-    phi_interpolation = np.concatenate(
-        [
-            points_spherical[:, 2] + 2 * np.pi,
-            points_spherical[:, 2],
-            points_spherical[:, 2] - 2 * np.pi,
-        ]
-    )
-
-    new_x = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 0]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    new_y = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 1]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    new_z = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 2]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    resampled_points = np.stack([new_x, new_y, new_z]).T + center
-
-    no_nan_idx = np.where(~np.isnan(resampled_points[:, 0]))[0]
-    return resampled_points[no_nan_idx, :]
