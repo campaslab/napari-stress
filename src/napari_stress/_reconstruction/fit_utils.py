@@ -1,13 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from .._utils.fit_utils import (
-    _function_args_to_list,
-    _gaussian,
-    _sigmoid,
-    _detect_maxima,
-    _detect_max_gradient,
-)
 from enum import Enum
 from scipy.optimize import curve_fit
 from typing import List
@@ -27,6 +20,7 @@ class interpolation_types(Enum):
 class edge_functions(Enum):
     interior = {"fancy": _sigmoid, "quick": _detect_max_gradient}
     surface = {"fancy": _gaussian, "quick": _detect_maxima}
+
 
 def _identify_outliers(
     table: pd.DataFrame,
@@ -272,3 +266,52 @@ def _mean_squared_error(
     fraction_variance_unexplained = mean_squared_error / np.var(y)
 
     return mean_squared_error, fraction_variance_unexplained
+
+
+def _sigmoid(
+    array: np.ndarray,
+    center: float,
+    amplitude: float,
+    slope: float,
+    background_slope: float,
+    offset: float,
+):
+    """
+    Sigmoidal fit function
+    https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
+    """
+    return (amplitude + background_slope * (-1) * (array - center)) / (
+        1 + np.exp((-1) * slope * (array - center))
+    ) + offset
+
+
+def _gaussian(array: np.ndarray, center: float, sigma: float, amplitude: float):
+    """
+    Gaussian normal fit function
+    https://en.wikipedia.org/wiki/Normal_distribution
+    """
+    return (
+        amplitude
+        / np.sqrt((2 * np.pi * sigma**2))
+        * np.exp(-((array - center) ** 2) / (2 * sigma**2))
+    )
+
+
+def _detect_maxima(array: np.ndarray, center: float = None):
+    """
+    Function to find the maximum's index of data with a single peak.
+    """
+    return np.argmax(array)
+
+
+def _detect_max_gradient(array: np.ndarray, center: float = None):
+    """
+    Function to find the location of the steepest gradient for sigmoidal data
+    """
+    return np.argmax(np.abs(np.diff(array)))
+
+
+def _function_args_to_list(function: callable) -> list:
+
+    sig = inspect.signature(function)
+    return list(sig.parameters.keys())
