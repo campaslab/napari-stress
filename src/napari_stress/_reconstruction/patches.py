@@ -78,17 +78,25 @@ def create_fitted_coordinates(points, fitting_params):
     return zyx_pointcloud
 
 
-def find_neighbor_indices(pointcloud, patch_radii):
+def find_neighbor_indices(pointcloud: "napari.types.PointsData",
+                          patch_radius: Tuple[float, np.ndarray]):
     """
-    For each point in the pointcloud, find the indices and distances of all points within a given radius.
+    For each point in the pointcloud, find the indices and distances of all points
+    within a given radius.
     
     Parameters:
-    pointcloud: a numpy array with shape (n_points, 3), where each row is [Z, Y, X]
-    patch_radii: a single value or a numpy array with the same length as pointcloud indicating the radius around each point to search for neighbors
+    -----------
+    pointcloud: 'napari.types.PointsData'
+        A numpy array with shape (n_points, 3), where each row represents a point with
+        coordinates [Z, Y, X].
+    patch_radius: float or np.ndarray
+        The radius around each point to search for neighbors. Can be a single value or
+        a numpy array with the same length as pointcloud.
     
     Returns:
-    indices: a list where each element is a list of indices of neighbors for the corresponding point
-    distances: a list where each element is a list of distances to the corresponding neighbors
+    --------
+    indices: a list where each element is a list of indices of neighbors for the
+    corresponding point
     """
     from scipy.spatial import cKDTree
     tree = cKDTree(pointcloud)
