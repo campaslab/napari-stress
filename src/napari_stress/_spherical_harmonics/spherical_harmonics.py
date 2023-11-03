@@ -13,7 +13,7 @@ import vedo
 import pyshtools
 import warnings
 
-from .._utils.fit_utils import Least_Squares_Harmonic_Fit
+from .fit_utils import Least_Squares_Harmonic_Fit
 from .._stress import sph_func_SPB as sph_f
 from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf

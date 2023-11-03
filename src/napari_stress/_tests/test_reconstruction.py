@@ -53,7 +53,7 @@ def test_reconstruction(make_napari_viewer):
     assert widget2.doubleSpinBox_voxelsize_z.value() == 1.1
 
 
-def test_quadrature_point_reconstuction(make_napari_viewer):
+def test_quadrature_point_reconstruction(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud, fit_spherical_harmonics
     from napari_stress import reconstruction
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import (

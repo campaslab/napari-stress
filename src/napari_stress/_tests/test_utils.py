@@ -11,7 +11,7 @@ from napari.layers import Layer, Points
 
 
 def test_fit_functions():
-    from napari_stress._utils.fit_utils import (
+    from napari_stress._reconstruction.fit_utils import (
         _sigmoid,
         _gaussian,
         _detect_maxima,
