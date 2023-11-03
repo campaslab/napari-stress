@@ -140,8 +140,8 @@ def compute_orientation_matrix(patch_points: 'napari.types.PointsData') -> np.nd
     return eigvecs
 
 def orient_patch(patch_points: 'napari.types.PointsData',
-                 patch_center_point: 'napari.types.PointsData',
-                 center_point: 'napari.types.PointsData') -> tuple:
+                 patch_query_point: 'napari.types.PointsData',
+                 reference_point: 'napari.types.PointsData') -> tuple:
     """
     Reorient a patch of points so that the normal vector points along the z-axis.
 
@@ -152,9 +152,9 @@ def orient_patch(patch_points: 'napari.types.PointsData',
     ----------
     patch_points : np.ndarray
         An N x 3 array of points representing a patch in 3D space.
-    patch_center_point : np.ndarray
+    patch_query_point : np.ndarray
         A 1 x 3 array representing the center point of the patch.
-    center_point : np.ndarray
+    reference_point : np.ndarray
         A 1 x 3 array representing the overall center point for orientation.
 
     Returns
@@ -176,43 +176,36 @@ def orient_patch(patch_points: 'napari.types.PointsData',
         If the `patch_center_point` contains NaN or infinite values.
     """
     # Check for NaN or infinite values in the center point of the patch
-    if np.isnan(np.sum(patch_center_point)) or not np.isfinite(np.sum(patch_center_point)):
+    if np.isnan(np.sum(patch_query_point)) or not np.isfinite(np.sum(patch_query_point)):
         raise ValueError('Center point of the patch must be a finite 1x3 array')
     
-    # Filter out NaN values in patch points
-    valid_indices = ~np.isnan(patch_points[:, 0])
-    x = patch_points[valid_indices, 0]
-    y = patch_points[valid_indices, 1]
-    z = patch_points[valid_indices, 2]
-    
-    # Calculate the mean of the patch
-    xo, yo, zo = np.mean(x), np.mean(y), np.mean(z)
-    computed_patch_center = np.array([xo, yo, zo])
+    # Mean center of the patch points
+    computed_patch_center = patch_points.mean(axis=0)
     
     # Center the patch points and the given center point
-    X = np.column_stack((x - xo, y - yo, z - zo))
-    Xq = patch_center_point - computed_patch_center
-    Xct = center_point - computed_patch_center
+    points_centered = patch_points - computed_patch_center
+    query_point = patch_query_point - computed_patch_center
+    Xct = reference_point - computed_patch_center
     
     # Calculate the orientation matrix
-    orient_matrix = compute_orientation_matrix(X)
+    orient_matrix = compute_orientation_matrix(points_centered)
 
     # Reorient the center point of the patch
-    Yq = Xq @ orient_matrix
+    Yq = query_point @ orient_matrix
     YCenter = Xct @ orient_matrix
     
     # Determine if the patch needs to be flipped
     if Yq[2] - YCenter[2] > 0:
         flip_upside_down = np.diag([1, -1, -1])
         orient_matrix = orient_matrix @ flip_upside_down
-        Yq = Xq @ orient_matrix
+        Yq = query_point @ orient_matrix
         YCenter = Xct @ orient_matrix
     
     # Reorient all points in the patch
-    Xn_out = X @ orient_matrix
+    Xn_out = points_centered @ orient_matrix
     
     # Calculate eigenvalues for the covariance matrix
-    _, eigvals = np.linalg.eigh(np.cov(X.T))
+    _, eigvals = np.linalg.eigh(np.cov(points_centered.T))
 
     # Output
     Xq_out = Yq
