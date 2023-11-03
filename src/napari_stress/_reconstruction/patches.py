@@ -141,9 +141,9 @@ def compute_orientation_matrix(patch_points: 'napari.types.PointsData') -> np.nd
 
     return eigvecs
 
-def orient_patch(patch_points: 'napari.types.PointsData',
+def _orient_patch(patch_points: 'napari.types.PointsData',
                  patch_query_point: 'napari.types.PointsData',
-                 reference_point: 'napari.types.PointsData') -> tuple:
+                 reference_point: 'napari.types.PointsData' = None) -> tuple:
     """
     Reorient a patch of points so that the normal vector points along the z-axis.
 
@@ -180,6 +180,9 @@ def orient_patch(patch_points: 'napari.types.PointsData',
     # Check for NaN or infinite values in the center point of the patch
     if np.isnan(np.sum(patch_query_point)) or not np.isfinite(np.sum(patch_query_point)):
         raise ValueError('Center point of the patch must be a finite 1x3 array')
+    
+    if reference_point is None:
+        reference_point = np.asarray([0, 0, 0])[None, :]
     
     # Mean center of the patch points
     computed_patch_center = patch_points.mean(axis=0)
@@ -400,7 +403,7 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
             continue  # Not enough neighbors, skip to the next point
 
         # Orient the patch for the current point
-        oriented_patch, oriented_query_point, _, patch_center, orient_matrix = orient_patch(
+        oriented_patch, oriented_query_point, _, patch_center, orient_matrix = _orient_patch(
             patch, current_point, np.mean(point_cloud, axis=0))
 
         # Perform the quadratic surface fitting
@@ -446,7 +449,7 @@ def iterative_curvature_adaptive_patch_fitting(
                 continue  # Not enough neighbors, skip to the next point
 
             # Orient the patch for the current point
-            oriented_patch, oriented_query_point, _, patch_center, orient_matrix = orient_patch(
+            oriented_patch, oriented_query_point, _, patch_center, orient_matrix = _orient_patch(
                 patch, current_point, np.mean(point_cloud, axis=0))
 
             # Perform the quadratic surface fitting
