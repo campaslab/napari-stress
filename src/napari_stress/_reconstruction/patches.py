@@ -215,7 +215,6 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
 
     return (patch_transformed,
             query_point_transformed,
-            computed_patch_center,
             orient_matrix)
 
 
@@ -403,8 +402,9 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
             continue  # Not enough neighbors, skip to the next point
 
         # Orient the patch for the current point
-        oriented_patch, oriented_query_point, patch_center, orient_matrix = _orient_patch(
+        oriented_patch, oriented_query_point, orient_matrix = _orient_patch(
             patch, current_point, np.mean(point_cloud, axis=0))
+        patch_center = patch.mean(axis=0)
 
         # Perform the quadratic surface fitting
         fitting_params = _fit_quadratic_surface(oriented_patch)
@@ -449,8 +449,9 @@ def iterative_curvature_adaptive_patch_fitting(
                 continue  # Not enough neighbors, skip to the next point
 
             # Orient the patch for the current point
-            oriented_patch, oriented_query_point, patch_center, orient_matrix = _orient_patch(
+            oriented_patch, oriented_query_point, orient_matrix = _orient_patch(
                 patch, current_point, np.mean(point_cloud, axis=0))
+            patch_center = patch.mean(axis=0)
 
             # Perform the quadratic surface fitting
             fitting_params = _fit_quadratic_surface(oriented_patch)
