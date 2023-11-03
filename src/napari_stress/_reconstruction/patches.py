@@ -182,7 +182,7 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
         raise ValueError('Center point of the patch must be a finite 1x3 array')
     
     if reference_point is None:
-        reference_point = np.asarray([0, 0, 0])[None, :]
+        reference_point = np.asarray([0, 0, 0])
     
     # Mean center of the patch points
     computed_patch_center = patch_points.mean(axis=0)
@@ -196,27 +196,28 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
     orient_matrix = compute_orientation_matrix(points_centered)
 
     # Reorient the center point of the patch
-    Yq = query_point @ orient_matrix
+    query_point_transformed = query_point @ orient_matrix
     YCenter = Xct @ orient_matrix
     
     # Determine if the patch needs to be flipped
-    if Yq[2] - YCenter[2] > 0:
+    if query_point_transformed[2] - YCenter[2] > 0:
         flip_upside_down = np.diag([1, -1, -1])
         orient_matrix = orient_matrix @ flip_upside_down
-        Yq = query_point @ orient_matrix
+        query_point_transformed = query_point @ orient_matrix
         YCenter = Xct @ orient_matrix
     
     # Reorient all points in the patch
-    Xn_out = points_centered @ orient_matrix
+    patch_transformed = points_centered @ orient_matrix
     
     # Calculate eigenvalues for the covariance matrix
     _, eigvals = np.linalg.eigh(np.cov(points_centered.T))
 
-    # Output
-    Xq_out = Yq
-    Xn_out = Xn_out  # Reoriented patch points
 
-    return Xn_out, Xq_out, eigvals, computed_patch_center, orient_matrix
+    return (patch_transformed,
+            query_point_transformed,
+            eigvals,
+            computed_patch_center,
+            orient_matrix)
 
 
 def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
