@@ -1,6 +1,21 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+def test_patch_fitting():
+
+    from .._reconstruction.fit_utils import _fibonacci_sampling
+    from .._reconstruction.patches import _find_neighbor_indices
+    
+    # first create fibonacci pointcloud
+    pointcloud = _fibonacci_sampling(number_of_points=256)
+
+    # assert that distance of every point to origin is 1
+    assert np.allclose(np.linalg.norm(pointcloud, axis=1), 1)
+
+    # select a random point (i.e., #42) and extract its neighbors
+    patch_indices = _find_neighbor_indices(pointcloud, patch_center, patch_radius)
+    
+
 
 def test_reconstruction(make_napari_viewer):
     from napari_stress import reconstruction, get_droplet_4d
