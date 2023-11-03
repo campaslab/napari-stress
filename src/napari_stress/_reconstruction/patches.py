@@ -1,4 +1,6 @@
 import numpy as np
+from .._utils import frame_by_frame
+from typing import Tuple
 
 def fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
                               ) -> 'napari.tyes.PointsData':
@@ -213,8 +215,7 @@ def orient_patch(patch_points: 'napari.types.PointsData',
 
     return Xn_out, Xq_out, eigvals, computed_patch_center, orient_matrix
 
-def fit_patches(point_cloud: np.ndarray,
-                search_radius) -> 'napari.types.PointsData':
+
 def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
                                       fitting_params: np.ndarray) -> tuple:
     """
@@ -359,6 +360,11 @@ def estimate_patch_radii(
             updated_patch_radii[i] = np.max(all_distances[nearest_indices])
             
     return updated_patch_radii
+
+
+@frame_by_frame
+def fit_patches(point_cloud: 'napari.types.PointsData',
+                search_radius: float = 1) -> 'napari.types.PointsData':
     """
     Fit a quadratic surface to each point's neighborhood in a point cloud and
     adjust the point positions to the fitted surface.
@@ -387,27 +393,28 @@ def estimate_patch_radii(
     for idx in range(num_points):
         current_point = point_cloud[idx, :]
         neighbors_idx = neighbor_indices[idx]
-        neighbors = point_cloud[neighbors_idx, :]
+        patch = point_cloud[neighbors_idx, :]
 
         # Proceed only if there are enough points in the neighborhood
-        if len(neighbors) < min_neighbors:
+        if len(patch) < min_neighbors:
             continue  # Not enough neighbors, skip to the next point
 
         # Orient the patch for the current point
-        oriented_patch, oriented_query_point, _, patch_center = orient_patch(
-            neighbors, current_point, np.mean(point_cloud, axis=0))
+        oriented_patch, oriented_query_point, _, patch_center, orient_matrix = orient_patch(
+            patch, current_point, np.mean(point_cloud, axis=0))
 
         # Perform the quadratic surface fitting
-        x_coords, y_coords, z_coords = oriented_patch.T
-        fitting_params = fit_quadratic_surface(x_coords, y_coords, z_coords)
+        fitting_params = fit_quadratic_surface(oriented_patch)
 
         # Calculate the new fitted point
-        fitted_point = create_fitted_coordinates(
-            oriented_query_point[0], oriented_query_point[1], fitting_params)
+        fitted_query_point = create_fitted_coordinates(
+            oriented_query_point[None, :], fitting_params)
+        # fitted_patch = create_fitted_coordinates(oriented_patch, fitting_params)
 
-        # Adjust and store the fitted point based on the original patch center
-        fitted_point_cloud[idx, :] = fitted_point + patch_center
-
+        # fitted_patch_reoriented = fitted_patch @ orient_matrix.T + patch_center
+        fitted_point_cloud[idx, :] = fitted_query_point[None, :] @ orient_matrix.T +\
+            patch_center
+        
     return fitted_point_cloud
 
 
