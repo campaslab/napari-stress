@@ -274,25 +274,15 @@ def reconstruct_droplet(
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
-    mesh_vedo = vedo.mesh.Mesh((surface[0], surface[1])).clean()
+    surface = nppas.remove_duplicate_vertices(surface)
 
-    # Smooth surface
-    surface_smoothed = nppas.smooth_surface(
-        (mesh_vedo.points(), mesh_vedo.faces()),
-        number_of_iterations=n_smoothing_iterations,
-    )
-    points_low = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=0.01
-    )
-    points_high = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=0.25
-    )
-    points_per_fraction = (0.01 - 0.25) / (len(points_low) - len(points_high))
-
-    points_first_guess = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=points_per_fraction * n_points
-    )
-
+    # Smooth and decimate
+    surface = nppas.smooth_surface(surface,
+        n_smoothing_iterations,
+        feature_angle=120,
+        edge_angle=90)
+    surface = nppas.decimate_quadric(surface, number_of_vertices=n_points)
+    points_first_guess = surface[0]
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
