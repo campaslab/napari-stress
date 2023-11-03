@@ -2,7 +2,7 @@ import numpy as np
 from .._utils import frame_by_frame
 from typing import Tuple
 
-def fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
+def _fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
                               ) -> 'napari.tyes.PointsData':
     """
     Fits a quadratic surface to a pointcloud and returns a new pointcloud
@@ -15,16 +15,16 @@ def fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
     fitted_pointcloud: a numpy array with the fitted Z coordinates
     """
     # Fit the quadratic surface to the Z coordinates
-    fitting_params = fit_quadratic_surface(pointcloud)
+    fitting_params = _fit_quadratic_surface(pointcloud)
     
     # Apply the fitting parameters to get the fitted ZYX pointcloud
-    fitted_pointcloud = create_fitted_coordinates(pointcloud[:, 2],
+    fitted_pointcloud = _create_fitted_coordinates(pointcloud[:, 2],
                                                   pointcloud[:, 1],
                                                   fitting_params)
     
     return fitted_pointcloud
 
-def fit_quadratic_surface(points: 'napari.types.PointsData') -> np.ndarray:
+def _fit_quadratic_surface(points: 'napari.types.PointsData') -> np.ndarray:
     """
     Fits a quadratic surface to 3D data points using a second-order polynomial.
     
@@ -52,7 +52,7 @@ def fit_quadratic_surface(points: 'napari.types.PointsData') -> np.ndarray:
 
     return fitting_params.flatten()
 
-def create_fitted_coordinates(points, fitting_params):
+def _create_fitted_coordinates(points, fitting_params):
     """
     Creates the fitted ZYX pointcloud from the fitting parameters and X, Y coordinates.
     
@@ -80,8 +80,8 @@ def create_fitted_coordinates(points, fitting_params):
     return zyx_pointcloud
 
 
-def find_neighbor_indices(pointcloud: "napari.types.PointsData",
-                          patch_radius: Tuple[float, np.ndarray]):
+def _find_neighbor_indices(pointcloud: "napari.types.PointsData",
+                           patch_radius: Tuple[float, np.ndarray]):
     """
     For each point in the pointcloud, find the indices and distances of all points
     within a given radius.
@@ -336,7 +336,7 @@ def estimate_patch_radii(
     updated_patch_radii = np.copy(patch_radii)
     
     # Retrieve the list of lists containing neighbor indices for each point
-    neighbor_indices_list = find_neighbor_indices(pointcloud, patch_radii)
+    neighbor_indices_list = _find_neighbor_indices(pointcloud, patch_radii)
     
     for i, curv in enumerate(k1):
         # Get the current point's neighbors
@@ -388,7 +388,7 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
     min_neighbors = 6  # Minimum number of neighbors required to perform fitting
 
     # Compute neighbors for each point in the point cloud
-    neighbor_indices = find_neighbor_indices(point_cloud, search_radius)
+    neighbor_indices = _find_neighbor_indices(point_cloud, search_radius)
 
     for idx in range(num_points):
         current_point = point_cloud[idx, :]
@@ -404,12 +404,12 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
             patch, current_point, np.mean(point_cloud, axis=0))
 
         # Perform the quadratic surface fitting
-        fitting_params = fit_quadratic_surface(oriented_patch)
+        fitting_params = _fit_quadratic_surface(oriented_patch)
 
         # Calculate the new fitted point
-        fitted_query_point = create_fitted_coordinates(
+        fitted_query_point = _create_fitted_coordinates(
             oriented_query_point[None, :], fitting_params)
-        # fitted_patch = create_fitted_coordinates(oriented_patch, fitting_params)
+        # fitted_patch = _create_fitted_coordinates(oriented_patch, fitting_params)
 
         # fitted_patch_reoriented = fitted_patch @ orient_matrix.T + patch_center
         fitted_point_cloud[idx, :] = fitted_query_point[None, :] @ orient_matrix.T +\
@@ -430,7 +430,7 @@ def iterative_curvature_adaptive_patch_fitting(
 
     for it in range(n_iterations):
         
-        neighbor_indices = find_neighbor_indices(point_cloud, search_radii)
+        neighbor_indices = _find_neighbor_indices(point_cloud, search_radii)
         mean_curvatures = [np.nan] * len(point_cloud)
         principal_curvatures = [np.nan] * len(point_cloud)
 
@@ -450,12 +450,12 @@ def iterative_curvature_adaptive_patch_fitting(
                 patch, current_point, np.mean(point_cloud, axis=0))
 
             # Perform the quadratic surface fitting
-            fitting_params = fit_quadratic_surface(oriented_patch)
+            fitting_params = _fit_quadratic_surface(oriented_patch)
 
             # Calculate the new fitted point
-            fitted_query_point = create_fitted_coordinates(
+            fitted_query_point = _create_fitted_coordinates(
                 oriented_query_point[None, :], fitting_params)
-            # fitted_patch = create_fitted_coordinates(oriented_patch, fitting_params)
+            # fitted_patch = _create_fitted_coordinates(oriented_patch, fitting_params)
 
             fitted_point_cloud[idx, :] = fitted_query_point[None, :] @ orient_matrix.T +\
                 patch_center
