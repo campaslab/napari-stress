@@ -273,6 +273,92 @@ def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
     principal_curvatures.append((k1, k2))
     
     return mean_curvatures, principal_curvatures
+
+def estimate_patch_radii(
+        pointcloud: 'napari.types.PointsData',
+        k1: np.ndarray = None,
+        minimum_permitted_range: float = 2.5,
+        min_num_per_patch: int = 18):
+    """
+    Calculate patch radii for a point cloud based on principal curvatures.
+
+    This function calculates the patch radii for a point cloud based on the
+    principal curvatures of each point. The patch radii are calculated as the
+    geometric mean of the minimum radius and the radius calculated from the
+    principal curvatures. The minimum radius is calculated as the minimum
+    distance between a point and its nearest neighbor. The patch radii are
+    adjusted based on the minimum number of neighbors required for each patch.
+
+    Parameters
+    ----------
+    pointcloud : np.ndarray
+        An N x 3 array of points representing a point cloud in 3D space.
+    k1 : np.ndarray
+        An N x 1 array of principal curvatures for each point in the point cloud.
+    minimum_permitted_range : float
+        The minimum permitted range for the patch radii. This value is used to
+        ensure that the patch radii are not too small.
+    min_num_per_patch : int
+        The minimum number of neighbors required for each patch.
+
+    Returns
+    -------
+    patch_radii : np.ndarray
+    """
+    from .._approximation import least_squares_ellipsoid
+    from .._measurements import curvature_on_ellipsoid
+    from ..types import (_METADATAKEY_PRINCIPAL_CURVATURES1,
+                         _METADATAKEY_PRINCIPAL_CURVATURES2)
+    
+    if k1 is None:
+        # measure curvature on fitted patches first: Approximate by ellipsoid
+
+        ellipsoid = least_squares_ellipsoid(pointcloud)
+        curvatures = curvature_on_ellipsoid(
+            ellipsoid, pointcloud)[1]['features']
+        principal_curvatures = [curvatures[key] for key in [
+            _METADATAKEY_PRINCIPAL_CURVATURES1,
+            _METADATAKEY_PRINCIPAL_CURVATURES2]]
+        
+        # Assume this is 1 for every point as per the requirement
+        k1 = np.stack(principal_curvatures).max(axis=0)
+    len_scale2 = 2.0 * k1**(-1)
+    
+    # Calculate the geometric mean of the length scales to get the patch radius
+    small_patch_length_scale = 1
+    patch_radii = np.sqrt(small_patch_length_scale * len_scale2)
+    
+    # Ensure the patch radius is not smaller than the minimum patch radius
+    patch_radii[patch_radii < minimum_permitted_range] = minimum_permitted_range
+    
+    # List to store the updated radii
+    updated_patch_radii = np.copy(patch_radii)
+    
+    # Retrieve the list of lists containing neighbor indices for each point
+    neighbor_indices_list = find_neighbor_indices(pointcloud, patch_radii)
+    
+    for i, curv in enumerate(k1):
+        # Get the current point's neighbors
+        neighbors = neighbor_indices_list[i]
+        
+        if neighbors:  # Check if there are any neighbors
+            k_neighbors = k1[neighbors]
+            hot_spots = np.abs(k_neighbors / curv) > 2
+            
+            if np.any(hot_spots):
+                distances = np.linalg.norm(pointcloud[neighbors][hot_spots] -
+                                           pointcloud[i], axis=1)
+                if distances.size > 0:
+                    rp = np.min(distances) - 0.1
+                    updated_patch_radii[i] = max(rp, minimum_permitted_range)
+
+        # Ensure there are at least min_num_per_patch neighbors
+        if len(neighbors) < min_num_per_patch:
+            all_distances = np.linalg.norm(pointcloud - pointcloud[i], axis=1)
+            nearest_indices = np.argsort(all_distances)[:min_num_per_patch]
+            updated_patch_radii[i] = np.max(all_distances[nearest_indices])
+            
+    return updated_patch_radii
     """
     Fit a quadratic surface to each point's neighborhood in a point cloud and
     adjust the point positions to the fitted surface.
