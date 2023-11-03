@@ -130,12 +130,14 @@ def compute_orientation_matrix(patch_points: 'napari.types.PointsData') -> np.nd
     # Compute the covariance matrix and its eigen decomposition
     n = len(patch_points)
     S = (1 / (n - 1)) * (patch_points.T @ patch_points)
-    _, eigvecs = eigh(S)  # 'eigh' is for symmetric matrices like covariance
-    
-    # Ensure the normal vector points along the z-axis by reversing the order of eigenvectors
-    orient_matrix = eigvecs[:, [2, 1, 0]]
+    eigvals, eigvecs = eigh(S)  # 'eigh' is for symmetric matrices like covariance
 
-    return orient_matrix
+    # # Sort the eigenvectors by eigenvalues in ascending order
+    # # Assuming the normal corresponds to the smallest eigenvalue
+    # sorted_indices = np.argsort(eigvals)
+    # orient_matrix = eigvecs[:, sorted_indices]
+
+    return eigvecs
 
 def orient_patch(patch_points: 'napari.types.PointsData',
                  patch_center_point: 'napari.types.PointsData',
