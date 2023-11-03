@@ -22,7 +22,7 @@ def fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
     
     return fitted_pointcloud
 
-def fit_quadratic_surface(x_coords, y_coords, z_coords):
+def fit_quadratic_surface(points: 'napari.types.PointsData') -> np.ndarray:
     """
     Fits a quadratic surface to 3D data points using a second-order polynomial.
     
@@ -32,19 +32,17 @@ def fit_quadratic_surface(x_coords, y_coords, z_coords):
     Returns:
     fitting_params: coefficients of the fitted surface
     """
-    num_points = len(x_coords)
+    num_points = len(points)
 
     # Design matrix for the second-order polynomial surface
+    z = points[:, 0]
+    y = points[:, 1]
+    x = points[:, 2]
     ones_vec = np.ones(num_points)
-    x_lin = x_coords
-    y_lin = y_coords
-    x_y_cross = x_coords * y_coords
-    x_quad = x_coords ** 2
-    y_quad = y_coords ** 2
 
     # Assemble the design matrix
-    design_matrix = np.column_stack((ones_vec, x_lin, y_lin, x_y_cross, x_quad, y_quad))
-    z_matrix = z_coords.reshape(-1, 1)
+    design_matrix = np.column_stack((ones_vec, x, y, x * y, x**2, y**2))
+    z_matrix = z.reshape(-1, 1)
 
     # Linear least squares fitting
     normal_matrix = design_matrix.T @ design_matrix
