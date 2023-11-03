@@ -211,10 +211,68 @@ def orient_patch(patch_points: 'napari.types.PointsData',
     Xq_out = Yq
     Xn_out = Xn_out  # Reoriented patch points
 
-    return Xn_out, Xq_out, eigvals, computed_patch_center
+    return Xn_out, Xq_out, eigvals, computed_patch_center, orient_matrix
 
 def fit_patches(point_cloud: np.ndarray,
                 search_radius) -> 'napari.types.PointsData':
+def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
+                                      fitting_params: np.ndarray) -> tuple:
+    """
+    Calculate the mean curvature on a patch of points.
+
+    This function calculates the mean curvature on a patch of points by
+    fitting a quadratic surface to the patch and calculating the mean
+    curvature from the fitted surface.
+
+    Parameters
+    ----------
+    patch_cloud : np.ndarray
+        An N x 3 array of points representing a patch in 3D space.
+
+    Returns
+    -------
+    mean_curvatures : np.ndarray
+        An N x 1 array of mean curvature values for each point in the patch.
+    principal_curvatures : np.ndarray
+        An N x 2 array of principal curvature values for each point in the patch.
+    """
+    # Unpack the parameters
+    p10 = fitting_params[1]
+    p01 = fitting_params[2]
+    p11 = fitting_params[3]
+    p20 = fitting_params[4]
+    p02 = fitting_params[5]
+    
+    # Compute mean curvature and principal curvatures for each point in patch_cloud
+    mean_curvatures = []
+    principal_curvatures = []
+    
+    x = query_point.squeeze()[2]
+    y = query_point.squeeze()[1]
+    X = np.array([1, x, y])
+    
+    tht_u = np.array([p10, 2*p20, p11*y])
+    hu = X @ tht_u
+    tht_v = np.array([p01, p11*x, 2*p02])
+    hv = X @ tht_v
+    tht_uu = np.array([2*p20, 0, 0])
+    huu = X @ tht_uu
+    tht_vv = np.array([2*p02, 0, 0])
+    hvv = X @ tht_vv
+    tht_uv = np.array([p11, 0, 0])
+    huv = X @ tht_uv
+    
+    # Compute mean curvature
+    H = ((1+hu**2)*hvv - 2*hu*hv*huv + (1+hv**2)*huu) /\
+        (2*(1 + hu**2 + hv**2)**(3/2))
+    mean_curvatures.append(H)
+    
+    # Compute principal curvatures
+    k1 = 2*max(p02, p20)
+    k2 = 2*min(p02, p20)
+    principal_curvatures.append((k1, k2))
+    
+    return mean_curvatures, principal_curvatures
     """
     Fit a quadratic surface to each point's neighborhood in a point cloud and
     adjust the point positions to the fitted surface.
