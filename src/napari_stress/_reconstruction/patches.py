@@ -410,3 +410,61 @@ def estimate_patch_radii(
 
     return fitted_point_cloud
 
+
+@frame_by_frame
+def iterative_curvature_adaptive_patch_fitting(
+        point_cloud: 'napari.types.PointsData',
+        n_iterations: int = 3,
+        minimum_neighbors: int = 6) -> 'napari.types.PointsData':
+
+    # Initialize fitted point cloud and find neighbors
+    fitted_point_cloud = np.copy(point_cloud)
+    search_radii = estimate_patch_radii(point_cloud)
+
+    for it in range(n_iterations):
+        
+        neighbor_indices = find_neighbor_indices(point_cloud, search_radii)
+        mean_curvatures = [np.nan] * len(point_cloud)
+        principal_curvatures = [np.nan] * len(point_cloud)
+
+        # Compute neighbors for each point in the point cloud
+        for idx in range(len(point_cloud)):
+            current_point = point_cloud[idx, :]
+            neighbors_idx = neighbor_indices[idx]
+            patch = point_cloud[neighbors_idx, :]
+
+            # Proceed only if there are enough points in the neighborhood
+            if len(patch) < minimum_neighbors:
+                principal_curvatures[idx] = np.array([np.nan, np.nan])
+                continue  # Not enough neighbors, skip to the next point
+
+            # Orient the patch for the current point
+            oriented_patch, oriented_query_point, _, patch_center, orient_matrix = orient_patch(
+                patch, current_point, np.mean(point_cloud, axis=0))
+
+            # Perform the quadratic surface fitting
+            fitting_params = fit_quadratic_surface(oriented_patch)
+
+            # Calculate the new fitted point
+            fitted_query_point = create_fitted_coordinates(
+                oriented_query_point[None, :], fitting_params)
+            # fitted_patch = create_fitted_coordinates(oriented_patch, fitting_params)
+
+            fitted_point_cloud[idx, :] = fitted_query_point[None, :] @ orient_matrix.T +\
+                patch_center
+            
+            mean_curv, principal_curv = calculate_mean_curvature_on_patch(
+                fitted_query_point, fitting_params)
+            
+            mean_curvatures[idx] = mean_curv
+            principal_curvatures[idx] = principal_curv[0]
+
+        # Update the search radii
+        mean_curvatures = np.array(mean_curvatures)
+        principal_curvatures = np.array(principal_curvatures).squeeze()
+        point_cloud = fitted_point_cloud
+
+        search_radii = estimate_patch_radii(
+            point_cloud, principal_curvatures.max(axis=1))
+        
+    return fitted_point_cloud
