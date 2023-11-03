@@ -136,19 +136,20 @@ def _fancy_edge_fit(
     try:
         if selected_edge_func == _sigmoid:
 
-            ind_max = np.argmax(array)
-            array = array[ind_max:]  # trim array to start at max
+            x = np.arange(0, len(array), 1)
 
             # estimate parameters and trim intensity array
             parameter_estimate, trimmed_array, trimmed_idx = estimate_fit_parameters(
                 array)
-            boundaries = np.array([[0, len(array)],
-                          [0, max(array) * 1.5],
-                          [-np.inf, np.inf],
-                          [-np.inf, np.inf],
-                          [0, max(array)]])
-                          
             trimmed_indices = np.arange(trimmed_idx[0], trimmed_idx[1])
+
+            boundaries = np.array([
+                [0, len(array)],
+                [0.5 * max(array), max(array) * 1.5],
+                [-np.inf, np.inf],
+                [-np.inf, np.inf],
+                [0, 0.5 * max(array)]
+                ])
 
             # run fit
             optimal_fit_parameters, _covariance = curve_fit(
@@ -158,8 +159,6 @@ def _fancy_edge_fit(
                 parameter_estimate,
                 bounds=boundaries.T
             )
-
-            optimal_fit_parameters[0] += ind_max
 
         elif selected_edge_func == _gaussian:
             parameter_estimate = [len(array) / 2, len(array) / 2, max(array)]
@@ -245,7 +244,7 @@ def estimate_fit_parameters(intensity):
         lambda_val = (intensity[-1] - intensity[indX4]) / (len(intensity) - 1 - indX4)
 
     # Return starting parameters and trimmed intensity values
-    return (center, amp, k, lambda_val, offset), intensity[indX2:indX4], [indX2, indX4]
+    return [center, amp, -k, lambda_val, offset], intensity[indX2:indX4], [indX2, indX4]
 
 
 def _mean_squared_error(
