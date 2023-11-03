@@ -262,6 +262,7 @@ def reconstruct_droplet(
     from napari_stress import reconstruction
     from skimage import filters, transform
     from .refine_surfaces import resample_pointcloud
+    from .patches import iterative_curvature_adaptive_patch_fitting
 
     scaling_factors = voxelsize / target_voxelsize
     rescaled_image = transform.rescale(image, scaling_factors,
@@ -303,15 +304,23 @@ def reconstruct_droplet(
             interpolation_method=interpolation_method,
         )
 
-        points = traced_points[0]
+        # adaptive patch fitting
+        points = iterative_curvature_adaptive_patch_fitting(traced_points[0])
 
     # =========================================================================
     # Returns
     # =========================================================================
 
-    properties = {"name": "points_first_guess", "size": 1}
+    properties = {"name": "points_first_guess", "size": 0.5}
     layer_points_first_guess = (
         points_first_guess * target_voxelsize,
+        properties,
+        "points",
+    )
+
+    properties = {"name": "points_patch_fitted", "size": 0.5}
+    layer_patch_fitted = (
+        points * target_voxelsize,
         properties,
         "points",
     )
@@ -334,6 +343,7 @@ def reconstruct_droplet(
     return [
         layer_label_image,
         layer_points_first_guess,
+        layer_patch_fitted,
         traced_points,
         trace_vectors,
         droplet_center,
