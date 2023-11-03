@@ -7,9 +7,9 @@ import pandas as pd
 from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_function
 
-from .._utils.fit_utils import (_function_args_to_list)
-from .._utils.frame_by_frame import frame_by_frame
-from .fit_utils import (edge_functions,
+from .. import frame_by_frame
+from .fit_utils import (_function_args_to_list,
+                        edge_functions,
                         fit_types,
                         interpolation_types)
 
