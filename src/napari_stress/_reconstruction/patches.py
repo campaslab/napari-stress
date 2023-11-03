@@ -12,16 +12,13 @@ def fit_and_create_pointcloud(pointcloud: 'napari.tyes.PointsData'
     Returns:
     fitted_pointcloud: a numpy array with the fitted Z coordinates
     """
-    # Extract X, Y, Z coordinates from the pointcloud
-    z_coords = pointcloud[:, 0]
-    y_coords = pointcloud[:, 1]
-    x_coords = pointcloud[:, 2]
-    
     # Fit the quadratic surface to the Z coordinates
-    fitting_params = fit_quadratic_surface(x_coords, y_coords, z_coords)
+    fitting_params = fit_quadratic_surface(pointcloud)
     
     # Apply the fitting parameters to get the fitted ZYX pointcloud
-    fitted_pointcloud = create_fitted_coordinates(x_coords, y_coords, fitting_params)
+    fitted_pointcloud = create_fitted_coordinates(pointcloud[:, 2],
+                                                  pointcloud[:, 1],
+                                                  fitting_params)
     
     return fitted_pointcloud
 
