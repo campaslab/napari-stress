@@ -1,10 +1,32 @@
 import numpy as np
 import pandas as pd
 
-from .toolbox import _function_args_to_list,
-from .toolbox import _gaussian, _sigmoid
-from .toolbox import edge_functions
+from .._utils.fit_utils import (
+    _function_args_to_list,
+    _gaussian,
+    _sigmoid,
+    _detect_maxima,
+    _detect_max_gradient,
+)
+from enum import Enum
 from scipy.optimize import curve_fit
+from typing import List
+import matplotlib.pyplot as plt
+
+class fit_types(Enum):
+    quick_edge_fit = "quick"
+    fancy_edge_fit = "fancy"
+
+
+class interpolation_types(Enum):
+    linear = "linear"
+    cubic = "cubic"
+    nearest = "nearest"
+
+
+class edge_functions(Enum):
+    interior = {"fancy": _sigmoid, "quick": _detect_max_gradient}
+    surface = {"fancy": _gaussian, "quick": _detect_maxima}
 
 def _identify_outliers(
     table: pd.DataFrame,
