@@ -101,16 +101,15 @@ def find_neighbor_indices(pointcloud: "napari.types.PointsData",
     from scipy.spatial import cKDTree
     tree = cKDTree(pointcloud)
     indices = []
-    distances = []
     
-    for i, (point, radius) in enumerate(zip(pointcloud, patch_radii)):
-        idx, dist = tree.query(point, k=None, distance_upper_bound=radius)
-        # Exclude points at a distance of infinity (outside the search radius)
-        valid_indices = idx < len(pointcloud)
-        indices.append(idx[valid_indices].tolist())
-        distances.append(dist[valid_indices].tolist())
+    for i, point in enumerate(pointcloud):
+        if isinstance(patch_radius, np.ndarray) and len(patch_radius) == len(pointcloud):
+            idx = tree.query_ball_point(point, r=patch_radius[i])
+        else:
+            idx = tree.query_ball_point(point, r=patch_radius)
+        indices.append(idx)
         
-    return indices, distances
+    return indices
 
 
 def compute_orientation_matrix(patch_points: 'napari.types.PointsData') -> np.ndarray:
