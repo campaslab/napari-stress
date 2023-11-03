@@ -7,33 +7,13 @@ import pandas as pd
 from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_function
 
-from .._utils.fit_utils import (
-    _detect_max_gradient,
-    _detect_maxima,
-    _function_args_to_list,
-    _gaussian,
-    _sigmoid,
-)
+from .._utils.fit_utils import (_function_args_to_list)
 from .._utils.frame_by_frame import frame_by_frame
+from .fit_utils import (edge_functions,
+                        fit_types,
+                        interpolation_types)
 
 warnings.filterwarnings("ignore")
-
-
-class fit_types(Enum):
-    quick_edge_fit = "quick"
-    fancy_edge_fit = "fancy"
-
-
-class interpolation_types(Enum):
-    linear = "linear"
-    cubic = "cubic"
-    nearest = "nearest"
-
-
-class edge_functions(Enum):
-    interior = {"fancy": _sigmoid, "quick": _detect_max_gradient}
-    surface = {"fancy": _gaussian, "quick": _detect_maxima}
-
 
 @register_function(menu="Points > Trace-refine points (n-STRESS)")
 @frame_by_frame
@@ -92,8 +72,6 @@ def trace_refinement_of_surface(
     -------
     List[LayerDataTuple]
         List of napari layer data tuples
-
-
     """
     from .. import _vectors as vectors
     from .._measurements.intensity import sample_intensity_along_vector
