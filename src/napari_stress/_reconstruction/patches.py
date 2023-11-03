@@ -209,13 +209,12 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
     # Reorient all points in the patch
     patch_transformed = points_centered @ orient_matrix
     
-    # Calculate eigenvalues for the covariance matrix
-    _, eigvals = np.linalg.eigh(np.cov(points_centered.T))
+    # # Calculate eigenvalues for the covariance matrix
+    # _, eigvals = np.linalg.eigh(np.cov(points_centered.T))
 
 
     return (patch_transformed,
             query_point_transformed,
-            eigvals,
             computed_patch_center,
             orient_matrix)
 
@@ -404,7 +403,7 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
             continue  # Not enough neighbors, skip to the next point
 
         # Orient the patch for the current point
-        oriented_patch, oriented_query_point, _, patch_center, orient_matrix = _orient_patch(
+        oriented_patch, oriented_query_point, patch_center, orient_matrix = _orient_patch(
             patch, current_point, np.mean(point_cloud, axis=0))
 
         # Perform the quadratic surface fitting
@@ -450,7 +449,7 @@ def iterative_curvature_adaptive_patch_fitting(
                 continue  # Not enough neighbors, skip to the next point
 
             # Orient the patch for the current point
-            oriented_patch, oriented_query_point, _, patch_center, orient_matrix = _orient_patch(
+            oriented_patch, oriented_query_point, patch_center, orient_matrix = _orient_patch(
                 patch, current_point, np.mean(point_cloud, axis=0))
 
             # Perform the quadratic surface fitting
