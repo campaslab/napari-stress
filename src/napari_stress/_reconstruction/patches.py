@@ -50,7 +50,7 @@ def fit_quadratic_surface(points: 'napari.types.PointsData') -> np.ndarray:
 
     return fitting_params.flatten()
 
-def create_fitted_coordinates(x_coords, y_coords, fitting_params):
+def create_fitted_coordinates(points, fitting_params):
     """
     Creates the fitted ZYX pointcloud from the fitting parameters and X, Y coordinates.
     
@@ -61,22 +61,20 @@ def create_fitted_coordinates(x_coords, y_coords, fitting_params):
     Returns:
     zyx_pointcloud: new pointcloud with fitted z-coordinates
     """
-    num_points = len(x_coords)
+    num_points = len(points)
     ones_vec = np.ones(num_points)
-    x_lin = x_coords
-    y_lin = y_coords
-    x_y_cross = x_coords * y_coords
-    x_quad = x_coords ** 2
-    y_quad = y_coords ** 2
+    x = points[:, 2]
+    y = points[:, 1]
+    z = points[:, 0]
 
     # Assemble the design matrix with the known coordinates
-    design_matrix = np.column_stack((ones_vec, x_lin, y_lin, x_y_cross, x_quad, y_quad))
+    design_matrix = np.column_stack((ones_vec, x, y, x * y, x**2, y**2))
 
     # Calculate the fitted z-coordinates
     z_fitted = design_matrix @ fitting_params
 
     # Create the new pointcloud as a ZYX array
-    zyx_pointcloud = np.column_stack((z_fitted, y_coords, x_coords))
+    zyx_pointcloud = np.column_stack((z_fitted, y, x))
     return zyx_pointcloud
 
 
