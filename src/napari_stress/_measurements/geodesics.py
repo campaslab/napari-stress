@@ -138,7 +138,6 @@ def correlation_on_surface(
 
     # calculate autocorrelation with spatially averaged feature values
     for dist_i in range(0, maximal_distance + 1):
-
         sum_mean_curv_corr_d_i, n_points = _avg_around_pt(
             dist_i, dists_lbdv_non0, Corr_non0_pts, maximal_distance
         )
@@ -235,7 +234,6 @@ def local_extrema_analysis(
     delta_feature_nearest_min_max = np.zeros_like(feature)
 
     for pt in range(quad_fit):
-
         H_pt = feature[pt]
 
         # set to True, change if False:

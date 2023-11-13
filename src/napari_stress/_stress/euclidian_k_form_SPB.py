@@ -12,14 +12,12 @@ def zero_quad_array(Q_val):
 
 # Return list of quad vals at each quad pt, given func
 def get_quadrature_points_from_function(Func, lbdv):
-
     Extracted_Quad_vals = Func(lbdv.theta_pts, lbdv.phi_pts)
     return Extracted_Quad_vals
 
 
 # Return list of quad vals at each quad pt, given SPH_Func (CHART A order)
 def get_quadrature_points_from_sh_function(SPH_Func, lbdv, Chart):
-
     Extracted_Quad_vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
     quad_pts = range(lbdv.lbdv_quad_pts)
@@ -37,13 +35,11 @@ def get_quadrature_points_from_sh_function(SPH_Func, lbdv, Chart):
 
 # Return list of quad vals at each quad pt within Chart (CHART A order)
 def Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
-
     # Extracted_dPhi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
     quad_pts = range(lbdv.lbdv_quad_pts)
 
     if Chart == "A":
-
         return np.where(
             lbdv.Chart_of_Quad_Pts > 0,
             sph_func.Eval_SPH_Der_Phi_Coef(quad_pts, lbdv),
@@ -51,7 +47,6 @@ def Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
         )
 
     if Chart == "B":
-
         quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
         return np.where(
             lbdv.Chart_of_Quad_Pts[quad_pts_rot] > 0,
@@ -62,13 +57,11 @@ def Extract_dPhi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
 
 # Return list of quad vals at each quad pt within Chart (CHART A order)
 def Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
-
     # Extracted_dPhi_Phi_Quad_Vals = zero_quad_array(lbdv.lbdv_quad_pts)
 
     quad_pts = range(lbdv.lbdv_quad_pts)
 
     if Chart == "A":
-
         return np.where(
             lbdv.Chart_of_Quad_Pts > 0,
             sph_func.Eval_SPH_Der_Phi_Phi_Coef(quad_pts, lbdv),
@@ -76,7 +69,6 @@ def Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
         )
 
     if Chart == "B":
-
         quad_pts_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
         return np.where(
             lbdv.Chart_of_Quad_Pts[quad_pts_rot] > 0,
@@ -87,7 +79,6 @@ def Extract_dPhi_Phi_Quad_Pt_Vals_From_SPH_Fn(sph_func, lbdv, Chart):
 
 # Combines info from each chart to give good vals at every point
 def Combine_Chart_Quad_Vals(Quad_Vals_A, Quad_Vals_B, lbdv):
-
     quad_pts = range(lbdv.lbdv_quad_pts)
     return np.where(
         lbdv.Chart_of_Quad_Pts > 0,
@@ -98,7 +89,6 @@ def Combine_Chart_Quad_Vals(Quad_Vals_A, Quad_Vals_B, lbdv):
 
 # Combines K_A and K_B into Chart A vector
 def Combine_Manny_Gauss_Curvatures(Manny, lbdv, verbose=False):
-
     K_cominbed_A_pts = Combine_Chart_Quad_Vals(Manny.K_A_pts, Manny.K_B_pts, lbdv)
 
     if verbose is True:
@@ -116,7 +106,6 @@ def Combine_Manny_Gauss_Curvatures(Manny, lbdv, verbose=False):
 
 # Converts 1-form alpha, to vector field at quad pts:
 def Sharp(dtheta_A_vals, dphi_A_vals, dtheta_B_vals, dphi_B_vals, p_deg, lbdv, Manny):
-
     # alpha_i = (dtheta_vals_i)dtheta + (d_phi_vals_i)dphi
 
     # Store x,y,z vals of sharped vector field at each quad_pt
@@ -263,7 +252,6 @@ def Sharp(dtheta_A_vals, dphi_A_vals, dtheta_B_vals, dphi_B_vals, p_deg, lbdv, M
 
 # Converts 2-forms from Euclidean to Polar at a Quad Pt
 def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
-
     # BJG: DOES NOT NEED TO CHANGE FOR SPB FRAME:
 
     theta_pt = lbdv.theta_pts[quad_pt]
@@ -274,7 +262,6 @@ def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
     dx_dy_comp = []
 
     if np.isscalar(quad_pt) is True:
-
         theta_pt = np.asscalar(theta_pt)
         phi_pt = np.asscalar(phi_pt)
 
@@ -288,7 +275,6 @@ def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
         dx_dz_comp = -1 * Cross_of_Basis[1]
         dx_dy_comp = Cross_of_Basis[2]
     else:
-
         # Cross_of_Basis = Manny.Normal_Dir_Quad_Pts(lbdv, Chart)
         # Manny.Normal_Dir(theta_pt, phi_pt, Chart)
 
@@ -311,7 +297,6 @@ def Two_Form_Conv_to_Polar_pt(quad_pt, lbdv, Manny, Chart):
 def Gen_Curl_1(
     theta_C_A_vals, phi_C_A_vals, theta_C_B_vals, phi_C_B_vals, p_deg, lbdv, Manny
 ):
-
     # Project into SPH within Charts:
     theta_C_A_SPH_Fn = sph_f.Faster_Double_Proj(theta_C_A_vals, p_deg, lbdv)
     phi_C_A_SPH_Fn = sph_f.Faster_Double_Proj(phi_C_A_vals, p_deg, lbdv)
@@ -367,7 +352,6 @@ def Gen_Curl_1(
 
 # takes in quadrature points and weights them by metric:
 def Integral_on_Manny_Eta_Z(vals_at_quad_pts, Manny, lbdv):  # Orriginal Version
-
     met_fac_over_sin_phi_pts_A = Manny.Metric_Factor_A_over_sin_phi_pts
     met_fac_over_sin_phi_pts_B = Manny.Metric_Factor_B_over_sin_phi_bar_pts
 
@@ -381,7 +365,6 @@ def Integral_on_Manny_Eta_Z(vals_at_quad_pts, Manny, lbdv):  # Orriginal Version
     rotated_vals_at_quad_pts = np.zeros((num_quad_pts, 1))
 
     for quad_pt in range(num_quad_pts):
-
         eta_Z_pt = lbdv.eta_z(quad_pt)
 
         eta_Z_Chart_A[quad_pt, 0] = eta_Z_pt
@@ -406,7 +389,6 @@ def Integral_on_Manny_Eta_Z(vals_at_quad_pts, Manny, lbdv):  # Orriginal Version
 
 
 def Integral_on_Manny(vals_at_quad_pts, Manny, lbdv):  # New Version
-
     vals_at_quad_pts = vals_at_quad_pts.reshape(
         len(vals_at_quad_pts), 1
     )  # ASSERT THIS IS THE RIGHT SIZE
@@ -453,7 +435,6 @@ def lebedev_quad_adj_Manny(Manny, lbdv):
 def Lp_Rel_Error_At_Quad_On_Manny(
     approx_f_vals, f_vals, lbdv, p, Manny
 ):  # Assumes f NOT 0
-
     # Lp_Err = 0  # ||self - f||_p
     # Lp_f = 0  # || f ||_p
 
@@ -467,7 +448,6 @@ def Lp_Rel_Error_At_Quad_On_Manny(
 
 # Get rid of normal components in a elegant way:
 def Tangent_Projection(Vectors_at_Quad, lbdv, Manny):
-
     num_quad_pts = lbdv.lbdv_quad_pts
     Tangent_Vecs_at_Quad = np.zeros((num_quad_pts, 3))
 
@@ -478,14 +458,12 @@ def Tangent_Projection(Vectors_at_Quad, lbdv, Manny):
     sigma_phi_B_pts = Manny.Sigma_Phi_B_Pts
 
     for quad_pt in range(num_quad_pts):
-
         Vec_pt = Vectors_at_Quad[quad_pt, :].flatten()
 
         Normal_Vec_pt = []
 
         # Chart A:
         if lbdv.Chart_of_Quad_Pts[quad_pt] > 0:
-
             Normal_Vec_pt = np.cross(
                 sigma_theta_A_pts[quad_pt, :].flatten(),
                 sigma_phi_A_pts[quad_pt, :].flatten(),
@@ -530,7 +508,6 @@ def Tangent_Projection(Vectors_at_Quad, lbdv, Manny):
 
 # Returns Riemannian Inner Product of 1-Forms input, returns Integral of
 def Riemann_L2_Inner_Product_One_Form(One_Form_pts_1, One_Form_pts_2, lbdv, manny):
-
     One_Form_1 = euc_k_form(
         1, lbdv.lbdv_quad_pts, manny.Man_SPH_Deg, manny, One_Form_pts_1
     )
@@ -567,7 +544,6 @@ def Riemann_L2_Inner_Product_Zero_Form(Zero_Form_pts_1, Zero_Form_pts_2, lbdv, m
 
 class euc_k_form(object):
     def __init__(self, k_val, Q_val, P_deg, Manny, array_of_quad_vals):
-
         self.k_value = k_val  # k = 0, 1, 2
         self.Q_value = Q_val  # lbdv.lbdv_quad_pts # Number of Quad Pts
         self.P_degree = P_deg  # Degree of Basis
@@ -611,7 +587,6 @@ class euc_k_form(object):
 
     # Multiplies k_form by a function
     def times_fn(self, fn_vals_at_quad_pts):
-
         num_cols = self.array_size
         product_array = np.zeros((self.Q_value, num_cols))
 
@@ -638,10 +613,8 @@ class euc_k_form(object):
         One_Form_Phi_Comp_B_vals = zero_quad_array(self.Q_value)
 
         for quad_pt in range(self.Q_value):
-
             # We use quad pts within each chart
             if lbdv.Chart_of_Quad_Pts[quad_pt] > 0:
-
                 quad_pt_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pt)
 
                 alpha_sharp_X_A_pt = self.quad_pt_array[quad_pt, :].T
@@ -710,9 +683,7 @@ class euc_k_form(object):
 
     # d: k_form -> (k+1)_form
     def Ext_Der(self, lbdv):
-
         if self.k_value == 0:
-
             # print("Doing Ext_Der on 0-Forms")
 
             f_dtheta_A_quad_vals = zero_quad_array(lbdv.lbdv_quad_pts)
@@ -767,7 +738,6 @@ class euc_k_form(object):
             )
 
         if self.k_value == 1:
-
             # print("Doing Ext_Der on 1-Forms")
 
             # Store values of Ext Det  of (1-forms) alpha, at quad pts in each Chart
@@ -925,7 +895,6 @@ class euc_k_form(object):
 
             # Compute Y = -dA_i * A^(-1)
             def Y_mat(q_pt, Chart, deriv):
-
                 Basis_Mat = self.Manifold.Change_Basis_Mat(q_pt, Chart)
                 dBasis_Mat_deriv = []
 
@@ -1043,7 +1012,6 @@ class euc_k_form(object):
             )
 
         if self.k_value == 2:  # ext der of of 2-form is 0:
-
             # print("Doing Ext_Der on 2-Forms")
 
             return euc_k_form(
@@ -1056,9 +1024,7 @@ class euc_k_form(object):
 
     # Compute *: k_form -> (n-k)_form
     def Hodge_Star(self, lbdv):
-
         if self.k_value == 0:
-
             # print("Doing Hodge Star on 0-Forms")
 
             # store values of Hodge star of fn (0-form) f, at quad pts in each Chart
@@ -1125,7 +1091,6 @@ class euc_k_form(object):
             )
 
         if self.k_value == 1:
-
             # print("Doing Hodge Star on 1-Forms")
 
             # Store values of Hodge Star of (1-forms) alpha, at quad pts in each Chart
@@ -1198,7 +1163,6 @@ class euc_k_form(object):
             )
 
         if self.k_value == 2:
-
             # print("Doing Hodge Star on 2-Forms")
 
             # store values of Hodge star of fn (2-form) beta, at quad pts in each Chart
@@ -1270,9 +1234,7 @@ class euc_k_form(object):
     # Computes -*d directly;
     # Takes 0-Forms -> 1-Forms (in local chart)
     def Gen_Curl_0(self, lbdv):
-
         if self.k_value == 0:
-
             # print("Doing Ext_Der on 0-Forms")
 
             f_dtheta_A_quad_vals = zero_quad_array(lbdv.lbdv_quad_pts)
@@ -1378,9 +1340,7 @@ class euc_k_form(object):
 
     # Computes -*d directly; Will give output k-forms
     def Gen_Curl_to_K_Form(self, lbdv):
-
         if self.k_value == 0:
-
             # print("Doing Ext_Der on 0-Forms")
 
             f_dtheta_A_quad_vals = zero_quad_array(lbdv.lbdv_quad_pts)
@@ -1466,7 +1426,6 @@ class euc_k_form(object):
     # div(v) = -\delta v^{\flat}
     def Divergence_1_Form(self, lbdv, debug_mode=False):
         if self.k_value == 1:
-
             # get X derivatives at quad pts:
             Vec_X_SPH_Fn_A, Vec_X_SPH_Fn_B = sph_f.Proj_Into_SPH_Charts_At_Quad_Pts(
                 self.quad_pt_array[:, 0], self.P_degree, lbdv
@@ -1894,7 +1853,6 @@ class euc_k_form(object):
 
     # Write Expressions in 1 line (COPIED FROM LB_POINT_VALS_SPB):
     def Explicit_LB(self, lbdv):
-
         Y_mn_SPH_Fn_A, Y_mn_SPH_Fn_B = sph_f.Proj_Into_SPH_Charts_At_Quad_Pts(
             self.quad_pt_array, self.P_degree, lbdv
         )
@@ -1980,7 +1938,6 @@ class euc_k_form(object):
     # we get better convergence this way
     # (by ignoring intermediate k-form stuctures)
     def LB_Zero_Form_From_Curl(self, lbdv):
-
         if self.k_value != 0:
             print("Error: Zero Forms needed for this inner-product fn to work")
 
@@ -2023,10 +1980,8 @@ class euc_k_form(object):
     # Returns Riemannian Inner Product of 1-Forms input,
     # returns vector of scalar inner-products at each point
     def Riemann_Inner_Prouct_One_Form(self, One_Form_2, lbdv):
-
         # if we have faulty input
         if self.k_value != 1 or One_Form_2.k_value != 1:
-
             print("Error: One Forms needed for this inner-product fn to work")
 
         else:
@@ -2042,7 +1997,6 @@ class euc_k_form(object):
     # Returns Riemannian Inner Product of 2-Forms with ITSELF input,
     # returns vector of scalar inner-products at each point
     def Riemann_Self_Inner_Prouct_Two_Form(self, lbdv):
-
         # Corresponding quad pt in chart B (in Chart A Coors)
         quad_pts = range(self.Q_value)
         quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pts)
@@ -2103,13 +2057,10 @@ class euc_k_form(object):
 
     # Pushes forward a 1-form onto Manny_2, using our chart convention
     def Push_Forward_One_Form(self, Manny_2, lbdv):
-
         if self.k_value != 1:
-
             print("Error: One Form needed for this Push-Forward fn to work")
 
         else:
-
             push_forward_quad_vals = np.zeros((self.Q_value, 3))
 
             sigma_theta_A_vecs = Manny_2.sigma_theta_Quad_Pts(lbdv, "A")
@@ -2119,12 +2070,10 @@ class euc_k_form(object):
             sigma_phi_B_vecs = Manny_2.sigma_phi_Quad_Pts(lbdv, "B")
 
             for quad_pt in range(self.Q_value):
-
                 # print("q = "+str(quad_pt))
 
                 # If Chart A:
                 if lbdv.Chart_of_Quad_Pts[quad_pt] > 0:
-
                     alpha_sharp_X_A_pt = self.quad_pt_array[quad_pt, :].T
 
                     A_Mat_pt = self.Manifold.Change_Basis_Mat(quad_pt, "A")
@@ -2148,7 +2097,6 @@ class euc_k_form(object):
                     push_forward_quad_vals[quad_pt, :] = push_forward_vec_A_pt.T
 
                 else:
-
                     quad_pt_rot = lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pt)
 
                     alpha_sharp_X_B_pt = self.quad_pt_array[quad_pt, :].T
