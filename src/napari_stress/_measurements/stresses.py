@@ -172,6 +172,7 @@ def calculate_anisotropy(
         every group in the dataframe
 
     """
+
     # write a function to apply to every group in the dataframe
     def anisotropy(
         df: pd.DataFrame, alpha: float = 0.05, column: str = "anisotropic_stress"

@@ -23,7 +23,6 @@ import tqdm
 def frame_by_frame(function: callable, progress_bar: bool = False):
     @wraps(function)
     def wrapper(*args, **kwargs):
-
         sig = inspect.signature(function)
         annotations = [sig.parameters[key].annotation for key in sig.parameters.keys()]
 
@@ -98,7 +97,6 @@ class TimelapseConverter:
     """
 
     def __init__(self):
-
         # Supported LayerData types
         self.data_to_list_conversion_functions = {
             PointsData: self._points_to_list_of_points,
@@ -479,7 +477,6 @@ class TimelapseConverter:
         # as previously determined
         surfaces = [None] * n_frames
         for t in range(n_frames):
-
             # Find points with correct frame index
             _points = points[points[:, 0] == t, 1:]
 
@@ -519,7 +516,6 @@ class TimelapseConverter:
 
         n_vertices = 0
         for idx, surface in enumerate(surfaces):
-
             # Offset indices in faces list by previous amount of points
             faces[idx] = n_vertices + np.array(faces[idx])
 
@@ -567,7 +563,6 @@ class TimelapseConverter:
         # Fill the respective entries in the list with coordinates in the
         # original data where time-coordinate matches the current frame
         for t in range(n_frames):
-
             # Find points with correct frame index
             points_out[t] = points[points[:, 0] == t, 1:]
 

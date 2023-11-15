@@ -48,7 +48,6 @@ def _detect_max_gradient(array: np.ndarray, center: float = None):
 
 
 def _function_args_to_list(function: callable) -> list:
-
     sig = inspect.signature(function)
     return list(sig.parameters.keys())
 

@@ -94,7 +94,6 @@ def test_decorator_points_layerdatatuple():
 
 
 def test_decorator_points_layers():
-
     from napari_stress import TimelapseConverter, get_droplet_point_cloud_4d
 
     Converter = TimelapseConverter()
@@ -148,7 +147,6 @@ def test_decorator_surfaces():
 
 
 def test_decorator_images():
-
     from napari_stress import TimelapseConverter
 
     Converter = TimelapseConverter()
@@ -168,7 +166,6 @@ def test_decorator_images():
 
 
 def test_frame_by_frame_vectors():
-
     from napari_stress import TimelapseConverter
 
     Converter = TimelapseConverter()

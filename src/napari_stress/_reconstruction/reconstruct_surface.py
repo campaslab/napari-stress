@@ -46,7 +46,6 @@ def reconstruct_surface_from_quadrature_points(points: PointsData) -> SurfaceDat
             vertex = tetras[tri_i, tetra_vert]
 
             if vertex != n_quadrature_points and vert_ind < 3:
-
                 delauney_triangles[tri_i, vert_ind] = vertex
                 vert_ind = vert_ind + 1
 

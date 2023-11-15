@@ -55,7 +55,6 @@ def shtools_spherical_harmonics_expansion(
     longitude = np.rad2deg(spherical_coordinates[2])
 
     if expansion_type == "radial":
-
         # Find spherical harmonics expansion coefficients until specified degree
         opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(
             radius, latitude, longitude, lmax=max_degree
@@ -74,7 +73,6 @@ def shtools_spherical_harmonics_expansion(
         return points, coefficients
 
     elif expansion_type == "cartesian":
-
         optimal_fit_params = []
         fitted_coordinates = np.zeros_like(points)
         for i in range(3):
@@ -267,7 +265,6 @@ def lebedev_quadrature(
 def create_manifold(
     points: PointsData, lebedev_fit: lebedev_info.lbdv_info, max_degree: int
 ) -> mnfd.manifold:
-
     # add information to manifold on what type of expansion was used
     Manny_Dict = {}
     Manny_Name_Dict = {}  # sph point cloud at lbdv
