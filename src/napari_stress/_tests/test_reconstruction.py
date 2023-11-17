@@ -1,22 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-def test_patch_fitting():
-
-    from .._reconstruction.fit_utils import _fibonacci_sampling
-    from .._reconstruction.patches import _find_neighbor_indices
-    
-    # first create fibonacci pointcloud
-    pointcloud = _fibonacci_sampling(number_of_points=256)
-
-    # assert that distance of every point to origin is 1
-    assert np.allclose(np.linalg.norm(pointcloud, axis=1), 1)
-
-    # select a random point (i.e., #42) and extract its neighbors
-    patch_indices = _find_neighbor_indices(pointcloud, patch_center, patch_radius)
-    
-
-
 def test_reconstruction(make_napari_viewer):
     from napari_stress import reconstruction, get_droplet_4d
     from napari.layers import Layer
@@ -150,7 +134,7 @@ def test_surface_tracing():
     assert len(traced_points.squeeze()) < len(surf_points)
 
 def test_fit_and_create_pointcloud():
-    from .._reconstruction.patches import fit_and_create_pointcloud
+    from napari_stress._reconstruction.patches import _fit_and_create_pointcloud
     # Mock input data
     mock_pointcloud = np.array([[1, 2, 3],
                                 [4, 5, 6],
@@ -163,7 +147,7 @@ def test_fit_and_create_pointcloud():
                                            [7, 8, 9]]) # Example expected pointcloud
 
     # Call the function to test
-    fitted_pointcloud = fit_and_create_pointcloud(mock_pointcloud)
+    fitted_pointcloud = _fit_and_create_pointcloud(mock_pointcloud)
 
     # Assert that the output is as expected
     np.testing.assert_array_almost_equal(
@@ -173,7 +157,7 @@ def test_fit_and_create_pointcloud():
     )
 
 def test_fit_quadratic_surface():
-    from .._reconstruction.patches import fit_quadratic_surface
+    from napari_stress._reconstruction.patches import _fit_quadratic_surface
     # Mock input data
     x_coords = np.array([0, 1, 2])
     y_coords = np.array([0, 1, 2])
@@ -183,7 +167,7 @@ def test_fit_quadratic_surface():
     expected_fitting_params = np.array([1, 0, 0, 0, 0, 0])
 
     # Call the function to test
-    fitting_params = fit_quadratic_surface(x_coords, y_coords, z_coords)
+    fitting_params = _fit_quadratic_surface(x_coords, y_coords, z_coords)
 
     # Assert that the output is as expected
     np.testing.assert_array_almost_equal(
@@ -193,7 +177,7 @@ def test_fit_quadratic_surface():
     )
 
 def test_create_fitted_coordinates():
-    from .._reconstruction.patches import create_fitted_coordinates
+    from napari_stress._reconstruction.patches import _create_fitted_coordinates
     # Mock input data
     x_coords = np.array([0, 1, 2])
     y_coords = np.array([0, 1, 2])
@@ -203,7 +187,7 @@ def test_create_fitted_coordinates():
     expected_zyx_pointcloud = np.array([[1, 0, 0], [1, 1, 1], [1, 2, 2]])
 
     # Call the function to test
-    zyx_pointcloud = create_fitted_coordinates(x_coords, y_coords, fitting_params)
+    zyx_pointcloud = _create_fitted_coordinates(x_coords, y_coords, fitting_params)
 
     # Assert that the output is as expected
     np.testing.assert_array_almost_equal(
@@ -211,3 +195,86 @@ def test_create_fitted_coordinates():
         decimal=5,
         err_msg='Created pointcloud did not match expected values'
     )
+
+def test_patch_fitting():
+    from napari_stress._reconstruction.fit_utils import _fibonacci_sampling
+    from napari_stress._reconstruction.patches import _find_neighbor_indices
+    from napari_stress._reconstruction.patches import (_find_neighbor_indices,
+                                           _orient_patch,
+                                           _calculate_mean_curvature_on_patch,
+                                           _fit_quadratic_surface,
+                                           _estimate_patch_radii,
+                                           fit_patches,
+                                           iterative_curvature_adaptive_patch_fitting)
+    
+    # first create fibonacci pointcloud
+    pointcloud = _fibonacci_sampling(number_of_points=256)
+
+    # assert that distance of every point to origin is 1
+    assert np.allclose(np.linalg.norm(pointcloud, axis=1), 1)
+
+    # make sure every point has one neighbor (itself)
+    patch_indices = _find_neighbor_indices(pointcloud, patch_radius=0.1)
+    assert np.allclose(np.asarray(patch_indices).squeeze(), np.arange(256))
+
+    # make sure all points are neighbors of each other for large radius
+    patch_indices = _find_neighbor_indices(pointcloud, patch_radius=2)
+    assert np.allclose(np.asarray([len(x) for x in patch_indices]), np.repeat(256, 256))
+
+    # extract a patch around the first point
+    # assert that all of these points have a distance of less than radius to the first point
+    radius = 0.3
+    patch_indices = _find_neighbor_indices(pointcloud, patch_radius=radius)
+    assert all(np.linalg.norm(pointcloud[patch_indices[0]] - pointcloud[0][None, :], axis=1) < radius)
+
+    # get patch and orient it
+    patch = pointcloud[patch_indices[0]]
+    transformed_patch, _, orient_matrix = _orient_patch(patch, patch[0])
+    assert np.array_equal(transformed_patch.shape, patch.shape)
+    assert np.allclose(transformed_patch.mean(axis=0), 0)  # patch center should be zero
+
+    # make sure it's aligned with the first axis
+    _, _, _orient_matrix = _orient_patch(transformed_patch, [0,0,0])
+    assert np.allclose(_orient_matrix[:, 0], [1, 0, 0])
+
+    # calculate principal curvatures on patch
+    fit_params = _fit_quadratic_surface(transformed_patch)
+    curvature, principal_curvatures = _calculate_mean_curvature_on_patch(
+        transformed_patch[0], fit_params)
+
+    assert abs(curvature[0] - 1) < 0.1  # curvature error should be smaller than 10%
+
+    # calculate all principal curvatures
+    radius = 0.5
+    patch_indices = _find_neighbor_indices(pointcloud, patch_radius=radius)
+    k1 = []
+    k2 = []
+    curvatures = []
+
+    for i, p in enumerate(pointcloud):
+        patch = pointcloud[patch_indices[i]]
+        transformed_patch, _, orient_matrix = _orient_patch(patch, patch[0])
+        fit_params = _fit_quadratic_surface(transformed_patch)
+        curvature, principal_curvatures = _calculate_mean_curvature_on_patch(
+            transformed_patch[0], fit_params)
+        k1.append(principal_curvatures[0][0])
+        k2.append(principal_curvatures[0][1])
+        curvatures.append(curvature[0])
+
+    # The principal curvatures should be identical as it's a sphere
+    # curvature error should be smaller than 10%
+    assert np.allclose(np.asarray(k1), np.asarray(k2), atol=0.02)  
+    assert np.std(np.asarray(curvatures)) < 0.05
+
+    # Lastly, apply patch fitting and iterative methods
+    # should still be a sphere afterwards
+    fitted_pointcloud = fit_patches(pointcloud, search_radius=radius)
+    assert np.allclose(np.linalg.norm(fitted_pointcloud, axis=1), 1,
+                       atol=0.01)
+
+    # # iterative method - result should still be a sphere
+    # fitted_pointcloud = iterative_curvature_adaptive_patch_fitting(pointcloud)
+    # assert np.allclose(np.linalg.norm(fitted_pointcloud, axis=1), 1)
+
+if __name__ == '__main__':
+    test_patch_fitting()
