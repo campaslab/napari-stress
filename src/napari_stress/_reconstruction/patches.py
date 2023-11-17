@@ -218,7 +218,7 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
             orient_matrix)
 
 
-def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
+def _calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
                                       fitting_params: np.ndarray) -> tuple:
     """
     Calculate the mean curvature on a patch of points.
@@ -277,7 +277,7 @@ def calculate_mean_curvature_on_patch(query_point: 'napari.types.PointsData',
     
     return mean_curvatures, principal_curvatures
 
-def estimate_patch_radii(
+def _estimate_patch_radii(
         pointcloud: 'napari.types.PointsData',
         k1: np.ndarray = None,
         minimum_permitted_range: float = 2.5,
@@ -425,11 +425,13 @@ def fit_patches(point_cloud: 'napari.types.PointsData',
 def iterative_curvature_adaptive_patch_fitting(
         point_cloud: 'napari.types.PointsData',
         n_iterations: int = 3,
-        minimum_neighbors: int = 6) -> 'napari.types.PointsData':
+        minimum_neighbors: int = 6,
+        minimum_search_radius: int = 1) -> 'napari.types.PointsData':
 
     # Initialize fitted point cloud and find neighbors
     fitted_point_cloud = np.copy(point_cloud)
-    search_radii = estimate_patch_radii(point_cloud)
+    search_radii = _estimate_patch_radii(point_cloud,
+        minimum_permitted_range=minimum_search_radius)
 
     for it in range(n_iterations):
         
@@ -464,7 +466,7 @@ def iterative_curvature_adaptive_patch_fitting(
             fitted_point_cloud[idx, :] = fitted_query_point[None, :] @ orient_matrix.T +\
                 patch_center
             
-            mean_curv, principal_curv = calculate_mean_curvature_on_patch(
+            mean_curv, principal_curv = _calculate_mean_curvature_on_patch(
                 fitted_query_point, fitting_params)
             
             mean_curvatures[idx] = mean_curv
@@ -475,7 +477,7 @@ def iterative_curvature_adaptive_patch_fitting(
         principal_curvatures = np.array(principal_curvatures).squeeze()
         point_cloud = fitted_point_cloud
 
-        search_radii = estimate_patch_radii(
+        search_radii = _estimate_patch_radii(
             point_cloud, principal_curvatures.max(axis=1))
         
     return fitted_point_cloud
