@@ -14,6 +14,36 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="5" column="0" colspan="2">
+    <widget class="QPushButton" name="pushButton_run">
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QWidget" name="widget" native="true"/>
+   </item>
+   <item row="8" column="1">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Input intensity image</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
@@ -37,13 +67,6 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_run">
-     <property name="text">
-      <string>Run</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
@@ -54,8 +77,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>855</width>
-        <height>265</height>
+        <width>125</width>
+        <height>118</height>
        </rect>
       </property>
       <attribute name="label">
@@ -150,8 +173,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>855</width>
-        <height>265</height>
+        <width>147</width>
+        <height>93</height>
        </rect>
       </property>
       <attribute name="label">
@@ -231,9 +254,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-29</y>
+        <y>0</y>
         <width>838</width>
-        <height>341</height>
+        <height>318</height>
        </rect>
       </property>
       <attribute name="label">
@@ -435,33 +458,17 @@
      </widget>
     </widget>
    </item>
-   <item row="7" column="1">
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Input intensity image</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QWidget" name="widget" native="true"/>
-   </item>
    <item row="6" column="0">
     <widget class="QCheckBox" name="checkBox_use_dask">
      <property name="text">
       <string>Parallelize with dask</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QCheckBox" name="checkBox_return_intermediate">
+     <property name="text">
+      <string>Return intermediate resultss (may require a lot of memory)</string>
      </property>
     </widget>
    </item>

@@ -178,6 +178,7 @@ class droplet_reconstruction_toolbox(QWidget):
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
             interpolation_method=self.comboBox_interpolation_method.currentText(),
+            return_intermediate_results=self.checkBox_return_intermediate.isChecked(),
             use_dask=self.checkBox_use_dask.isChecked(),
         )
 
@@ -203,6 +204,7 @@ def reconstruct_droplet(
     outlier_tolerance: float = 1.5,
     sampling_distance: float = 0.5,
     interpolation_method: str = "cubic",
+    return_intermediate_results: bool = False,
 ) -> List[LayerDataTuple]:
     """
     Reconstruct droplet surface from points layer.
@@ -243,6 +245,8 @@ def reconstruct_droplet(
         "cubic" is more accurate but slower.
     use_dask: bool, optional
         Whether to use dask for parallelization. The default is False.
+    return_intermediate_results: bool, optional
+        Whether to return intermediate results. The default is False.
 
     Returns
     -------
@@ -311,11 +315,11 @@ def reconstruct_droplet(
     # Returns
     # =========================================================================
 
-    properties = {"name": "points_first_guess", "size": 0.5}
-    layer_points_first_guess = (
-        points_first_guess * target_voxelsize,
+    properties = {"name": "surface_first_guess"}
+    layer_first_guess = (
+        (surface[0] * target_voxelsize, surface[1]),
         properties,
-        "points",
+        "surface",
     )
 
     properties = {"name": "points_patch_fitted", "size": 0.5}
@@ -340,13 +344,20 @@ def reconstruct_droplet(
     properties = {"name": "Rescaled image", 'blending': 'additive', 'scale': [target_voxelsize] * 3}
     layer_rescaled_image = (rescaled_image, properties, "image")
 
-    return [
-        layer_label_image,
-        layer_points_first_guess,
-        layer_patch_fitted,
-        traced_points,
-        trace_vectors,
-        droplet_center,
-        layer_rescaled_image
-    ]
+    if return_intermediate_results:
+        return [
+            layer_label_image,
+            layer_first_guess,
+            layer_patch_fitted,
+            traced_points,
+            trace_vectors,
+            droplet_center,
+            layer_rescaled_image,
+        ]
+    else:
+        return [
+            layer_first_guess,
+            layer_patch_fitted,
+        ]
+
 
