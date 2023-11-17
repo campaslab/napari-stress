@@ -200,8 +200,8 @@ def _orient_patch(patch_points: 'napari.types.PointsData',
     YCenter = Xct @ orient_matrix
     
     # Determine if the patch needs to be flipped
-    if query_point_transformed[2] - YCenter[2] > 0:
-        flip_upside_down = np.diag([1, -1, -1])
+    if query_point_transformed[0] - YCenter[0] > 0:
+        flip_upside_down = np.diag([-1, -1, 1])
         orient_matrix = orient_matrix @ flip_upside_down
         query_point_transformed = query_point @ orient_matrix
         YCenter = Xct @ orient_matrix
