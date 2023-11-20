@@ -6,6 +6,7 @@ from scipy.optimize import curve_fit
 from typing import List
 import inspect
 
+
 def _sigmoid(
     array: np.ndarray,
     center: float,
@@ -50,7 +51,6 @@ def _detect_max_gradient(array: np.ndarray, center: float = None):
 
 
 def _function_args_to_list(function: callable) -> list:
-
     sig = inspect.signature(function)
     return list(sig.parameters.keys())
 
@@ -125,7 +125,7 @@ def _identify_outliers(
     return indices
 
 
-def _fibonacci_sampling(number_of_points: int = 256) -> 'napari.types.PointsData':
+def _fibonacci_sampling(number_of_points: int = 256) -> "napari.types.PointsData":
     """
     Sample points on unit sphere according to fibonacci-scheme.
 
@@ -178,21 +178,23 @@ def _fancy_edge_fit(
     array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
-
             x = np.arange(0, len(array), 1)
 
             # estimate parameters and trim intensity array
             parameter_estimate, trimmed_array, trimmed_idx = estimate_fit_parameters(
-                array)
+                array
+            )
             trimmed_indices = np.arange(trimmed_idx[0], trimmed_idx[1])
 
-            boundaries = np.array([
-                [0, len(array)],
-                [0.5 * max(array), max(array) * 1.5],
-                [-np.inf, np.inf],
-                [-np.inf, np.inf],
-                [0, 0.5 * max(array)]
-                ])
+            boundaries = np.array(
+                [
+                    [0, len(array)],
+                    [0.5 * max(array), max(array) * 1.5],
+                    [-np.inf, np.inf],
+                    [-np.inf, np.inf],
+                    [0, 0.5 * max(array)],
+                ]
+            )
 
             # run fit
             optimal_fit_parameters, _covariance = curve_fit(
@@ -200,7 +202,7 @@ def _fancy_edge_fit(
                 trimmed_indices,
                 trimmed_array,
                 parameter_estimate,
-                bounds=boundaries.T
+                bounds=boundaries.T,
             )
 
         elif selected_edge_func == _gaussian:
@@ -245,18 +247,19 @@ def estimate_fit_parameters(intensity):
     # Check if there are too few points
     if len(intensity) < 5:
         print("Warning: Too few points in trace (length < 5)")
-        return [np.nan]*5, intensity, intensity
+        return [np.nan] * 5, intensity, intensity
 
     # Calculate the first derivative (dY)
-    dY = 0.5 * (np.diff([intensity[0]] + intensity) +
-                np.diff(intensity + [intensity[-1]]))
+    dY = 0.5 * (
+        np.diff([intensity[0]] + intensity) + np.diff(intensity + [intensity[-1]])
+    )
 
     # Identify X3 as the position of the maximum change
     indX3 = np.argmax(abs(dY))
-    
+
     # Calculate the second derivative (ddY)
     ddY = 0.5 * (np.diff([dY[0]] + list(dY)) + np.diff(list(dY) + [dY[-1]]))
-    
+
     # Define X2 and X4
     ddY_left, ddY_right = ddY.copy(), ddY.copy()
     ddY_left[indX3:] = np.nan
@@ -268,9 +271,9 @@ def estimate_fit_parameters(intensity):
     fullWidth = indX4 - indX2
     halfWidth = fullWidth / 2
     indX2 = int(indX3 - halfWidth)
-    indX2 = max(1, min(len(intensity)-2, indX2))
+    indX2 = max(1, min(len(intensity) - 2, indX2))
     indX4 = int(indX3 + halfWidth)
-    indX4 = max(2, min(len(intensity)-1, indX4))
+    indX4 = max(2, min(len(intensity) - 1, indX4))
 
     # Estimate parameters
     k = 4 / (indX4 - indX2)
@@ -278,7 +281,7 @@ def estimate_fit_parameters(intensity):
         k = -k
     center = indX3
     amp = 2 * intensity[indX3]
-    
+
     if k > 0:
         offset = intensity[-1]
         lambda_val = (intensity[indX2] - intensity[0]) / (indX2 - 0)

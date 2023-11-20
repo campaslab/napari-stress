@@ -1,6 +1,7 @@
 from .._stress import lebedev_info_SPB as lebedev_info
 import numpy as np
 
+
 def Least_Squares_Harmonic_Fit(
     fit_degree: int, sample_locations: tuple, values: np.ndarray
 ) -> np.ndarray:

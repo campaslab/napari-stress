@@ -269,9 +269,9 @@ def reconstruct_droplet(
     from .patches import iterative_curvature_adaptive_patch_fitting
 
     scaling_factors = voxelsize / target_voxelsize
-    rescaled_image = transform.rescale(image, scaling_factors,
-                                       preserve_range=True,
-                                       anti_aliasing=True)
+    rescaled_image = transform.rescale(
+        image, scaling_factors, preserve_range=True, anti_aliasing=True
+    )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     threshold = filters.threshold_otsu(rescaled_image)
     binarized_image = rescaled_image > threshold
@@ -282,10 +282,9 @@ def reconstruct_droplet(
     surface = nppas.remove_duplicate_vertices(surface)
 
     # Smooth and decimate
-    surface = nppas.smooth_surface(surface,
-        n_smoothing_iterations,
-        feature_angle=120,
-        edge_angle=90)
+    surface = nppas.smooth_surface(
+        surface, n_smoothing_iterations, feature_angle=120, edge_angle=90
+    )
     surface = nppas.decimate_quadric(surface, number_of_vertices=n_points)
     points_first_guess = surface[0]
     points = copy.deepcopy(points_first_guess)
@@ -341,7 +340,11 @@ def reconstruct_droplet(
     properties = {"name": "Center", "symbol": "ring", "face_color": "yellow", "size": 3}
     droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
 
-    properties = {"name": "Rescaled image", 'blending': 'additive', 'scale': [target_voxelsize] * 3}
+    properties = {
+        "name": "Rescaled image",
+        "blending": "additive",
+        "scale": [target_voxelsize] * 3,
+    }
     layer_rescaled_image = (rescaled_image, properties, "image")
 
     if return_intermediate_results:
@@ -359,5 +362,3 @@ def reconstruct_droplet(
             layer_first_guess,
             layer_patch_fitted,
         ]
-
-

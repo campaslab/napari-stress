@@ -68,7 +68,7 @@ def test_decorator_points_layerdatatuple():
         points[1]["features"] = features
         points[1]["metadata"] = metadata
         list_of_ldtuples.append(points)
-    
+
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
@@ -93,6 +93,7 @@ def test_decorator_points_layerdatatuple():
             ldt[1]["features"]["feature1"], _ldt[1]["features"]["feature1"]
         )
         assert np.array_equal(ldt[1]["metadata"]["data1"], _ldt[1]["metadata"]["data1"])
+
 
 def test_decorator_points_layers():
     from napari_stress import TimelapseConverter, get_droplet_point_cloud_4d

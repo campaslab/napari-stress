@@ -8,12 +8,15 @@ from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_function
 
 from .._utils import frame_by_frame
-from .fit_utils import (_function_args_to_list,
-                        edge_functions,
-                        fit_types,
-                        interpolation_types)
+from .fit_utils import (
+    _function_args_to_list,
+    edge_functions,
+    fit_types,
+    interpolation_types,
+)
 
 warnings.filterwarnings("ignore")
+
 
 @register_function(menu="Points > Trace-refine points (n-STRESS)")
 @frame_by_frame
@@ -77,7 +80,6 @@ def trace_refinement_of_surface(
     from .._measurements.intensity import sample_intensity_along_vector
     from .._measurements.measurements import distance_to_k_nearest_neighbors
     from .fit_utils import _mean_squared_error, _identify_outliers, _fancy_edge_fit
-
 
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
@@ -169,7 +171,7 @@ def trace_refinement_of_surface(
             column_names=["fraction_variance_unexplained_log"],
             which=["above"],
             factor=outlier_tolerance,
-            merge='or'
+            merge="or",
         )
         fit_data = fit_data[good_points]
         intensity_along_vector = intensity_along_vector[good_points]
@@ -230,9 +232,8 @@ def trace_refinement_of_surface(
 
 @register_function(menu="Points > Resample spherical pointcloud (n-STRESS)")
 def resample_pointcloud(
-        points: 'napari.types.PointsData',
-        sampling_length: float = 5
-        ) -> 'napari.types.PointsData':
+    points: "napari.types.PointsData", sampling_length: float = 5
+) -> "napari.types.PointsData":
     """
     Resampe a spherical-like pointcloud on fibonacci grid.
 
