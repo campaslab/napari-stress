@@ -3,10 +3,9 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
-import vedo
 from magicgui.widgets import create_widget
 from napari.layers import Image, Layer
-from napari.types import ImageData, LayerDataTuple, PointsData
+from napari.types import ImageData, LayerDataTuple
 from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject

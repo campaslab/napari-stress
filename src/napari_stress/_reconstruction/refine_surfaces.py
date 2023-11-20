@@ -1,5 +1,4 @@
 import warnings
-from enum import Enum
 from typing import List
 
 import numpy as np

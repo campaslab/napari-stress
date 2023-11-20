@@ -71,7 +71,6 @@ def _create_fitted_coordinates(points, fitting_params):
     ones_vec = np.ones(num_points)
     x = points[:, 2]
     y = points[:, 1]
-    z = points[:, 0]
 
     # Assemble the design matrix with the known coordinates
     design_matrix = np.column_stack((ones_vec, x, y, x * y, x**2, y**2))

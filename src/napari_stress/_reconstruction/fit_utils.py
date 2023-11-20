@@ -178,7 +178,6 @@ def _fancy_edge_fit(
     array = [x for x in array if not np.isnan(x)]  # filter out nans
     try:
         if selected_edge_func == _sigmoid:
-            x = np.arange(0, len(array), 1)
 
             # estimate parameters and trim intensity array
             parameter_estimate, trimmed_array, trimmed_idx = estimate_fit_parameters(

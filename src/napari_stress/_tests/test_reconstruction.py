@@ -207,15 +207,12 @@ def test_create_fitted_coordinates():
 
 def test_patch_fitting():
     from napari_stress._reconstruction.fit_utils import _fibonacci_sampling
-    from napari_stress._reconstruction.patches import _find_neighbor_indices
     from napari_stress._reconstruction.patches import (
         _find_neighbor_indices,
         _orient_patch,
         _calculate_mean_curvature_on_patch,
         _fit_quadratic_surface,
-        _estimate_patch_radii,
         fit_patches,
-        iterative_curvature_adaptive_patch_fitting,
     )
 
     # first create fibonacci pointcloud
