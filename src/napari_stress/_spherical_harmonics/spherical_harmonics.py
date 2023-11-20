@@ -24,13 +24,14 @@ def shtools_spherical_harmonics_expansion(
     points: PointsData, max_degree: int = 5, expansion_type: str = "radial"
 ) -> Tuple[PointsData, np.ndarray]:
     """
-    Approximate a surface by spherical harmonics expansion with pyshtools implementation.
+    Approximate surface with pyshtools implementation.
 
     Parameters
     ----------
     points : PointsData
     max_degree : int, optional
-        Degree of spherical harmonics to fit to the data. The default is 5.
+        Degree of spherical harmonics to fit to the data.
+        The default is 5.
 
     Returns
     -------
@@ -54,7 +55,6 @@ def shtools_spherical_harmonics_expansion(
     longitude = np.rad2deg(spherical_coordinates[2])
 
     if expansion_type == "radial":
-
         # Find spherical harmonics expansion coefficients until specified degree
         opt_fit_params = pyshtools._SHTOOLS.SHExpandLSQ(
             radius, latitude, longitude, lmax=max_degree
@@ -73,7 +73,6 @@ def shtools_spherical_harmonics_expansion(
         return points, coefficients
 
     elif expansion_type == "cartesian":
-
         optimal_fit_params = []
         fitted_coordinates = np.zeros_like(points)
         for i in range(3):
@@ -251,7 +250,8 @@ def lebedev_quadrature(
         sph_f.spherical_harmonics_function(x, max_degree) for x in coefficients
     ]
 
-    # Get {Z/Y/X} Coordinates at lebedev points, so we can leverage our code more efficiently (and uniformly) on surface:
+    # Get {Z/Y/X} Coordinates at lebedev points, so we can
+    # leverage our code more efficiently (and uniformly) on surface:
     LBDV_Fit = lebedev_info.lbdv_info(max_degree, number_of_quadrature_points)
     lebedev_points = [
         euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
@@ -265,7 +265,6 @@ def lebedev_quadrature(
 def create_manifold(
     points: PointsData, lebedev_fit: lebedev_info.lbdv_info, max_degree: int
 ) -> mnfd.manifold:
-
     # add information to manifold on what type of expansion was used
     Manny_Dict = {}
     Manny_Name_Dict = {}  # sph point cloud at lbdv
@@ -294,7 +293,7 @@ def create_manifold(
     Manny_Dict[
         "use_manifold_name"
     ] = False  # we are NOT using named shapes in these tests
-    Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict  # sph point cloud at lbdv
+    Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
 
     return mnfd.manifold(
         Manny_Dict, manifold_type=manifold_type, raw_coordinates=points
@@ -358,7 +357,8 @@ def calculate_mean_curvature_on_manifold(
     points = manifold.get_coordinates()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
-    # Makre sure orientation is inward, so H is positive (for Ellipsoid, and small deviations):
+    # Makre sure orientation is inward, so H is positive
+    # (for Ellipsoid, and small deviations):
     Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 

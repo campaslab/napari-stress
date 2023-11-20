@@ -1,15 +1,11 @@
 # From https://github.com/campaslab/STRESS
-#! We use spherical_harmonics_function to encapsulate data from SPH Basis of functions, regardless of chart
+#! We use spherical_harmonics_function to encapsulate data
+# from SPH Basis of functions, regardless of chart
 
-from numpy import *
 import numpy as np
-from scipy import *
-import mpmath
-import cmath
-from scipy.special import sph_harm
 
-from .lebedev_info_SPB import *
-from .charts_SPB import *
+from .lebedev_info_SPB import Der_Phi_Basis_Fn, Der_Phi_Phi_Basis_Fn, Eval_SPH_Basis
+from .charts_SPB import Chart_Min_Polar, Chart_Max_Polar, Coor_B_To_A
 
 import pyshtools
 
@@ -24,7 +20,6 @@ def Mass_Mat_Exact(m_coef, n_coef):
 
 # Inverse Mass Matrix on S2 pullback (NOT INCLUDING constant mode
 def Inv_Mass_Mat_on_Pullback(SPH_Deg):
-
     mat_dim = (SPH_Deg + 1) ** 2 - 1
     inv_mass_mat = np.zeros((mat_dim, mat_dim))
 
@@ -32,7 +27,6 @@ def Inv_Mass_Mat_on_Pullback(SPH_Deg):
 
     for n in range(1, SPH_Deg + 1):
         for m in range(-1 * n, n + 1):
-
             inv_mass_mat[diag_entry, diag_entry] = 1.0 / Mass_Mat_Exact(m, n)
 
     return inv_mass_mat
@@ -40,7 +34,7 @@ def Inv_Mass_Mat_on_Pullback(SPH_Deg):
 
 # Creates a SPH representation of Y^m_n
 def Create_Basis_Fn(m, n, basis_degree):
-    Coef_Mat = zeros((basis_degree + 1, basis_degree + 1))
+    Coef_Mat = np.zeros((basis_degree + 1, basis_degree + 1))
 
     if m >= 0:
         Coef_Mat[n - m][n] = 1.0
@@ -52,8 +46,7 @@ def Create_Basis_Fn(m, n, basis_degree):
 
 # Approximate func(theta, phi) in FE space
 def Proj_Func(func, SPH_Deg, lbdv):
-
-    Proj_Coef = zeros([SPH_Deg + 1, SPH_Deg + 1])
+    Proj_Coef = np.zeros([SPH_Deg + 1, SPH_Deg + 1])
 
     theta_quad_pts = lbdv.Lbdv_Sph_Pts_Quad[:, 0]
     phi_quad_pts = lbdv.Lbdv_Sph_Pts_Quad[:, 1]
@@ -68,9 +61,8 @@ def Proj_Func(func, SPH_Deg, lbdv):
     # Compute inner product of theta der with each basis elt
     for n in range(SPH_Deg + 1):
         for m in range(-1 * n, n + 1):
-
             Proj_Coef_mn = sum(
-                multiply(lbdv.Eval_SPH_Basis_Wt_M_N(m, n), func_vals_at_quad_pts)
+                np.multiply(lbdv.Eval_SPH_Basis_Wt_M_N(m, n), func_vals_at_quad_pts)
             ) / Mass_Mat_Exact(m, n)
 
             if m > 0:
@@ -84,23 +76,18 @@ def Proj_Func(func, SPH_Deg, lbdv):
 
 # Projects function into both charts
 def Proj_Into_SPH_Charts(func, Coef_Deg, lbdv):
-
     # In chart A
     # Coef_A = Proj_Func(lambda theta, phi: eta_A(func, theta, phi), Coef_Deg)
     sph_func_A = Proj_Func(func, Coef_Deg, lbdv)  # using class structure
 
-    # func for chart B
-    # Coef_B = Proj_Func(lambda theta_bar, phi_bar: eta_B(func, theta_bar, phi_bar), Coef_Deg)
-
     # rotate func to Chart B Coors
     def func_rot(theta_bar, phi_bar):
-
         A_Coors = Coor_B_To_A(theta_bar, phi_bar)
 
         Theta_Vals = A_Coors[0]
         Phi_Vals = A_Coors[1]
 
-        func_vals = func(Theta_Vals, Phi_Vals)  # zeros(shape(theta_bar))
+        func_vals = func(Theta_Vals, Phi_Vals)  # np.zeros(shape(theta_bar))
 
         return func_vals
 
@@ -111,7 +98,6 @@ def Proj_Into_SPH_Charts(func, Coef_Deg, lbdv):
 
 # Projects function into both charts using quad_pts
 def Proj_Into_SPH_Charts_At_Quad_Pts(func_quad_vals, Proj_Deg, lbdv):
-
     # In chart A
     sph_func_A = Faster_Double_Proj(
         func_quad_vals, Proj_Deg, lbdv
@@ -119,11 +105,10 @@ def Proj_Into_SPH_Charts_At_Quad_Pts(func_quad_vals, Proj_Deg, lbdv):
 
     # vals for chart B
 
-    quad_pt_vals_B = zeros((lbdv.lbdv_quad_pts, 1))
+    quad_pt_vals_B = np.zeros((lbdv.lbdv_quad_pts, 1))
 
     # rotate func to Chart B Coors
     for quad_pt in range(lbdv.lbdv_quad_pts):
-
         quad_pt_vals_B[quad_pt] = func_quad_vals[
             lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(quad_pt)
         ]
@@ -137,7 +122,6 @@ def Proj_Into_SPH_Charts_At_Quad_Pts(func_quad_vals, Proj_Deg, lbdv):
 
 # TAKES VALS AT QUAD PTS, to Approximate func(theta, phi) in SPH Basis
 def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
-
     Proj_Coef = np.zeros(
         [Proj_Deg + 1, Proj_Deg + 1]
     )  # Size of basis used to represent derivative
@@ -145,7 +129,6 @@ def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
     # Compute inner product of theta der with each basis elt
     for n in range(Proj_Deg + 1):
         for m in range(-1 * n, n + 1):
-
             I_mn = 0
 
             for quad_pt in range(lbdv.lbdv_quad_pts):
@@ -155,7 +138,8 @@ def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
                 I_mn += func_quad_vals[quad_pt] * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(
                     m, n, quad_pt
                 )
-                # Above fn sums basis vals for proj, times func,  times weight at each quad pt
+                # Above fn sums basis vals for proj, times func,
+                # times weight at each quad pt
 
             Proj_mn = I_mn / Mass_Mat_Exact(m, n)
 
@@ -168,17 +152,16 @@ def Faster_Double_Proj(func_quad_vals, Proj_Deg, lbdv):
     return spherical_harmonics_function(Proj_Coef, Proj_Deg)
 
 
-# TAKES VALS AT QUAD PTS, to Approximate func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
+# TAKES VALS AT QUAD PTS, to Approximate
+# func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
 def Faster_Double_Proj_Product(func1_quad_vals, func2_quad_vals, Proj_Deg, lbdv):
-
-    Proj_Product_Coef = zeros(
+    Proj_Product_Coef = np.zeros(
         [Proj_Deg + 1, Proj_Deg + 1]
     )  # Size of basis used to represent derivative
 
     # Compute inner product of theta der with each basis elt
     for n in range(Proj_Deg + 1):
         for m in range(-1 * n, n + 1):
-
             I_mn = 0
 
             for quad_pt in range(lbdv.lbdv_quad_pts):
@@ -190,7 +173,8 @@ def Faster_Double_Proj_Product(func1_quad_vals, func2_quad_vals, Proj_Deg, lbdv)
                     * func2_quad_vals[quad_pt]
                     * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(m, n, quad_pt)
                 )
-                # Above fn sums basis vals for proj, times func*Coef_Mat,  times weight at each quad pt
+                # Above fn sums basis vals for proj, times func*Coef_Mat,
+                # times weight at each quad pt
 
             Proj_Product_mn = I_mn / Mass_Mat_Exact(m, n)
 
@@ -205,25 +189,15 @@ def Faster_Double_Proj_Product(func1_quad_vals, func2_quad_vals, Proj_Deg, lbdv)
 
 # Inputs quad vals for f, f_approx, integrates on SPHERE:
 def Lp_Rel_Error_At_Quad(approx_f_vals, f_vals, lbdv, p):  # Assumes f NOT 0
-
     Lp_Err = 0  # ||self - f||_p
     Lp_f = 0  # || f ||_p
 
     for quad_pt in range(lbdv.lbdv_quad_pts):
-
         weight_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][2]
 
         Lp_Err_Pt = abs((approx_f_vals[quad_pt] - f_vals[quad_pt]) ** p) * weight_pt
         Lp_f_Pt = abs(f_vals[quad_pt] ** p) * weight_pt
 
-        """
-        if(Lp_Err_Pt < 0):
-            print("Lp_Err_Pt = "+str(Lp_Err_Pt)+" at pt = "+str(quad_pt))
-            print("(approx_f_vals[quad_pt] - f_vals[quad_pt])**p = "+str( (approx_f_vals[quad_pt] - f_vals[quad_pt])**p ))
-            print("abs((approx_f_vals[quad_pt] - f_vals[quad_pt])**p) = "+str( abs((approx_f_vals[quad_pt] - f_vals[quad_pt])**p) ))
-            print("weight_pt = "+str(weight_pt))
-            print("\n")
-        """
         Lp_Err += Lp_Err_Pt
         Lp_f += Lp_f_Pt
 
@@ -235,12 +209,10 @@ def Lp_Rel_Error_At_Quad(approx_f_vals, f_vals, lbdv, p):  # Assumes f NOT 0
 
 # Inputs quad vals for f, f_approx, integrates on CHART:
 def Lp_Rel_Error_At_Quad_In_Chart(approx_f_vals, f_vals, lbdv, p):  # Assumes f NOT 0
-
     Lp_Err = 0  # ||self - f||_p
     Lp_f = 0  # || f ||_p
 
     for quad_pt in range(lbdv.lbdv_quad_pts):
-
         if lbdv.Chart_of_Quad_Pts[quad_pt] > 0:
             weight_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][2]
 
@@ -255,14 +227,13 @@ def Lp_Rel_Error_At_Quad_In_Chart(approx_f_vals, f_vals, lbdv, p):  # Assumes f 
 
 # Computes Coef of constant mode of Fn
 def Const_SPH_Mode_Of_Func(func, lbdv):
-
     theta_quad_pts = lbdv.Lbdv_Sph_Pts_Quad[:, 0]
     phi_quad_pts = lbdv.Lbdv_Sph_Pts_Quad[:, 1]
 
     func_vals_at_quad_pts = func(theta_quad_pts, phi_quad_pts)
 
     Proj_Coef_Const_Mode = sum(
-        multiply(lbdv.Eval_SPH_Basis_Wt_M_N(0, 0), func_vals_at_quad_pts)
+        np.multiply(lbdv.Eval_SPH_Basis_Wt_M_N(0, 0), func_vals_at_quad_pts)
     ) / Mass_Mat_Exact(0, 0)
 
     return Proj_Coef_Const_Mode
@@ -270,13 +241,12 @@ def Const_SPH_Mode_Of_Func(func, lbdv):
 
 # Computes Average of sph proj of quad pts
 def Avg_of_SPH_Proj_of_Func(func_vals_at_quad_pts, lbdv):
-
     Proj_Coef_Const_Mode = sum(
-        multiply(lbdv.Eval_SPH_Basis_Wt_M_N(0, 0), func_vals_at_quad_pts.flatten())
+        np.multiply(lbdv.Eval_SPH_Basis_Wt_M_N(0, 0), func_vals_at_quad_pts.flatten())
     ) / Mass_Mat_Exact(0, 0)
     Avg_of_SPH_Proj = (
         Proj_Coef_Const_Mode * 1.0 / (2 * np.sqrt(np.pi))
-    )  # multiply by height of Y^0_0
+    )  # np.multiply by height of Y^0_0
 
     return Avg_of_SPH_Proj
 
@@ -292,7 +262,6 @@ def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
     row = 0
     for n in range(basis_degree + 1):
         for m in range(-1 * n, n + 1):
-
             if m > 0:
                 coefficient_matrix[n - m][n] = coefficient_vector[row]
 
@@ -362,11 +331,9 @@ def convert_coeffcients_stress_to_pyshtools(
 
 # Gives L_1 Integral on SPHERE pullback:
 def L1_Integral(f_quad_vals, lbdv):
-
     L1_Int = 0
 
     for quad_pt in range(lbdv.lbdv_quad_pts):
-
         weight_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][2]
         L1_Int_Pt = abs(f_quad_vals[quad_pt]) * weight_pt
 
@@ -377,11 +344,9 @@ def L1_Integral(f_quad_vals, lbdv):
 
 # Gives Integral on SPHERE pullback:
 def S2_Integral(f_quad_vals, lbdv):
-
     S2_Int = 0
 
     for quad_pt in range(lbdv.lbdv_quad_pts):
-
         weight_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][2]
         S2_Int_Pt = f_quad_vals[quad_pt, 0] * weight_pt
 
@@ -393,7 +358,7 @@ def S2_Integral(f_quad_vals, lbdv):
     return S2_Int
 
 
-#############################################################################################################################################################
+#######################################################################################
 
 
 class spherical_harmonics_function(
@@ -407,12 +372,10 @@ class spherical_harmonics_function(
 
     # Evaluates the Coef Matrix Representing SPH Basis of a Fn
     def Eval_SPH(self, Theta, Phi):
-
         SPH_Val = 0
 
         for L_Coef in range(0, self.sph_deg + 1):
             for M_Coef in range(0, L_Coef + 1):
-
                 SPH_Val += self.sph_coef[L_Coef - M_Coef][L_Coef] * Eval_SPH_Basis(
                     M_Coef, L_Coef, Theta, Phi
                 )
@@ -426,12 +389,10 @@ class spherical_harmonics_function(
 
     # Evaluates the Phi Derivatibve of Coef Matrix Representing SPH Basis of a Fn
     def Eval_SPH_Der_Phi(self, Theta, Phi):
-
         Der_SPH_Val = 0
 
         for L_Coef in range(0, self.sph_deg + 1):
             for M_Coef in range(0, L_Coef + 1):
-
                 Der_SPH_Val += self.sph_coef[L_Coef - M_Coef][
                     L_Coef
                 ] * Der_Phi_Basis_Fn(M_Coef, L_Coef, Theta, Phi)
@@ -445,12 +406,10 @@ class spherical_harmonics_function(
 
     # Evaluates the Second Phi Derivatibve of Coef Matrix Representing SPH Basis of a Fn
     def Eval_SPH_Der_Phi_Phi(self, Theta, Phi):
-
         Sec_Der_SPH_Val = 0
 
         for L_Coef in range(0, self.sph_deg + 1):
             for M_Coef in range(0, L_Coef + 1):
-
                 Sec_Der_SPH_Val += self.sph_coef[L_Coef - M_Coef][
                     L_Coef
                 ] * Der_Phi_Phi_Basis_Fn(M_Coef, L_Coef, Theta, Phi)
@@ -462,37 +421,41 @@ class spherical_harmonics_function(
 
         return Sec_Der_SPH_Val
 
-    # Should Evalaute Phi Der of Matrix at Quad_Pt (times weight), to be used in quadrature,
+    # Should Evalaute Phi Der of Matrix at Quad_Pt (times weight),
+    # to be used in quadrature,
     def Eval_SPH_Der_Phi_Coef(self, Quad_Pt, lbdv):
-
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
             return sum(
-                multiply(self.sph_coef, lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt))
+                np.multiply(
+                    self.sph_coef, lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt)
+                )
             )
 
-        # For multiple quad pts, we use einstein sumation to output vector of solutions at each point:
+        # For multiple quad pts, we use einstein sumation to
+        # output vector of solutions at each point:
         else:
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k",
                 self.sph_coef,
                 lbdv.Eval_SPH_Der_Phi_At_Quad_Pt_Mat(Quad_Pt),
             ).reshape((len(Quad_Pt), 1))
 
-    # Should Evalaute 2nd Phi Der of Matrix at Quad_Pt (times weight), to be used in quadrature,
+    # Should Evalaute 2nd Phi Der of Matrix at Quad_Pt (times weight),
+    # to be used in quadrature,
     def Eval_SPH_Der_Phi_Phi_Coef(self, Quad_Pt, lbdv):
-
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
             return sum(
-                multiply(
+                np.multiply(
                     self.sph_coef, lbdv.Eval_SPH_Der_Phi_Phi_At_Quad_Pt_Mat(Quad_Pt)
                 )
             )
 
-        # For multiple quad pts, we use einstein sumation to output vector of solutions at each point:
+        # For multiple quad pts, we use einstein sumation to
+        # output vector of solutions at each point:
         else:
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k",
                 self.sph_coef,
                 lbdv.Eval_SPH_Der_Phi_Phi_At_Quad_Pt_Mat(Quad_Pt),
@@ -500,27 +463,25 @@ class spherical_harmonics_function(
 
     # Evaluates A SPH fn at a quad pt(s)
     def Eval_SPH_Coef_Mat(self, Quad_Pt, lbdv):
-
         # For Scalar Case, we use usual vectorization:
-        if isscalar(Quad_Pt):
+        if np.isscalar(Quad_Pt):
+            return sum(
+                np.multiply(self.sph_coef, lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt))
+            )
 
-            return sum(multiply(self.sph_coef, lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt)))
-
-        # For multiple quad pts, we use einstein sumation to output vector of solutions at each point:
+        # For multiple quad pts, we use einstein sumation to
+        # output vector of solutions at each point:
         else:
-
-            return einsum(
+            return np.einsum(
                 "ij, ijk -> k", self.sph_coef, lbdv.Eval_SPH_At_Quad_Pt_Mat(Quad_Pt)
             ).reshape((len(Quad_Pt), 1))
 
     # Use the fact that Theta Der Formula is EXACT for our basis
     def Quick_Theta_Der(self):
-
-        Der_Coef = zeros(shape(self.sph_coef))
+        Der_Coef = np.zeros(np.shape(self.sph_coef))
 
         for n_coef in range(self.sph_deg + 1):
             for m_coef in range(1, n_coef + 1):  # Theta Der of Y^0_n = 0
-
                 # D_theta X^m_n = -m*Z^m_n
                 Der_Coef[n_coef - m_coef][n_coef] = (
                     m_coef * self.sph_coef[n_coef][n_coef - m_coef]
@@ -538,15 +499,13 @@ class spherical_harmonics_function(
 
     # Approximate func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
     def Fast_Proj_Product(self, func, Proj_Deg, lbdv):
-
-        Proj_Product_Coef = zeros(
+        Proj_Product_Coef = np.zeros(
             [Proj_Deg + 1, Proj_Deg + 1]
         )  # Size of basis used to represent derivative
 
         # Compute inner product of theta der with each basis elt
         for n in range(Proj_Deg + 1):
             for m in range(-1 * n, n + 1):
-
                 I_mn = 0
 
                 for quad_pt in range(lbdv.lbdv_quad_pts):
@@ -558,7 +517,8 @@ class spherical_harmonics_function(
                         * self.Eval_SPH_Coef_Mat(quad_pt, lbdv)
                         * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(m, n, quad_pt)
                     )
-                    # Above fn sums basis vals for proj, times func*Coef_Mat,  times weight at each quad pt
+                    # Above fn sums basis vals for proj, times func*Coef_Mat,
+                    # times weight at each quad pt
 
                 Proj_Product_mn = I_mn / Mass_Mat_Exact(m, n)
 
@@ -570,17 +530,16 @@ class spherical_harmonics_function(
 
         return spherical_harmonics_function(Proj_Product_Coef, Proj_Deg)
 
-    # TAKES VALS AT QUAD PTS, to Approximate func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
+    # TAKES VALS AT QUAD PTS, to Approximate
+    # func(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
     def Faster_Proj_Product(self, func_quad_vals, Proj_Deg, lbdv):
-
-        Proj_Product_Coef = zeros(
+        Proj_Product_Coef = np.zeros(
             [Proj_Deg + 1, Proj_Deg + 1]
         )  # Size of basis used to represent derivative
 
         # Compute inner product of theta der with each basis elt
         for n in range(Proj_Deg + 1):
             for m in range(-1 * n, n + 1):
-
                 I_mn = 0
 
                 for quad_pt in range(lbdv.lbdv_quad_pts):
@@ -592,7 +551,8 @@ class spherical_harmonics_function(
                         * self.Eval_SPH_Coef_Mat(quad_pt, lbdv)
                         * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(m, n, quad_pt)
                     )
-                    # Above fn sums basis vals for proj, times func*Coef_Mat,  times weight at each quad pt
+                    # Above fn sums basis vals for proj,
+                    # times func*Coef_Mat,  times weight at each quad pt
 
                 Proj_Product_mn = I_mn / Mass_Mat_Exact(m, n)
 
@@ -605,28 +565,27 @@ class spherical_harmonics_function(
         return spherical_harmonics_function(Proj_Product_Coef, Proj_Deg)
 
     # Approximate Coef_Mat2(theta, phi)*Coef_Mat(theta, phi) in SPH Basis
-    def Fast_Proj_Product_SPH(self, spherical_harmonics_function2, Proj_Deg, lbdv):
-
-        Proj_Product_Coef = zeros(
+    def Fast_Proj_Product_SPH(self, SPH_Func2, Proj_Deg, lbdv):
+        Proj_Product_Coef = np.zeros(
             [Proj_Deg + 1, Proj_Deg + 1]
         )  # Size of basis used to represent derivative
 
         # Compute inner product of theta der with each basis elt
         for n in range(Proj_Deg + 1):
             for m in range(-1 * n, n + 1):
-
                 I_mn = 0
 
                 for quad_pt in range(lbdv.lbdv_quad_pts):
-                    theta_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][0]
-                    phi_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][1]
+                    # theta_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][0]
+                    # phi_pt = lbdv.Lbdv_Sph_Pts_Quad[quad_pt][1]
 
                     I_mn += (
                         SPH_Func2.Eval_SPH_Coef_Mat(quad_pt, lbdv)
                         * self.Eval_SPH_Coef_Mat(quad_pt, lbdv)
                         * lbdv.Eval_SPH_Basis_Wt_At_Quad_Pts(m, n, quad_pt)
                     )
-                    # Above fn sums basis vals for proj, times func*Coef_Mat,  times weight at each quad pt
+                    # Above fn sums basis vals for proj, times func*Coef_Mat,
+                    # times weight at each quad pt
 
                 Proj_Product_mn = I_mn / Mass_Mat_Exact(m, n)
 
@@ -639,22 +598,25 @@ class spherical_harmonics_function(
         return spherical_harmonics_function(Proj_Product_Coef, Proj_Deg)
 
     def Inner_Product_SPH(self, Other_SPH):
-
         Vec1 = self.sph_coef.flatten()
         Vec2 = Other_SPH.sph_coef.flatten()
 
-        I_Vec = eye((self.sph_deg + 1) ** 2)
+        I_Vec = np.eye((self.sph_deg + 1) ** 2)
 
         return (
-            sum(multiply(abs(Vec1), abs(Vec2))) / 2
-            + sum(multiply(multiply(abs(Vec1), I_Vec), multiply(abs(Vec2), I_Vec))) / 2
+            sum(np.multiply(abs(Vec1), abs(Vec2))) / 2
+            + sum(
+                np.multiply(
+                    np.multiply(abs(Vec1), I_Vec), np.multiply(abs(Vec2), I_Vec)
+                )
+            )
+            / 2
         )
 
     def L2_Norm_SPH(self):
-        return sqrt(self.Inner_Product_SPH(self))
+        return np.sqrt(self.Inner_Product_SPH(self))
 
     def Lp_Rel_Error_in_Chart(self, f, lbdv, p):  # Assumes f NOT 0
-
         Lp_Err = 0  # ||self - f||_p
         Lp_f = 0  # || f ||_p
 
@@ -677,7 +639,6 @@ class spherical_harmonics_function(
 
     # Looks at Rel Error in ALL of S^2
     def Lp_Rel_Error_in_S2(self, f, lbdv, p):  # Assumes f NOT 0
-
         Lp_Err = 0  # ||self - f||_p
         Lp_f = 0  # || f ||_p
 
@@ -699,16 +660,14 @@ class spherical_harmonics_function(
 
     # Returns properly ordered vector of SPH Coef
     def Flatten_Coef_Mat(self):
-
         coef_mat = self.sph_coef
         sph_degree = self.sph_deg
 
-        coef_vec = zeros(((sph_degree + 1) ** 2, 1))
+        coef_vec = np.zeros(((sph_degree + 1) ** 2, 1))
         row = 0
 
         for n in range(sph_degree + 1):
             for m in range(-1 * n, n + 1):
-
                 if m > 0:
                     coef_vec[row, 0] = coef_mat[n - m][n]
 

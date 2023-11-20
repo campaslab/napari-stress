@@ -10,7 +10,7 @@ from napari.types import ImageData, LayerDataTuple, PointsData
 from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
-from qtpy.QtWidgets import QWidget, QFileDialog
+from qtpy.QtWidgets import QWidget
 
 from .._utils.frame_by_frame import frame_by_frame
 

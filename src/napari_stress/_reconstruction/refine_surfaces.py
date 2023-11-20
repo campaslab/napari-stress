@@ -126,7 +126,6 @@ def trace_refinement_of_surface(
 
     # Iterate over all provided target points
     for idx in range(n_points):
-
         array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:

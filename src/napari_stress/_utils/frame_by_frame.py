@@ -23,7 +23,6 @@ import tqdm
 def frame_by_frame(function: callable, progress_bar: bool = False):
     @wraps(function)
     def wrapper(*args, **kwargs):
-
         sig = inspect.signature(function)
         annotations = [sig.parameters[key].annotation for key in sig.parameters.keys()]
 
@@ -98,7 +97,6 @@ class TimelapseConverter:
     """
 
     def __init__(self):
-
         # Supported LayerData types
         self.data_to_list_conversion_functions = {
             PointsData: self._points_to_list_of_points,
@@ -128,7 +126,8 @@ class TimelapseConverter:
             "napari.types.ImageData": self._list_of_images_to_image,
             LabelsData: self._list_of_images_to_image,
             "napari.types.LabelsData": self._list_of_images_to_image,
-            LayerDataTuple: self._list_of_layerdatatuple_to_layerdatatuple,
+            LayerDataTuple: self._list_of_ldtuple_to_layerdatatuple,
+            "napari.types.LayerDataTuple": self._list_of_ldtuple_to_layerdatatuple,
             List[
                 LayerDataTuple
             ]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
@@ -295,14 +294,12 @@ class TimelapseConverter:
         for idx, res_type in enumerate(layertypes):
             tuples_to_convert = data[:, idx]
             converted_tuples.append(
-                self._list_of_layerdatatuple_to_layerdatatuple(list(tuples_to_convert))
+                self._list_of_ldtuple_to_layerdatatuple(list(tuples_to_convert))
             )
 
         return converted_tuples
 
-    def _list_of_layerdatatuple_to_layerdatatuple(
-        self, tuple_data: list
-    ) -> LayerDataTuple:
+    def _list_of_ldtuple_to_layerdatatuple(self, tuple_data: list) -> LayerDataTuple:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """
@@ -480,7 +477,6 @@ class TimelapseConverter:
         # as previously determined
         surfaces = [None] * n_frames
         for t in range(n_frames):
-
             # Find points with correct frame index
             _points = points[points[:, 0] == t, 1:]
 
@@ -520,7 +516,6 @@ class TimelapseConverter:
 
         n_vertices = 0
         for idx, surface in enumerate(surfaces):
-
             # Offset indices in faces list by previous amount of points
             faces[idx] = n_vertices + np.array(faces[idx])
 
@@ -568,7 +563,6 @@ class TimelapseConverter:
         # Fill the respective entries in the list with coordinates in the
         # original data where time-coordinate matches the current frame
         for t in range(n_frames):
-
             # Find points with correct frame index
             points_out[t] = points[points[:, 0] == t, 1:]
 

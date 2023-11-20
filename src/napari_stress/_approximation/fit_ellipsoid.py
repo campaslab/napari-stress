@@ -112,7 +112,7 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
     F = coefficients.flatten()[5]
     G = coefficients.flatten()[6]
     H = coefficients.flatten()[7]
-    I = coefficients.flatten()[8]
+    J = coefficients.flatten()[8]
 
     xx = points[:, 0][:, None]
     yy = points[:, 1][:, None]
@@ -120,7 +120,7 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
 
     grad_F_x = 2.0 * A * xx + D * yy + E * zz + G
     grad_F_y = 2.0 * B * yy + D * xx + F * zz + H
-    grad_F_z = 2.0 * C * zz + E * xx + F * yy + I
+    grad_F_z = 2.0 * C * zz + E * xx + F * yy + J
 
     grad_F_X = np.hstack((grad_F_x, grad_F_y, grad_F_z))
     Vec_Norms = np.sqrt(np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)).reshape(

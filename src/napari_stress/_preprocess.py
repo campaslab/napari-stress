@@ -1,8 +1,6 @@
 from napari.types import ImageData
 from skimage import transform
 
-from skimage import transform
-
 import numpy as np
 from ._utils.frame_by_frame import frame_by_frame
 

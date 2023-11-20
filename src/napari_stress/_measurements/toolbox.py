@@ -169,8 +169,6 @@ class stress_analysis_toolbox(QWidget):
 
     def _export(self, results_stress_analysis):
         """Export results to csv file."""
-        from .. import types
-        from .. import measurements
         from .. import plotting
         from .. import utils
         import datetime
@@ -433,8 +431,8 @@ def comprehensive_analysis(
     features = curvature_ellipsoid["features"]
     metadata = curvature_ellipsoid["metadata"]
     mean_curvature_ellipsoid = features[_METADATAKEY_MEAN_CURVATURE]
-    H_major_minor = metadata[_METADATAKEY_H_E123_ELLIPSOID]
-    H0_arithmetic_ellipsoid = curvature_ellipsoid_sh[1]
+    _ = metadata[_METADATAKEY_H_E123_ELLIPSOID]
+    _ = curvature_ellipsoid_sh[1]
     H0_surface_ellipsoid = curvature_ellipsoid_sh[2]
 
     # =========================================================================

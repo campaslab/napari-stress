@@ -10,6 +10,8 @@ def test_lsq_ellipsoid():
 
     fitted_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
 
+    assert fitted_points is not None
+
 
 def test_lsq_ellipsoid2():
     import vedo
@@ -71,6 +73,8 @@ def test_ellipse_normals():
 
     normals = approximation.normals_on_ellipsoid(pointcloud)
 
+    assert normals is not None
+
 
 def test_curvature_on_ellipsoid(make_napari_viewer):
     from napari_stress import (
@@ -88,6 +92,10 @@ def test_curvature_on_ellipsoid(make_napari_viewer):
     data, features, metadata = measurements.curvature_on_ellipsoid(
         ellipsoid_stress, fitted_points_stress
     )
+
+    assert data is not None
+    assert features is not None
+    assert metadata is not None
 
     viewer = make_napari_viewer()
     viewer.add_points(fitted_points_stress)

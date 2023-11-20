@@ -360,7 +360,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
-    from napari_stress import get_droplet_point_cloud_4d, measurements
+    from napari_stress import get_droplet_point_cloud_4d
     import napari_stress
     import os
 
@@ -419,7 +419,6 @@ def test_curvature(make_napari_viewer):
         fit_spherical_harmonics,
         types,
     )
-    from magicgui import magicgui
     from napari.layers import Layer
 
     # We'll first create a spherical harmonics expansion and a lebedev
@@ -433,8 +432,8 @@ def test_curvature(make_napari_viewer):
     viewer.add_points(expansion[0], **expansion[1])
 
     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
-    l = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
-    viewer.add_layer(l)
+    lay = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(lay)
     results_layer = viewer.layers[-1]
 
     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
@@ -443,9 +442,18 @@ def test_curvature(make_napari_viewer):
     H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
+
+    assert H is not None
+    assert H0_arithmetic is not None
+    assert H0_surface is not None
+
     H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
         results_layer
     )
+
+    assert H is not None
+    assert H0_arithmetic is not None
+    assert H0_surface is not None
 
     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata
@@ -460,10 +468,16 @@ def test_curvature(make_napari_viewer):
     assert types._METADATAKEY_GAUSS_BONNET_ABS in results_layer.metadata.keys()
     assert types._METADATAKEY_GAUSS_BONNET_REL in results_layer.metadata.keys()
 
+    assert absolute is not None
+    assert relative is not None
+
     results = measurements.average_mean_curvatures_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
+    assert results is not None
+
     results = measurements.average_mean_curvatures_on_manifold(results_layer)
+    assert results is not None
 
     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata
@@ -489,7 +503,6 @@ def test_curvature2(make_napari_viewer):
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
         expansion_types,
     )
-    from magicgui import magicgui
     from napari.layers import Layer
 
     # We'll first create a spherical harmonics expansion and a lebedev
@@ -506,8 +519,8 @@ def test_curvature2(make_napari_viewer):
     viewer.add_points(expansion[0], **expansion[1])
 
     lebedev_points = perform_lebedev_quadrature(viewer.layers[-1], viewer=viewer)
-    l = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
-    viewer.add_layer(l)
+    lay = Layer.create(lebedev_points[0], lebedev_points[1], lebedev_points[2])
+    viewer.add_layer(lay)
     results_layer = viewer.layers[-1]
 
     assert types._METADATAKEY_MANIFOLD in results_layer.metadata
@@ -515,14 +528,22 @@ def test_curvature2(make_napari_viewer):
     H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
+    assert H is not None
+    assert H0_arithmetic is not None
+    assert H0_surface is not None
     H, H0_arithmetic, H0_surface = measurements.calculate_mean_curvature_on_manifold(
         results_layer
     )
+    assert H is not None
+    assert H0_arithmetic is not None
+    assert H0_surface is not None
 
     results = measurements.average_mean_curvatures_on_manifold(
         results_layer.metadata[types._METADATAKEY_MANIFOLD]
     )
+    assert results is not None
     results = measurements.average_mean_curvatures_on_manifold(results_layer)
+    assert results is not None
 
     assert types._METADATAKEY_H0_ARITHMETIC in results_layer.metadata
     assert types._METADATAKEY_H0_SURFACE_INTEGRAL in results_layer.metadata
@@ -548,6 +569,8 @@ def test_curvature3():
     )
     curvature = measurements.curvature_on_ellipsoid(ellipsoid, approximated_pointcloud)
 
+    assert curvature is not None
+
 
 def test_stresses():
     from napari_stress import lebedev_quadrature
@@ -556,7 +579,6 @@ def test_stresses():
         approximation,
         get_droplet_point_cloud,
         create_manifold,
-        types,
     )
     from napari_stress._spherical_harmonics.spherical_harmonics import (
         stress_spherical_harmonics_expansion,
@@ -582,6 +604,7 @@ def test_stresses():
     curvature_ellipsoid = measurements.curvature_on_ellipsoid(
         ellipsoid, ellipsoid_points
     )
+    assert curvature_ellipsoid is not None
 
     _, ellipsoid_coefficients = stress_spherical_harmonics_expansion(
         ellipsoid_points, max_degree=max_degree
@@ -603,15 +626,16 @@ def test_stresses():
         ellipsoid, H0_ellipsoid, gamma=gamma
     )
 
+    assert ellptical is not None
+    assert cartesian is not None
+
     stress, stress_tissue, stress_cell = measurements.anisotropic_stress(
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma
     )
 
+    assert stress is not None
+    assert stress_tissue is not None
+    assert stress_cell is not None
+
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
-
-
-if __name__ == "__main__":
-    import napari
-
-    test_comprehensive_stress_toolbox_4d(napari.Viewer)

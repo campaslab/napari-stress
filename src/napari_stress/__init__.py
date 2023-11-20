@@ -1,4 +1,4 @@
-__version__ = "0.2.8"
+__version__ = "0.2.9"
 
 from . import _measurements as measurements
 from . import _approximation as approximation
@@ -35,3 +35,32 @@ from ._sample_data.sample_data import (
 
 from . import types
 from . import _vectors as vectors
+
+__all__ = [
+    "__version__",
+    "measurements",
+    "approximation",
+    "reconstruction",
+    "sample_data",
+    "plotting",
+    "utils",
+    "stress_backend",
+    "rescale",
+    "smooth_sinc",
+    "smoothMLS2D",
+    "reconstruct_surface",
+    "decimate",
+    "extract_vertex_points",
+    "fit_ellipsoid_to_pointcloud_points",
+    "fit_ellipsoid_to_pointcloud_vectors",
+    "TimelapseConverter",
+    "frame_by_frame",
+    "fit_spherical_harmonics",
+    "lebedev_quadrature",
+    "create_manifold",
+    "get_droplet_point_cloud",
+    "get_droplet_point_cloud_4d",
+    "get_droplet_4d",
+    "types",
+    "vectors",
+]

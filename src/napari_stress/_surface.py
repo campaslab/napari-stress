@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import napari_process_points_and_surfaces as nppas
-from napari.types import LabelsData, SurfaceData, PointsData, VectorsData
+from napari.types import SurfaceData, PointsData, VectorsData
 from napari_stress._utils.frame_by_frame import frame_by_frame
 from napari_tools_menu import register_function
 
@@ -144,7 +143,6 @@ def smooth_sinc(
     feature_angle: float = 60,
     boundary: bool = False,
 ) -> SurfaceData:
-
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.smooth(
         niter=niter,
@@ -161,7 +159,6 @@ def smooth_sinc(
 def smoothMLS2D(
     points: PointsData, factor: float = 0.5, radius: float = None
 ) -> PointsData:
-
     pointcloud = vedo.pointcloud.Points(points)
     pointcloud.smoothMLS2D(f=factor, radius=radius)
 
@@ -174,7 +171,6 @@ def smoothMLS2D(
 @register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
 @frame_by_frame
 def decimate(surface: SurfaceData, fraction: float = 0.1) -> SurfaceData:
-
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
 
     n_vertices = mesh.N()
