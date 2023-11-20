@@ -345,9 +345,9 @@ def local_extrema_analysis(
     # nearest min/max dists and anisotropies contain many zeros as per their definition
     # remove them
     delta_feature_nearest_min_max = delta_feature_nearest_min_max[
-        nearest_min_max_dists != 0]
-    nearest_min_max_dists = nearest_min_max_dists[
-        nearest_min_max_dists != 0]
+        nearest_min_max_dists != 0
+    ]
+    nearest_min_max_dists = nearest_min_max_dists[nearest_min_max_dists != 0]
 
     # assemble output
     features = {"local_max_and_min": local_max_and_min}
