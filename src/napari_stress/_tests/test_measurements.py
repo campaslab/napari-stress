@@ -202,7 +202,7 @@ def project_point_on_ellipse_surface(
     )
 
     # transform point on sphere back to cartesian coordinates
-    point_on_transformed_ellipse_surface = vedo.utils.spher2cart(
+    point_on_transformed_ellipse_surface = vedo.transformations.spher2cart(
         *point_on_transformed_ellipse_surface
     )[::-1]
     point_on_ellipse_surface = (
