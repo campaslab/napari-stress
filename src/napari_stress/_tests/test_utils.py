@@ -121,9 +121,12 @@ def test_decorator_surfaces():
 
     Converter = TimelapseConverter()
 
-    # create a list of surfaces with points/faces/values
     surface_list = [
-        (Sphere().points() * k, np.asarray(Sphere().faces()), k * np.ones(Sphere().N()))
+        (
+            Sphere().points() * k,
+            np.asarray(Sphere().cells),
+            k * np.ones(Sphere().npoints),
+        )
         for k in np.arange(1.9, 2.1, 0.1)
     ]
     n_frames = len(surface_list)
