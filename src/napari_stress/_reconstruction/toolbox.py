@@ -393,7 +393,7 @@ def _resample_pointcloud(points: PointsData, sampling_length: float = 5):
     # convert to spherical, relative coordinates
     center = np.mean(points, axis=0)
     points_centered = points - center
-    points_spherical = vedo.cart2spher(
+    points_spherical = vedo.transformations.cart2spher(
         points_centered[:, 0], points_centered[:, 1], points_centered[:, 2]
     ).T
 
@@ -404,7 +404,7 @@ def _resample_pointcloud(points: PointsData, sampling_length: float = 5):
 
     # sample points on unit-sphere according to fibonacci-scheme
     sampled_points = _fibonacci_sampling(n)
-    sampled_points = vedo.utils.cart2spher(
+    sampled_points = vedo.transformations.cart2spher(
         sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2]
     ).T
 
