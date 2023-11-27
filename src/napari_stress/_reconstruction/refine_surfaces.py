@@ -265,7 +265,7 @@ def resample_pointcloud(
 
     # sample points on unit-sphere according to fibonacci-scheme
     sampled_points = _fibonacci_sampling(n)
-    sampled_points = vedo.utils.cart2spher(
+    sampled_points = vedo.transformations.cart2spher(
         sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2]
     ).T
 
