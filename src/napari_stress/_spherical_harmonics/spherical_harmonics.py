@@ -184,7 +184,9 @@ def stress_spherical_harmonics_expansion(
         r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
 
         fitted_points = (
-            vedo.transformations.spher2cart(r_fit_sph_UV_pts, latitude, longitude).transpose()
+            vedo.transformations.spher2cart(
+                r_fit_sph_UV_pts, latitude, longitude
+            ).transpose()
             + center[None, :]
         )
 
