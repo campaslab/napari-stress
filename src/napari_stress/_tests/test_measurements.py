@@ -127,7 +127,7 @@ def theoretical_mean_curvature_on_pointcloud(a, b, c, pointcloud) -> float:
 
     pointcloud = pointcloud - pointcloud.mean(axis=0)[None, :]
 
-    pointcloud_spherical = vedo.cart2spher(
+    pointcloud_spherical = vedo.transformations.cart2spher(
         pointcloud[:, 2], pointcloud[:, 1], pointcloud[:, 0]
     )
     elevation = pointcloud_spherical[1]
@@ -185,7 +185,7 @@ def project_point_on_ellipse_surface(
     transformed_query_point = np.dot(query_point - center, T)
 
     # transform query point into spherical coordinates
-    transformed_query_point_spherical = vedo.utils.cart2spher(
+    transformed_query_point_spherical = vedo.transformations.cart2spher(
         transformed_query_point[2],
         transformed_query_point[1],
         transformed_query_point[0],

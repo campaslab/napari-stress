@@ -45,7 +45,7 @@ def shtools_spherical_harmonics_expansion(
     relative_coordinates = points - center[np.newaxis, :]
 
     # Convert point coordinates to spherical coordinates (in degree!)
-    spherical_coordinates = vedo.cart2spher(
+    spherical_coordinates = vedo.transformations.cart2spher(
         relative_coordinates[:, 0],
         relative_coordinates[:, 1],
         relative_coordinates[:, 2],
