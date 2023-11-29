@@ -20,9 +20,7 @@ def _fit_and_create_pointcloud(
     fitting_params = _fit_quadratic_surface(pointcloud)
 
     # Apply the fitting parameters to get the fitted ZYX pointcloud
-    fitted_pointcloud = _create_fitted_coordinates(
-        pointcloud, fitting_params
-    )
+    fitted_pointcloud = _create_fitted_coordinates(pointcloud, fitting_params)
 
     return fitted_pointcloud
 

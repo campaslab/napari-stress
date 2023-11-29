@@ -195,8 +195,8 @@ def test_create_fitted_coordinates():
 
     # Call the function to test
     zyx_pointcloud = _create_fitted_coordinates(
-        np.stack([x_coords, y_coords, np.zeros(3)]),
-        fitting_params)
+        np.stack([x_coords, y_coords, np.zeros(3)]), fitting_params
+    )
 
     # Assert that the output is as expected
     np.testing.assert_array_almost_equal(
