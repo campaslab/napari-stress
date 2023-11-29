@@ -162,11 +162,13 @@ def test_fit_and_create_pointcloud():
 def test_fit_quadratic_surface():
     from napari_stress._reconstruction.patches import _fit_quadratic_surface
 
-    pointcloud = np.array([
-        [1, 0, 0],
-        [1, 1, 2],
-        [1, 1, 2],
-    ])
+    pointcloud = np.array(
+        [
+            [1, 0, 0],
+            [1, 1, 2],
+            [1, 1, 2],
+        ]
+    )
 
     # Expected result (a flat surface would just have the constant term)
     expected_fitting_params = np.array([1, 0, 0, 0, 0, 0])
@@ -193,9 +195,7 @@ def test_create_fitted_coordinates():
     fitting_params = np.array([1, 0, 0, 0, 0, 0])  # Flat surface along z = 1
 
     # Expected result
-    expected_zyx_pointcloud = np.stack([[1, 0, 0],
-                                        [1, 1, 2],
-                                        [1, 1, 2]])
+    expected_zyx_pointcloud = np.stack([[1, 0, 0], [1, 1, 2], [1, 1, 2]])
 
     # Call the function to test
     zyx_pointcloud = _create_fitted_coordinates(
