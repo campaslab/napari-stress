@@ -189,7 +189,6 @@ def test_create_fitted_coordinates():
     # Mock input data
     x_coords = np.array([0, 1, 2])
     y_coords = np.array([0, 1, 2])
-    z_coords = np.array([1, 1, 1])  # Flat surface along z = 1
     fitting_params = np.array([1, 0, 0, 0, 0, 0])  # Flat surface along z = 1
 
     # Expected result
