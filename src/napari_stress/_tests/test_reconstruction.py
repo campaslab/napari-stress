@@ -162,16 +162,17 @@ def test_fit_and_create_pointcloud():
 def test_fit_quadratic_surface():
     from napari_stress._reconstruction.patches import _fit_quadratic_surface
 
-    # Mock input data
-    x_coords = np.array([0, 1, 2])
-    y_coords = np.array([0, 1, 2])
-    z_coords = np.array([1, 1, 1])  # Flat surface along z = 1
+    pointcloud = np.array([
+        [1, 0, 0],
+        [1, 1, 2],
+        [1, 1, 2],
+    ])
 
     # Expected result (a flat surface would just have the constant term)
     expected_fitting_params = np.array([1, 0, 0, 0, 0, 0])
 
     # Call the function to test
-    fitting_params = _fit_quadratic_surface(np.stack([x_coords, y_coords, z_coords]))
+    fitting_params = _fit_quadratic_surface(pointcloud)
 
     # Assert that the output is as expected
     np.testing.assert_array_almost_equal(
@@ -188,14 +189,17 @@ def test_create_fitted_coordinates():
     # Mock input data
     x_coords = np.array([0, 1, 2])
     y_coords = np.array([0, 1, 2])
+    z_coords = np.array([1, 1, 1])  # Flat surface along z = 1
     fitting_params = np.array([1, 0, 0, 0, 0, 0])  # Flat surface along z = 1
 
     # Expected result
-    expected_zyx_pointcloud = np.array([[1, 0, 0], [1, 1, 1], [1, 2, 2]])
+    expected_zyx_pointcloud = np.stack([[1, 0, 0],
+                                        [1, 1, 2],
+                                        [1, 1, 2]])
 
     # Call the function to test
     zyx_pointcloud = _create_fitted_coordinates(
-        np.stack([x_coords, y_coords, np.zeros(3)]), fitting_params
+        np.stack([np.zeros(3), y_coords, x_coords]), fitting_params
     )
 
     # Assert that the output is as expected
@@ -292,4 +296,4 @@ def test_patch_fitting():
 
 
 if __name__ == "__main__":
-    test_patch_fitting()
+    test_fit_quadratic_surface()
