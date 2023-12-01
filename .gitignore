@@ -10,7 +10,7 @@ __pycache__/
 *.pdf
 *.vtp
 *.mat
-results_*/
+#results_*/
 stress_analysis_*/
 Pickled_LBDV_*/
 
