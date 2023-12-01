@@ -347,6 +347,9 @@ def test_geodesics():
     # the biggest possible distance on a unit sphere is pi
     assert (GDM <= np.pi).all()
 
+    # all values on diagonal must be zero
+    assert (np.diag(GDM) == 0).all()
+
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud
@@ -648,6 +651,3 @@ def test_stresses():
 
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
-
-if __name__ == '__main__':
-    test_geodesics()
