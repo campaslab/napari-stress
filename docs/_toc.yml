@@ -56,7 +56,7 @@ parts:
     chapters:
     - file: 04_FAQ/Installation
     - file: 04_FAQ/Acknowledgement_and_citation
-    - file: 04_FAQ/02_validation/analyze_validation
+    - file: 04_FAQ/Validation
 
   - caption: API
     chapters:
