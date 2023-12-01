@@ -338,6 +338,15 @@ def test_geodesics():
     assert geodesic_vectors.shape[1] == 2
     assert geodesic_vectors.shape[2] == 3
 
+    # Do again on sphere
+    sphere = vedo.Sphere(pos=(0, 0, 0), r=1)
+    surface = (sphere.vertices, np.asarray(sphere.cells))
+
+    GDM = measurements.geodesic_distance_matrix(surface)
+
+    # the biggest possible distance on a unit sphere is pi
+    assert (GDM <= np.pi).all()
+
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud
@@ -639,3 +648,6 @@ def test_stresses():
 
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
+
+if __name__ == '__main__':
+    test_geodesics()

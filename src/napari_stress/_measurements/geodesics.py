@@ -41,6 +41,42 @@ def geodesic_distance_matrix(
     else:
         iterator = enumerate(points)
 
+    if n_points > 1000:
+        from dask.distributed import Client, get_client
+
+        try:
+            client = get_client()
+        except ValueError:
+            client = Client()
+
+        def _geodesic_distances(surface, chunk):
+            geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+            distances = []
+
+            # check for unique source indices
+            unique_source_indices = np.unique(chunk[:, 0])
+            for source_index in unique_source_indices:
+                target_indices = chunk[chunk[:, 0] == source_index, 1]
+                distances += list(
+                    geoalg.geodesicDistances([source_index], target_indices)[0]
+                )
+            return distances
+
+        # get the indices of the upper triangle, get pairs and split into chunks
+        indices = np.triu_indices(n_points, k=1)
+        pairs = np.stack(indices).T
+        chunks = np.array_split(pairs, len(pairs) // 5000)
+
+        # calculate distances in parallel
+        futures = []
+        for chunk in chunks:
+            futures.append(client.submit(_geodesic_distances, surface, chunk))
+
+        # Gather results and fill distance matrix
+        results = client.gather(futures)
+        for chunk, result in zip(chunks, results):
+            distance_matrix[chunk[:, 0], chunk[:, 1]] = result
+
     for idx, pt in iterator:
         distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
         distance_matrix[idx, idx + 1 :] = distances
