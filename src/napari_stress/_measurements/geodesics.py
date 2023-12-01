@@ -35,40 +35,24 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     points = surface[0]
 
     if n_points > 500:
-        from dask.distributed import Client, get_client
+        from dask.distributed import Client, get_client, secede, rejoin, worker_client
+        from dask import compute
 
-        try:
-            client = get_client()
-        except ValueError:
-            client = Client()
+        with worker_client() as client:
+            # get the indices of the upper triangle, get pairs and split into chunks
+            indices = np.triu_indices(n_points, k=1)
+            pairs = np.stack(indices).T
+            chunks = np.array_split(pairs, len(pairs) // 5000)
 
-        def _geodesic_distances(surface, chunk):
-            geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
-            distances = []
+            # calculate distances in parallel
+            futures = []
+            for chunk in chunks:
+                futures.append(client.submit(_geodesic_distances, surface, chunk))
 
-            # check for unique source indices
-            unique_source_indices = np.unique(chunk[:, 0])
-            for source_index in unique_source_indices:
-                target_indices = chunk[chunk[:, 0] == source_index, 1]
-                distances += list(
-                    geoalg.geodesicDistances([source_index], target_indices)[0]
-                )
-            return distances
-
-        # get the indices of the upper triangle, get pairs and split into chunks
-        indices = np.triu_indices(n_points, k=1)
-        pairs = np.stack(indices).T
-        chunks = np.array_split(pairs, len(pairs) // 5000)
-
-        # calculate distances in parallel
-        futures = []
-        for chunk in chunks:
-            futures.append(client.submit(_geodesic_distances, surface, chunk))
-
-        # Gather results and fill distance matrix
-        results = client.gather(futures)
-        for chunk, result in zip(chunks, results):
-            distance_matrix[chunk[:, 0], chunk[:, 1]] = result
+            results = client.gather(futures)
+            # Gather results and fill distance matrix
+            for chunk, result in zip(chunks, results):
+                distance_matrix[chunk[:, 0], chunk[:, 1]] = result
 
     for idx, pt in enumerate(points):
         distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
@@ -76,6 +60,20 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
         distance_matrix[idx + 1 :, idx] = distances
 
     return distance_matrix
+
+
+def _geodesic_distances(surface, chunk):
+    from pygeodesic import geodesic
+
+    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    distances = []
+
+    # check for unique source indices
+    unique_source_indices = np.unique(chunk[:, 0])
+    for source_index in unique_source_indices:
+        target_indices = chunk[chunk[:, 0] == source_index, 1]
+        distances += list(geoalg.geodesicDistances([source_index], target_indices)[0])
+    return distances
 
 
 @register_function(menu="Surfaces > Geodesic path (pygeodesics, n-STRESS)")
