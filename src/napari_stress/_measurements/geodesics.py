@@ -8,14 +8,13 @@ from napari_tools_menu import register_function
 from .._utils.frame_by_frame import frame_by_frame
 
 
-def geodesic_distance_matrix(
-    surface: SurfaceData, show_progress: bool = False
-) -> np.ndarray:
+def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
     Calculate a pairwise distance matrix for vertices of a surface.
 
     This calculates the geodesic distances between any two vertices on a given
-    surface.
+    surface. If the surface comprises more than 500 vertices, the computation will
+    be parallelized using dask.
 
     Parameters
     ----------
@@ -36,12 +35,7 @@ def geodesic_distance_matrix(
     distance_matrix = np.zeros((n_points, n_points))
     points = surface[0]
 
-    if show_progress:
-        iterator = tqdm.tqdm(enumerate(points), desc="Calculating geodesic distances")
-    else:
-        iterator = enumerate(points)
-
-    if n_points > 1000:
+    if n_points > 500:
         from dask.distributed import Client, get_client
 
         try:
@@ -77,7 +71,7 @@ def geodesic_distance_matrix(
         for chunk, result in zip(chunks, results):
             distance_matrix[chunk[:, 0], chunk[:, 1]] = result
 
-    for idx, pt in iterator:
+    for idx, pt in enumerate(points):
         distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
         distance_matrix[idx, idx + 1 :] = distances
         distance_matrix[idx + 1 :, idx] = distances
