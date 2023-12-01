@@ -3,21 +3,21 @@
 
 .. automodule:: napari_stress.approximation
 
-   
-   
-   
 
-   
-   
-   
 
-   
-   
-   
 
-   
-   
-   
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28,4 +28,3 @@
    :recursive:
 
    napari_stress.approximation.fit_ellipsoid
-
