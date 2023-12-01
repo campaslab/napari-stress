@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-import tqdm
 from napari.types import LayerDataTuple, SurfaceData, VectorsData
 from napari_tools_menu import register_function
 
