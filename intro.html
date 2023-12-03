@@ -169,6 +169,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_fit_ellipsoid_code.html">Ellipsoid fitting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_surface_reconstruction_code.html">Surface reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_surface_tracing.html">Trace refining a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_patch_fitting_reconstruction.html">Patch smoothing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_spherical_harmonics_code.html">Spherical harmonics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_timelapse_processing.html">Timelapse processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="01_code_usage/02_example_workflows/demo_measure_intensity_on_surface.html">Measureing intensity on a surface</a></li>
@@ -206,10 +207,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="04_FAQ/Installation.html">Installation issues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_FAQ/02_validation/analyze_validation.html">Validation</a></li>
-
-
-
+<li class="toctree-l1"><a class="reference internal" href="04_FAQ/Validation.html">Validation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
@@ -361,7 +359,10 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents">Contents</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-useful-packages">Other useful packages</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgements">Acknowledgements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#issues">Issues</a></li>
 </ul>
@@ -397,7 +398,16 @@ document.write(`
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">napari</span><span class="o">-</span><span class="n">stress</span>
 </pre></div>
 </div>
+<section id="other-useful-packages">
+<h3>Other useful packages<a class="headerlink" href="#other-useful-packages" title="Permalink to this headline">#</a></h3>
+<p>Some packages can be very helpful in conjunction with napari-STRESS, e.g., for better 3D interactivity, visualization of the results and/or data export. Here are some suggestions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.napari-hub.org/plugins/napari-threedee">Napari-threedee</a>: Enhance rendering options in napari with a set of interesting tools for mesh lighting, plane rendering, etc.install type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-threedee</span></code>.</p></li>
+<li><p><a class="reference external" href="https://www.napari-hub.org/plugins/napari-matplotlib">Napari-matplotlib</a>: Visualize results obtained with napari-STRESS directly inside the napari viewer with matplotlib. To install, type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-matplotlib</span></code>.</p></li>
+<li><p><a class="reference external" href="https://www.napari-hub.org/plugins/napari-aicsimageio">napari-aicsimageio</a>: Importer library to directly load common file formats into the napari viewer via drag &amp; drop. <em>Note</em>: Depending on the fileformat, you may have to install additional packages (see the documentation for hints on what exactly you need.) To install, type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-aicsimageio</span></code>.</p></li>
+</ul>
 <p>If you encounter problems during installations, please have a look at the <a class="reference internal" href="04_FAQ/Installation.html#faq-installation"><span class="std std-ref">FAQ page</span></a>.</p>
+</section>
 </section>
 <section id="acknowledgements">
 <h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">#</a></h2>
@@ -481,7 +491,10 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents">Contents</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-useful-packages">Other useful packages</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgements">Acknowledgements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#issues">Issues</a></li>
 </ul>

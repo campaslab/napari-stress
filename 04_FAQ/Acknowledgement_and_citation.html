@@ -63,7 +63,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = '04_FAQ/Acknowledgement_and_citation';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Validation" href="02_validation/analyze_validation.html" />
+    <link rel="next" title="Validation" href="Validation.html" />
     <link rel="prev" title="Installation issues" href="Installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
@@ -170,6 +170,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_fit_ellipsoid_code.html">Ellipsoid fitting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_surface_reconstruction_code.html">Surface reconstruction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_surface_tracing.html">Trace refining a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_patch_fitting_reconstruction.html">Patch smoothing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_spherical_harmonics_code.html">Spherical harmonics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_timelapse_processing.html">Timelapse processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../01_code_usage/02_example_workflows/demo_measure_intensity_on_surface.html">Measureing intensity on a surface</a></li>
@@ -207,10 +208,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation issues</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Acknowledgement &amp; Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_validation/analyze_validation.html">Validation</a></li>
-
-
-
+<li class="toctree-l1"><a class="reference internal" href="Validation.html">Validation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
@@ -338,7 +336,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -354,6 +354,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -366,34 +374,17 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="acknowledgement-citation">
 <span id="topic-acknowledgement-citation"></span><h1>Acknowledgement &amp; Citation<a class="headerlink" href="#acknowledgement-citation" title="Permalink to this headline">#</a></h1>
 <p>Napari-stress and the backend code have been developed by the <a class="reference external" href="https://physics-of-life.tu-dresden.de/research/core-groups/campas">campas-lab</a>. The code is open source and available on <a class="reference external" href="https://github.com/campaslab/napari-stress">github</a> or through the <a class="reference external" href="https://www.napari-hub.org/plugins/napari-stress">napari-hub</a>. It is based on the legacy version of STRESS that has been published on github <a class="reference external" href="https://github.com/campaslab/STRESS">here</a>.</p>
-<p>If you use napari-stress in your research, please cite the following paper:</p>
-<ul class="simple">
-<li><p>Gross, Ben, et al. “STRESS, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses.” bioRxiv (2021): 2021-03. <a class="reference external" href="https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1">https://doi.org/10.1101/2021.03.26.437148</a></p></li>
-<li><p>V.I. Lebedev, and D.N. Laikov
-‘A quadrature formula for the sphere of the 131st
-algebraic order of accuracy’
-Doklady Mathematics, Vol. 59, No. 3, 1999, pp. 477-481.</p></li>
-<li><p>V.I. Lebedev
-‘A quadrature formula for the sphere of 59th algebraic
-order of accuracy’
-Russian Acad. Sci. Dokl. Math., Vol. 50, 1995, pp. 283-286.</p></li>
-<li><p>V.I. Lebedev, and A.L. Skorokhodov
-‘Quadrature formulas of orders 41, 47, and 53 for the sphere’
-Russian Acad. Sci. Dokl. Math., Vol. 45, 1992, pp. 587-592.</p></li>
-<li><p>V.I. Lebedev
-‘Spherical quadrature formulas exact to orders 25-29’
-Siberian Mathematical Journal, Vol. 18, 1977, pp. 99-107.</p></li>
-<li><p>V.I. Lebedev
-‘Quadratures on a sphere’
-Computational Mathematics and Mathematical Physics, Vol. 16,
-1976, pp. 10-24.</p></li>
-<li><p>V.I. Lebedev
-‘Values of the nodes and weights of ninth to seventeenth
-order Gauss-Markov quadrature formulae invariant under the
-octahedron group with inversion’
-Computational Mathematics and Mathematical Physics, Vol. 15,
-1975, pp. 44-51.</p></li>
-</ul>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<p>If you use napari-stress in your research, please cite the following paper(s):</p>
+<div class="docutils container" id="id1">
+<dl class="citation">
+<dt class="label" id="id2"><span class="brackets">GSGCampas21</span></dt>
+<dd><p>Ben Gross, Elijah Shelton, Carlos Gomez, and Otger Campàs. Stress, an automated geometrical characterization of deformable particles for in vivo measurements of cell and tissue mechanical stresses. <em>bioRxiv</em>, pages 2021–03, 2021.</p>
+</dd>
+</dl>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -437,7 +428,7 @@ Computational Mathematics and Mathematical Physics, Vol. 15,
       </div>
     </a>
     <a class="right-next"
-       href="02_validation/analyze_validation.html"
+       href="Validation.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
@@ -454,6 +445,20 @@ Computational Mathematics and Mathematical Physics, Vol. 15,
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

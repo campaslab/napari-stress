@@ -23,6 +23,14 @@ After both of these are installed, install napari-stress into the environment yo
 pip install napari-stress
 ```
 
+### Other useful packages
+
+Some packages can be very helpful in conjunction with napari-STRESS, e.g., for better 3D interactivity, visualization of the results and/or data export. Here are some suggestions:
+
+- [Napari-threedee](https://www.napari-hub.org/plugins/napari-threedee): Enhance rendering options in napari with a set of interesting tools for mesh lighting, plane rendering, etc.install type `pip install napari-threedee`.
+- [Napari-matplotlib](https://www.napari-hub.org/plugins/napari-matplotlib): Visualize results obtained with napari-STRESS directly inside the napari viewer with matplotlib. To install, type `pip install napari-matplotlib`.
+- [napari-aicsimageio](https://www.napari-hub.org/plugins/napari-aicsimageio): Importer library to directly load common file formats into the napari viewer via drag & drop. *Note*: Depending on the fileformat, you may have to install additional packages (see the documentation for hints on what exactly you need.) To install, type `pip install napari-aicsimageio`.
+
 If you encounter problems during installations, please have a look at the [FAQ page](FAQ:installation).
 
 ## Acknowledgements
