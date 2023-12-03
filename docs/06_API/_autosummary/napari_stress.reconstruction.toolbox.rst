@@ -24,9 +24,3 @@ napari\_stress.reconstruction.toolbox
    .. autosummary::
 
       droplet_reconstruction_toolbox
-
-
-
-
-
-

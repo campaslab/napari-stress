@@ -17,13 +17,3 @@ napari\_stress.measurements.stresses
       calculate_anisotropy
       maximal_tissue_anisotropy
       tissue_stress_tensor
-
-
-
-
-
-
-
-
-
-

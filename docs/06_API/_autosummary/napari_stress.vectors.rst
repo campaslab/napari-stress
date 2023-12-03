@@ -18,13 +18,3 @@
       normal_vectors_on_surface
       pairwise_point_distances
       relative_move_points_along_vector
-
-
-
-
-
-
-
-
-
-

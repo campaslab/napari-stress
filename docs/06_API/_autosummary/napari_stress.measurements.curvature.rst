@@ -24,13 +24,3 @@ napari\_stress.measurements.curvature
       radial_surface_averaged_mean_curvature
       surface_integrated_mean_curvature
       volume_integrated_mean_curvature
-
-
-
-
-
-
-
-
-
-

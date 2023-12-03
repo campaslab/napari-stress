@@ -16,13 +16,3 @@ napari\_stress.approximation.fit\_ellipsoid
       expand_points_on_ellipse
       least_squares_ellipsoid
       normals_on_ellipsoid
-
-
-
-
-
-
-
-
-
-

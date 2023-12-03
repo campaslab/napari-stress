@@ -17,13 +17,3 @@ napari\_stress.measurements.geodesics
       geodesic_distance_matrix
       geodesic_path
       local_extrema_analysis
-
-
-
-
-
-
-
-
-
-

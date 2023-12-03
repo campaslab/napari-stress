@@ -16,13 +16,3 @@ napari\_stress.reconstruction.patches
       compute_orientation_matrix
       fit_patches
       iterative_curvature_adaptive_patch_fitting
-
-
-
-
-
-
-
-
-
-

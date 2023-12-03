@@ -14,13 +14,3 @@ napari\_stress.measurements.measurements
    .. autosummary::
 
       distance_to_k_nearest_neighbors
-
-
-
-
-
-
-
-
-
-

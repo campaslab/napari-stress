@@ -16,13 +16,3 @@ napari\_stress.measurements.temporal\_correlation
       haversine_distances
       spatio_temporal_autocorrelation
       temporal_autocorrelation
-
-
-
-
-
-
-
-
-
-

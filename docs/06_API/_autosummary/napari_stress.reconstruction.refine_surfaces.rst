@@ -15,13 +15,3 @@ napari\_stress.reconstruction.refine\_surfaces
 
       resample_pointcloud
       trace_refinement_of_surface
-
-
-
-
-
-
-
-
-
-

@@ -24,9 +24,3 @@ napari\_stress.measurements.toolbox
    .. autosummary::
 
       stress_analysis_toolbox
-
-
-
-
-
-

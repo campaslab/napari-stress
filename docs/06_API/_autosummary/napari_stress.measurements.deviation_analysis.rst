@@ -14,13 +14,3 @@ napari\_stress.measurements.deviation\_analysis
    .. autosummary::
 
       deviation_from_ellipsoidal_mode
-
-
-
-
-
-
-
-
-
-

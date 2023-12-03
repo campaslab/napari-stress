@@ -14,13 +14,3 @@ napari\_stress.reconstruction.reconstruct\_surface
    .. autosummary::
 
       reconstruct_surface_from_quadrature_points
-
-
-
-
-
-
-
-
-
-

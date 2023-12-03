@@ -15,13 +15,3 @@ napari\_stress.measurements.intensity
 
       measure_intensity_on_surface
       sample_intensity_along_vector
-
-
-
-
-
-
-
-
-
-
