@@ -35,7 +35,7 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     points = surface[0]
 
     if n_points > 500:
-        from dask.distributed import worker_client, get_client, Client
+        from dask.distributed import worker_client, Client
 
         # get the indices of the upper triangle
         # get pairs and split into chunks
