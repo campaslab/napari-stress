@@ -63,12 +63,9 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
             distance_matrix[chunk[:, 0], chunk[:, 1]] = result
 
     for idx, pt in enumerate(points):
-        distances, _ = geoalg.geodesicDistances(
-            [idx],
-            np.arange(idx + 1, n_points)
-            )
-        distance_matrix[idx, idx + 1:] = distances
-        distance_matrix[idx + 1:, idx] = distances
+        distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
+        distance_matrix[idx, idx + 1 :] = distances
+        distance_matrix[idx + 1 :, idx] = distances
 
     return distance_matrix
 
