@@ -10,6 +10,8 @@ from ._stress.manifold_SPB import manifold
 
 _METADATAKEY_MANIFOLD = "manifold"
 _METADATAKEY_MEAN_CURVATURE = "mean_curvature"
+_METADATAKEY_PRINCIPAL_CURVATURES1 = "principal_curvatures_k1"
+_METADATAKEY_PRINCIPAL_CURVATURES2 = "principal_curvatures_k2"
 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE = (
     "difference_mean_curvature_cartesian_radial_manifold"
 )

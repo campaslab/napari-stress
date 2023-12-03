@@ -57,6 +57,7 @@ def test_mean_curvature_on_ellipsoid():
             interpolation_method="linear",
             trace_length=10,
             sampling_distance=1,
+            return_intermediate_results=True,
         )
 
         # calculate each point's distance to the surface of the ellipsoid

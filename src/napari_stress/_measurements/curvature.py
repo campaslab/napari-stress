@@ -21,6 +21,8 @@ from ..types import (
     _METADATAKEY_H0_RADIAL_SURFACE,
     _METADATAKEY_GAUSS_BONNET_REL,
     _METADATAKEY_GAUSS_BONNET_ABS,
+    _METADATAKEY_PRINCIPAL_CURVATURES1,
+    _METADATAKEY_PRINCIPAL_CURVATURES2,
     manifold,
 )
 
@@ -84,8 +86,19 @@ def curvature_on_ellipsoid(
     )
     H_ellps_pts = (num_H_ellps / den_H_ellps).squeeze()
 
-    # calculate averaged curvatures H_0: 1st method of H0 computation,
-    # for Ellipsoid in UV points
+    # also calculate principal curvatures
+    k_upstairs = a0**2 * a1**2 * a2**2
+    K_downstairs = (
+        a0**2 * a1**2 * np.cos(V) ** 2
+        + a2**2
+        * (a1**2 * np.cos(U) ** 2 + a0**2 * np.sin(U) ** 2)
+        * np.sin(V) ** 2
+    ) ** 2
+    k = k_upstairs / K_downstairs.squeeze()
+    k1 = H_ellps_pts + np.sqrt(H_ellps_pts**2 - k)
+    k2 = H_ellps_pts - np.sqrt(H_ellps_pts**2 - k)
+
+    # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
     H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(ellipsoid)
@@ -93,6 +106,8 @@ def curvature_on_ellipsoid(
     # add to viewer if it doesn't exist.
     properties, features, metadata = {}, {}, {}
     features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
+    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = k1
+    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = k2
     metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
     metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
 

@@ -11,7 +11,7 @@ def deviation_from_ellipsoidal_mode(
     points: PointsData, max_degree: int = 5, viewer: napari.Viewer = None
 ) -> LayerDataTuple:
     from napari_stress import approximation, vectors
-    from .._utils.fit_utils import Least_Squares_Harmonic_Fit
+    from .._spherical_harmonics.fit_utils import Least_Squares_Harmonic_Fit
     from .._utils.coordinate_conversion import cartesian_to_elliptical
     from .._stress import sph_func_SPB as sph_f
     import numpy as np

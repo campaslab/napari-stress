@@ -10,7 +10,7 @@ from napari.layers import Layer, Points
 
 
 def test_fit_functions():
-    from napari_stress._utils.fit_utils import (
+    from napari_stress._reconstruction.fit_utils import (
         _sigmoid,
         _gaussian,
         _detect_maxima,
@@ -68,6 +68,8 @@ def test_decorator_points_layerdatatuple():
         points[1]["features"] = features
         points[1]["metadata"] = metadata
         list_of_ldtuples.append(points)
+
+    list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
@@ -188,7 +190,3 @@ def test_frame_by_frame_vectors():
 
     assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
-
-
-if __name__ == "__main__":
-    test_decorator_surfaces()
