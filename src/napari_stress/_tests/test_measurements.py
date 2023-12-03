@@ -350,6 +350,20 @@ def test_geodesics():
     # all values on diagonal must be zero
     assert (np.diag(GDM) == 0).all()
 
+    # calculate cord length between two random points
+    # and compare with geodesic distance
+    sphere.compute_normals()
+    point1 = np.random.randint(0, len(surface[0]))
+    point2 = np.random.randint(0, len(surface[0]))
+
+    n1 = sphere.pointdata["Normals"][point1]
+    n2 = sphere.pointdata["Normals"][point2]
+
+    arc_angle = np.arccos(np.dot(n1, n2))
+    cord_length = arc_angle * sphere.radius
+
+    np.allclose(GDM[point2, point1], cord_length, rtol=1e-2)
+
 
 def test_comprehenive_stress_toolbox(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud
