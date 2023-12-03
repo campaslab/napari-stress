@@ -35,32 +35,40 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     points = surface[0]
 
     if n_points > 500:
-        from dask.distributed import Client, get_client
+        from dask.distributed import worker_client, get_client, Client
 
-        try:
-            client = get_client()
-        except ValueError:
-            client = Client()
-
-        # get the indices of the upper triangle, get pairs and split into chunks
+        # get the indices of the upper triangle
+        # get pairs and split into chunks
         indices = np.triu_indices(n_points, k=1)
         pairs = np.stack(indices).T
         chunks = np.array_split(pairs, len(pairs) // 5000)
-
-        # calculate distances in parallel
         futures = []
-        for chunk in chunks:
-            futures.append(client.submit(_geodesic_distances, surface, chunk))
 
-        results = client.gather(futures)
+        # we need to check whether a client has already been established.
+        # If so, we submit the jobs to a worker client, otherwise we create
+        # a new client.
+        try:
+            with worker_client() as client:
+                for chunk in chunks:
+                    futures.append(client.submit(_geodesic_distances, surface, chunk))
+                results = client.gather(futures)
+        except ValueError:
+            client = Client()
+            for chunk in chunks:
+                futures.append(client.submit(_geodesic_distances, surface, chunk))
+            results = client.gather(futures)
+
         # Gather results and fill distance matrix
         for chunk, result in zip(chunks, results):
             distance_matrix[chunk[:, 0], chunk[:, 1]] = result
 
     for idx, pt in enumerate(points):
-        distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
-        distance_matrix[idx, idx + 1 :] = distances
-        distance_matrix[idx + 1 :, idx] = distances
+        distances, _ = geoalg.geodesicDistances(
+            [idx],
+            np.arange(idx + 1, n_points)
+            )
+        distance_matrix[idx, idx + 1:] = distances
+        distance_matrix[idx + 1:, idx] = distances
 
     return distance_matrix
 
