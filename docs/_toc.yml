@@ -22,6 +22,7 @@ parts:
       - file: 01_code_usage/02_example_workflows/Readme
         sections:
         - file: 01_code_usage/02_example_workflows/demo_fit_ellipsoid_code
+        - file: 01_code_usage/02_example_workflows/demo_measure_patch_fitted_curvature
         - file: 01_code_usage/02_example_workflows/demo_surface_reconstruction_code
         - file: 01_code_usage/02_example_workflows/demo_surface_tracing
         - file: 01_code_usage/02_example_workflows/demo_patch_fitting_reconstruction

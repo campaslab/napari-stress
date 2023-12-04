@@ -5,6 +5,7 @@ from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from napari_tools_menu import register_function
 import numpy as np
+import pandas as pd
 
 from napari.layers import Layer
 
@@ -118,6 +119,90 @@ def curvature_on_ellipsoid(
     properties["name"] = "Result of mean curvature on ellipsoid"
 
     return (sample_points, properties, "points")
+
+
+def calculate_patch_fitted_curvature_on_surface(
+    surface: "napari.types.SurfaceData",
+    search_radius: float = 2,
+) -> pd.DataFrame:
+    """Calculate the curvature of a patch fitted to the surface.
+
+    Parameters
+    ----------
+    surface : array-like
+        The surface to calculate the curvature for.
+
+    Returns
+    -------
+    array-like
+        The curvature of the patch fitted to the surface.
+    """
+    points = surface[0]
+
+    return calculate_patch_fitted_curvature_on_pointcloud(points, search_radius)
+
+
+def calculate_patch_fitted_curvature_on_pointcloud(
+    points: "napari.types.PointsData",
+    search_radius: float = 2,
+) -> pd.DataFrame:
+    """Calculate the curvature of a patch fitted to the points.
+
+    Parameters
+    ----------
+    points : array-like
+        The points to calculate the curvature for.
+
+    Returns
+    -------
+    array-like
+        The curvature of the patch fitted to the points.
+    """
+    from .._reconstruction.patches import (
+        _calculate_mean_curvature_on_patch,
+        _orient_patch,
+        _find_neighbor_indices,
+        _fit_quadratic_surface,
+    )
+    import numpy as np
+
+    num_points = len(points)  # Number of points in the point cloud
+
+    # Compute neighbors for each point in the point cloud
+    neighbor_indices = _find_neighbor_indices(points, search_radius)
+    mean_curvatures = np.zeros(num_points)
+    principal_curvatures = np.zeros((num_points, 2))
+
+    for idx in range(num_points):
+        current_point = points[idx, :]
+        neighbors_idx = neighbor_indices[idx]
+        patch = points[neighbors_idx, :]
+
+        # Orient the patch for the current point
+        oriented_patch, oriented_query_point, _ = _orient_patch(
+            patch, current_point, np.mean(points, axis=0)
+        )
+
+        # Perform the quadratic surface fitting
+        fitting_params = _fit_quadratic_surface(oriented_patch)
+
+        mean_curv, principal_curv = _calculate_mean_curvature_on_patch(
+            oriented_query_point, fitting_params
+        )
+
+        # Store the mean curvature and principal curvatures
+        mean_curvatures[idx] = mean_curv[0]
+        principal_curvatures[idx, :] = principal_curv[0]
+
+    df = pd.DataFrame(
+        {
+            "mean_curvature": mean_curvatures,
+            "principal_curvature_1": principal_curvatures[:, 0],
+            "principal_curvature_2": principal_curvatures[:, 1],
+        }
+    )
+
+    return df
 
 
 def mean_curvature_on_ellipse_cardinal_points(
