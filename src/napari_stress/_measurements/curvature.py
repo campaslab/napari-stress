@@ -121,6 +121,43 @@ def curvature_on_ellipsoid(
     return (sample_points, properties, "points")
 
 
+@register_function(
+    menu="Measurement > Measure patch-fitted-curvature on surface (n-STRESS)"
+)
+@frame_by_frame
+def _calculate_patch_fitted_curvature_on_surface(
+    surface: "napari.types.SurfaceData",
+    search_radius: float = 2,
+) -> "napari.types.LayerDataTuple":
+    """Calculate the curvature of a patch fitted to the surface.
+
+    Parameters
+    ----------
+    surface : array-like
+        The surface to calculate the curvature for.
+
+    Returns
+    -------
+    array-like
+        The curvature of the patch fitted to the surface.
+    """
+    df = calculate_patch_fitted_curvature_on_surface(surface, search_radius)
+
+    # add to viewer if it doesn't exist.
+    properties, features, metadata = {}, {}, {}
+    features[_METADATAKEY_MEAN_CURVATURE] = df["mean_curvature"].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = df["principal_curvature_1"].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = df["principal_curvature_2"].values
+    metadata["features"] = features
+    properties["metadata"] = metadata
+    properties["name"] = "Result of mean curvature on ellipsoid"
+
+    surface = list(surface)
+    surface[2] = df["mean_curvature"].values
+
+    return (surface, properties, "surface")
+
+
 def calculate_patch_fitted_curvature_on_surface(
     surface: "napari.types.SurfaceData",
     search_radius: float = 2,
