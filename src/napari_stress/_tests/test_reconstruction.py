@@ -292,7 +292,3 @@ def test_patch_fitting():
     # # iterative method - result should still be a sphere
     # fitted_pointcloud = iterative_curvature_adaptive_patch_fitting(pointcloud)
     # assert np.allclose(np.linalg.norm(fitted_pointcloud, axis=1), 1)
-
-
-if __name__ == "__main__":
-    test_fit_quadratic_surface()
