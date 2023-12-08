@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from magicgui.widgets._bases import CategoricalWidget
+from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from typing import List
 
 from napari import layers
@@ -68,7 +68,7 @@ _METADATAKEY_FIT_RESIDUE = "fit_residue"
 _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = "Elipsoid_deviation_contribution_matrix"
 
 
-def _get_layers_features(gui: CategoricalWidget) -> List[layers.Layer]:
+def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
     """Retrieve layers matching gui.annotation, from the Viewer the gui is in.
 
     Parameters
