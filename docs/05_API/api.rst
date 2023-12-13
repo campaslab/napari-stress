@@ -7,3 +7,4 @@
     measurements.rst
     vectors.rst
     approximation.rst
+    reconstruction.rst
