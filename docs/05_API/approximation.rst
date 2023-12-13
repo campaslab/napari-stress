@@ -3,3 +3,4 @@
 
 .. automodule:: napari_stress.approximation
     :members:
+    :undoc-members:
