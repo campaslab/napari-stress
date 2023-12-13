@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 import tqdm
-from napari.types import LayerDataTuple, SurfaceData, VectorsData
+from napari.types import LayerDataTuple, SurfaceData
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame

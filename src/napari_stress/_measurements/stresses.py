@@ -2,7 +2,6 @@
 import numpy as np
 
 from typing import Tuple
-from napari.types import VectorsData
 import pandas as pd
 
 from napari_stress.types import _METADATAKEY_MEAN_CURVATURE
