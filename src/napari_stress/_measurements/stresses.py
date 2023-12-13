@@ -46,7 +46,7 @@ def anisotropic_stress(
 
     See Also
     --------
-    [1] Campàs, Otger, et al. "Quantifying cell-generated mechanical forces
+    .. [1] Campàs, Otger, et al. "Quantifying cell-generated mechanical forces
     within living embryonic tissues." Nature methods 11.2 (2014): 183-189.
 
     """
@@ -57,19 +57,22 @@ def anisotropic_stress(
     return stress, stress_tissue, stress_droplet
 
 
-def maximal_tissue_anisotropy(ellipsoid: VectorsData, gamma: float = 26.0) -> float:
+def maximal_tissue_anisotropy(
+    ellipsoid: "napari.types.VectorsData", gamma: float = 26.0
+) -> float:
     """
     Calculate maximaum stress anisotropy on ellipsoid.
 
     Parameters
     ----------
-    ellipsoid : VectorsData
+    ellipsoid : 'napari.types.VectorsData'
     gamma : float, optional
-        Interfacial surface tnesion in mN/m. The default is 26.0.
+        Interfacial surface tension in mN/m. The default is 26.0.
 
     Returns
     -------
-    float
+    maximal_tissue_anisotropy : float
+        Maximum stress anisotropy on ellipsoid
 
     """
     from .._utils.coordinate_conversion import _axes_lengths_from_ellipsoid
@@ -91,19 +94,17 @@ def maximal_tissue_anisotropy(ellipsoid: VectorsData, gamma: float = 26.0) -> fl
 
 
 def tissue_stress_tensor(
-    ellipsoid: VectorsData, H0_ellipsoid: float, gamma: float
+    ellipsoid: "napari.types.VectorsData", H0_ellipsoid: float, gamma: float
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Calculate tissue stress tensor(s).
 
     Parameters
     ----------
-    cardinal_curvatures : np.ndarray
-        mean curvatures at cardinal points on ellipsoid, e.g., at the inter-
-        section of the ellipsoid major axes and the allipsoid surface
+    ellipsoid : 'napari.types.VectorsData'
+        Ellipsoid that was fitted to a droplet.
     H0_ellipsoid : float
         averaged mean curvature of the ellipsoid.
-    orientation_matrix : np.ndarray
     gamma : float
         droplet interfacial tension in mN/m
 
@@ -111,9 +112,8 @@ def tissue_stress_tensor(
     -------
     Tissue_Stress_Tensor_elliptical : np.ndarray
         3x3 orientation matrix with stresses along ellipsoid axes
-    Tissue_Stress_Tensor_cartesian : TYPE
-        3x3 orientation matrix with stresses along cartesian axes
-
+    Tissue_Stress_Tensor_cartesian : np.ndarray
+        3x3 orientation matrix with stresses projected onto cartesian axes
     """
     from .._measurements import mean_curvature_on_ellipse_cardinal_points
     from .._utils.coordinate_conversion import _orientation_from_ellipsoid
@@ -148,9 +148,10 @@ def calculate_anisotropy(
     group_column: str = "time",
 ) -> pd.DataFrame:
     """
-    Calculate anisotropy of a column in a dataframe. The dataframe is assumed
-    to contain multiple groups, which are defined by the values in the
-    group_column.
+    Calculate anisotropy of a column in a dataframe.
+
+    The dataframe is assumed to contain multiple groups,
+    which are defined by the values in the group_column.
 
     Parameters
     ----------
@@ -169,8 +170,10 @@ def calculate_anisotropy(
     -------
     pd.DataFrame
         Dataframe containing the anisotropy of the data in the column for
-        every group in the dataframe
-
+        every group in the dataframe:
+        - `column` + '_lower': lower percentile of the data
+        - `column` + '_upper': upper percentile of the data
+        - `column` + '_anisotropy': anisotropy of the data
     """
 
     # write a function to apply to every group in the dataframe

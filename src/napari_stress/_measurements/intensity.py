@@ -83,8 +83,8 @@ def measure_intensity_on_surface(
 
     Parameters
     ----------
-    surface : SurfaceData
-    image : ImageData
+    surface : 'napari.types.SurfaceData'
+    image : 'napari.types.ImageData'
     measurement_range : float, optional
         Range of measurement, by default 1.0. This determines in which
         range around the surface the intensity is measured.
@@ -101,7 +101,7 @@ def measure_intensity_on_surface(
     Returns
     -------
     pd.DataFrame
-        Intensity values
+        Intensity values for each point on the surface.
     """
     from .._vectors import normal_vectors_on_surface
 
@@ -175,7 +175,7 @@ def _sample_intensity_along_vector(
 
 
 def sample_intensity_along_vector(
-    sample_vectors: "napari.types.sample_vectorsData",
+    sample_vectors: "napari.types.VectorsData",
     image: "napari.types.ImageData",
     sampling_distance: float = 1.0,
     interpolation_method: str = "linear",
@@ -183,14 +183,26 @@ def sample_intensity_along_vector(
     """
     Sample intensity along sample_vectors of equal length.
 
-    Args:
-        sample_vectors (napari.types.sample_vectorsData): sample_vectors
-            along which to measure intensity
-        image (napari.types.ImageData): Image to sample
-        sampling_distance (float, optional): Distance between samples.
-            Defaults to 1.0.
-        interpolation_method (str, optional): Interpolation method.
-            Defaults to 'linear'.
+    Parameters
+    ----------
+    sample_vectors : 'napari.types.VectorsData'
+        Vectors along which to measure intensity. Must be of equal length.
+    image : 'napari.types.ImageData'
+        Image to sample intensity from.
+    sampling_distance : float, optional
+        Distance between samples, by default 1.0
+    interpolation_method : str, optional
+        Interpolation method, by default "linear". See
+        `scipy.interpolate.RegularGridInterpolator` for available methods.
+
+    Returns
+    -------
+    pd.DataFrame
+        Intensity values for each point on the sample_vectors.
+
+    See Also
+    --------
+    .. [1] https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RegularGridInterpolator.html
     """
     from scipy.interpolate import RegularGridInterpolator
 
