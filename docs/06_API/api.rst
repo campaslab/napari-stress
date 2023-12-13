@@ -1,11 +1,9 @@
 `napari_stress`
 ===============
 
-.. autosummary::
-   :toctree: _autosummary
-   :recursive:
+.. toctree::
+    :glob:
 
-   napari_stress.vectors
-   napari_stress.approximation
-   napari_stress.measurements
-   napari_stress.reconstruction
+    measurements.rst
+    vectors.rst
+    approximation.rst
