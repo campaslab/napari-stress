@@ -55,8 +55,10 @@ def curvature_on_ellipsoid(
     See Also
     --------
 
-    ..[1] https://en.wikipedia.org/wiki/Mean_curvature
-    .. [2] https://mathworld.wolfram.com/Ellipsoid.html
+    `Mean curvature <https://en.wikipedia.org/wiki/Mean_curvature>`_.
+        Mean curvature on Wikipedia.
+    `Ellipsoid definition <https://mathworld.wolfram.com/Ellipsoid.html>`_
+        Ellipsoid definition on Wolfram MathWorld.
 
     """
     lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
@@ -308,7 +310,7 @@ def gauss_bonnet_test(
 
     See Also
     --------
-    .. [1] https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem
+    `Gauss Bonnet theorem <https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem>`_
     """
     layer = None
     if isinstance(input_manifold, Layer):

@@ -113,7 +113,7 @@ def haversine_distances(degree_lebedev: int, n_lebedev_points: int) -> np.ndarra
 
     See Also
     --------
-    .. [1] https://en.wikipedia.org/wiki/Haversine_formula
+    `Haversine formula <https://en.wikipedia.org/wiki/Haversine_formula>`
     """
     from .._stress.lebedev_info_SPB import lbdv_info
 

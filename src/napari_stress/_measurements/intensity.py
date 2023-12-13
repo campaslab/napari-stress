@@ -202,7 +202,7 @@ def sample_intensity_along_vector(
 
     See Also
     --------
-    .. [1] https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RegularGridInterpolator.html
+    `RegularGridInterpolator <https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RegularGridInterpolator.html>`_
     """
     from scipy.interpolate import RegularGridInterpolator
 

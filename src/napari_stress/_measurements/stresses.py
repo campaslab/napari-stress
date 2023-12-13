@@ -44,10 +44,10 @@ def anisotropic_stress(
         cell-scale anisotropic stress on the droplet surface
 
 
-    See Also
-    --------
+    References
+    ----------
     .. [1] Campàs, Otger, et al. "Quantifying cell-generated mechanical forces
-    within living embryonic tissues." Nature methods 11.2 (2014): 183-189.
+           within living embryonic tissues." Nature Methods 11.2 (2014): 183-189.
 
     """
     stress = 2 * gamma * (mean_curvature_droplet - H0_droplet)
