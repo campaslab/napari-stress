@@ -374,8 +374,68 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="approximation-module">
-<h1><cite>Approximation module</cite><a class="headerlink" href="#approximation-module" title="Permalink to this headline">#</a></h1>
+  <section id="module-napari_stress.approximation">
+<span id="approximation-module"></span><h1><cite>Approximation module</cite><a class="headerlink" href="#module-napari_stress.approximation" title="Permalink to this headline">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.approximation.expand_points_on_ellipse">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">expand_points_on_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitted_ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointcloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PointsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.expand_points_on_ellipse" title="Permalink to this definition">#</a></dt>
+<dd><p>Expand a pointcloud on the surface of a fitted ellipse.</p>
+<p>This function takes a ellipsoid (in the form of the major axes) and a
+pointcloud from which the ellipsoid was derived. The coordinates of the
+points in the pointcloud are then transformed to their corresponding
+locations on the surface of the fitted ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitted_ellipsoid</strong> (<em>VectorsData</em>) – </p></li>
+<li><p><strong>pointcloud</strong> (<em>PointsData</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>PointsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.approximation.least_squares_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">least_squares_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VectorsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.least_squares_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Fit ellipsoid to points with a last-squares approach.</p>
+<p>This function takes a pointcloud and fits an ellipsoid to it using a
+least-squares approach. The ellipsoid is returned as a set of vectors
+representing the major and minor axes of the ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>PointsData</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>VectorsData</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Major/minor axis of the ellipsoid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.approximation.normals_on_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">normals_on_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VectorsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.normals_on_ellipsoid" title="Permalink to this definition">#</a></dt>
+<dd><p>Fits an ellipsoid and calculates the normals vectors.</p>
+<p>This function takes a pointcloud and calculates the normals on the
+ellipsoid fitted to the pointcloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>PointsData</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>VectorsData</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Normals on the ellipsoid</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
