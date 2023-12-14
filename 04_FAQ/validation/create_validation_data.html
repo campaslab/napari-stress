@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Create synthetic data &#8212; Napari-stress documentation</title>
+    <title>Create synthetic validation data &#8212; Napari-stress documentation</title>
   
   
   
@@ -63,6 +63,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = '04_FAQ/validation/create_validation_data';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="napari_stress" href="../../05_API/api.html" />
+    <link rel="prev" title="Validation" href="analyze_validation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
   </head>
@@ -204,14 +206,26 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">FAQ</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../Installation.html">Installation issues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Validation.html">Validation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../Validation.html">Validation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="validation_stress_paper.html">Napari-stress validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analyze_validation.html">Validation</a></li>
+
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Create synthetic validation data</a></li>
+</ul>
+</li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../06_API/api.html"><cite>napari_stress</cite></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../05_API/api.html"><cite>napari_stress</cite></a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/measurements.html"><cite>Measurements module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/vectors.html"><cite>Vectors module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/approximation.html"><cite>Approximation module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/reconstruction.html"><cite>Reconstruction module</cite></a></li>
+</ul>
+</li>
 </ul>
 
     </div>
@@ -348,7 +362,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Create synthetic data</h1>
+    <h1>Create synthetic validation data</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -358,14 +372,13 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Create synthetic data</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-with-napari-stress">Analyze with napari-stress</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphere">Sphere</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid">Ellipsoid:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-synthetic-data">Create synthetic data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-with-napari-stress">Analyze with napari-stress</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sphere">Sphere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid">Ellipsoid:</a></li>
 </ul>
 </li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -376,18 +389,17 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <div class="cell docutils container">
+  <section class="tex2jax_ignore mathjax_ignore" id="create-synthetic-validation-data">
+<h1>Create synthetic validation data<a class="headerlink" href="#create-synthetic-validation-data" title="Permalink to this headline">#</a></h1>
+<p>This notebook demonstrates how to create some synthetic validation data</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">vedo</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">napari</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span><span class="p">,</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span>
 
 <span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">sample_data</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 </pre></div>
 </div>
 </div>
@@ -414,7 +426,7 @@ document.write(`
 </div>
 </div>
 <section id="create-synthetic-data">
-<h1>Create synthetic data<a class="headerlink" href="#create-synthetic-data" title="Permalink to this headline">#</a></h1>
+<h2>Create synthetic data<a class="headerlink" href="#create-synthetic-data" title="Permalink to this headline">#</a></h2>
 <p>Create sphere with padded border</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -447,9 +459,9 @@ document.write(`
 </div>
 </section>
 <section id="analyze-with-napari-stress">
-<h1>Analyze with napari-stress<a class="headerlink" href="#analyze-with-napari-stress" title="Permalink to this headline">#</a></h1>
+<h2>Analyze with napari-stress<a class="headerlink" href="#analyze-with-napari-stress" title="Permalink to this headline">#</a></h2>
 <section id="sphere">
-<h2>Sphere<a class="headerlink" href="#sphere" title="Permalink to this headline">#</a></h2>
+<h3>Sphere<a class="headerlink" href="#sphere" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dest</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./results_sphere/napari_stress_analysis_and_napari_stress_pointcloud/&#39;</span><span class="p">)</span>
@@ -514,7 +526,7 @@ document.write(`
 </div>
 </section>
 <section id="ellipsoid">
-<h2>Ellipsoid:<a class="headerlink" href="#ellipsoid" title="Permalink to this headline">#</a></h2>
+<h3>Ellipsoid:<a class="headerlink" href="#ellipsoid" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dest</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;./results_ellipsoid/napari_stress_analysis_and_napari_stress_pointcloud/&#39;</span><span class="p">)</span>
@@ -571,6 +583,7 @@ document.write(`
 </div>
 </section>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -603,6 +616,24 @@ document.write(`
   
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="analyze_validation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Validation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../05_API/api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><cite>napari_stress</cite></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div></div>
   
 </div>
@@ -621,14 +652,13 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Create synthetic data</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-with-napari-stress">Analyze with napari-stress</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphere">Sphere</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid">Ellipsoid:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-synthetic-data">Create synthetic data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-with-napari-stress">Analyze with napari-stress</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sphere">Sphere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ellipsoid">Ellipsoid:</a></li>
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
 </div></div>
