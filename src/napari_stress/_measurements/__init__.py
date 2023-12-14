@@ -1,4 +1,9 @@
-# -*- coding: utf-8 -*-
+"""
+Measurements subpackage for napari-stress.
+
+This subpackage contains functions for measuring curvature, stress, and
+temporal correlations on surfaces.
+"""
 
 from .curvature import (
     calculate_mean_curvature_on_manifold,

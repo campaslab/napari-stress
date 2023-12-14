@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Approximation subpackage for napari-stress."""
 
 from .fit_ellipsoid import (
     least_squares_ellipsoid,

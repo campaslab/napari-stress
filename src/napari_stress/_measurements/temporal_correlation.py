@@ -95,21 +95,25 @@ def spatio_temporal_autocorrelation(
     return results
 
 
-def haversine_distances(degree_lebedev: int, n_lebedev_points: int):
+def haversine_distances(degree_lebedev: int, n_lebedev_points: int) -> np.ndarray:
     """
-    Calculate geodesic (Great Circle) distance matrix on unit sphere,
-    from haversine formula.
+    Calculate geodesic (Great Circle) distance matrix from haversine formula.
+
+    Parameters
+    ----------
+    deg_lbdv : int
+        degree of Lebedev quadrature
+    num_lbdv_pts : int
+        number of Lebedev quadrature points
+
+    Returns
+    -------
+    np.ndarray
+        distance matrix of shape (num_lbdv_pts, num_lbdv_pts)
 
     See Also
     --------
-    [0] https://en.wikipedia.org/wiki/Haversine_formula
-
-    Args:
-        deg_lbdv (_type_): _description_
-        num_lbdv_pts (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    `Haversine formula <https://en.wikipedia.org/wiki/Haversine_formula>`
     """
     from .._stress.lebedev_info_SPB import lbdv_info
 

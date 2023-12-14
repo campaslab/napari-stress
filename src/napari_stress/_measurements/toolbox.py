@@ -221,39 +221,51 @@ def comprehensive_analysis(
     verbose=False,
 ) -> List[LayerDataTuple]:
     """
-    Run a comprehensive stress analysis on a given pointcloud.
+    Comprehensive stress analysis of droplet points layer.
 
     Parameters
     ----------
     pointcloud : PointsData
+        Points layer.
     max_degree : int, optional
-        Maximal used degree of the spherical harmonics expansion.
-        The default is 5.
+        Maximum degree of spherical harmonics expansion, by default 5
     n_quadrature_points : int, optional
-        Number of used quadrature points. The default is 110.
+        Number of quadrature points, by default 110
+    maximal_distance : int, optional
+        Maximal distance for geodesic distance matrix, by default None
     gamma : float, optional
-        Interfacial surface tension in mN/m. The default is 26.0 mN/m.
+        Surface tension, by default 26.0
+    verbose : bool, optional
+        Show progress bar, by default False
 
     Returns
     -------
     List[LayerDataTuple]
-        List of `LayerDataTuple` objects. The order of elements in the list is
-        as follows:
-            * `layer_spherical_harmonics`: Points layer containing result of
-            the spherical harmonics expansion of the pointcloud.
-            * `layer_fitted_ellipsoid_points`: Points layer with points on the
-            surface of the fitted least-squares ellipsoid.
-            * `layer_fitted_ellipsoid`: Vectors layers with major axes of the
-            fitted ellipsoid.
-            * `layer_quadrature_ellipsoid`: Points layer with quadrature points
-            projected on the surface of the ellipsoid.
-            * `layer_quadrature`: Points layer with quadrature points on the
-            surface of the spherical harmonics expansion.
-
-    See Also
-    --------
-
-    [0]
+        List of layer data tuples:
+        - layer_spherical_harmonics: 'napari.types.PointsData'
+            fitted spherical harmonics expansion
+        - layer_fitted_ellipsoid_points: 'napari.types.PointsData'
+            fitted ellipsoid points
+        - layer_fitted_ellipsoid: 'napari.types.VectorsData'
+            fitted ellipsoid major axes
+        - layer_quadrature_ellipsoid: 'napari.types.PointsData'
+            Lebedev quadrature points on ellipsoid
+        - layer_quadrature: 'napari.types.PointsData'
+            Lebedev quadrature points on spherical-harmonics fitted droplet
+        - max_min_geodesics_total: 'napari.types.SurfaceData'
+            geodesics on total stress from local maxima of total stress to
+            local minima of total stress
+        - min_max_geodesics_total: 'napari.types.SurfaceData'
+            geodesics on total stress from local minima of total stress to
+            local maxima of total stress
+        - max_min_geodesics_cell: 'napari.types.SurfaceData'
+            geodesics on cell stress from local maxima of cell stress to
+            local minima of cell stress
+        - min_max_geodesics_cell: 'napari.types.SurfaceData'
+            geodesics on cell stress from local minima of cell stress to
+            local maxima of cell stress
+        - layer_surface_autocorrelation: 'napari.types.SurfaceData'
+            Surface representation of autocorrelations of total stress.
     """
     from .. import approximation
     from .. import measurements
