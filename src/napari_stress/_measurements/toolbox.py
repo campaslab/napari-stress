@@ -142,6 +142,13 @@ class stress_analysis_toolbox(QWidget):
             Num_Quad_Pts=int(self.comboBox_quadpoints.currentData()),
         )
         from napari_stress import TimelapseConverter
+        import webbrowser
+
+        if self.checkBox_use_dask.isChecked():
+            from dask.distributed import get_client
+
+            client = get_client()
+            webbrowser.open_new_tab(client.dashboard_link)
 
         # calculate number of frames
         Converter = TimelapseConverter()
