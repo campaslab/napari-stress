@@ -448,13 +448,13 @@ document.write(`
 <p>Replace the following code with the commented out part (and remove the rest) below to load your own data for analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">example_data</span> <span class="o">=</span> <span class="n">napari_stress</span><span class="o">.</span><span class="n">get_droplet_4d</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">napari_stress</span><span class="o">.</span><span class="n">get_droplet_4d</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">image</span><span class="o">.</span><span class="n">shape</span>
 <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="c1">## Replace this code with a command to import your data. Example:</span>
 <span class="c1"># filename = &#39;path/to/data.tif&#39;</span>
-<span class="c1"># example_data = io.imread(filename)</span>
+<span class="c1"># image = io.imread(filename)</span>
 </pre></div>
 </div>
 </div>
@@ -490,36 +490,39 @@ document.write(`
 <li><p><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">Reconstruction</span></a></p></li>
 <li><p><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive.html#toolboxes-stress-toolbox-stress-toolbox-interactive"><span class="std std-ref">Measurement</span></a></p></li>
 </ul>
+<p>If you used the previous cell to import some parameters, skip the next cell or delete it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Reconstruction settings</span>
-<span class="n">smoothing_sigma</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">n_smoothing_iterations</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">n_points_first_guess</span> <span class="o">=</span> <span class="mi">256</span>
-<span class="n">n_tracing_iterations</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">resampling_length</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">fit_type</span> <span class="o">=</span> <span class="s1">&#39;fancy&#39;</span>  <span class="c1"># can be &#39;fancy&#39; or &#39;quick&#39;</span>
-<span class="n">edge_type</span> <span class="o">=</span> <span class="s1">&#39;interior&#39;</span>  <span class="c1"># can be &#39;interior&#39; or &#39;surface&#39;</span>
-<span class="n">trace_length</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">trace_sampling_distance</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">interpolation_method</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span> <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
-<span class="n">outlier_tolerance</span> <span class="o">=</span> <span class="mf">1.5</span>
-<span class="n">remove_outliers</span> <span class="o">=</span> <span class="kc">True</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;voxelsize&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">]),</span>
+    <span class="s1">&#39;target_voxelsize&#39;</span><span class="p">:</span> <span class="n">target_voxel_size</span><span class="p">,</span>
+    <span class="s1">&#39;smoothing_sigma&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;n_smoothing_iterations&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+    <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="s1">&#39;fancy&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;fancy&#39; or &#39;quick&#39;</span>
+    <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="s1">&#39;interior&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;interior&#39; or &#39;surface&#39;</span>
+    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="s1">&#39;linear&#39;</span><span class="p">,</span>  <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
+    <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;return_intermediate_results&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
-<span class="c1">## Measurement settings</span>
-<span class="n">max_degree</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># spherical harmonics degree</span>
-<span class="n">n_quadrature_points</span> <span class="o">=</span> <span class="mi">434</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">3.3</span>  <span class="c1"># interfacial tension of droplet</span>
+<span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>  <span class="c1"># spherical harmonics degree</span>
+    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">434</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
+    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">}</span>  <span class="c1"># interfacial tension of droplet</span>
 <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p><em>Hint:</em> Not sure whether the code is running probably? To show a progress bar for the processing of each timeframe, set the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">True</span></code>.  Also, in order to speed up computation, set the <code class="docutils literal notranslate"><span class="pre">parallelize</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p><em>Hint:</em> If you are working with timelapse data, it is recommended to use parallel computation to speed up the analysis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">parallelize</span> <span class="o">=</span> <span class="kc">True</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">parallelize</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
 </div>
@@ -535,56 +538,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">example_data</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;example_data&#39; at 0x26613f0b9d0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;image&#39; at 0x1ab5827ee50&gt;
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We put all parameters into a dictionary so we can save and reload them later:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">reconstruction_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;voxelsize&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">]),</span>
-        <span class="s1">&#39;target_voxelsize&#39;</span><span class="p">:</span> <span class="n">target_voxel_size</span><span class="p">,</span>
-        <span class="s1">&#39;smoothing_sigma&#39;</span><span class="p">:</span> <span class="n">smoothing_sigma</span><span class="p">,</span>
-        <span class="s1">&#39;n_smoothing_iterations&#39;</span><span class="p">:</span> <span class="n">n_smoothing_iterations</span><span class="p">,</span>
-        <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="n">n_points_first_guess</span><span class="p">,</span>
-        <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="n">n_tracing_iterations</span><span class="p">,</span>
-        <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="n">resampling_length</span><span class="p">,</span>
-        <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="n">fit_type</span><span class="p">,</span>
-        <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="n">edge_type</span><span class="p">,</span>
-        <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="n">trace_length</span><span class="p">,</span>
-        <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="n">trace_sampling_distance</span><span class="p">,</span>
-        <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="n">interpolation_method</span><span class="p">,</span>
-        <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="n">outlier_tolerance</span><span class="p">,</span>
-        <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="n">remove_outliers</span><span class="p">}</span>
-
-<span class="k">if</span> <span class="n">measurement_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="n">max_degree</span><span class="p">,</span>
-        <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="n">n_quadrature_points</span><span class="p">,</span>
-        <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="n">gamma</span><span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -592,12 +561,16 @@ document.write(`
 <p>We run the reconstruction and the stress analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results_reconstruction</span><span class="p">:</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:5289&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -607,22 +580,18 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">stress_backend</span><span class="o">.</span><span class="n">lbdv_info</span><span class="p">(</span><span class="n">Max_SPH_Deg</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;max_degree&#39;</span><span class="p">],</span>
                              <span class="n">Num_Quad_Pts</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">])</span>
 
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;points_patch_fitted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 <span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">,</span>
-                                                              <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+                                                              <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results_stress_analysis</span><span class="p">:</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:5289&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results_reconstruction</span> <span class="o">+</span> <span class="n">results_stress_analysis</span><span class="p">:</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">viewer</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -750,7 +719,7 @@ document.write(`
 <p>We first show all the errors that were calculated during the pointcloud refinement:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fit_error_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fit_error_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
 <span class="n">fit_error_df</span>
 </pre></div>
 </div>
@@ -774,6 +743,7 @@ document.write(`
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>index</th>
       <th>center</th>
       <th>amplitude</th>
       <th>slope</th>
@@ -795,97 +765,102 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>10.081819</td>
-      <td>-0.693914</td>
-      <td>0.607314</td>
-      <td>-0.001880</td>
-      <td>0.676320</td>
-      <td>0.047377</td>
-      <td>0.009202</td>
-      <td>0.008967</td>
-      <td>0.001105</td>
-      <td>0.001462</td>
-      <td>0.957678</td>
-      <td>0.000006</td>
-      <td>0.000078</td>
-      <td>-9.460465</td>
-      <td>10.081819</td>
+      <td>0</td>
+      <td>10.078734</td>
+      <td>185.026230</td>
+      <td>-1.293870</td>
+      <td>-3.176896</td>
+      <td>8.790393e-19</td>
+      <td>0.039644</td>
+      <td>4.949525</td>
+      <td>0.051631</td>
+      <td>0.931247</td>
+      <td>1.656268</td>
+      <td>1.039348</td>
+      <td>15.512122</td>
+      <td>0.003528</td>
+      <td>-5.647097</td>
+      <td>10.078734</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>9.997145</td>
-      <td>-0.721613</td>
-      <td>0.618847</td>
-      <td>-0.001849</td>
-      <td>0.703815</td>
-      <td>0.051559</td>
-      <td>0.012043</td>
-      <td>0.012329</td>
-      <td>0.001328</td>
-      <td>0.002801</td>
-      <td>1.025464</td>
-      <td>0.000036</td>
-      <td>0.000430</td>
-      <td>-7.751091</td>
-      <td>9.997145</td>
+      <td>1</td>
+      <td>9.994986</td>
+      <td>177.677651</td>
+      <td>-1.290982</td>
+      <td>-1.746494</td>
+      <td>1.249346e-18</td>
+      <td>0.039008</td>
+      <td>4.649751</td>
+      <td>0.048972</td>
+      <td>0.893158</td>
+      <td>1.456703</td>
+      <td>1.039850</td>
+      <td>15.846914</td>
+      <td>0.003462</td>
+      <td>-5.665806</td>
+      <td>9.994986</td>
       <td>0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>10.019467</td>
-      <td>-0.705932</td>
-      <td>0.628523</td>
-      <td>-0.001733</td>
-      <td>0.689551</td>
-      <td>0.049747</td>
-      <td>0.011424</td>
-      <td>0.012283</td>
-      <td>0.001272</td>
-      <td>0.002654</td>
-      <td>1.044057</td>
-      <td>0.000038</td>
-      <td>0.000473</td>
-      <td>-7.655381</td>
-      <td>10.019467</td>
+      <td>2</td>
+      <td>10.047399</td>
+      <td>165.771369</td>
+      <td>-1.254640</td>
+      <td>0.570991</td>
+      <td>5.288825e-21</td>
+      <td>0.030352</td>
+      <td>3.427686</td>
+      <td>0.036084</td>
+      <td>0.632925</td>
+      <td>1.057619</td>
+      <td>1.067304</td>
+      <td>9.112638</td>
+      <td>0.001753</td>
+      <td>-6.346661</td>
+      <td>10.047399</td>
       <td>0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>10.058297</td>
-      <td>-0.705459</td>
-      <td>0.580484</td>
-      <td>-0.002987</td>
-      <td>0.678742</td>
-      <td>0.054540</td>
-      <td>0.010433</td>
-      <td>0.009215</td>
-      <td>0.001236</td>
-      <td>0.001637</td>
-      <td>0.939916</td>
-      <td>0.000007</td>
-      <td>0.000090</td>
-      <td>-9.319205</td>
-      <td>10.058297</td>
+      <td>3</td>
+      <td>9.916528</td>
+      <td>193.255861</td>
+      <td>-1.268593</td>
+      <td>-4.532889</td>
+      <td>3.184175e-16</td>
+      <td>0.040298</td>
+      <td>5.073571</td>
+      <td>0.048039</td>
+      <td>1.003252</td>
+      <td>1.572305</td>
+      <td>0.893322</td>
+      <td>23.273296</td>
+      <td>0.005133</td>
+      <td>-5.272148</td>
+      <td>9.916528</td>
       <td>0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>9.994608</td>
-      <td>-0.733188</td>
-      <td>0.628733</td>
-      <td>-0.001073</td>
-      <td>0.722375</td>
-      <td>0.056921</td>
-      <td>0.014856</td>
-      <td>0.015583</td>
-      <td>0.001559</td>
-      <td>0.004056</td>
-      <td>1.054863</td>
-      <td>0.000220</td>
-      <td>0.002569</td>
-      <td>-5.964267</td>
-      <td>9.994608</td>
+      <td>4</td>
+      <td>10.089293</td>
+      <td>162.822238</td>
+      <td>-1.283923</td>
+      <td>0.636131</td>
+      <td>5.820165e-17</td>
+      <td>0.035624</td>
+      <td>3.993077</td>
+      <td>0.045057</td>
+      <td>0.734985</td>
+      <td>1.269362</td>
+      <td>1.054800</td>
+      <td>8.324991</td>
+      <td>0.001650</td>
+      <td>-6.406691</td>
+      <td>10.089293</td>
       <td>0</td>
     </tr>
     <tr>
@@ -906,105 +881,111 @@ document.write(`
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>752</th>
-      <td>9.985638</td>
-      <td>-0.665616</td>
-      <td>0.638497</td>
-      <td>-0.000195</td>
-      <td>0.664523</td>
-      <td>0.057744</td>
-      <td>0.013783</td>
-      <td>0.016346</td>
-      <td>0.001452</td>
-      <td>0.003766</td>
-      <td>1.047671</td>
-      <td>0.000215</td>
-      <td>0.002983</td>
-      <td>-5.814902</td>
-      <td>9.985638</td>
+      <th>15327</th>
+      <td>724</td>
+      <td>9.981528</td>
+      <td>186.846862</td>
+      <td>-1.330305</td>
+      <td>-5.374804</td>
+      <td>2.227535e-20</td>
+      <td>0.022160</td>
+      <td>2.396995</td>
+      <td>0.026184</td>
+      <td>0.523345</td>
+      <td>0.622494</td>
+      <td>1.171448</td>
+      <td>18.268088</td>
+      <td>0.003611</td>
+      <td>-5.623770</td>
+      <td>9.981528</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>753</th>
-      <td>10.034802</td>
-      <td>-0.688490</td>
-      <td>0.639655</td>
-      <td>0.000048</td>
-      <td>0.689812</td>
-      <td>0.065847</td>
-      <td>0.016203</td>
-      <td>0.018504</td>
-      <td>0.001720</td>
-      <td>0.004350</td>
-      <td>0.989689</td>
-      <td>0.000309</td>
-      <td>0.004026</td>
-      <td>-5.515093</td>
-      <td>10.034802</td>
+      <th>15328</th>
+      <td>725</td>
+      <td>9.964223</td>
+      <td>170.293715</td>
+      <td>-1.269859</td>
+      <td>-3.526373</td>
+      <td>2.210641e-19</td>
+      <td>0.056924</td>
+      <td>6.506348</td>
+      <td>0.057069</td>
+      <td>1.541861</td>
+      <td>1.524380</td>
+      <td>1.025318</td>
+      <td>18.192430</td>
+      <td>0.004120</td>
+      <td>-5.491821</td>
+      <td>9.964223</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>754</th>
-      <td>9.993330</td>
-      <td>-0.637168</td>
-      <td>0.652893</td>
-      <td>-0.000147</td>
-      <td>0.635390</td>
-      <td>0.070049</td>
-      <td>0.014840</td>
-      <td>0.018929</td>
-      <td>0.001665</td>
-      <td>0.003482</td>
-      <td>1.074969</td>
-      <td>0.000087</td>
-      <td>0.001272</td>
-      <td>-6.667313</td>
-      <td>9.993330</td>
+      <th>15329</th>
+      <td>726</td>
+      <td>9.931492</td>
+      <td>195.555717</td>
+      <td>-1.231771</td>
+      <td>-6.902258</td>
+      <td>4.727212e-01</td>
+      <td>0.010384</td>
+      <td>1.080617</td>
+      <td>0.011518</td>
+      <td>0.198995</td>
+      <td>0.342508</td>
+      <td>1.092538</td>
+      <td>11.617848</td>
+      <td>0.002359</td>
+      <td>-6.049447</td>
+      <td>9.931492</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>755</th>
-      <td>9.962993</td>
-      <td>-0.677188</td>
-      <td>0.639055</td>
-      <td>0.000683</td>
-      <td>0.684309</td>
-      <td>0.064850</td>
-      <td>0.015825</td>
-      <td>0.018429</td>
-      <td>0.001657</td>
-      <td>0.004324</td>
-      <td>1.025626</td>
-      <td>0.000293</td>
-      <td>0.003885</td>
-      <td>-5.550508</td>
-      <td>9.962993</td>
+      <th>15330</th>
+      <td>727</td>
+      <td>9.931746</td>
+      <td>172.997568</td>
+      <td>-1.289292</td>
+      <td>-3.641066</td>
+      <td>6.200124e-15</td>
+      <td>0.036146</td>
+      <td>3.607780</td>
+      <td>0.039000</td>
+      <td>0.780804</td>
+      <td>0.882290</td>
+      <td>1.377617</td>
+      <td>16.077625</td>
+      <td>0.003526</td>
+      <td>-5.647468</td>
+      <td>9.931746</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>756</th>
-      <td>9.948624</td>
-      <td>-0.676929</td>
-      <td>0.636114</td>
-      <td>-0.000832</td>
-      <td>0.669345</td>
-      <td>0.053737</td>
-      <td>0.013056</td>
-      <td>0.015239</td>
-      <td>0.001367</td>
-      <td>0.003626</td>
-      <td>1.022825</td>
-      <td>0.000185</td>
-      <td>0.002506</td>
-      <td>-5.989060</td>
-      <td>9.948624</td>
+      <th>15331</th>
+      <td>728</td>
+      <td>10.034654</td>
+      <td>183.124743</td>
+      <td>-1.277000</td>
+      <td>-5.057036</td>
+      <td>2.733309e-21</td>
+      <td>0.020255</td>
+      <td>2.027836</td>
+      <td>0.024662</td>
+      <td>0.365454</td>
+      <td>0.663016</td>
+      <td>NaN</td>
+      <td>11.039712</td>
+      <td>0.002430</td>
+      <td>-6.020011</td>
+      <td>10.034654</td>
       <td>20</td>
     </tr>
   </tbody>
 </table>
-<p>15931 rows × 16 columns</p>
+<p>15332 rows × 17 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1024,7 +1005,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/2bdd0b4ab32359d0e4c10feff3bc1f03e448a3f5fb1e6dcf12196663b455372c.png" src="../../_images/2bdd0b4ab32359d0e4c10feff3bc1f03e448a3f5fb1e6dcf12196663b455372c.png" />
+<img alt="../../_images/8440b8430323f450ee57b2c6997e23982d30f0ac072e3c47bbf3484acf042296.png" src="../../_images/8440b8430323f450ee57b2c6997e23982d30f0ac072e3c47bbf3484acf042296.png" />
 </div>
 </div>
 </section>
@@ -1044,7 +1025,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/07c9e3bdaf55d7064dff38740c1540e7749b0b495c75f1bf3f1bf6a3fe3b3315.png" src="../../_images/07c9e3bdaf55d7064dff38740c1540e7749b0b495c75f1bf3f1bf6a3fe3b3315.png" />
+<img alt="../../_images/ba3e9506523c018ed6bfd7e1fe3e073f4bb50984baca94a3d7b1af08c8f02635.png" src="../../_images/ba3e9506523c018ed6bfd7e1fe3e073f4bb50984baca94a3d7b1af08c8f02635.png" />
 </div>
 </div>
 </section>
@@ -1062,7 +1043,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/a9cfb8487b8c78eb50fdb7e3e633bfaef4cc6407985bebfdd8638cbec6c18cae.png" src="../../_images/a9cfb8487b8c78eb50fdb7e3e633bfaef4cc6407985bebfdd8638cbec6c18cae.png" />
+<img alt="../../_images/7c581fa72815d50f3c8aa3a8cbeb119a15939f2f9cea74e06ca34611ad214203.png" src="../../_images/7c581fa72815d50f3c8aa3a8cbeb119a15939f2f9cea74e06ca34611ad214203.png" />
 </div>
 </div>
 </section>
@@ -1086,7 +1067,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/34a0d5e26aadc02da83ea54c8336ab331ae0de5a51f1e5ef9d340439076e4f58.png" src="../../_images/34a0d5e26aadc02da83ea54c8336ab331ae0de5a51f1e5ef9d340439076e4f58.png" />
+<img alt="../../_images/ffdd7c7c73610333f0d085a9045a2f86c82076ead1c375e5edda993dd8a698d1.png" src="../../_images/ffdd7c7c73610333f0d085a9045a2f86c82076ead1c375e5edda993dd8a698d1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1100,7 +1081,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/3c6670ceda6cf1518809389e04b97d18401f43f6c94301e5b47a1f838441d185.png" src="../../_images/3c6670ceda6cf1518809389e04b97d18401f43f6c94301e5b47a1f838441d185.png" />
+<img alt="../../_images/8bc8f006d9343be334fb4002c276efd35afbb8657443a45e90325cd56cadfad0.png" src="../../_images/8bc8f006d9343be334fb4002c276efd35afbb8657443a45e90325cd56cadfad0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1114,7 +1095,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ab75978cf45f8bd8460e0a070289192ad12e3b694a142ec94168724da8534a97.png" src="../../_images/ab75978cf45f8bd8460e0a070289192ad12e3b694a142ec94168724da8534a97.png" />
+<img alt="../../_images/bb1b45664ca4973dd27389e51a5f1af66829909396c4feab5c86b6acda38ade4.png" src="../../_images/bb1b45664ca4973dd27389e51a5f1af66829909396c4feab5c86b6acda38ade4.png" />
 </div>
 </div>
 </section>
@@ -1131,7 +1112,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/a177de31262af3fa8ede437521d523786339734e017bb762d558cd3a8a439913.png" src="../../_images/a177de31262af3fa8ede437521d523786339734e017bb762d558cd3a8a439913.png" />
+<img alt="../../_images/0a8bd196a2075fc8e1fe98454058ec46a2cd91fdf2fbe31bdc17437c76d64214.png" src="../../_images/0a8bd196a2075fc8e1fe98454058ec46a2cd91fdf2fbe31bdc17437c76d64214.png" />
 </div>
 </div>
 </section>
@@ -1148,7 +1129,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/3a3a0332d9b90271420393ae33ad46c3469b2eba1750b1995df9a3343a8ab903.png" src="../../_images/3a3a0332d9b90271420393ae33ad46c3469b2eba1750b1995df9a3343a8ab903.png" />
+<img alt="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" src="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" />
 </div>
 </div>
 </section>
@@ -1165,7 +1146,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/a4019794959ef68a496964bb8875e9c7d3434f1cb97e3bd3ca604cd6fed22f0d.png" src="../../_images/a4019794959ef68a496964bb8875e9c7d3434f1cb97e3bd3ca604cd6fed22f0d.png" />
+<img alt="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" src="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" />
 </div>
 </div>
 </section>
@@ -1182,7 +1163,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/2bd708f6404c319f454d99e593460d68a00556cc96fc11409d877bfcc120d0ab.png" src="../../_images/2bd708f6404c319f454d99e593460d68a00556cc96fc11409d877bfcc120d0ab.png" />
+<img alt="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" src="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" />
 </div>
 </div>
 </section>
@@ -1199,7 +1180,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/4acdac489d65fbb005b075715c1d48a1bdd70c4d522fd81493f780c78ba69a6c.png" src="../../_images/4acdac489d65fbb005b075715c1d48a1bdd70c4d522fd81493f780c78ba69a6c.png" />
+<img alt="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" src="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" />
 </div>
 </div>
 </section>
@@ -1216,7 +1197,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/6df707493ab7275fafb713db82835bd9ee79f83746af8a3a35a86063c9461370.png" src="../../_images/6df707493ab7275fafb713db82835bd9ee79f83746af8a3a35a86063c9461370.png" />
+<img alt="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" src="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" />
 </div>
 </div>
 </section>
@@ -1239,7 +1220,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/bc1c99eb78bca9b784d56931ebcf8272a62afd92e7de43439a64893aa540671d.png" src="../../_images/bc1c99eb78bca9b784d56931ebcf8272a62afd92e7de43439a64893aa540671d.png" />
+<img alt="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" src="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" />
 </div>
 </div>
 </section>
@@ -1265,6 +1246,18 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>
