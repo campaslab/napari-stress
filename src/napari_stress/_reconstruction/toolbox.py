@@ -261,7 +261,7 @@ def reconstruct_droplet(
             - droplet center: center of droplet
 
     """
-    import copy
+    import vedo
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
@@ -280,15 +280,12 @@ def reconstruct_droplet(
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
-    surface = nppas.remove_duplicate_vertices(surface)
-
-    # Smooth and decimate
-    surface = nppas.smooth_surface(
-        surface, n_smoothing_iterations, feature_angle=120, edge_angle=90
-    )
-    surface = nppas.decimate_quadric(surface, number_of_vertices=n_points)
-    points_first_guess = surface[0]
-    points = copy.deepcopy(points_first_guess)
+    vedo_mesh = vedo.Mesh(surface).clean().smooth(
+                              niter=n_smoothing_iterations,
+                              feature_angle=120,
+                              edge_angle=90)
+    vedo_mesh.decimate(method='quadric', n=n_points)
+    points = vedo_mesh.vertices
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
