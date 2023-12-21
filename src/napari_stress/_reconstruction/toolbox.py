@@ -293,7 +293,7 @@ def reconstruct_droplet(
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
-            points, sampling_length=resampling_length
+            points, sampling_length=resampling_length/(target_voxelsize**2)
         )
 
         traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
