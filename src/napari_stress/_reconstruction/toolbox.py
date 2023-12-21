@@ -280,17 +280,18 @@ def reconstruct_droplet(
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
-    vedo_mesh = vedo.Mesh(surface).clean().smooth(
-                              niter=n_smoothing_iterations,
-                              feature_angle=120,
-                              edge_angle=90)
-    vedo_mesh.decimate(method='quadric', n=n_points)
+    vedo_mesh = (
+        vedo.Mesh(surface)
+        .clean()
+        .smooth(niter=n_smoothing_iterations, feature_angle=120, edge_angle=90)
+    )
+    vedo_mesh.decimate(method="quadric", n=n_points)
     points = vedo_mesh.vertices
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
-            points, sampling_length=resampling_length/(target_voxelsize**2)
+            points, sampling_length=resampling_length / (target_voxelsize**2)
         )
 
         traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
