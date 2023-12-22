@@ -1,0 +1,8 @@
+labels:
+  ontology: EDAM-BIOIMAGING:alpha06
+  terms:
+  - Surface rendering
+  - 3D reconstruction
+  - Object measurement
+  - Image segmentation
+  - Microscopy
