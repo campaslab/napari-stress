@@ -375,6 +375,13 @@ document.write(`
                   
   <section id="module-napari_stress.reconstruction">
 <span id="reconstruction-module"></span><h1><cite>Reconstruction module</cite><a class="headerlink" href="#module-napari_stress.reconstruction" title="Permalink to this headline">#</a></h1>
+<p>Reconstruction of surfaces from point clouds.</p>
+<p>This module contains functions to reconstruct, refine, and resample surfaces
+from point clouds. The surfaces can be reconstructed from point clouds using
+the marching cubes algorithm. The surfaces can be refined by tracing the
+surface and fitting patches to the traced surface. The surfaces can be
+resampled by fitting patches to the surface and resampling the surface
+according to the fitted patches.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="napari_stress.reconstruction.fit_patches">
 <span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">fit_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.fit_patches" title="Permalink to this definition">#</a></dt>
