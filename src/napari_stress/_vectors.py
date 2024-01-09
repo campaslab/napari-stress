@@ -172,7 +172,7 @@ def normal_vectors_on_surface(
     surface = vedo.mesh.Mesh((surface[0], surface[1]))
     surface.compute_normals()
     normals = length_multiplier * surface.pointdata["Normals"]
-    base = surface.points()
+    base = surface.vertices
 
     if center:
         base = base - normals / 2
