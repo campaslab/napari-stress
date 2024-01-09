@@ -221,6 +221,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2"><a class="reference internal" href="05_API/vectors.html"><cite>Vectors module</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="05_API/approximation.html"><cite>Approximation module</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="05_API/reconstruction.html"><cite>Reconstruction module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_API/utils.html"><cite>Utilities module</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -364,9 +365,11 @@ document.write(`
 </li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_pointcloud">calculate_patch_fitted_curvature_on_pointcloud() (in module napari_stress.measurements)</a>
 </li>
+      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface">calculate_patch_fitted_curvature_on_surface() (in module napari_stress.measurements)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface">calculate_patch_fitted_curvature_on_surface() (in module napari_stress.measurements)</a>
+      <li><a href="05_API/utils.html#napari_stress.utils.compile_data_from_layers">compile_data_from_layers() (in module napari_stress.utils)</a>
 </li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.comprehensive_analysis">comprehensive_analysis() (in module napari_stress.measurements)</a>
 </li>
@@ -380,10 +383,12 @@ document.write(`
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.deviation_from_ellipsoidal_mode">deviation_from_ellipsoidal_mode() (in module napari_stress.measurements)</a>
+      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter.data_to_list_of_data">data_to_list_of_data() (napari_stress.utils.TimelapseConverter method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/measurements.html#napari_stress.measurements.deviation_from_ellipsoidal_mode">deviation_from_ellipsoidal_mode() (in module napari_stress.measurements)</a>
+</li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.distance_to_k_nearest_neighbors">distance_to_k_nearest_neighbors() (in module napari_stress.measurements)</a>
 </li>
   </ul></td>
@@ -395,12 +400,20 @@ document.write(`
       <li><a href="05_API/approximation.html#napari_stress.approximation.expand_points_on_ellipse">expand_points_on_ellipse() (in module napari_stress.approximation)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/utils.html#napari_stress.utils.export_settings">export_settings() (in module napari_stress.utils)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.fit_patches">fit_patches() (in module napari_stress.reconstruction)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/utils.html#napari_stress.utils.frame_by_frame">frame_by_frame() (in module napari_stress.utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -430,6 +443,10 @@ document.write(`
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/utils.html#napari_stress.utils.import_settings">import_settings() (in module napari_stress.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting">iterative_curvature_adaptive_patch_fitting() (in module napari_stress.reconstruction)</a>
 </li>
   </ul></td>
@@ -442,6 +459,8 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter.list_of_data_to_data">list_of_data_to_data() (napari_stress.utils.TimelapseConverter method)</a>
+</li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.local_extrema_analysis">local_extrema_analysis() (in module napari_stress.measurements)</a>
 </li>
   </ul></td>
@@ -472,6 +491,8 @@ document.write(`
 </li>
         <li><a href="05_API/reconstruction.html#module-napari_stress.reconstruction">napari_stress.reconstruction</a>
 </li>
+        <li><a href="05_API/utils.html#module-napari_stress.utils">napari_stress.utils</a>
+</li>
         <li><a href="05_API/vectors.html#module-napari_stress.vectors">napari_stress.vectors</a>
 </li>
       </ul></li>
@@ -495,13 +516,20 @@ document.write(`
         <li><a href="05_API/measurements.html#module-napari_stress.measurements">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     napari_stress.reconstruction
 
       <ul>
         <li><a href="05_API/reconstruction.html#module-napari_stress.reconstruction">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    napari_stress.utils
+
+      <ul>
+        <li><a href="05_API/utils.html#module-napari_stress.utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -548,6 +576,8 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/measurements.html#napari_stress.measurements.temporal_autocorrelation">temporal_autocorrelation() (in module napari_stress.measurements)</a>
+</li>
+      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter">TimelapseConverter (class in napari_stress.utils)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
