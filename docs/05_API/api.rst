@@ -8,3 +8,4 @@
     vectors.rst
     approximation.rst
     reconstruction.rst
+    utils.rst
