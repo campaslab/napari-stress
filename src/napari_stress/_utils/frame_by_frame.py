@@ -112,6 +112,7 @@ class TimelapseConverter:
             "napari.types.VectorsData": self._vectors_to_list_of_vectors,
             LayerDataTuple: self._ldtuple_to_list_of_ldtuple,
             "napari.types:LayerDataTuple": self._ldtuple_to_list_of_ldtuple,
+            pd.DataFrame: self._dataframes_to_list_of_dataframes,
             str: None,
         }
 
@@ -134,6 +135,7 @@ class TimelapseConverter:
             VectorsData: self._list_of_vectors_to_vectors,
             "napari.types.VectorsData": self._list_of_vectors_to_vectors,
             Points: self._list_of_layers_to_layer,
+            pd.DataFrame: self._list_of_dataframes_to_dataframe,
         }
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
@@ -155,7 +157,8 @@ class TimelapseConverter:
         ----------
         data : 4D data to be converted
         layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
-        `ImageData`, `LabelsData` or `List[LayerDataTuple]`
+        `ImageData`, `LabelsData`, `List[LayerDataTuple]`, `LayerDataTuple` or
+        pd.DataFrame.
 
         Raises
         ------
@@ -165,7 +168,7 @@ class TimelapseConverter:
 
         Returns
         -------
-        list: List of 3D objects of type `layertype`
+        list: List of 3D objects of input layertype
 
         """
         if layertype not in list(self.data_to_list_conversion_functions.keys()):
@@ -184,7 +187,8 @@ class TimelapseConverter:
         ----------
         data : list of 3D data (time)frames
         layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
-        `ImageData`, `LabelsData` or `List[LayerDataTuple]`
+        `ImageData`, `LabelsData`, `List[LayerDataTuple]`, `LayerDataTuple` or
+        pd.DataFrame.
 
         Raises
         ------
@@ -322,7 +326,7 @@ class TimelapseConverter:
             # Stack features
             if "features" in properties[0].keys():
                 # concatenate features and add time column
-                features = pd.concat(
+                features = self._list_of_dataframes_to_dataframe(
                     [pd.DataFrame(frame["features"]) for frame in properties]
                 )
                 features["frame"] = np.concatenate(
@@ -364,6 +368,22 @@ class TimelapseConverter:
         result[2] = dtype
 
         return tuple(result)
+    
+    # =============================================================================
+    # DataFrames and dictionaries
+    # =============================================================================
+
+    def _list_of_dataframes_to_dataframe(self, dataframes: list) -> pd.DataFrame:
+        """Convert a list of dataframes to a single dataframe"""
+        # concatenate dataframes and add 'frame' column
+        for idx, frame in enumerate(dataframes):
+            frame["frame"] = [idx] * len(frame)
+        return pd.concat(dataframes)
+    
+    def _dataframes_to_list_of_dataframes(self, dataframe: pd.DataFrame) -> list:
+        """Convert a single dataframe to a list of dataframes"""
+        # split into list of dataframes according to "frame" column
+        return [frame for _, frame in dataframe.groupby("frame")]
 
     def _list_of_dictionaries_to_dictionary(self, dictionaries: list) -> dict:
         _dictionary = {}
