@@ -191,6 +191,7 @@ def test_frame_by_frame_vectors():
     assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
+
 def test_frame_by_frame_dataframes():
     from napari_stress import TimelapseConverter
     import pandas as pd
@@ -205,6 +206,6 @@ def test_frame_by_frame_dataframes():
     single_df = Converter.list_of_data_to_data([df1, df2, df3], layertype=pd.DataFrame)
     list_of_dfs = Converter.data_to_list_of_data(single_df, layertype=pd.DataFrame)
 
-    assert np.array_equal(list_of_dfs[0]['data'], df1['data'])
-    assert np.array_equal(list_of_dfs[1]['data'], df2['data'])
-    assert np.array_equal(list_of_dfs[2]['data'], df3['data'])
+    assert np.array_equal(list_of_dfs[0]["data"], df1["data"])
+    assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
+    assert np.array_equal(list_of_dfs[2]["data"], df3["data"])

@@ -368,7 +368,7 @@ class TimelapseConverter:
         result[2] = dtype
 
         return tuple(result)
-    
+
     # =============================================================================
     # DataFrames and dictionaries
     # =============================================================================
@@ -379,7 +379,7 @@ class TimelapseConverter:
         for idx, frame in enumerate(dataframes):
             frame["frame"] = [idx] * len(frame)
         return pd.concat(dataframes)
-    
+
     def _dataframes_to_list_of_dataframes(self, dataframe: pd.DataFrame) -> list:
         """Convert a single dataframe to a list of dataframes"""
         # split into list of dataframes according to "frame" column
