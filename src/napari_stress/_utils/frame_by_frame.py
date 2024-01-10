@@ -21,6 +21,36 @@ import tqdm
 
 
 def frame_by_frame(function: callable, progress_bar: bool = False):
+    """
+    Decorator to apply a function frame by frame to 4D data.
+
+    Parameters
+    ----------
+    function : callable
+        Function to be wrapped. If the optional argument `use_dask` is passed
+        to the function, the function will be parallelized using dask:
+
+        >>> @frame_by_frame(some_function)(argument1, argument2, use_dask=True)
+
+        *Note*: For this to work, the arguments (e.g., the input data) must not be passed as keyword
+        argument. I.e., this works:
+
+        >>> @frame_by_frame(some_function)(argument1, argument2, some_keyword='abc', use_dask=True)
+
+        This does not work:
+
+        >>> @frame_by_frame(some_function)(image1=argument1, image2=argument2, some_keyword='abc', use_dask=True)
+
+    progress_bar : bool, optional
+        Show progress bar, by default False. Has no effect if `use_dask=True` is passed as an argument
+        to the input function `function`.
+
+    Returns
+    -------
+    callable
+        Wrapped function
+    """
+
     @wraps(function)
     def wrapper(*args, **kwargs):
         sig = inspect.signature(function)
