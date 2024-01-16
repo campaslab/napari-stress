@@ -122,9 +122,15 @@ class stress_analysis_toolbox(QWidget):
 
     def _check_minimal_point_number(self) -> None:
         """Check if number of quadrature point complies with max_degree."""
-        minimal_point_number = lebedev_info_SPB.pts_of_lbdv_lookup[
-            self.spinBox_max_degree.value()
-        ]
+        # lebedev_info_SPB.pts_of_lbdv_lookup is a dictionary of the form
+        # {degree: number of quadrature points}
+        # if no value for the given key exists, pick the next higher value.
+        max_degree = self.spinBox_max_degree.value()
+        lookup = lebedev_info_SPB.pts_of_lbdv_lookup
+        for degree in range(max_degree, list(lookup.keys())[-1] + 1):
+            if degree in lookup.keys():
+                minimal_point_number = lookup.get(degree)
+                break
 
         if self.comboBox_quadpoints.currentData() < minimal_point_number:
             index = self.comboBox_quadpoints.findData(minimal_point_number)
