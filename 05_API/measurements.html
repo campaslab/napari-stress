@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Measurements module &#8212; Napari-stress documentation</title>
   
@@ -19,15 +19,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,12 +38,14 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -66,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Vectors module" href="vectors.html" />
     <link rel="prev" title="napari_stress" href="api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -74,7 +76,16 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -108,12 +119,18 @@ const thebe_selector_output = ".output, .cell_output"
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <header>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    </div>
   
+  </header>
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -128,9 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../intro.html">
+  
   
   
   
@@ -140,8 +159,8 @@ const thebe_selector_output = ".output, .cell_output"
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Napari-stress documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Napari-stress documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -333,20 +352,22 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -373,663 +394,10 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
-  <section id="module-napari_stress.measurements">
-<span id="measurements-module"></span><h1><cite>Measurements module</cite><a class="headerlink" href="#module-napari_stress.measurements" title="Permalink to this headline">#</a></h1>
-<p>Measurements subpackage for napari-stress.</p>
-<p>This subpackage contains functions for measuring curvature, stress, and
-temporal correlations on surfaces.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.anisotropic_stress">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">anisotropic_stress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean_curvature_droplet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H0_droplet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_curvature_ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H0_ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">26.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.anisotropic_stress" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate anisotropic stress from mean and averaged curvatures.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mean_curvature_droplet</strong> (<em>np.ndarray</em>) – mean curvature at every point on the surface of a droplet</p></li>
-<li><p><strong>H0_droplet</strong> (<em>float</em>) – surface-integrated surface curvature on droplet</p></li>
-<li><p><strong>mean_curvature_ellipsoid</strong> (<em>np.ndarray</em>) – mean curvature at every point on the surface of an ellipsoid that was
-fitted to a droplet. The droplet positions must correspond to the
-point locations on the droplet surface in terms of latitude and
-longitude</p></li>
-<li><p><strong>H0_ellipsoid</strong> (<em>float</em>) – surface-integrated surface curvature on ellipsoid</p></li>
-<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>optional</em>) – interfacial surface tension in mN/m. The default is 26.0. See also [1].</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>stress</strong> (<em>np.ndarray</em>) – raw anisotropic stress on every point on the droplet surface</p></li>
-<li><p><strong>stress_tissue</strong> (<em>np.ndarray</em>) – tissue-scale anisotropic stress on the droplet surface</p></li>
-<li><p><strong>stress_droplet</strong> (<em>np.ndarray</em>) – cell-scale anisotropic stress on the droplet surface</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<p class="rubric">References</p>
-<dl class="footnote brackets">
-<dt class="label" id="id1"><span class="brackets">1</span></dt>
-<dd><p>Campàs, Otger, et al. “Quantifying cell-generated mechanical forces
-within living embryonic tissues.” Nature Methods 11.2 (2014): 183-189.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.average_mean_curvatures_on_manifold">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">average_mean_curvatures_on_manifold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.average_mean_curvatures_on_manifold" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate averaged mean curvatures on manifold.</p>
-<p>The input can also be a layer with a manifold in its metadata. In this case
-the results are stored in the layer’s metadata.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>manifold</strong> (<em>mnfd.manifold</em>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>H0_arithmetic</strong> (<em>float</em>) – Arithmetic average of mean curvature</p></li>
-<li><p><strong>H0_surface_integral</strong> (<em>float</em>) – Averaged curvature by integrating surface area</p></li>
-<li><p><strong>H0_volume_integral</strong> (<em>float</em>) – Averaged curvature by deriving volume-integral
-of manifold.</p></li>
-<li><p><strong>S2_volume</strong> (<em>float</em>) – Volume of the unit sphere</p></li>
-<li><p><strong>H0_radial_surface</strong> (<em>float</em>) – Averaged curvature on radially expanded surface.
-Only calculated if  <cite>mnfd.manifold.manifold_type</cite>
-is <cite>radial</cite>.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.calculate_anisotropy">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">calculate_anisotropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.calculate_anisotropy" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate anisotropy of a column in a dataframe.</p>
-<p>The dataframe is assumed to contain multiple groups,
-which are defined by the values in the group_column.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Dataframe containing the data to analyze</p></li>
-<li><p><strong>column</strong> (<em>str</em><em>, </em><em>optional</em>) – Column name to analyze. The column is assumed to contain numerical
-data.</p></li>
-<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Lower and upper percentile of the data to exclude when calculating
-the anisotropy, by default 0.05</p></li>
-<li><p><strong>group_column</strong> (<em>str</em><em>, </em><em>optional</em>) – Column name to use for grouping the data, by default ‘time’</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dataframe containing the anisotropy of the data in the column for
-every group in the dataframe:
-- <cite>column</cite> + ‘_lower’: lower percentile of the data
-- <cite>column</cite> + ‘_upper’: upper percentile of the data
-- <cite>column</cite> + ‘_anisotropy’: anisotropy of the data</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.calculate_mean_curvature_on_manifold">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">calculate_mean_curvature_on_manifold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.calculate_mean_curvature_on_manifold" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate mean curvatures for a given manifold.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>manifold</strong> (<em>mnfd.manifold</em>) – Input manifold to calculate mean curvature for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>mean_curvatures</strong> – Mean curvature value for every quadrature point</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.calculate_patch_fitted_curvature_on_pointcloud">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">calculate_patch_fitted_curvature_on_pointcloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.calculate_patch_fitted_curvature_on_pointcloud" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate the curvature of a patch fitted to the points.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>'napari.types.PointsData'</em>) – The points to calculate the curvature for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dataframe with columns “mean_curvature”, “principal_curvature_1” and
-“principal_curvature_2” for the mean curvature and principal curvatures
-of the patch fitted to every point in the pointcloud.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.calculate_patch_fitted_curvature_on_surface">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">calculate_patch_fitted_curvature_on_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate the curvature of a patch fitted to the surface.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>surface</strong> (<em>'napari.types.SurfaceData'</em>) – The surface to calculate the curvature for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dataframe with columns “mean_curvature”, “principal_curvature_1” and
-“principal_curvature_2” for the mean curvature and principal curvatures
-of the patch fitted to every vertex on the surface.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.comprehensive_analysis">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">comprehensive_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pointcloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_quadrature_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">110</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximal_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">26.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LayerDataTuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.comprehensive_analysis" title="Permalink to this definition">#</a></dt>
-<dd><p>Comprehensive stress analysis of droplet points layer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pointcloud</strong> (<em>PointsData</em>) – Points layer.</p></li>
-<li><p><strong>max_degree</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum degree of spherical harmonics expansion, by default 5</p></li>
-<li><p><strong>n_quadrature_points</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of quadrature points, by default 110</p></li>
-<li><p><strong>maximal_distance</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximal distance for geodesic distance matrix, by default None</p></li>
-<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>optional</em>) – Surface tension, by default 26.0</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show progress bar, by default False</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>List of layer data tuples:
-- layer_spherical_harmonics: ‘napari.types.PointsData’</p>
-<blockquote>
-<div><p>fitted spherical harmonics expansion</p>
-</div></blockquote>
-<ul class="simple">
-<li><dl class="simple">
-<dt>layer_fitted_ellipsoid_points: ‘napari.types.PointsData’</dt><dd><p>fitted ellipsoid points</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>layer_fitted_ellipsoid: ‘napari.types.VectorsData’</dt><dd><p>fitted ellipsoid major axes</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>layer_quadrature_ellipsoid: ‘napari.types.PointsData’</dt><dd><p>Lebedev quadrature points on ellipsoid</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>layer_quadrature: ‘napari.types.PointsData’</dt><dd><p>Lebedev quadrature points on spherical-harmonics fitted droplet</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>max_min_geodesics_total: ‘napari.types.SurfaceData’</dt><dd><p>geodesics on total stress from local maxima of total stress to
-local minima of total stress</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>min_max_geodesics_total: ‘napari.types.SurfaceData’</dt><dd><p>geodesics on total stress from local minima of total stress to
-local maxima of total stress</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>max_min_geodesics_cell: ‘napari.types.SurfaceData’</dt><dd><p>geodesics on cell stress from local maxima of cell stress to
-local minima of cell stress</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>min_max_geodesics_cell: ‘napari.types.SurfaceData’</dt><dd><p>geodesics on cell stress from local minima of cell stress to
-local maxima of cell stress</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>layer_surface_autocorrelation: ‘napari.types.SurfaceData’</dt><dd><p>Surface representation of autocorrelations of total stress.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[LayerDataTuple]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.correlation_on_surface">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">correlation_on_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximal_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stress.measurements.correlation_on_surface" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate (auto-) correlation of features on surface.</p>
-<p>This calculates the correlation of features on a surface with itself
-(auto-correlation) or with another surface (cross-correlation).
-If the two input surfaces are identical, this is the auto-correlation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>surface1</strong> (<em>'napari.types.SurfaceData'</em>) – </p></li>
-<li><p><strong>surface2</strong> (<em>'napari.types.SurfaceData'</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Dictionary with keys:</dt><dd><ul class="simple">
-<li><p><cite>auto_correlations_distances</cite></p></li>
-<li><p><cite>auto_correlations_average</cite></p></li>
-<li><p><cite>auto_correlations_normalized</cite></p></li>
-<li><p><cite>auto_correlations_averaged_normalized</cite></p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.curvature_on_ellipsoid">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">curvature_on_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.LayerDataTuple</span></span></span><a class="headerlink" href="#napari_stress.measurements.curvature_on_ellipsoid" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate mean curvature on ellipsoid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ellipsoid</strong> (<em>VectorsData</em>) – Ellipsoid major axes to calculate mean curvature for.</p></li>
-<li><p><strong>sample_points</strong> (<em>PointsData</em>) – Sample points to calculate mean curvature on.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The sample points, properties and layer type. The properties contain
-the mean curvature, principal curvatures and the averaged mean curvature
-on the ellipsoid.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>LayerDataTuple (tuple)</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference external" href="https://en.wikipedia.org/wiki/Mean_curvature">Mean curvature</a>.</dt><dd><p>Mean curvature on Wikipedia.</p>
-</dd>
-<dt><a class="reference external" href="https://mathworld.wolfram.com/Ellipsoid.html">Ellipsoid definition</a></dt><dd><p>Ellipsoid definition on Wolfram MathWorld.</p>
-</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.deviation_from_ellipsoidal_mode">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">deviation_from_ellipsoidal_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.viewer.Viewer</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LayerDataTuple</span></span></span><a class="headerlink" href="#napari_stress.measurements.deviation_from_ellipsoidal_mode" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.distance_to_k_nearest_neighbors">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">distance_to_k_nearest_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.distance_to_k_nearest_neighbors" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate the distance to the k nearest neighbors for each point.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<em>'napari.types.PointsData'</em>) – The points to calculate the distance to the k nearest neighbors for.</p></li>
-<li><p><strong>k</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of nearest neighbors to use for the calculation, by default 5.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dataframe with the distance to the k nearest neighbors for each point.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.gauss_bonnet_test">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">gauss_bonnet_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.Viewer</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.gauss_bonnet_test" title="Permalink to this definition">#</a></dt>
-<dd><p>Use Gauss-Bonnet theorem to measure resolution on manifold.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input_manifold</strong> (<em>mnfd.manifold</em>) – Manifold to calculate Gauss-Bonnet error for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Gauss_Bonnet_Err</strong> (<em>float</em>) – Absolute error of Gauss-Bonnet-test</p></li>
-<li><p><strong>Gauss_Bonnet_Rel_Err</strong> (<em>float</em>) – Relative error of Gauss-Bonnet test (absolute error divided by 4*pi)</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem">Gauss Bonnet theorem</a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.geodesic_distance_matrix">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">geodesic_distance_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#napari_stress.measurements.geodesic_distance_matrix" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate a pairwise distance matrix for vertices of a surface.</p>
-<p>This calculates the geodesic distances between any two vertices on a given
-surface.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>surface</strong> (<em>SurfaceData</em>) – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>distance_matrix</strong> – Triangular matrix with differences between vertex i and j located
-at <cite>distance_matrix[i, j]</cite></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.geodesic_path">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">geodesic_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.measurements.geodesic_path" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate the geodesic path between two index-defined surface vertices .</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>surface</strong> (<em>'napari.types.SurfaceData'</em>) – </p></li>
-<li><p><strong>index_1</strong> (<em>int</em>) – Index of start vertex</p></li>
-<li><p><strong>index_2</strong> (<em>int</em>) – Index of destination vertex</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>VectorsData array with shape (n_points, 2, 3) where n_points is the
-number of points on the path. The first dimension is the point
-coordinates, the second dimension is the vector from point to point.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>napari.types.VectorsData</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.haversine_distances">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">haversine_distances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">degree_lebedev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_lebedev_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#napari_stress.measurements.haversine_distances" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate geodesic (Great Circle) distance matrix from haversine formula.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>deg_lbdv</strong> (<em>int</em>) – degree of Lebedev quadrature</p></li>
-<li><p><strong>num_lbdv_pts</strong> (<em>int</em>) – number of Lebedev quadrature points</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>distance matrix of shape (num_lbdv_pts, num_lbdv_pts)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><cite>Haversine formula &lt;https://en.wikipedia.org/wiki/Haversine_formula&gt;</cite></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.local_extrema_analysis">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">local_extrema_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LayerDataTuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.local_extrema_analysis" title="Permalink to this definition">#</a></dt>
-<dd><p>Get local maximum and minimum and analyze their mutual distances.</p>
-<p>This function identifies local maxima and minima on a given surface and analyzes
-the distances and value differences between them.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>surface</strong> (<em>napari.types.SurfaceData</em>) – The surface data on which local extrema are to be found.</p></li>
-<li><p><strong>distance_matrix</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Geodesic distance matrix for the surface. If not provided, it will be computed.
-The default is None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>A list of LayerDataTuples, each containing features and metadata related to local extrema.
-The ‘features’ key includes:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><cite>local_max_and_min</cite>: -1 if local minimum, +1 if local maximum, 0 otherwise.</p></li>
-</ul>
-</div></blockquote>
-<dl class="simple">
-<dt>The ‘metadata’ key includes:</dt><dd><ul class="simple">
-<li><p><cite>nearest_min_max_dists</cite>: Distance between each local maximum and its nearest local minimum.</p></li>
-<li><p><cite>nearest_min_max_anisotropies</cite>: Difference in input value <cite>(vertices, faces, values)</cite> between each local maximum and its nearest local minimum.</p></li>
-<li><p><cite>min_max_pair_distances</cite>: Distances between all pairs of local minima and maxima.</p></li>
-<li><p><cite>min_max_pair_anisotropies</cite>: Difference in input value <cite>(vertices, faces, values)</cite> between all pairs of local minima and maxima.</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[LayerDataTuple]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.maximal_tissue_anisotropy">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">maximal_tissue_anisotropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">26.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#napari_stress.measurements.maximal_tissue_anisotropy" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate maximaum stress anisotropy on ellipsoid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ellipsoid</strong> (<em>'napari.types.VectorsData'</em>) – </p></li>
-<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>optional</em>) – Interfacial surface tension in mN/m. The default is 26.0.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>maximal_tissue_anisotropy</strong> – Maximum stress anisotropy on ellipsoid</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.mean_curvature_differences_radial_cartesian_manifolds">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">mean_curvature_differences_radial_cartesian_manifolds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifold_cartesian</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manifold_radial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#napari_stress.measurements.mean_curvature_differences_radial_cartesian_manifolds" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate difference of radial and cartesian mean curvature calculation</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>manifold_cartesian</strong> (<em>manifold</em>) – Cartesian manifold</p></li>
-<li><p><strong>manifold_radial</strong> (<em>manifold</em>) – Radial manifold</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>difference of mean curvatures.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.mean_curvature_on_ellipse_cardinal_points">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">mean_curvature_on_ellipse_cardinal_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#napari_stress.measurements.mean_curvature_on_ellipse_cardinal_points" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate mean points on major axes tip points of ellipsoid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ellipsoid</strong> (<em>'napari.types.VectorsData'</em>) – Ellipsoid major axes to calculate mean curvature for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Mean curvature at cardinal points on ellipsoid, e.g., at the inter-
-section of the ellipsoid major axes and the allipsoid surface.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.mean_curvature_on_radial_manifold">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">mean_curvature_on_radial_manifold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#napari_stress.measurements.mean_curvature_on_radial_manifold" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate mean curvature on radial manifold</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input_manifold</strong> (<em>manifold</em>) – radial manifold</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mean curvature</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.measure_intensity_on_surface">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">measure_intensity_on_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.ImageData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.measure_intensity_on_surface" title="Permalink to this definition">#</a></dt>
-<dd><p>Measure intensity on surface.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>surface</strong> (<em>'napari.types.SurfaceData'</em>) – </p></li>
-<li><p><strong>image</strong> (<em>'napari.types.ImageData'</em>) – </p></li>
-<li><p><strong>measurement_range</strong> (<em>float</em><em>, </em><em>optional</em>) – Range of measurement, by default 1.0. This determines in which
-range around the surface the intensity is measured.</p></li>
-<li><p><strong>sampling_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between samples, by default 0.5. This determines how many samples
-are taken in the measurement range. Needs to be smaller than measurement_range.</p></li>
-<li><p><strong>center</strong> (<em>bool</em><em>, </em><em>optional</em>) – Center normal vectors on surface, by default True. If set to False, the
-normal vectors point away from the surface so that the intensity is measured
-only on one side of the surface.</p></li>
-<li><p><strong>interpolation_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Interpolation method, by default “linear”</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Intensity values for each point on the surface.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.radial_surface_averaged_mean_curvature">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">radial_surface_averaged_mean_curvature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manifold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari_stress._stress.manifold_SPB.manifold</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#napari_stress.measurements.radial_surface_averaged_mean_curvature" title="Permalink to this definition">#</a></dt>
-<dd><blockquote>
-<div><p>Eestimate H0 on Radial Manifold.</p>
-<p>Integratal of H_Rad (on surface) divided by Rad surface area</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input_manifold</strong> (<em>manifold</em>) – radial manifold</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>averaged mean curvature</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.sample_intensity_along_vector">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">sample_intensity_along_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.ImageData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#napari_stress.measurements.sample_intensity_along_vector" title="Permalink to this definition">#</a></dt>
-<dd><p>Sample intensity along sample_vectors of equal length.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample_vectors</strong> (<em>'napari.types.VectorsData'</em>) – Vectors along which to measure intensity. Must be of equal length.</p></li>
-<li><p><strong>image</strong> (<em>'napari.types.ImageData'</em>) – Image to sample intensity from.</p></li>
-<li><p><strong>sampling_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between samples, by default 1.0</p></li>
-<li><p><strong>interpolation_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Interpolation method, by default “linear”. See
-<cite>scipy.interpolate.RegularGridInterpolator</cite> for available methods.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Intensity values for each point on the sample_vectors.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RegularGridInterpolator.html">RegularGridInterpolator</a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.spatio_temporal_autocorrelation">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">spatio_temporal_autocorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surfaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SurfaceData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximal_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.measurements.spatio_temporal_autocorrelation" title="Permalink to this definition">#</a></dt>
-<dd><p>Spatio-temporal autocorrelation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>surfaces</strong> (<em>SurfaceData</em>) – 4D-surface object with values</p></li>
-<li><p><strong>distance_matrix</strong> (<em>np.ndarray</em>) – Distance matrix to be used on the surface.</p></li>
-<li><p><strong>maximal_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.temporal_autocorrelation">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">temporal_autocorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_column_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'frame'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.measurements.temporal_autocorrelation" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate temporal autocorrelation for a list of features.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>features</strong> (<em>list</em>) – List of features - each entry corresponds to features</p></li>
-<li><p><strong>timeframe</strong> (<em>of a single</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>temporal autocorrelation. The i-th entry denotes the correlation of
-features at time i with the feature at time 0.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.measurements.tissue_stress_tensor">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.measurements.</span></span><span class="sig-name descname"><span class="pre">tissue_stress_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H0_ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.measurements.tissue_stress_tensor" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculate tissue stress tensor(s).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ellipsoid</strong> (<em>'napari.types.VectorsData'</em>) – Ellipsoid that was fitted to a droplet.</p></li>
-<li><p><strong>H0_ellipsoid</strong> (<em>float</em>) – averaged mean curvature of the ellipsoid.</p></li>
-<li><p><strong>gamma</strong> (<em>float</em>) – droplet interfacial tension in mN/m</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Tissue_Stress_Tensor_elliptical</strong> (<em>np.ndarray</em>) – 3x3 orientation matrix with stresses along ellipsoid axes</p></li>
-<li><p><strong>Tissue_Stress_Tensor_cartesian</strong> (<em>np.ndarray</em>) – 3x3 orientation matrix with stresses projected onto cartesian axes</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="measurements-module">
+<h1><cite>Measurements module</cite><a class="headerlink" href="#measurements-module" title="Permalink to this heading">#</a></h1>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1057,11 +425,10 @@ features at time i with the feature at time 0.</p>
 
               
               
-                <footer class="bd-footer-article">
+              
+              
+                <footer class="prev-next-footer">
                   
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="api.html"
@@ -1081,15 +448,14 @@ features at time i with the feature at time 0.</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>
@@ -1107,6 +473,7 @@ By Johannes Soltwedel
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -1133,8 +500,8 @@ By Johannes Soltwedel
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
 
   <footer class="bd-footer">
   </footer>

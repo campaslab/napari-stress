@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Analyze everything &#8212; Napari-stress documentation</title>
   
@@ -19,15 +19,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,12 +38,14 @@
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -66,7 +68,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="Other example workflows" href="../02_example_workflows/Readme.html" />
     <link rel="prev" title="Anisotropic stresses" href="demo_anisotropic_stresses.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -74,7 +76,16 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -108,12 +119,20 @@ const thebe_selector_output = ".output, .cell_output"
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <header>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    </div>
   
+  </header>
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -128,9 +147,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../../intro.html">
+  
   
   
   
@@ -140,8 +161,8 @@ const thebe_selector_output = ".output, .cell_output"
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Napari-stress documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Napari-stress documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -333,20 +354,22 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -410,10 +433,10 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analyze-everything">
-<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this headline">#</a></h1>
+<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this heading">#</a></h1>
 <p>This notebook demonstrates how to run a complete STRESS analysis and produce all relevant output graphs. If you want to download this notebook and execute it locally on your machine, download this file as a <code class="docutils literal notranslate"><span class="pre">ipynb</span></code> Jupyter notebook file and run it in your local python environment using the download button at the top of this page.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -445,7 +468,7 @@ document.write(`
 </div>
 </div>
 <section id="load-the-data">
-<h2>Load the data<a class="headerlink" href="#load-the-data" title="Permalink to this headline">#</a></h2>
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Permalink to this heading">#</a></h2>
 <p>Replace the following code with the commented out part (and remove the rest) below to load your own data for analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -461,7 +484,7 @@ document.write(`
 </div>
 </div>
 <section id="data-dimensions">
-<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this headline">#</a></h3>
+<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this heading">#</a></h3>
 <p>You need to set a few parameters pertaining to your data:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -476,7 +499,7 @@ document.write(`
 </div>
 </section>
 <section id="analysis-parameters">
-<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this headline">#</a></h3>
+<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this heading">#</a></h3>
 <p>In case you ran the reconstruction previously interactively from the napari viewer (as explained <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>) and exported the settings, you can import the settings here, too. To do so, simply uncomment the line below (remove the <code class="docutils literal notranslate"><span class="pre">#</span></code>) and provide the path to the saved settings file:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -532,7 +555,7 @@ document.write(`
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="analysis">
-<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">#</a></h1>
+<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -685,7 +708,7 @@ document.write(`
 </div>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="visualization">
-<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">#</a></h1>
+<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h1>
 <p>In this section, we will plot some interesting results and save the data to disk. The file location will be at the</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -716,7 +739,7 @@ document.write(`
 </div>
 </div>
 <section id="fit-errors">
-<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Permalink to this headline">#</a></h2>
+<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Permalink to this heading">#</a></h2>
 <p>We first show all the errors that were calculated during the pointcloud refinement:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1011,9 +1034,9 @@ document.write(`
 </div>
 </section>
 <section id="spherical-harmonics">
-<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this headline">#</a></h2>
+<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this heading">#</a></h2>
 <section id="fit-residue">
-<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Permalink to this headline">#</a></h3>
+<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Permalink to this heading">#</a></h3>
 <p>We now show the errors made when approximating the reconstructed pointcloud with the spherical harmonics:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1031,7 +1054,7 @@ document.write(`
 </div>
 </section>
 <section id="fit-quality">
-<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Permalink to this headline">#</a></h3>
+<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Permalink to this heading">#</a></h3>
 <p>We can quantify the quality of the extracted pointcloud by using the absolute and relative Gauss-Bonnet errors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1050,7 +1073,7 @@ document.write(`
 </section>
 </section>
 <section id="curvature">
-<h2>Curvature<a class="headerlink" href="#curvature" title="Permalink to this headline">#</a></h2>
+<h2>Curvature<a class="headerlink" href="#curvature" title="Permalink to this heading">#</a></h2>
 <p>We next show mean curvature histograms and averages over time:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1101,7 +1124,7 @@ document.write(`
 </div>
 </section>
 <section id="tissue-scale-stresses">
-<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this headline">#</a></h2>
+<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_tissue_stress&#39;</span><span class="p">]</span>
@@ -1118,7 +1141,7 @@ document.write(`
 </div>
 </section>
 <section id="stress-along-axes">
-<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this headline">#</a></h2>
+<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_stress_tensor&#39;</span><span class="p">]</span>
@@ -1135,7 +1158,7 @@ document.write(`
 </div>
 </section>
 <section id="extrema-analysis">
-<h2>Extrema analysis<a class="headerlink" href="#extrema-analysis" title="Permalink to this headline">#</a></h2>
+<h2>Extrema analysis<a class="headerlink" href="#extrema-analysis" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_all_pairs&#39;</span><span class="p">]</span>
@@ -1152,7 +1175,7 @@ document.write(`
 </div>
 </section>
 <section id="autocorrelations-spatial">
-<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this headline">#</a></h2>
+<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_spatial_autocorrelation&#39;</span><span class="p">]</span>
@@ -1169,7 +1192,7 @@ document.write(`
 </div>
 </section>
 <section id="autocorrelations-temporal">
-<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this headline">#</a></h2>
+<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_temporal_autocorrelation&#39;</span><span class="p">]</span>
@@ -1186,7 +1209,7 @@ document.write(`
 </div>
 </section>
 <section id="ellipsoid-deviation">
-<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this headline">#</a></h2>
+<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_ellipsoid_contribution&#39;</span><span class="p">]</span>
@@ -1203,7 +1226,7 @@ document.write(`
 </div>
 </section>
 <section id="droplet-movement">
-<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Permalink to this headline">#</a></h2>
+<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Permalink to this heading">#</a></h2>
 <p>This analyzes how much the center of the droplet moves over time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1226,7 +1249,7 @@ document.write(`
 </div>
 </section>
 <section id="export-data">
-<h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this headline">#</a></h2>
+<h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this heading">#</a></h2>
 <p>We first agregate the data from the spatial autocorrelations in a separate dataframe. This dataframe has a column for autocorrelations of total, cell and tissue-scale stresses.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1291,11 +1314,10 @@ No artists with labels found to put in legend.  Note that artists whose label st
 
               
               
-                <footer class="bd-footer-article">
+              
+              
+                <footer class="prev-next-footer">
                   
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="demo_anisotropic_stresses.html"
@@ -1315,10 +1337,7 @@ No artists with labels found to put in legend.  Note that artists whose label st
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -1326,6 +1345,7 @@ No artists with labels found to put in legend.  Note that artists whose label st
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -1382,6 +1402,7 @@ By Johannes Soltwedel
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -1408,8 +1429,8 @@ By Johannes Soltwedel
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
 
   <footer class="bd-footer">
   </footer>

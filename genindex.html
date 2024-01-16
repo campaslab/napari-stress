@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -18,15 +18,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -37,12 +37,14 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
@@ -63,7 +65,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -71,7 +73,16 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -105,12 +116,20 @@ const thebe_selector_output = ".output, .cell_output"
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <header>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <div class="bd-header navbar navbar-expand-lg bd-navbar">
+    </div>
   
+  </header>
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -125,9 +144,11 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="intro.html">
+  
   
   
   
@@ -137,8 +158,8 @@ const thebe_selector_output = ".output, .cell_output"
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Napari-stress documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Napari-stress documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -282,20 +303,22 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -322,272 +345,14 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
 
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
- | <a href="#F"><strong>F</strong></a>
- | <a href="#G"><strong>G</strong></a>
- | <a href="#H"><strong>H</strong></a>
- | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
- | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
- | <a href="#R"><strong>R</strong></a>
- | <a href="#S"><strong>S</strong></a>
- | <a href="#T"><strong>T</strong></a>
  
 </div>
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.anisotropic_stress">anisotropic_stress() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.average_mean_curvatures_on_manifold">average_mean_curvatures_on_manifold() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="C">C</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_anisotropy">calculate_anisotropy() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_mean_curvature_on_manifold">calculate_mean_curvature_on_manifold() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_pointcloud">calculate_patch_fitted_curvature_on_pointcloud() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface">calculate_patch_fitted_curvature_on_surface() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.compile_data_from_layers">compile_data_from_layers() (in module napari_stress.utils)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.comprehensive_analysis">comprehensive_analysis() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.correlation_on_surface">correlation_on_surface() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.curvature_on_ellipsoid">curvature_on_ellipsoid() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter.data_to_list_of_data">data_to_list_of_data() (napari_stress.utils.TimelapseConverter method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.deviation_from_ellipsoidal_mode">deviation_from_ellipsoidal_mode() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.distance_to_k_nearest_neighbors">distance_to_k_nearest_neighbors() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/approximation.html#napari_stress.approximation.expand_points_on_ellipse">expand_points_on_ellipse() (in module napari_stress.approximation)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.export_settings">export_settings() (in module napari_stress.utils)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.fit_patches">fit_patches() (in module napari_stress.reconstruction)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.frame_by_frame">frame_by_frame() (in module napari_stress.utils)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="G">G</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.gauss_bonnet_test">gauss_bonnet_test() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.geodesic_distance_matrix">geodesic_distance_matrix() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.geodesic_path">geodesic_path() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.haversine_distances">haversine_distances() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="I">I</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.import_settings">import_settings() (in module napari_stress.utils)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting">iterative_curvature_adaptive_patch_fitting() (in module napari_stress.reconstruction)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/approximation.html#napari_stress.approximation.least_squares_ellipsoid">least_squares_ellipsoid() (in module napari_stress.approximation)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter.list_of_data_to_data">list_of_data_to_data() (napari_stress.utils.TimelapseConverter method)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.local_extrema_analysis">local_extrema_analysis() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.maximal_tissue_anisotropy">maximal_tissue_anisotropy() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.mean_curvature_differences_radial_cartesian_manifolds">mean_curvature_differences_radial_cartesian_manifolds() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.mean_curvature_on_ellipse_cardinal_points">mean_curvature_on_ellipse_cardinal_points() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.mean_curvature_on_radial_manifold">mean_curvature_on_radial_manifold() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.measure_intensity_on_surface">measure_intensity_on_surface() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    module
-
-      <ul>
-        <li><a href="05_API/approximation.html#module-napari_stress.approximation">napari_stress.approximation</a>
-</li>
-        <li><a href="05_API/measurements.html#module-napari_stress.measurements">napari_stress.measurements</a>
-</li>
-        <li><a href="05_API/reconstruction.html#module-napari_stress.reconstruction">napari_stress.reconstruction</a>
-</li>
-        <li><a href="05_API/utils.html#module-napari_stress.utils">napari_stress.utils</a>
-</li>
-        <li><a href="05_API/vectors.html#module-napari_stress.vectors">napari_stress.vectors</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    napari_stress.approximation
-
-      <ul>
-        <li><a href="05_API/approximation.html#module-napari_stress.approximation">module</a>
-</li>
-      </ul></li>
-      <li>
-    napari_stress.measurements
-
-      <ul>
-        <li><a href="05_API/measurements.html#module-napari_stress.measurements">module</a>
-</li>
-      </ul></li>
-      <li>
-    napari_stress.reconstruction
-
-      <ul>
-        <li><a href="05_API/reconstruction.html#module-napari_stress.reconstruction">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    napari_stress.utils
-
-      <ul>
-        <li><a href="05_API/utils.html#module-napari_stress.utils">module</a>
-</li>
-      </ul></li>
-      <li>
-    napari_stress.vectors
-
-      <ul>
-        <li><a href="05_API/vectors.html#module-napari_stress.vectors">module</a>
-</li>
-      </ul></li>
-      <li><a href="05_API/approximation.html#napari_stress.approximation.normals_on_ellipsoid">normals_on_ellipsoid() (in module napari_stress.approximation)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="R">R</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.radial_surface_averaged_mean_curvature">radial_surface_averaged_mean_curvature() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.reconstruct_droplet">reconstruct_droplet() (in module napari_stress.reconstruction)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.reconstruct_surface_from_quadrature_points">reconstruct_surface_from_quadrature_points() (in module napari_stress.reconstruction)</a>
-</li>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.resample_pointcloud">resample_pointcloud() (in module napari_stress.reconstruction)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="S">S</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.sample_intensity_along_vector">sample_intensity_along_vector() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.spatio_temporal_autocorrelation">spatio_temporal_autocorrelation() (in module napari_stress.measurements)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="T">T</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.temporal_autocorrelation">temporal_autocorrelation() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/utils.html#napari_stress.utils.TimelapseConverter">TimelapseConverter (class in napari_stress.utils)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/measurements.html#napari_stress.measurements.tissue_stress_tensor">tissue_stress_tensor() (in module napari_stress.measurements)</a>
-</li>
-      <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.trace_refinement_of_surface">trace_refinement_of_surface() (in module napari_stress.reconstruction)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 
 
                 </article>
@@ -595,21 +360,19 @@ document.write(`
 
               
               
-                <footer class="bd-footer-article">
+              
+              
+                <footer class="prev-next-footer">
                   
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>
@@ -627,6 +390,7 @@ By Johannes Soltwedel
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2022.
@@ -653,8 +417,8 @@ By Johannes Soltwedel
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
 
   <footer class="bd-footer">
   </footer>
