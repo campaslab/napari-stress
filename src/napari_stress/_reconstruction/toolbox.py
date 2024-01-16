@@ -59,6 +59,10 @@ class droplet_reconstruction_toolbox(QWidget):
             self.doubleSpinBox_voxelsize_x.setValue(scales[2])
             self.doubleSpinBox_voxelsize_y.setValue(scales[1])
             self.doubleSpinBox_voxelsize_z.setValue(scales[0])
+
+            # set target voxel size to mean of scales as default
+            mean_scale = np.mean([scales[0], scales[2]])
+            self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
         except Exception:
             pass
 
