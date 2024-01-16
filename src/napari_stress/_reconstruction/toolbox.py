@@ -334,7 +334,7 @@ def reconstruct_droplet(
     layer_label_image = (label_image, properties, "labels")
 
     traced_points = list(traced_points)
-    traced_points[1]['name'] = 'Droplet pointcloud (traced)'
+    traced_points[1]["name"] = "Droplet pointcloud (traced)"
     traced_points[0] *= target_voxelsize
 
     trace_vectors = list(trace_vectors)
