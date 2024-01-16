@@ -70,7 +70,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page_3">
       <property name="geometry">
@@ -254,7 +254,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-29</y>
         <width>838</width>
         <height>341</height>
        </rect>
