@@ -34,6 +34,7 @@ class droplet_reconstruction_toolbox(QWidget):
         self.comboBox_fittype.addItems(["fancy", "quick"])
         self.comboBox_fluorescence_type.addItems(["interior", "surface"])
         self.comboBox_interpolation_method.addItems(["cubic", "linear"])
+        self.comboBox_interpolation_method.setCurrentText("linear")
 
         # calculate density/point number
         self.spinBox_n_vertices.setValue(256)
