@@ -77,8 +77,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>125</width>
-        <height>118</height>
+        <width>855</width>
+        <height>253</height>
        </rect>
       </property>
       <attribute name="label">
@@ -173,8 +173,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>147</width>
-        <height>93</height>
+        <width>855</width>
+        <height>253</height>
        </rect>
       </property>
       <attribute name="label">
@@ -256,7 +256,7 @@
         <x>0</x>
         <y>0</y>
         <width>838</width>
-        <height>318</height>
+        <height>341</height>
        </rect>
       </property>
       <attribute name="label">
@@ -344,7 +344,7 @@
              <double>1.000000000000000</double>
             </property>
             <property name="value">
-             <double>2.500000000000000</double>
+             <double>5.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -400,7 +400,7 @@
              <double>0.250000000000000</double>
             </property>
             <property name="value">
-             <double>0.500000000000000</double>
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -420,7 +420,7 @@
              <double>2.000000000000000</double>
             </property>
             <property name="value">
-             <double>10.000000000000000</double>
+             <double>20.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -468,7 +468,10 @@
    <item row="7" column="0">
     <widget class="QCheckBox" name="checkBox_return_intermediate">
      <property name="text">
-      <string>Return intermediate resultss (may require a lot of memory)</string>
+      <string>Return intermediate results (may require a lot of memory)</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
