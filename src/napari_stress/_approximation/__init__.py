@@ -1,5 +1,7 @@
 """Approximation subpackage for napari-stress."""
 
+from .expansion import SphericalHarmonicsExpander, expand_spherical_harmonics
+
 from .fit_ellipsoid import (
     least_squares_ellipsoid,
     expand_points_on_ellipse,

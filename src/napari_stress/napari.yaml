@@ -36,7 +36,7 @@ contributions:
 
     # Spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:fit_spherical_harmonics
+      python_name: napari_stress._approximation.expansion:spherical_harmonics_napari:expand_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
