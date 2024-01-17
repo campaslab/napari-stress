@@ -1,5 +1,52 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import pytest
+
+
+@pytest.fixture
+def ellipsoid_points():
+    """
+    Generates points on the surface of an ellipsoid.
+    """
+    a, b, c = 5, 3, 2  # Semi-axes of the ellipsoid
+    u = np.linspace(0, 2 * np.pi, 30)  # Longitude-like angles
+    v = np.linspace(0, np.pi, 30)  # Latitude-like angles
+    u, v = np.meshgrid(u, v)
+    x = a * np.cos(u) * np.sin(v)
+    y = b * np.sin(u) * np.sin(v)
+    z = c * np.cos(v)
+    return np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+
+
+def test_spherical_harmonics_fit(ellipsoid_points):
+    """
+    Test fitting spherical harmonics to ellipsoid points.
+    """
+    from napari_stress import approximation
+
+    expander = approximation.SphericalHarmonicsExpander(
+        max_degree=5, expansion_type="cartesian"
+    )
+    expander.fit(ellipsoid_points)
+
+    assert expander.coefficients_ is not None
+    assert expander.coefficients_.shape == (3, (5 + 1), (5 + 1))
+
+
+def test_spherical_harmonics_expand(ellipsoid_points):
+    """
+    Test expanding points using spherical harmonics.
+    """
+    from napari_stress import approximation
+
+    expander = approximation.SphericalHarmonicsExpander(
+        max_degree=5, expansion_type="cartesian"
+    )
+    expander.fit(ellipsoid_points)
+    expanded_points = expander.expand(ellipsoid_points)
+
+    # Assert the expanded points are close to the original points
+    np.testing.assert_allclose(expanded_points, ellipsoid_points, atol=1e-1)
 
 
 def test_lsq_ellipsoid():
