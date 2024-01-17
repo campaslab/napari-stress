@@ -30,7 +30,6 @@ class expansion_types(Enum):
     radial = "radial"
 
 
-@register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def fit_spherical_harmonics(
     points: PointsData,
