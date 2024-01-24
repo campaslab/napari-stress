@@ -310,7 +310,7 @@ def reconstruct_droplet(
         points = traced_points[0]
 
     # adaptive patch fitting
-    points = iterative_curvature_adaptive_patch_fitting(traced_points[0])
+    points = iterative_curvature_adaptive_patch_fitting(traced_points[0], n_iterations=2)
 
     # =========================================================================
     # Returns
