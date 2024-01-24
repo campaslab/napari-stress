@@ -183,8 +183,12 @@ def correlation_on_surface(
                 distances_used.append(distance)
 
     num_distances_used = len(distances_used)
-    auto_correlations_distances = np.array(distances_used, dtype=np.float64).reshape(num_distances_used, 1)
-    auto_correlations_average = np.array(avg_auto_correlations, dtype=np.float64).reshape(num_distances_used, 1)
+    auto_correlations_distances = np.array(distances_used, dtype=np.float64).reshape(
+        num_distances_used, 1
+    )
+    auto_correlations_average = np.array(
+        avg_auto_correlations, dtype=np.float64
+    ).reshape(num_distances_used, 1)
     auto_correlations_normalized_average = auto_correlations_average / auto_corr_norm
 
     return {
@@ -193,6 +197,7 @@ def correlation_on_surface(
         "auto_correlations_normalized": auto_corr_norm,
         "auto_correlations_averaged_normalized": auto_correlations_normalized_average,
     }
+
 
 def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
     """
