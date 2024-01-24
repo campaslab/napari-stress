@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 from napari.types import LayerDataTuple, SurfaceData, VectorsData
@@ -123,9 +123,9 @@ def correlation_on_surface(
     surface2: SurfaceData,
     distance_matrix: np.ndarray = None,
     maximal_distance: float = None,
-) -> dict:
+) -> Dict:
     """
-    Calculate (auto-) correlation of features on surface.
+    Calculate (auto-)correlation of features on surface.
 
     This calculates the correlation of features on a surface with itself
     (auto-correlation) or with another surface (cross-correlation).
@@ -133,79 +133,60 @@ def correlation_on_surface(
 
     Parameters
     ----------
-    surface1 : SurfaceData
-    surface2 : SurfaceData
+    surface1 : napari.types.SurfaceData
+        The first surface data.
+    surface2 : napari.types.SurfaceData
+        The second surface data.
+    distance_matrix : np.ndarray, optional
+        Precomputed distance matrix. If None, it will be computed.
+    maximal_distance : float, optional
+        The maximal distance for correlation calculation.
 
     Returns
     -------
-    dict
-        Dictionary with keys:
-            - auto_correlations_distances
-            - auto_correlations_average
-            - auto_correlations_normalized
-            - auto_correlations_averaged_normalized
+    Dict
+        A dictionary containing various correlation metrics.
     """
     if distance_matrix is None:
         distance_matrix = geodesic_distance_matrix(surface1)
 
     n_points = len(surface1[0])
-    dists_lbdv_non0 = distance_matrix[np.triu_indices(n_points)]
+    distances_upper_triangle = distance_matrix[np.triu_indices(n_points)]
 
     if maximal_distance is None:
-        maximal_distance = int(np.floor(max(dists_lbdv_non0)))
+        maximal_distance = int(np.floor(max(distances_upper_triangle)))
 
-    # get features from surfaces
-    feature1 = surface1[-1]
-    feature2 = surface2[-1]
+    feature1, feature2 = surface1[-1], surface2[-1]
+    corr_matrix = np.outer(feature1, feature2)
+    corr_upper_triangle = corr_matrix[np.triu_indices(n_points)]
 
-    # Calculate outer product of input features
-    Corr_outer_prod_mat_pts = np.dot(
-        feature1.reshape(n_points, 1), feature2.reshape(n_points, 1).T
-    )
-    Corr_non0_pts = Corr_outer_prod_mat_pts[np.triu_indices(n_points)]
+    auto_corr_norm = np.mean(np.diag(corr_matrix))
 
-    # calculate autocorrelation for all points
-    # norm, so auto-corrs are 1 at \delta (= |x - x'|) = 0
-    auto_corr_norm = np.average(np.diag(Corr_outer_prod_mat_pts).flatten(), axis=0)
+    avg_auto_correlations = []
+    distances_used = []
 
-    avg_mean_curv_auto_corrs = []
-    dists_used = []
-
-    # calculate autocorrelation with spatially averaged feature values
-    for dist_i in range(0, maximal_distance + 1):
-        sum_mean_curv_corr_d_i, n_points = _avg_around_pt(
-            dist_i, dists_lbdv_non0, Corr_non0_pts, maximal_distance
+    for distance in range(maximal_distance + 1):
+        sum_corr, num_points = _avg_around_pt(
+            distance, distances_upper_triangle, corr_upper_triangle, maximal_distance
         )
 
-        if n_points > 0:
-            # average in bin
-            mean_curv_corr_d_i = sum_mean_curv_corr_d_i / n_points
-            # include if corr <= 1
-            if abs(mean_curv_corr_d_i) / auto_corr_norm <= 1.0:
-                avg_mean_curv_auto_corrs.append(mean_curv_corr_d_i)
-                dists_used.append(dist_i)
+        if num_points > 0:
+            mean_corr = sum_corr / num_points
+            if abs(mean_corr) / auto_corr_norm <= 1.0:
+                avg_auto_correlations.append(mean_corr)
+                distances_used.append(distance)
 
-    num_dists_used = len(dists_used)
+    num_distances_used = len(distances_used)
+    auto_correlations_distances = np.array(distances_used, dtype=np.float64).reshape(num_distances_used, 1)
+    auto_correlations_average = np.array(avg_auto_correlations, dtype=np.float64).reshape(num_distances_used, 1)
+    auto_correlations_normalized_average = auto_correlations_average / auto_corr_norm
 
-    # We get (geodesic) distances we calculate correlations on,
-    # using bump fn averages around these distances:
-    auto_corrs_microns_dists = np.array(dists_used, dtype=np.dtype("d")).reshape(
-        num_dists_used, 1
-    )
-    auto_corrs_avg = np.array(avg_mean_curv_auto_corrs, dtype=np.dtype("d")).reshape(
-        num_dists_used, 1
-    )
-    auto_corrs_avg_normed = auto_corrs_avg / auto_corr_norm
-
-    result = {
-        "auto_correlations_distances": auto_corrs_microns_dists,
-        "auto_correlations_average": auto_corrs_avg,
+    return {
+        "auto_correlations_distances": auto_correlations_distances,
+        "auto_correlations_average": auto_correlations_average,
         "auto_correlations_normalized": auto_corr_norm,
-        "auto_correlations_averaged_normalized": auto_corrs_avg_normed,
+        "auto_correlations_averaged_normalized": auto_correlations_normalized_average,
     }
-
-    return result
-
 
 def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
     """
