@@ -34,14 +34,14 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     distance_matrix = np.zeros((n_points, n_points))
     points = surface[0]
 
-    if n_points > 500:
+    if n_points > 1000:
         from dask.distributed import worker_client, Client
 
         # get the indices of the upper triangle
         # get pairs and split into chunks
         indices = np.triu_indices(n_points, k=1)
         pairs = np.stack(indices).T
-        chunks = np.array_split(pairs, len(pairs) // 5000)
+        chunks = np.array_split(pairs, len(pairs) // 10000)
         futures = []
 
         # we need to check whether a client has already been established.
