@@ -3,10 +3,9 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
-import vedo
 from magicgui.widgets import create_widget
 from napari.layers import Image, Layer
-from napari.types import ImageData, LayerDataTuple, PointsData
+from napari.types import ImageData, LayerDataTuple
 from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
@@ -150,6 +149,7 @@ class droplet_reconstruction_toolbox(QWidget):
     def _run(self):
         """Call analysis function."""
         import webbrowser
+        from dask.distributed import get_client
 
         current_voxel_size = np.asarray(
             [
@@ -160,7 +160,8 @@ class droplet_reconstruction_toolbox(QWidget):
         )
 
         if self.checkBox_use_dask.isChecked():
-            webbrowser.open("http://localhost:8787")
+            client = get_client()
+            webbrowser.open_new_tab(client.dashboard_link)
 
         results = reconstruct_droplet(
             self.image_layer_select.value.data,
@@ -178,6 +179,7 @@ class droplet_reconstruction_toolbox(QWidget):
             outlier_tolerance=self.doubleSpinBox_outlier_tolerance.value(),
             sampling_distance=self.doubleSpinBox_sampling_distance.value(),
             interpolation_method=self.comboBox_interpolation_method.currentText(),
+            return_intermediate_results=self.checkBox_return_intermediate.isChecked(),
             use_dask=self.checkBox_use_dask.isChecked(),
         )
 
@@ -203,6 +205,7 @@ def reconstruct_droplet(
     outlier_tolerance: float = 1.5,
     sampling_distance: float = 0.5,
     interpolation_method: str = "cubic",
+    return_intermediate_results: bool = False,
 ) -> List[LayerDataTuple]:
     """
     Reconstruct droplet surface from points layer.
@@ -243,6 +246,8 @@ def reconstruct_droplet(
         "cubic" is more accurate but slower.
     use_dask: bool, optional
         Whether to use dask for parallelization. The default is False.
+    return_intermediate_results: bool, optional
+        Whether to return intermediate results. The default is False.
 
     Returns
     -------
@@ -261,9 +266,13 @@ def reconstruct_droplet(
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
     from skimage import filters, transform
+    from .refine_surfaces import resample_pointcloud
+    from .patches import iterative_curvature_adaptive_patch_fitting
 
     scaling_factors = voxelsize / target_voxelsize
-    rescaled_image = transform.rescale(image, scaling_factors)
+    rescaled_image = transform.rescale(
+        image, scaling_factors, preserve_range=True, anti_aliasing=True
+    )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     threshold = filters.threshold_otsu(rescaled_image)
     binarized_image = rescaled_image > threshold
@@ -271,30 +280,19 @@ def reconstruct_droplet(
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
     surface = nppas.largest_label_to_surface(label_image)
-    mesh_vedo = vedo.mesh.Mesh((surface[0], surface[1])).clean()
+    surface = nppas.remove_duplicate_vertices(surface)
 
-    # Smooth surface
-    surface_smoothed = nppas.smooth_surface(
-        (mesh_vedo.points(), mesh_vedo.faces()),
-        number_of_iterations=n_smoothing_iterations,
+    # Smooth and decimate
+    surface = nppas.smooth_surface(
+        surface, n_smoothing_iterations, feature_angle=120, edge_angle=90
     )
-    points_low = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=0.01
-    )
-    points_high = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=0.25
-    )
-    points_per_fraction = (0.01 - 0.25) / (len(points_low) - len(points_high))
-
-    points_first_guess = nppas.sample_points_from_surface(
-        surface_smoothed, distance_fraction=points_per_fraction * n_points
-    )
-
+    surface = nppas.decimate_quadric(surface, number_of_vertices=n_points)
+    points_first_guess = surface[0]
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
     for i in range(n_tracing_iterations):
-        resampled_points = _resample_pointcloud(
+        resampled_points = resample_pointcloud(
             points, sampling_length=resampling_length
         )
 
@@ -309,16 +307,25 @@ def reconstruct_droplet(
             outlier_tolerance=outlier_tolerance,
             interpolation_method=interpolation_method,
         )
-
         points = traced_points[0]
+
+    # adaptive patch fitting
+    points = iterative_curvature_adaptive_patch_fitting(traced_points[0])
 
     # =========================================================================
     # Returns
     # =========================================================================
 
-    properties = {"name": "points_first_guess", "size": 1}
-    layer_points_first_guess = (
-        points_first_guess * target_voxelsize,
+    properties = {"name": "surface_first_guess"}
+    layer_first_guess = (
+        (surface[0] * target_voxelsize, surface[1]),
+        properties,
+        "surface",
+    )
+
+    properties = {"name": "points_patch_fitted", "size": 0.5}
+    layer_patch_fitted = (
+        points * target_voxelsize,
         properties,
         "points",
     )
@@ -335,113 +342,25 @@ def reconstruct_droplet(
     properties = {"name": "Center", "symbol": "ring", "face_color": "yellow", "size": 3}
     droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
 
-    return [
-        layer_label_image,
-        layer_points_first_guess,
-        traced_points,
-        trace_vectors,
-        droplet_center,
-    ]
+    properties = {
+        "name": "Rescaled image",
+        "blending": "additive",
+        "scale": [target_voxelsize] * 3,
+    }
+    layer_rescaled_image = (rescaled_image, properties, "image")
 
-
-def _fibonacci_sampling(number_of_points: int = 256) -> PointsData:
-    """
-    Sample points on unit sphere according to fibonacci-scheme.
-
-    See Also
-    --------
-    http://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/
-
-    Parameters
-    ----------
-    number_of_points : int, optional
-        Number of points to be sampled. The default is 256.
-
-    Returns
-    -------
-    PointsData
-
-    """
-    goldenRatio = (1 + 5**0.5) / 2
-    i = np.arange(0, number_of_points)
-    theta = 2 * np.pi * i / goldenRatio
-    phi = np.arccos(1 - 2 * (i + 0.5) / number_of_points)
-    x = np.cos(theta) * np.sin(phi)
-    y = np.sin(theta) * np.sin(phi)
-    z = np.cos(phi)
-
-    return np.stack([x, y, z]).T
-
-
-def _resample_pointcloud(points: PointsData, sampling_length: float = 5):
-    """
-    Resampe a spherical-like pointcloud on fibonacci grid.
-
-    Parameters
-    ----------
-    points : PointsData
-    sampling_length : float, optional
-        Distance between sampled point locations. The default is 5.
-
-    Returns
-    -------
-    resampled_points : TYPE
-
-    """
-    from scipy.interpolate import griddata
-
-    # convert to spherical, relative coordinates
-    center = np.mean(points, axis=0)
-    points_centered = points - center
-    points_spherical = vedo.transformations.cart2spher(
-        points_centered[:, 0], points_centered[:, 1], points_centered[:, 2]
-    ).T
-
-    # estimate point number according to passed sampling length
-    mean_radius = points_spherical[:, 0].mean()
-    surface_area = mean_radius**2 * 4 * np.pi
-    n = int(surface_area / sampling_length**2)
-
-    # sample points on unit-sphere according to fibonacci-scheme
-    sampled_points = _fibonacci_sampling(n)
-    sampled_points = vedo.transformations.cart2spher(
-        sampled_points[:, 0], sampled_points[:, 1], sampled_points[:, 2]
-    ).T
-
-    # interpolate cartesian coordinates on (theta, phi) grid
-    theta_interpolation = np.concatenate(
-        [points_spherical[:, 1], points_spherical[:, 1], points_spherical[:, 1]]
-    )
-    phi_interpolation = np.concatenate(
-        [
-            points_spherical[:, 2] + 2 * np.pi,
-            points_spherical[:, 2],
-            points_spherical[:, 2] - 2 * np.pi,
+    if return_intermediate_results:
+        return [
+            layer_label_image,
+            layer_first_guess,
+            layer_patch_fitted,
+            traced_points,
+            trace_vectors,
+            droplet_center,
+            layer_rescaled_image,
         ]
-    )
-
-    new_x = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 0]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    new_y = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 1]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    new_z = griddata(
-        np.stack([theta_interpolation, phi_interpolation]).T,
-        list(points_centered[:, 2]) * 3,
-        sampled_points[:, 1:],
-        method="cubic",
-    )
-
-    resampled_points = np.stack([new_x, new_y, new_z]).T + center
-
-    no_nan_idx = np.where(~np.isnan(resampled_points[:, 0]))[0]
-    return resampled_points[no_nan_idx, :]
+    else:
+        return [
+            layer_first_guess,
+            layer_patch_fitted,
+        ]

@@ -35,8 +35,9 @@ def get_droplet_4d() -> LayerDataTuple:
     from skimage import io
 
     image = io.imread(os.path.join(DATA_ROOT, "ExampleTifSequence.tif"))
+    properties = {"name": "Oil droplet timelapse", "scale": [1, 3.998, 1.98, 1.98]}
 
-    return [(image, {}, "image")]
+    return [(image, properties, "image")]
 
 
 def make_blurry_ellipsoid(

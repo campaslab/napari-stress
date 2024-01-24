@@ -9,15 +9,15 @@ def distance_to_k_nearest_neighbors(
 
     Parameters
     ----------
-    points : array-like
+    points : 'napari.types.PointsData'
         The points to calculate the distance to the k nearest neighbors for.
     k : int, optional
-        The number of nearest neighbors to use for the calculation, by default 5
+        The number of nearest neighbors to use for the calculation, by default 5.
 
     Returns
     -------
-    array-like
-        The distance to the k nearest neighbors for each point.
+    pd.DataFrame
+        A dataframe with the distance to the k nearest neighbors for each point.
     """
     from scipy.spatial import KDTree
 

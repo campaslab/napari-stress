@@ -10,7 +10,7 @@ from napari.layers import Layer, Points
 
 
 def test_fit_functions():
-    from napari_stress._utils.fit_utils import (
+    from napari_stress._reconstruction.fit_utils import (
         _sigmoid,
         _gaussian,
         _detect_maxima,
@@ -68,6 +68,8 @@ def test_decorator_points_layerdatatuple():
         points[1]["features"] = features
         points[1]["metadata"] = metadata
         list_of_ldtuples.append(points)
+
+    list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
     list_of_ldtuples_copy = deepcopy(list_of_ldtuples)
 
@@ -190,5 +192,20 @@ def test_frame_by_frame_vectors():
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
 
-if __name__ == "__main__":
-    test_decorator_surfaces()
+def test_frame_by_frame_dataframes():
+    from napari_stress import TimelapseConverter
+    import pandas as pd
+
+    Converter = TimelapseConverter()
+
+    # make some dataframes
+    df1 = pd.DataFrame({"data": np.random.random(100)})
+    df2 = pd.DataFrame({"data": np.random.random(100)})
+    df3 = pd.DataFrame({"data": np.random.random(100)})
+
+    single_df = Converter.list_of_data_to_data([df1, df2, df3], layertype=pd.DataFrame)
+    list_of_dfs = Converter.data_to_list_of_data(single_df, layertype=pd.DataFrame)
+
+    assert np.array_equal(list_of_dfs[0]["data"], df1["data"])
+    assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
+    assert np.array_equal(list_of_dfs[2]["data"], df3["data"])

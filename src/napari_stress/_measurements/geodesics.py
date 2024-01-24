@@ -1,7 +1,8 @@
 from typing import List, Dict
 
 import numpy as np
-from napari.types import LayerDataTuple, SurfaceData, VectorsData
+import tqdm
+from napari.types import LayerDataTuple, SurfaceData
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
@@ -86,13 +87,15 @@ def _geodesic_distances(surface, chunk):
 
 @register_function(menu="Surfaces > Geodesic path (pygeodesics, n-STRESS)")
 @frame_by_frame
-def geodesic_path(surface: SurfaceData, index_1: int, index_2: int) -> VectorsData:
+def geodesic_path(
+    surface: SurfaceData, index_1: int, index_2: int
+) -> "napari.types.VectorsData":
     """
     Calculate the geodesic path between two index-defined surface vertices .
 
     Parameters
     ----------
-    surface : SurfaceData
+    surface : 'napari.types.SurfaceData'
     index_1 : int
         Index of start vertex
     index_2 : int
@@ -100,7 +103,10 @@ def geodesic_path(surface: SurfaceData, index_1: int, index_2: int) -> VectorsDa
 
     Returns
     -------
-    VectorsData
+    napari.types.VectorsData
+        VectorsData array with shape (n_points, 2, 3) where n_points is the
+        number of points on the path. The first dimension is the point
+        coordinates, the second dimension is the vector from point to point.
 
     """
     from pygeodesic import geodesic
@@ -119,8 +125,8 @@ def geodesic_path(surface: SurfaceData, index_1: int, index_2: int) -> VectorsDa
 
 
 def correlation_on_surface(
-    surface1: SurfaceData,
-    surface2: SurfaceData,
+    surface1: "napari.types.SurfaceData",
+    surface2: "napari.types.SurfaceData",
     distance_matrix: np.ndarray = None,
     maximal_distance: float = None,
 ) -> Dict:
@@ -213,26 +219,33 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 
 @register_function(menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)")
 def local_extrema_analysis(
-    surface: SurfaceData, distance_matrix: np.ndarray = None
+    surface: "napari.types.SurfaceData", distance_matrix: np.ndarray = None
 ) -> List[LayerDataTuple]:
     """
     Get local maximum and minimum and analyze their mutual distances.
 
+    This function identifies local maxima and minima on a given surface and analyzes
+    the distances and value differences between them.
+
     Parameters
     ----------
-    surface : SurfaceData
+    surface : napari.types.SurfaceData
+        The surface data on which local extrema are to be found.
     distance_matrix : np.ndarray, optional
-        geodesic distance matrix. The default is None.
+        Geodesic distance matrix for the surface. If not provided, it will be computed.
+        The default is None.
 
     Returns
     -------
     List[LayerDataTuple]
-        List of layer data tuples with features and metadata:
-            - local_max_and_min (features)
-            - nearest_min_max_dists (metadata)
-            - nearest_min_max_anisotropies (metadata)
-            - min_max_pair_distances (metadata)
-            - min_max_pair_anisotropies (metadata)
+        A list of LayerDataTuples, each containing features and metadata related to local extrema.
+        The 'features' key includes:
+            - `local_max_and_min`: -1 if local minimum, +1 if local maximum, 0 otherwise.
+        The 'metadata' key includes:
+            - `nearest_min_max_dists`: Distance between each local maximum and its nearest local minimum.
+            - `nearest_min_max_anisotropies`: Difference in input value `(vertices, faces, values)` between each local maximum and its nearest local minimum.
+            - `min_max_pair_distances`: Distances between all pairs of local minima and maxima.
+            - `min_max_pair_anisotropies`: Difference in input value `(vertices, faces, values)` between all pairs of local minima and maxima.
     """
     triangles = surface[1]
     feature = surface[2]
@@ -358,6 +371,14 @@ def local_extrema_analysis(
             geodesic_path(surface, pt_min_num, pt_num_of_nearest_max)
         )
 
+    # nearest min/max dists and anisotropies contain many zeros as per their definition
+    # remove them
+    delta_feature_nearest_min_max = delta_feature_nearest_min_max[
+        nearest_min_max_dists != 0
+    ]
+    nearest_min_max_dists = nearest_min_max_dists[nearest_min_max_dists != 0]
+
+    # assemble output
     features = {"local_max_and_min": local_max_and_min}
     metadata = {
         "nearest_pair_distance": nearest_min_max_dists,

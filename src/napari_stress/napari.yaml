@@ -42,7 +42,7 @@ contributions:
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
 
-    # Spherical harmonics measurements
+    # Spherical harmonics measurements & curvature
     - id: napari-stress.measure_curvature
       python_name: napari_stress._measurements.curvature:calculate_mean_curvature_on_manifold
       title: Measure curvature on manifold
@@ -52,6 +52,9 @@ contributions:
     - id: napari-stress.curvature_on_ellipsoid
       python_name: napari_stress.approximation:curvature_on_ellipsoid
       title: Measure curvature on ellipsoid
+    - id: napari-stress.calculate_patch_fitted_curvature_surface
+      python_name: napari_stress.measurements:calculate_patch_fitted_curvature_on_surface
+      title: Calculate patch-fitted curvature on surface
 
     # stress measurements
     - id: napari-stress.measure_anisotropic_stresses
@@ -146,6 +149,9 @@ contributions:
     - command: napari-stress.measure_intensity_on_surface
       autogenerate: true
       display_name: Measure intensity on surface
+    - command: napari-stress.calculate_patch_fitted_curvature_surface
+      autogenerate: true
+      display_name: Calculate patch-fitted curvature on surface
 
     # Reconstruction
     - command: napari-stress.trace_refine_surface

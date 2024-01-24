@@ -24,7 +24,7 @@ For documentation on how to use napari-stress both interactively from the napari
 ## Installation
 
 Create a new conda environment with the following command.
-If you have never used conda before, please [read this guide first](https://campaslab.github.io/blog/johannes_mueller/anaconda_getting_started/).
+If you have never used conda before, please [read this guide first](https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html).
 
 ```
 conda create -n napari-stress Python=3.9 napari jupyterlab -c conda-forge

@@ -2,6 +2,22 @@
 import numpy as np
 
 
+def test_patch_fitted_curvature():
+    from napari_stress._measurements.curvature import (
+        _calculate_patch_fitted_curvature_on_surface,
+    )
+    import vedo
+
+    sphere = vedo.Sphere()
+    sphere = (sphere.vertices, np.asarray(sphere.cells))
+    result = _calculate_patch_fitted_curvature_on_surface(sphere, search_radius=0.25)
+
+    features = result[1]["metadata"]["features"]
+
+    assert "mean_curvature" in features.keys()
+    assert np.allclose(features["mean_curvature"].mean(), 1.0, atol=0.1)
+
+
 def test_intensity_measurement_on_normals():
     from napari_stress import vectors, measurements, sample_data, frame_by_frame
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
@@ -57,6 +73,7 @@ def test_mean_curvature_on_ellipsoid():
             interpolation_method="linear",
             trace_length=10,
             sampling_distance=1,
+            return_intermediate_results=True,
         )
 
         # calculate each point's distance to the surface of the ellipsoid
@@ -665,3 +682,7 @@ def test_stresses():
 
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid)
+
+
+if __name__ == "__main__":
+    test_patch_fitted_curvature()

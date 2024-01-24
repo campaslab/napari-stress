@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from magicgui.widgets._bases import CategoricalWidget
+from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from typing import List
 
 from napari import layers
@@ -10,6 +10,8 @@ from ._stress.manifold_SPB import manifold
 
 _METADATAKEY_MANIFOLD = "manifold"
 _METADATAKEY_MEAN_CURVATURE = "mean_curvature"
+_METADATAKEY_PRINCIPAL_CURVATURES1 = "principal_curvatures_k1"
+_METADATAKEY_PRINCIPAL_CURVATURES2 = "principal_curvatures_k2"
 _METADATAKEY_MEAN_CURVATURE_DIFFERENCE = (
     "difference_mean_curvature_cartesian_radial_manifold"
 )
@@ -66,7 +68,7 @@ _METADATAKEY_FIT_RESIDUE = "fit_residue"
 _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = "Elipsoid_deviation_contribution_matrix"
 
 
-def _get_layers_features(gui: CategoricalWidget) -> List[layers.Layer]:
+def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
     """Retrieve layers matching gui.annotation, from the Viewer the gui is in.
 
     Parameters

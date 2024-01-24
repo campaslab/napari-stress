@@ -1,4 +1,5 @@
 jupyter-book>=0.7.0b
 napari
-qtpy
+pyqt5   # noqa
 napari-stress
+sphinx>=5.0.0

@@ -1,4 +1,9 @@
-# -*- coding: utf-8 -*-
+"""
+Measurements subpackage for napari-stress.
+
+This subpackage contains functions for measuring curvature, stress, and
+temporal correlations on surfaces.
+"""
 
 from .curvature import (
     calculate_mean_curvature_on_manifold,
@@ -9,6 +14,8 @@ from .curvature import (
     mean_curvature_on_ellipse_cardinal_points,
     gauss_bonnet_test,
     mean_curvature_differences_radial_cartesian_manifolds,
+    calculate_patch_fitted_curvature_on_pointcloud,
+    calculate_patch_fitted_curvature_on_surface,
 )
 from .deviation_analysis import deviation_from_ellipsoidal_mode
 
@@ -44,6 +51,8 @@ __all__ = [
     "mean_curvature_on_ellipse_cardinal_points",
     "gauss_bonnet_test",
     "mean_curvature_differences_radial_cartesian_manifolds",
+    "calculate_patch_fitted_curvature_on_pointcloud",
+    "calculate_patch_fitted_curvature_on_surface",
     "deviation_from_ellipsoidal_mode",
     "temporal_autocorrelation",
     "haversine_distances",

@@ -5,6 +5,7 @@ from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 
 from napari_tools_menu import register_function
 import numpy as np
+import pandas as pd
 
 from napari.layers import Layer
 
@@ -21,6 +22,8 @@ from ..types import (
     _METADATAKEY_H0_RADIAL_SURFACE,
     _METADATAKEY_GAUSS_BONNET_REL,
     _METADATAKEY_GAUSS_BONNET_ABS,
+    _METADATAKEY_PRINCIPAL_CURVATURES1,
+    _METADATAKEY_PRINCIPAL_CURVATURES2,
     manifold,
 )
 
@@ -33,27 +36,29 @@ def curvature_on_ellipsoid(
     ellipsoid: "napari.types.VectorsData", sample_points: "napari.types.PointsData"
 ) -> "napari.types.LayerDataTuple":
     """
-    Calculate curvature at sample points on the surface of an ellipse.
+    Calculate mean curvature on ellipsoid.
 
     Parameters
     ----------
     ellipsoid : VectorsData
+        Ellipsoid major axes to calculate mean curvature for.
     sample_points : PointsData
-        points on the ellipse surface. Can be generated from a pointcloud using
-        the `approximation.expand_points_on_ellipse` function
+        Sample points to calculate mean curvature on.
 
     Returns
     -------
-    LayerDataTuple
-        LayerDataTuple of structured `(data, properties, 'points')`. The results
-        of this function are stored in:
-            * LayerDataTuple['features']['mean_curvature']
-            * LayerDataTuple['metadata']['H_ellipsoid_major_medial_minor']
-            * LayerDataTuple['metadata']['H0_ellipsoid']
+    LayerDataTuple (tuple)
+        The sample points, properties and layer type. The properties contain
+        the mean curvature, principal curvatures and the averaged mean curvature
+        on the ellipsoid.
 
     See Also
     --------
-    https://mathworld.wolfram.com/Ellipsoid.html
+
+    `Mean curvature <https://en.wikipedia.org/wiki/Mean_curvature>`_.
+        Mean curvature on Wikipedia.
+    `Ellipsoid definition <https://mathworld.wolfram.com/Ellipsoid.html>`_
+        Ellipsoid definition on Wolfram MathWorld.
 
     """
     lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
@@ -84,8 +89,19 @@ def curvature_on_ellipsoid(
     )
     H_ellps_pts = (num_H_ellps / den_H_ellps).squeeze()
 
-    # calculate averaged curvatures H_0: 1st method of H0 computation,
-    # for Ellipsoid in UV points
+    # also calculate principal curvatures
+    k_upstairs = a0**2 * a1**2 * a2**2
+    K_downstairs = (
+        a0**2 * a1**2 * np.cos(V) ** 2
+        + a2**2
+        * (a1**2 * np.cos(U) ** 2 + a0**2 * np.sin(U) ** 2)
+        * np.sin(V) ** 2
+    ) ** 2
+    k = k_upstairs / K_downstairs.squeeze()
+    k1 = H_ellps_pts + np.sqrt(H_ellps_pts**2 - k)
+    k2 = H_ellps_pts - np.sqrt(H_ellps_pts**2 - k)
+
+    # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
     H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(ellipsoid)
@@ -93,6 +109,8 @@ def curvature_on_ellipsoid(
     # add to viewer if it doesn't exist.
     properties, features, metadata = {}, {}, {}
     features[_METADATAKEY_MEAN_CURVATURE] = H_ellps_pts
+    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = k1
+    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = k2
     metadata[_METADATAKEY_H0_ELLIPSOID] = H0_ellps_avg_ellps_UV_curvs
     metadata[_METADATAKEY_H_E123_ELLIPSOID] = H0_ellipsoid_major_minor
 
@@ -105,6 +123,134 @@ def curvature_on_ellipsoid(
     return (sample_points, properties, "points")
 
 
+@register_function(
+    menu="Measurement > Measure patch-fitted-curvature on surface (n-STRESS)"
+)
+@frame_by_frame
+def _calculate_patch_fitted_curvature_on_surface(
+    surface: "napari.types.SurfaceData",
+    search_radius: float = 2,
+) -> "napari.types.LayerDataTuple":
+    """Calculate the curvature of a patch fitted to the surface.
+
+    Parameters
+    ----------
+    surface : 'napari.types.SurfaceData'
+        The surface to calculate the curvature for.
+
+    Returns
+    -------
+    'napari.types.LayerDataTuple'
+        The surface, properties and layer type. The properties contain
+        the mean curvature, principal curvatures and the averaged mean curvature
+        on the ellipsoid.
+    """
+    df = calculate_patch_fitted_curvature_on_surface(surface, search_radius)
+
+    # add to viewer if it doesn't exist.
+    properties, features, metadata = {}, {}, {}
+    features[_METADATAKEY_MEAN_CURVATURE] = df["mean_curvature"].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = df["principal_curvature_1"].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = df["principal_curvature_2"].values
+    metadata["features"] = features
+    properties["metadata"] = metadata
+    properties["name"] = "Result of mean curvature on ellipsoid"
+
+    surface = list(surface)
+    surface[2] = df["mean_curvature"].values
+
+    return (surface, properties, "surface")
+
+
+def calculate_patch_fitted_curvature_on_surface(
+    surface: "napari.types.SurfaceData",
+    search_radius: float = 2,
+) -> pd.DataFrame:
+    """Calculate the curvature of a patch fitted to the surface.
+
+    Parameters
+    ----------
+    surface : 'napari.types.SurfaceData'
+        The surface to calculate the curvature for.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with columns "mean_curvature", "principal_curvature_1" and
+        "principal_curvature_2" for the mean curvature and principal curvatures
+        of the patch fitted to every vertex on the surface.
+    """
+    points = surface[0]
+
+    return calculate_patch_fitted_curvature_on_pointcloud(points, search_radius)
+
+
+def calculate_patch_fitted_curvature_on_pointcloud(
+    points: "napari.types.PointsData",
+    search_radius: float = 2,
+) -> pd.DataFrame:
+    """
+    Calculate the curvature of a patch fitted to the points.
+
+    Parameters
+    ----------
+    points : 'napari.types.PointsData'
+        The points to calculate the curvature for.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with columns "mean_curvature", "principal_curvature_1" and
+        "principal_curvature_2" for the mean curvature and principal curvatures
+        of the patch fitted to every point in the pointcloud.
+    """
+    from .._reconstruction.patches import (
+        _calculate_mean_curvature_on_patch,
+        _orient_patch,
+        _find_neighbor_indices,
+        _fit_quadratic_surface,
+    )
+    import numpy as np
+
+    num_points = len(points)  # Number of points in the point cloud
+
+    # Compute neighbors for each point in the point cloud
+    neighbor_indices = _find_neighbor_indices(points, search_radius)
+    mean_curvatures = np.zeros(num_points)
+    principal_curvatures = np.zeros((num_points, 2))
+
+    for idx in range(num_points):
+        current_point = points[idx, :]
+        neighbors_idx = neighbor_indices[idx]
+        patch = points[neighbors_idx, :]
+
+        # Orient the patch for the current point
+        oriented_patch, oriented_query_point, _ = _orient_patch(
+            patch, current_point, np.mean(points, axis=0)
+        )
+
+        # Perform the quadratic surface fitting
+        fitting_params = _fit_quadratic_surface(oriented_patch)
+
+        mean_curv, principal_curv = _calculate_mean_curvature_on_patch(
+            oriented_query_point, fitting_params
+        )
+
+        # Store the mean curvature and principal curvatures
+        mean_curvatures[idx] = mean_curv[0]
+        principal_curvatures[idx, :] = principal_curv[0]
+
+    df = pd.DataFrame(
+        {
+            "mean_curvature": mean_curvatures,
+            "principal_curvature_1": principal_curvatures[:, 0],
+            "principal_curvature_2": principal_curvatures[:, 1],
+        }
+    )
+
+    return df
+
+
 def mean_curvature_on_ellipse_cardinal_points(
     ellipsoid: "napari.types.VectorsData",
 ) -> list:
@@ -113,13 +259,14 @@ def mean_curvature_on_ellipse_cardinal_points(
 
     Parameters
     ----------
-    ellipsoid : VectorsData
+    ellipsoid : 'napari.types.VectorsData'
+        Ellipsoid major axes to calculate mean curvature for.
 
     Returns
     -------
     list
-        List with mean curvature at major/medial/minor axis of ellipsoid.
-
+        Mean curvature at cardinal points on ellipsoid, e.g., at the inter-
+        section of the ellipsoid major axes and the allipsoid surface.
     """
     lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
     a0 = lengths[0]
@@ -151,7 +298,8 @@ def gauss_bonnet_test(
 
     Parameters
     ----------
-    input_manifold: manifold
+    input_manifold: mnfd.manifold
+        Manifold to calculate Gauss-Bonnet error for.
 
     Returns
     -------
@@ -162,7 +310,7 @@ def gauss_bonnet_test(
 
     See Also
     --------
-    https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem
+    `Gauss Bonnet theorem <https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem>`_
     """
     layer = None
     if isinstance(input_manifold, Layer):
@@ -197,6 +345,7 @@ def calculate_mean_curvature_on_manifold(
     Parameters
     ----------
     manifold: mnfd.manifold
+        Input manifold to calculate mean curvature for.
 
     Returns
     -------
@@ -256,23 +405,28 @@ def average_mean_curvatures_on_manifold(
     """
     Calculate averaged mean curvatures on manifold.
 
-    Args:
-    ----
-        input_manifold (manifold): Manifold object. Can be of type `napari.Layer`
-            if a `manifold` object is detected in `layer.metadata`
+    The input can also be a layer with a manifold in its metadata. In this case
+    the results are stored in the layer's metadata.
 
-    Returns:
+    Parameters
+    ----------
+    manifold: mnfd.manifold
+
+    Returns
     -------
-        H0_arithmetic: float
-            arithmetic average of mean curvature
-        H0_surface_integral: float
-            surface-integrated averaged mean curvature
-        H0_volume_integral: float
-            volume-integrated averaged mean curvature. Only calculated if
-            `manifold.manifold_type` is `radial`.
-        S2_volume: float
-            volume-integral of manifold. Only calculated if
-            `manifold.manifold_type` is `radial`.
+    H0_arithmetic: float
+        Arithmetic average of mean curvature
+    H0_surface_integral: float
+        Averaged curvature by integrating surface area
+    H0_volume_integral: float
+        Averaged curvature by deriving volume-integral
+        of manifold.
+    S2_volume: float
+        Volume of the unit sphere
+    H0_radial_surface: float
+        Averaged curvature on radially expanded surface.
+        Only calculated if  `mnfd.manifold.manifold_type`
+        is `radial`.
     """
 
     mean_curvature, _, _ = calculate_mean_curvature_on_manifold(input_manifold)
