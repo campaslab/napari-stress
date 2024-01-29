@@ -26,54 +26,6 @@ def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     """
     from .._utils.coordinate_conversion import polynomial_to_parameters3D
 
-    # # Formulate the problem as a linear equation Ax = b
-    # A = np.column_stack((points[:, 0]**2,  # A
-    #                     points[:, 1]**2,  # B
-    #                     points[:, 2]**2,  # C
-    #                     2 * points[:, 0] * points[:, 1],  # D
-    #                     2 * points[:, 0] * points[:, 2],  # E
-    #                     2 * points[:, 1] * points[:, 2],  # F
-    #                     2 * points[:, 0],  # G
-    #                     2 * points[:, 1],  # H
-    #                     2 * points[:, 2]))  # I
-
-    # b = np.ones(points.shape[0])
-
-    # # Use least squares solver to find the coefficients
-    # coefficients, _, _, _= np.linalg.lstsq(A, b, rcond=None)
-
-    # # Extract the ellipsoid parameters
-    # A, B, C, D, E, F, G, H, I = coefficients
-
-    # # Calculate the center of the ellipsoid
-    # center = np.array([-G / A, -H / B, -I / C])
-
-    # # Calculate the major axes lengths
-    # a = 1 / np.sqrt(A)
-    # b = 1 / np.sqrt(B)
-    # c = 1 / np.sqrt(C)
-
-    # # Calculate the major axes directions
-    # cov_matrix = np.cov(points, rowvar=False)
-    # eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
-
-    # # Sort the eigenvalues and eigenvectors in descending order
-    # sorted_indices = np.argsort(eigenvalues)[::-1]
-    # eigenvalues = eigenvalues[sorted_indices]
-    # eigenvectors = eigenvectors[:, sorted_indices]
-
-    # # Assemble the (3x2x3) array
-    # result_matrix = np.zeros((3, 2, 3))
-
-    # for i in range(3):
-    #     result_matrix[i, 0, 0] = center[2]  # Base point (z)
-    #     result_matrix[i, 0, 1] = center[1]  # Base point (y)
-    #     result_matrix[i, 0, 2] = center[0]  # Base point (x)
-
-    #     result_matrix[i, 1, 0] = eigenvectors[i, 2] * a  # Direction (z)
-    #     result_matrix[i, 1, 1] = eigenvectors[i, 1] * b  # Direction (y)
-    #     result_matrix[i, 1, 2] = eigenvectors[i, 0] * c  # Direction (x)
-
     coefficients = _solve_ellipsoid_polynomial(points)
 
     # convert results to VectorsData
