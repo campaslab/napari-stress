@@ -324,6 +324,12 @@ def comprehensive_analysis(
     # Spherical harmonics expansion
     # =====================================================================
 
+    import pandas as pd
+
+    df = pd.read_csv(
+        r"C:\Users\johamuel\Desktop\pointcloud.csv", index_col="Unnamed: 0"
+    )
+    pointcloud = df[["z", "y", "x"]].to_numpy()
     # CARTESIAN
     fitted_pointcloud, coefficients = stress_spherical_harmonics_expansion(
         pointcloud, max_degree=max_degree
@@ -431,7 +437,7 @@ def comprehensive_analysis(
     H0_volume_droplet = averaged_curvatures_radial[2]
     S2_volume_droplet = averaged_curvatures_radial[3]
     H0_radial_surface = averaged_curvatures_radial[4]
-    stress_total_radial = gamma * (mean_curvature_radial - H0_radial_surface)
+    stress_total_radial = 2 * gamma * (mean_curvature_radial - H0_radial_surface)
 
     delta_mean_curvature = (
         measurements.mean_curvature_differences_radial_cartesian_manifolds(
