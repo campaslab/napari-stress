@@ -561,7 +561,7 @@ def mean_curvature_differences_radial_cartesian_manifolds(
     mean_curvature_cartesian, _, _ = calculate_mean_curvature_on_manifold(
         manifold_cartesian
     )
-    mean_curvature_radial, _, _ = calculate_mean_curvature_on_manifold(manifold_radial)
+    mean_curvature_radial = mean_curvature_on_radial_manifold(manifold_cartesian)
 
     on_radial = euc_kf.Integral_on_Manny(
         mean_curvature_radial - mean_curvature_cartesian,
