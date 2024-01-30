@@ -324,12 +324,12 @@ def comprehensive_analysis(
     # Spherical harmonics expansion
     # =====================================================================
 
-    import pandas as pd
+    # import pandas as pd
 
-    df = pd.read_csv(
-        r"C:\Users\johamuel\Desktop\pointcloud.csv", index_col="Unnamed: 0"
-    )
-    pointcloud = df[["z", "y", "x"]].to_numpy()
+    # df = pd.read_csv(
+    #     r"C:\Users\johan\OneDrive\Desktop\pointcloud.csv", index_col="Unnamed: 0"
+    # )
+    # pointcloud = df[["x", "y", "z"]].to_numpy()
     # CARTESIAN
     fitted_pointcloud, coefficients = stress_spherical_harmonics_expansion(
         pointcloud, max_degree=max_degree
