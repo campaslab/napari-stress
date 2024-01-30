@@ -276,11 +276,11 @@ def create_manifold(
         manifold_type = "radial"
         coordinates = np.stack(
             [
-                lebedev_fit.X.squeeze() * points,
-                lebedev_fit.Y.squeeze() * points,
-                lebedev_fit.Z.squeeze() * points,
+                lebedev_fit.X * points[:, None],
+                lebedev_fit.Y * points[:, None],
+                lebedev_fit.Z * points[:, None],
             ]
-        ).T
+        ).T.squeeze()
         Manny_Name_Dict["coordinates"] = coordinates
 
     elif len(points.shape) == 2:
