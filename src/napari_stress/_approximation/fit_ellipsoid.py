@@ -30,7 +30,7 @@ def least_squares_ellipsoid(points: PointsData) -> VectorsData:
 
     # convert results to VectorsData
     center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=coefficients)
-    direction = R * axes[:, None]
+    direction = R * axes[None, :]
     origin = np.stack(3 * [center])  # cheap repeat
     vector = np.stack([origin, direction]).transpose((1, 0, 2))
 
