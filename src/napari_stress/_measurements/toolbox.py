@@ -391,6 +391,8 @@ def comprehensive_analysis(
         ellipsoid, quadrature_points
     )
 
+    quadrature_points_ellipsoid = ellipsoid_expander.expand(quadrature_points)
+
     # =========================================================================
     # Evaluate fit quality
     # =========================================================================
