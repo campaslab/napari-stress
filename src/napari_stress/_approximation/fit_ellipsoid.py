@@ -6,8 +6,6 @@ from napari_tools_menu import register_function
 import numpy as np
 
 
-@register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
-@frame_by_frame
 def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     """
     Fit ellipsoid to points with a last-squares approach.
@@ -35,6 +33,86 @@ def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     vector = np.stack([origin, direction]).transpose((1, 0, 2))
 
     return vector
+def fit_ellipsoid_to_points(
+    points: "napari.types.PointsData",
+) -> "napari.types.VectorsData":
+    """
+    Fit a 3D ellipsoid to given points using least squares fitting.
+    The ellipsoid equation is: Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz = 1
+
+    :param points: A numpy array of shape (N, 3) representing the 3D points.
+    :return: A numpy array containing the coefficients [A, B, C, D, E, F, G, H, I, J] of the ellipsoid equation.
+    """
+    # Extract x, y, z coordinates from points and reshape to column vectors
+    x = points[:, 0, np.newaxis]
+    y = points[:, 1, np.newaxis]
+    z = points[:, 2, np.newaxis]
+
+    # Construct the design matrix for the ellipsoid equation
+    design_matrix = np.hstack((x**2, y**2, z**2, x * y, x * z, y * z, x, y, z))
+    column_of_ones = np.ones_like(x)  # Column vector of ones
+
+    # Perform least squares fitting to solve for the coefficients
+    transposed_matrix = design_matrix.transpose()
+    matrix_product = np.dot(transposed_matrix, design_matrix)
+    inverse_matrix = np.linalg.inv(matrix_product)
+    coefficients = np.dot(inverse_matrix, np.dot(transposed_matrix, column_of_ones))
+
+    # Append -1 to the coefficients to represent the constant term on the right side of the equation
+    ellipsoid_coefficients = np.append(coefficients, -1)
+
+    return ellipsoid_coefficients
+
+
+def fit_ellipsoid(coefficients):
+    # Construct the augmented matrix from the coefficients
+    Amat = np.array(
+        [
+            [
+                coefficients[0],
+                coefficients[3] / 2.0,
+                coefficients[4] / 2.0,
+                coefficients[6] / 2.0,
+            ],
+            [
+                coefficients[3] / 2.0,
+                coefficients[1],
+                coefficients[5] / 2.0,
+                coefficients[7] / 2.0,
+            ],
+            [
+                coefficients[4] / 2.0,
+                coefficients[5] / 2.0,
+                coefficients[2],
+                coefficients[8] / 2.0,
+            ],
+            [coefficients[6] / 2.0, coefficients[7] / 2.0, coefficients[8] / 2.0, -1],
+        ]
+    )
+
+    # Extract the quadratic part and find its inverse
+    A3 = Amat[:3, :3]
+    A3inv = np.linalg.inv(A3)
+
+    # Compute the center of the ellipsoid
+    ofs = coefficients[6:9] / 2.0
+    center = -np.dot(A3inv, ofs)
+
+    # Transform the matrix to center the ellipsoid at the origin
+    Tofs = np.eye(4)
+    Tofs[3, :3] = center
+    R = np.dot(Tofs, np.dot(Amat, Tofs.T))
+
+    # Extract the transformed quadratic part
+    R3 = R[:3, :3]
+
+    # Perform eigendecomposition to find axes and orientation
+    eigenvalues, eigenvectors = np.linalg.eig(R3 / -R[3, 3])
+
+    # Compute the lengths of the axes
+    axes_lengths = np.sqrt(1.0 / np.abs(eigenvalues))
+
+    return center, axes_lengths, eigenvectors
 
 
 @register_function(menu="Points > Calculate normals on ellipsoid (n-STRESS)")
@@ -124,8 +202,6 @@ def _solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
     return eansa
 
 
-@register_function(menu="Points > Expand point locations on ellipsoid (n-STRESS)")
-@frame_by_frame
 def expand_points_on_ellipse(
     fitted_ellipsoid: VectorsData, pointcloud: PointsData
 ) -> PointsData:
