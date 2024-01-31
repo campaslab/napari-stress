@@ -65,7 +65,7 @@ def curvature_on_ellipsoid(
     a0 = lengths[0]
     a1 = lengths[1]
     a2 = lengths[2]
-    U, V = conversion.cartesian_to_elliptical(ellipsoid, sample_points)
+    U, V = conversion.cartesian_to_elliptical(ellipsoid, sample_points, invert=True)
 
     # calculate point-wise mean curvature H_i
     num_H_ellps = (

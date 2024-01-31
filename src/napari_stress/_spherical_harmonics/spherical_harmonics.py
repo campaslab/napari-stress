@@ -113,7 +113,7 @@ def stress_spherical_harmonics_expansion(
         ellipsoid_expander.fit(points)
         # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
         longitude, latitude = cartesian_to_elliptical(
-            ellipsoid_expander.coefficients_, points
+            ellipsoid_expander.coefficients_, points, invert=True
         )
 
         # This implementation fits a superposition of three sets of spherical harmonics
