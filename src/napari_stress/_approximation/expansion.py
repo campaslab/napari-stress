@@ -15,8 +15,8 @@ class EllipsoidExpander(Expander):
         The points to expand.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, get_measurements: bool = False):
+        super().__init__(get_measurements)
 
     def _fit(self, points: "napari.types.PointsData") -> "napari.types.VectorsData":
         """
