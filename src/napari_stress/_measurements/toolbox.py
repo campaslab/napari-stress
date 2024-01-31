@@ -429,34 +429,48 @@ def comprehensive_analysis(
     H0_surface_droplet = averaged_curvatures[1]
 
     # Droplet (radial)
-    from napari_stress._stress.euclidian_k_form_SPB import (Combine_Chart_Quad_Vals,
-                                                            Integral_on_Manny)
+    from napari_stress._stress.euclidian_k_form_SPB import (
+        Combine_Chart_Quad_Vals,
+        Integral_on_Manny,
+    )
+
     averaged_curvatures_radial = measurements.average_mean_curvatures_on_manifold(
         manifold_droplet_radial
     )
     H0_volume_droplet = averaged_curvatures_radial[2]
     S2_volume_droplet = averaged_curvatures_radial[3]
-    
 
     mean_curvature_radial = Combine_Chart_Quad_Vals(
         manifold_droplet_radial.H_A_pts,
         manifold_droplet_radial.H_B_pts,
-        manifold_droplet_radial.lebedev_info).squeeze()
-    H0_radial_surface = Integral_on_Manny(mean_curvature_radial,
-                                          manifold_droplet_radial,
-                                          manifold_droplet_radial.lebedev_info)
-    H0_radial_surface /= Integral_on_Manny(np.ones_like(mean_curvature_radial),
-                                             manifold_droplet_radial,
-                                             manifold_droplet_radial.lebedev_info)
-    mean_curvature_radial *= abs(H0_radial_surface)/H0_radial_surface
+        manifold_droplet_radial.lebedev_info,
+    ).squeeze()
+    H0_radial_surface = Integral_on_Manny(
+        mean_curvature_radial,
+        manifold_droplet_radial,
+        manifold_droplet_radial.lebedev_info,
+    )
+    H0_radial_surface /= Integral_on_Manny(
+        np.ones_like(mean_curvature_radial),
+        manifold_droplet_radial,
+        manifold_droplet_radial.lebedev_info,
+    )
+    mean_curvature_radial *= abs(H0_radial_surface) / H0_radial_surface
     stress_total_radial = 2 * gamma * (mean_curvature_radial - abs(H0_radial_surface))
 
     delta_mean_curvature = np.mean(
         [
-            Integral_on_Manny(mean_curvature_radial - mean_curvature_radial,
-                           manifold_droplet_radial, manifold_droplet_radial.lebedev_info),
-            Integral_on_Manny(mean_curvature_radial - mean_curvature_radial,
-                              manifold_droplet, manifold_droplet.lebedev_info)]
+            Integral_on_Manny(
+                mean_curvature_radial - mean_curvature_radial,
+                manifold_droplet_radial,
+                manifold_droplet_radial.lebedev_info,
+            ),
+            Integral_on_Manny(
+                mean_curvature_radial - mean_curvature_radial,
+                manifold_droplet,
+                manifold_droplet.lebedev_info,
+            ),
+        ]
     )
 
     # Ellipsoid
