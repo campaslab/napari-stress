@@ -374,8 +374,10 @@ def comprehensive_analysis(
     # Ellipsoid fit
     # =====================================================================
 
-    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
-    ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+    ellipsoid_expander = approximation.EllipsoidExpander()
+    ellipsoid_expander.fit(pointcloud)
+    ellipsoid = ellipsoid_expander.coefficients_
+    ellipsoid_points = ellipsoid_expander.expand(pointcloud)
 
     fitted_ellipsoid, coefficients_ell = stress_spherical_harmonics_expansion(
         ellipsoid_points, max_degree=max_degree

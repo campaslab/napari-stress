@@ -109,9 +109,12 @@ def stress_spherical_harmonics_expansion(
     from .._stress.charts_SPB import Cart_To_Coor_A
 
     if expansion_type == "cartesian":
+        ellipsoid_expander = approximation.EllipsoidExpander()
+        ellipsoid_expander.fit(points)
         # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-        ellipsoid = approximation.least_squares_ellipsoid(points)
-        longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
+        longitude, latitude = cartesian_to_elliptical(
+            ellipsoid_expander.coefficients_, points
+        )
 
         # This implementation fits a superposition of three sets of spherical harmonics
         # to the data, one for each cardinal direction (x/y/z).
