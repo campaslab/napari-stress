@@ -22,17 +22,18 @@ def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     -------
     VectorsData: Major/minor axis of the ellipsoid
     """
-    from .._utils.coordinate_conversion import polynomial_to_parameters3D
+    coefficients = fit_ellipsoid_to_points(points)
+    center, axes_lengths, eigenvectors = fit_ellipsoid(coefficients)
 
-    coefficients = _solve_ellipsoid_polynomial(points)
+    vectors = (
+        eigenvectors / np.linalg.norm(eigenvectors, axis=1)[:, np.newaxis]
+    ).T * axes_lengths[:, None]
+    base = np.stack([center] * 3)
+    ellipsoid = np.stack([base, vectors], axis=1)
 
-    # convert results to VectorsData
-    center, axes, R, R_inverse = polynomial_to_parameters3D(coefficients=coefficients)
-    direction = R * axes[None, :]
-    origin = np.stack(3 * [center])  # cheap repeat
-    vector = np.stack([origin, direction]).transpose((1, 0, 2))
+    return ellipsoid
 
-    return vector
+
 def fit_ellipsoid_to_points(
     points: "napari.types.PointsData",
 ) -> "napari.types.VectorsData":
