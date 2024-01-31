@@ -153,7 +153,7 @@ def perform_lebedev_quadrature(
     properties["size"] = 0.5
     properties["name"] = "Result of lebedev quadrature"
 
-    lebedev_points = manifold.get_coordinates()
+    lebedev_points = manifold.get_coordinates().squeeze()
 
     # if viewer is not None:
     #     if properties['name'] not in viewer.layers:

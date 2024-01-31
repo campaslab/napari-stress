@@ -1693,7 +1693,9 @@ class manifold(object):
         # print("Manifold Constucted"+"\n") # BJG: should add verbose option
 
     def get_coordinates(self):
-        return np.stack([self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts]).transpose()
+        return (
+            np.stack([self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts]).transpose().squeeze()
+        )
 
     ######### Vector (& Derivs) of Manifold, Normals, 2-form Convs #####################
 

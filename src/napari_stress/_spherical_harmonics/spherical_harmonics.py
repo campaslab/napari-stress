@@ -359,7 +359,7 @@ def calculate_mean_curvature_on_manifold(
     normals = get_normals_on_manifold(manifold, lebedev_fit)
 
     # Test orientation:
-    points = manifold.get_coordinates()
+    points = manifold.get_coordinates().squeeze()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
     # Makre sure orientation is inward, so H is positive
