@@ -229,7 +229,7 @@ def expand_points_on_ellipse(
         elliptical_to_cartesian,
     )
 
-    U, V = cartesian_to_elliptical(fitted_ellipsoid, pointcloud)
-    points_on_fitted_ellipse = elliptical_to_cartesian(U, V, fitted_ellipsoid)
+    U, V = cartesian_to_elliptical(fitted_ellipsoid, pointcloud, invert=True)
+    points_on_fitted_ellipse = elliptical_to_cartesian(U, V, fitted_ellipsoid, invert=True)
 
     return points_on_fitted_ellipse
