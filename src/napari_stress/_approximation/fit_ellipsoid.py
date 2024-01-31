@@ -8,9 +8,13 @@ import numpy as np
 
 import deprecation
 
-@deprecation.deprecated(deprecated_in="0.3.3", current_version=__version__,
-                        removed_in="0.4.0",
-                        details="Use approximateion.EllipseExpander instead.")
+
+@deprecation.deprecated(
+    deprecated_in="0.3.3",
+    current_version=__version__,
+    removed_in="0.4.0",
+    details="Use approximateion.EllipseExpander instead.",
+)
 def least_squares_ellipsoid(points: PointsData) -> VectorsData:
     """
     Fit ellipsoid to points with a last-squares approach.
@@ -38,9 +42,13 @@ def least_squares_ellipsoid(points: PointsData) -> VectorsData:
 
     return ellipsoid
 
-@deprecation.deprecated(deprecated_in="0.3.3", current_version=__version__,
-                        removed_in="0.4.0",
-                        details="Use approximateion.EllipseExpander instead.")
+
+@deprecation.deprecated(
+    deprecated_in="0.3.3",
+    current_version=__version__,
+    removed_in="0.4.0",
+    details="Use approximateion.EllipseExpander instead.",
+)
 def fit_ellipsoid_to_points(
     points: "napari.types.PointsData",
 ) -> "napari.types.VectorsData":
@@ -71,9 +79,13 @@ def fit_ellipsoid_to_points(
 
     return ellipsoid_coefficients
 
-@deprecation.deprecated(deprecated_in="0.3.3", current_version=__version__,
-                        removed_in="0.4.0",
-                        details="Use approximateion.EllipseExpander instead.")
+
+@deprecation.deprecated(
+    deprecated_in="0.3.3",
+    current_version=__version__,
+    removed_in="0.4.0",
+    details="Use approximateion.EllipseExpander instead.",
+)
 def fit_ellipsoid(coefficients):
     # Construct the augmented matrix from the coefficients
     Amat = np.array(
@@ -170,9 +182,13 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
 
     return np.stack([points, grad_F_X_normed]).transpose((1, 0, 2))
 
-@deprecation.deprecated(deprecated_in="0.3.3", current_version=__version__,
-                        removed_in="0.4.0",
-                        details="Use approximateion.EllipseExpander instead.")
+
+@deprecation.deprecated(
+    deprecated_in="0.3.3",
+    current_version=__version__,
+    removed_in="0.4.0",
+    details="Use approximateion.EllipseExpander instead.",
+)
 def _solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
     """
     Fit ellipsoid polynomial equation.
@@ -213,9 +229,13 @@ def _solve_ellipsoid_polynomial(points: PointsData) -> np.ndarray:
 
     return eansa
 
-@deprecation.deprecated(deprecated_in="0.3.3", current_version=__version__,
-                        removed_in="0.4.0",
-                        details="Use approximateion.EllipseExpander instead.")
+
+@deprecation.deprecated(
+    deprecated_in="0.3.3",
+    current_version=__version__,
+    removed_in="0.4.0",
+    details="Use approximateion.EllipseExpander instead.",
+)
 def expand_points_on_ellipse(
     fitted_ellipsoid: VectorsData, pointcloud: PointsData
 ) -> PointsData:
@@ -243,6 +263,8 @@ def expand_points_on_ellipse(
     )
 
     U, V = cartesian_to_elliptical(fitted_ellipsoid, pointcloud, invert=True)
-    points_on_fitted_ellipse = elliptical_to_cartesian(U, V, fitted_ellipsoid, invert=True)
+    points_on_fitted_ellipse = elliptical_to_cartesian(
+        U, V, fitted_ellipsoid, invert=True
+    )
 
     return points_on_fitted_ellipse
