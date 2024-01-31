@@ -6,8 +6,11 @@ from .fit_ellipsoid import (
     normals_on_ellipsoid,
 )
 
+from .expansion import EllipsoidExpander
+
 __all__ = [
     "least_squares_ellipsoid",
     "expand_points_on_ellipse",
     "normals_on_ellipsoid",
+    "EllipsoidExpander",
 ]
