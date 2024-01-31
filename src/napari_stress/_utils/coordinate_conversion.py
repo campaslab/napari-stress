@@ -9,11 +9,11 @@ def _center_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
 
 def _axes_lengths_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
     # first, get lengths of ellipsoid axes:
-    return np.linalg.norm(ellipsoid[:, 1], axis=0)
+    return np.linalg.norm(ellipsoid[:, 1], axis=1)
 
 
 def _orientation_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
-    return ellipsoid[:, 1] / np.linalg.norm(ellipsoid[:, 1], axis=0)
+    return ellipsoid[:, 1] / np.linalg.norm(ellipsoid[:, 1], axis=1)
 
 
 def polynomial_to_parameters3D(coefficients: np.ndarray):
