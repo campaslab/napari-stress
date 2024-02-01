@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Installation issues &#8212; Napari-stress documentation</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04_FAQ/Installation';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -160,7 +163,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -405,10 +419,10 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="installation-issues">
-<span id="faq-installation"></span><h1>Installation issues<a class="headerlink" href="#installation-issues" title="Permalink to this heading">#</a></h1>
+<span id="faq-installation"></span><h1>Installation issues<a class="headerlink" href="#installation-issues" title="Link to this heading">#</a></h1>
 <p>In this section you find some known installation issues and how to fix them.</p>
 <section id="installation-failing-on-mac">
-<h2>Installation failing on Mac<a class="headerlink" href="#installation-failing-on-mac" title="Permalink to this heading">#</a></h2>
+<h2>Installation failing on Mac<a class="headerlink" href="#installation-failing-on-mac" title="Link to this heading">#</a></h2>
 <p id="faq-installation-xcode">When pip-installing napari-stress on M1 or M2 Macs, you may encounter the following error message (<a class="reference external" href="https://forum.image.sc/t/napari-stress-problem-loading-some-dependancies/73758">link to report</a>):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ImportError:<span class="w"> </span>dlopen<span class="o">(</span>/Users/manon/opt/anaconda3/envs/napari-stress/lib/python3.9/site-packages/open3d/cpu/pybind.cpython-39-darwin.so,<span class="w"> </span>0x0002<span class="o">)</span>:<span class="w"> </span>Library<span class="w"> </span>not<span class="w"> </span>loaded:<span class="w"> </span><span class="s1">&#39;/usr/local/opt/libomp/lib/libomp.dylib&#39;</span>
 Referenced<span class="w"> </span>from:<span class="w"> </span><span class="s1">&#39;/Users/xxxx/opt/anaconda3/envs/napari-stress/lib/python3.9/site-packages/open3d/cpu/pybind.cpython-39-darwin.so&#39;</span>
@@ -418,7 +432,7 @@ Reason:<span class="w"> </span>tried:<span class="w"> </span><span class="s1">&#
 <p>In order to fix this issue, please update the XCode tools on your Mac as described <a class="reference external" href="https://stackoverflow.com/questions/52522565/git-is-not-working-after-macos-update-xcrun-error-invalid-active-developer-pa">here</a>.</p>
 </section>
 <section id="pygeodesic-installation-fail">
-<h2>Pygeodesic installation fail<a class="headerlink" href="#pygeodesic-installation-fail" title="Permalink to this heading">#</a></h2>
+<h2>Pygeodesic installation fail<a class="headerlink" href="#pygeodesic-installation-fail" title="Link to this heading">#</a></h2>
 <p>On some Macs, the <code class="docutils literal notranslate"><span class="pre">pygeodesic</span></code> package fails to install with this error message:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>building<span class="w"> </span>‘pygeodesic.geodesic’<span class="w"> </span>extension
 creating<span class="w"> </span>build/temp.macosx-10.9-x86_64-cpython-39
@@ -441,7 +455,7 @@ hint:<span class="w"> </span>See<span class="w"> </span>above<span class="w"> </
 <p>Similar to <a class="reference internal" href="#faq-installation-xcode"><span class="std std-ref">this issue</span></a>, this problem can be fixed by updating the XCode command line tools on your Mac as described above.</p>
 </section>
 <section id="oserror-windows-during-installation">
-<h2>OSError (Windows) during installation<a class="headerlink" href="#oserror-windows-during-installation" title="Permalink to this heading">#</a></h2>
+<h2>OSError (Windows) during installation<a class="headerlink" href="#oserror-windows-during-installation" title="Link to this heading">#</a></h2>
 <p>This describes how to fix the following error:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ERROR: Could not install packages due to an OSError: [WinError 5] Access is denied: &#39;C:\\Users\\xxx\\AppData\\Local\\Temp\\pip-uninstall-f7qla__t\\jupyter-trust.exe&#39;
 Consider using the `--user` option or check the permissions.
@@ -542,7 +556,7 @@ By Johannes Soltwedel
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

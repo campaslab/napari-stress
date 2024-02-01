@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Analyze everything &#8212; Napari-stress documentation</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '01_code_usage/01_toolboxes/demo_analyze_everything';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -160,7 +163,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -430,7 +444,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analyze-everything">
-<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Permalink to this heading">#</a></h1>
+<span id="toolboxes-analyze-everything"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Link to this heading">#</a></h1>
 <p>This notebook demonstrates how to run a complete STRESS analysis and produce all relevant output graphs. If you want to download this notebook and execute it locally on your machine, download this file as a <code class="docutils literal notranslate"><span class="pre">ipynb</span></code> Jupyter notebook file and run it in your local python environment using the download button at the top of this page.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -455,6 +469,13 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
@@ -462,7 +483,7 @@ document.write(`
 </div>
 </div>
 <section id="load-the-data">
-<h2>Load the data<a class="headerlink" href="#load-the-data" title="Permalink to this heading">#</a></h2>
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Link to this heading">#</a></h2>
 <p>Replace the following code with the commented out part (and remove the rest) below to load your own data for analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -478,7 +499,7 @@ document.write(`
 </div>
 </div>
 <section id="data-dimensions">
-<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this heading">#</a></h3>
+<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Link to this heading">#</a></h3>
 <p>You need to set a few parameters pertaining to your data:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -491,9 +512,21 @@ document.write(`
 </div>
 </div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;raw&#39; at 0x16bcf27b370&gt;
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="analysis-parameters">
-<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Permalink to this heading">#</a></h3>
+<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Link to this heading">#</a></h3>
 <p>In case you ran the reconstruction previously interactively from the napari viewer (as explained <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>) and exported the settings, you can import the settings here, too. To do so, simply uncomment the line below (remove the <code class="docutils literal notranslate"><span class="pre">#</span></code>) and provide the path to the saved settings file:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -521,8 +554,8 @@ document.write(`
     <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="s1">&#39;fancy&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;fancy&#39; or &#39;quick&#39;</span>
     <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="s1">&#39;interior&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;interior&#39; or &#39;surface&#39;</span>
-    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-    <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="s1">&#39;linear&#39;</span><span class="p">,</span>  <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
     <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -530,7 +563,7 @@ document.write(`
 
 <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>  <span class="c1"># spherical harmonics degree</span>
-    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">434</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
+    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">590</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
     <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">}</span>  <span class="c1"># interfacial tension of droplet</span>
 <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
 </pre></div>
@@ -549,33 +582,7 @@ document.write(`
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="analysis">
-<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this heading">#</a></h1>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;image&#39; at 0x1ab5827ee50&gt;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
+<h1>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h1>
 <p>We run the reconstruction and the stress analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -588,7 +595,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:58280&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -609,7 +616,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:58280&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -690,6 +697,13 @@ document.write(`
 </div>
 </div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p>To make handling further down easier, we store all data and metadata in a few simple dataframes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -702,7 +716,7 @@ document.write(`
 </div>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="visualization">
-<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h1>
+<h1>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h1>
 <p>In this section, we will plot some interesting results and save the data to disk. The file location will be at the</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -712,6 +726,13 @@ document.write(`
     <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
     <span class="n">n_frames</span><span class="o">=</span><span class="n">n_frames</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>01-Feb-24 00:01:33 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+01-Feb-24 00:01:34 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+01-Feb-24 00:01:36 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>
@@ -733,7 +754,7 @@ document.write(`
 </div>
 </div>
 <section id="fit-errors">
-<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Permalink to this heading">#</a></h2>
+<h2>Fit errors<a class="headerlink" href="#fit-errors" title="Link to this heading">#</a></h2>
 <p>We first show all the errors that were calculated during the pointcloud refinement:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -784,101 +805,101 @@ document.write(`
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>10.078734</td>
-      <td>185.026230</td>
-      <td>-1.293870</td>
-      <td>-3.176896</td>
-      <td>8.790393e-19</td>
-      <td>0.039644</td>
-      <td>4.949525</td>
-      <td>0.051631</td>
-      <td>0.931247</td>
-      <td>1.656268</td>
-      <td>1.039348</td>
-      <td>15.512122</td>
-      <td>0.003528</td>
-      <td>-5.647097</td>
-      <td>10.078734</td>
+      <td>15.190590</td>
+      <td>186.590676</td>
+      <td>-0.637550</td>
+      <td>-1.769709</td>
+      <td>5.090815e-18</td>
+      <td>0.074060</td>
+      <td>4.265049</td>
+      <td>0.016540</td>
+      <td>0.540916</td>
+      <td>0.816536</td>
+      <td>0.992969</td>
+      <td>1.037978</td>
+      <td>0.000211</td>
+      <td>-8.465725</td>
+      <td>15.190590</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>9.994986</td>
-      <td>177.677651</td>
-      <td>-1.290982</td>
-      <td>-1.746494</td>
-      <td>1.249346e-18</td>
-      <td>0.039008</td>
-      <td>4.649751</td>
-      <td>0.048972</td>
-      <td>0.893158</td>
-      <td>1.456703</td>
-      <td>1.039850</td>
-      <td>15.846914</td>
-      <td>0.003462</td>
-      <td>-5.665806</td>
-      <td>9.994986</td>
+      <td>14.926727</td>
+      <td>178.492325</td>
+      <td>-0.643215</td>
+      <td>-0.984888</td>
+      <td>3.771187e-17</td>
+      <td>0.068326</td>
+      <td>3.992880</td>
+      <td>0.015777</td>
+      <td>0.502648</td>
+      <td>0.788083</td>
+      <td>1.019120</td>
+      <td>0.820574</td>
+      <td>0.000164</td>
+      <td>-8.716182</td>
+      <td>14.926727</td>
       <td>0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>10.047399</td>
-      <td>165.771369</td>
-      <td>-1.254640</td>
-      <td>0.570991</td>
-      <td>5.288825e-21</td>
-      <td>0.030352</td>
-      <td>3.427686</td>
-      <td>0.036084</td>
-      <td>0.632925</td>
-      <td>1.057619</td>
-      <td>1.067304</td>
-      <td>9.112638</td>
-      <td>0.001753</td>
-      <td>-6.346661</td>
-      <td>10.047399</td>
+      <td>14.959481</td>
+      <td>164.666211</td>
+      <td>-0.611056</td>
+      <td>0.510714</td>
+      <td>3.991062e-14</td>
+      <td>0.105730</td>
+      <td>6.152544</td>
+      <td>0.023461</td>
+      <td>0.702990</td>
+      <td>1.345746</td>
+      <td>1.070382</td>
+      <td>1.026360</td>
+      <td>0.000201</td>
+      <td>-8.513504</td>
+      <td>14.959481</td>
       <td>0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>9.916528</td>
-      <td>193.255861</td>
-      <td>-1.268593</td>
-      <td>-4.532889</td>
-      <td>3.184175e-16</td>
-      <td>0.040298</td>
-      <td>5.073571</td>
-      <td>0.048039</td>
-      <td>1.003252</td>
-      <td>1.572305</td>
-      <td>0.893322</td>
-      <td>23.273296</td>
-      <td>0.005133</td>
-      <td>-5.272148</td>
-      <td>9.916528</td>
+      <td>14.830856</td>
+      <td>195.543753</td>
+      <td>-0.631073</td>
+      <td>-2.641501</td>
+      <td>7.447230e-20</td>
+      <td>0.054265</td>
+      <td>3.331564</td>
+      <td>0.013456</td>
+      <td>0.390239</td>
+      <td>0.794023</td>
+      <td>0.885630</td>
+      <td>3.340005</td>
+      <td>0.000650</td>
+      <td>-7.338394</td>
+      <td>14.830856</td>
       <td>0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>10.089293</td>
-      <td>162.822238</td>
-      <td>-1.283923</td>
-      <td>0.636131</td>
-      <td>5.820165e-17</td>
-      <td>0.035624</td>
-      <td>3.993077</td>
-      <td>0.045057</td>
-      <td>0.734985</td>
-      <td>1.269362</td>
-      <td>1.054800</td>
-      <td>8.324991</td>
-      <td>0.001650</td>
-      <td>-6.406691</td>
-      <td>10.089293</td>
+      <td>15.206147</td>
+      <td>158.597999</td>
+      <td>-0.628247</td>
+      <td>1.100596</td>
+      <td>9.382679e-18</td>
+      <td>0.110401</td>
+      <td>5.953907</td>
+      <td>0.021396</td>
+      <td>0.762282</td>
+      <td>0.967384</td>
+      <td>1.059356</td>
+      <td>8.197669</td>
+      <td>0.001653</td>
+      <td>-6.404902</td>
+      <td>15.206147</td>
       <td>0</td>
     </tr>
     <tr>
@@ -902,108 +923,108 @@ document.write(`
       <td>...</td>
     </tr>
     <tr>
-      <th>15327</th>
-      <td>724</td>
-      <td>9.981528</td>
-      <td>186.846862</td>
-      <td>-1.330305</td>
-      <td>-5.374804</td>
-      <td>2.227535e-20</td>
-      <td>0.022160</td>
-      <td>2.396995</td>
-      <td>0.026184</td>
-      <td>0.523345</td>
-      <td>0.622494</td>
-      <td>1.171448</td>
-      <td>18.268088</td>
-      <td>0.003611</td>
-      <td>-5.623770</td>
-      <td>9.981528</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>15328</th>
-      <td>725</td>
-      <td>9.964223</td>
-      <td>170.293715</td>
-      <td>-1.269859</td>
-      <td>-3.526373</td>
-      <td>2.210641e-19</td>
-      <td>0.056924</td>
-      <td>6.506348</td>
-      <td>0.057069</td>
-      <td>1.541861</td>
-      <td>1.524380</td>
-      <td>1.025318</td>
-      <td>18.192430</td>
-      <td>0.004120</td>
-      <td>-5.491821</td>
-      <td>9.964223</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>15329</th>
+      <th>15466</th>
       <td>726</td>
-      <td>9.931492</td>
-      <td>195.555717</td>
-      <td>-1.231771</td>
-      <td>-6.902258</td>
-      <td>4.727212e-01</td>
-      <td>0.010384</td>
-      <td>1.080617</td>
-      <td>0.011518</td>
-      <td>0.198995</td>
-      <td>0.342508</td>
-      <td>1.092538</td>
-      <td>11.617848</td>
-      <td>0.002359</td>
-      <td>-6.049447</td>
-      <td>9.931492</td>
+      <td>15.006962</td>
+      <td>171.272077</td>
+      <td>-0.631978</td>
+      <td>-2.080011</td>
+      <td>1.284121e-20</td>
+      <td>0.049272</td>
+      <td>2.690719</td>
+      <td>0.012635</td>
+      <td>0.306373</td>
+      <td>0.670693</td>
+      <td>1.099160</td>
+      <td>3.606373</td>
+      <td>0.000788</td>
+      <td>-7.146100</td>
+      <td>15.006962</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>15330</th>
+      <th>15467</th>
       <td>727</td>
-      <td>9.931746</td>
-      <td>172.997568</td>
-      <td>-1.289292</td>
-      <td>-3.641066</td>
-      <td>6.200124e-15</td>
-      <td>0.036146</td>
-      <td>3.607780</td>
-      <td>0.039000</td>
-      <td>0.780804</td>
-      <td>0.882290</td>
-      <td>1.377617</td>
-      <td>16.077625</td>
-      <td>0.003526</td>
-      <td>-5.647468</td>
-      <td>9.931746</td>
+      <td>14.811968</td>
+      <td>202.240041</td>
+      <td>-0.577040</td>
+      <td>-4.562579</td>
+      <td>2.586749e-21</td>
+      <td>0.084006</td>
+      <td>4.682874</td>
+      <td>0.011969</td>
+      <td>0.693325</td>
+      <td>0.679159</td>
+      <td>1.010812</td>
+      <td>3.527341</td>
+      <td>0.000697</td>
+      <td>-7.268336</td>
+      <td>14.811968</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>15331</th>
+      <th>15468</th>
       <td>728</td>
-      <td>10.034654</td>
-      <td>183.124743</td>
-      <td>-1.277000</td>
-      <td>-5.057036</td>
-      <td>2.733309e-21</td>
-      <td>0.020255</td>
-      <td>2.027836</td>
-      <td>0.024662</td>
-      <td>0.365454</td>
-      <td>0.663016</td>
-      <td>NaN</td>
-      <td>11.039712</td>
-      <td>0.002430</td>
-      <td>-6.020011</td>
-      <td>10.034654</td>
+      <td>14.788477</td>
+      <td>172.161817</td>
+      <td>-0.637328</td>
+      <td>-1.547502</td>
+      <td>8.964412e-17</td>
+      <td>0.072624</td>
+      <td>4.005649</td>
+      <td>0.016042</td>
+      <td>0.517047</td>
+      <td>0.768873</td>
+      <td>1.088644</td>
+      <td>1.571945</td>
+      <td>0.000319</td>
+      <td>-8.050002</td>
+      <td>14.788477</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>15469</th>
+      <td>729</td>
+      <td>14.855324</td>
+      <td>182.943367</td>
+      <td>-0.622595</td>
+      <td>-2.827291</td>
+      <td>2.077865e-21</td>
+      <td>0.045157</td>
+      <td>2.570799</td>
+      <td>0.010947</td>
+      <td>0.299882</td>
+      <td>0.622296</td>
+      <td>1.092942</td>
+      <td>2.640551</td>
+      <td>0.000544</td>
+      <td>-7.517404</td>
+      <td>14.855324</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>15470</th>
+      <td>730</td>
+      <td>14.846577</td>
+      <td>195.132127</td>
+      <td>-0.609866</td>
+      <td>-3.446526</td>
+      <td>4.244949e-20</td>
+      <td>0.078359</td>
+      <td>4.697219</td>
+      <td>0.016085</td>
+      <td>0.605184</td>
+      <td>0.961180</td>
+      <td>1.073644</td>
+      <td>2.717995</td>
+      <td>0.000511</td>
+      <td>-7.579925</td>
+      <td>14.846577</td>
       <td>20</td>
     </tr>
   </tbody>
 </table>
-<p>15332 rows × 17 columns</p>
+<p>15471 rows × 17 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1023,14 +1044,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/8440b8430323f450ee57b2c6997e23982d30f0ac072e3c47bbf3484acf042296.png" src="../../_images/8440b8430323f450ee57b2c6997e23982d30f0ac072e3c47bbf3484acf042296.png" />
+<img alt="../../_images/6c1b9e478d25d30d1658535f000e9800a8f83268129859bfb17a1429c892cd14.png" src="../../_images/6c1b9e478d25d30d1658535f000e9800a8f83268129859bfb17a1429c892cd14.png" />
 </div>
 </div>
 </section>
 <section id="spherical-harmonics">
-<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Permalink to this heading">#</a></h2>
+<h2>Spherical harmonics<a class="headerlink" href="#spherical-harmonics" title="Link to this heading">#</a></h2>
 <section id="fit-residue">
-<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Permalink to this heading">#</a></h3>
+<h3>Fit residue<a class="headerlink" href="#fit-residue" title="Link to this heading">#</a></h3>
 <p>We now show the errors made when approximating the reconstructed pointcloud with the spherical harmonics:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1043,12 +1064,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ba3e9506523c018ed6bfd7e1fe3e073f4bb50984baca94a3d7b1af08c8f02635.png" src="../../_images/ba3e9506523c018ed6bfd7e1fe3e073f4bb50984baca94a3d7b1af08c8f02635.png" />
+<img alt="../../_images/90c7cf3de72b2ccadcb58553ca606028809514c864a59b2fb8e9a02db325ac4a.png" src="../../_images/90c7cf3de72b2ccadcb58553ca606028809514c864a59b2fb8e9a02db325ac4a.png" />
 </div>
 </div>
 </section>
 <section id="fit-quality">
-<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Permalink to this heading">#</a></h3>
+<h3>Fit quality<a class="headerlink" href="#fit-quality" title="Link to this heading">#</a></h3>
 <p>We can quantify the quality of the extracted pointcloud by using the absolute and relative Gauss-Bonnet errors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1061,13 +1082,13 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/7c581fa72815d50f3c8aa3a8cbeb119a15939f2f9cea74e06ca34611ad214203.png" src="../../_images/7c581fa72815d50f3c8aa3a8cbeb119a15939f2f9cea74e06ca34611ad214203.png" />
+<img alt="../../_images/57662f0bc45906d51498a4d1785ea51f8985e6a847fdcb0b747797b122e256b8.png" src="../../_images/57662f0bc45906d51498a4d1785ea51f8985e6a847fdcb0b747797b122e256b8.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="curvature">
-<h2>Curvature<a class="headerlink" href="#curvature" title="Permalink to this heading">#</a></h2>
+<h2>Curvature<a class="headerlink" href="#curvature" title="Link to this heading">#</a></h2>
 <p>We next show mean curvature histograms and averages over time:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1085,7 +1106,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ffdd7c7c73610333f0d085a9045a2f86c82076ead1c375e5edda993dd8a698d1.png" src="../../_images/ffdd7c7c73610333f0d085a9045a2f86c82076ead1c375e5edda993dd8a698d1.png" />
+<img alt="../../_images/471719cea214ad533180b66fe4dca83d6da5661b82384714a066c4b4b9121e2d.png" src="../../_images/471719cea214ad533180b66fe4dca83d6da5661b82384714a066c4b4b9121e2d.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1099,7 +1120,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/8bc8f006d9343be334fb4002c276efd35afbb8657443a45e90325cd56cadfad0.png" src="../../_images/8bc8f006d9343be334fb4002c276efd35afbb8657443a45e90325cd56cadfad0.png" />
+<img alt="../../_images/df3c94eeaff32854bda140c848279bc730c0561542e3f42ca1462d4bcb6b4730.png" src="../../_images/df3c94eeaff32854bda140c848279bc730c0561542e3f42ca1462d4bcb6b4730.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1113,12 +1134,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/bb1b45664ca4973dd27389e51a5f1af66829909396c4feab5c86b6acda38ade4.png" src="../../_images/bb1b45664ca4973dd27389e51a5f1af66829909396c4feab5c86b6acda38ade4.png" />
+<img alt="../../_images/c85fff58c1ed079e8362635356272a034ef759ebf6829d08e6e2c5d9479c0d60.png" src="../../_images/c85fff58c1ed079e8362635356272a034ef759ebf6829d08e6e2c5d9479c0d60.png" />
 </div>
 </div>
 </section>
 <section id="tissue-scale-stresses">
-<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Permalink to this heading">#</a></h2>
+<h2>Tissue-scale stresses<a class="headerlink" href="#tissue-scale-stresses" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_tissue_stress&#39;</span><span class="p">]</span>
@@ -1130,12 +1151,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/0a8bd196a2075fc8e1fe98454058ec46a2cd91fdf2fbe31bdc17437c76d64214.png" src="../../_images/0a8bd196a2075fc8e1fe98454058ec46a2cd91fdf2fbe31bdc17437c76d64214.png" />
+<img alt="../../_images/9be88957da2e1b8b0df860be106243614617d83cdd19056acde91c030b0a7dbe.png" src="../../_images/9be88957da2e1b8b0df860be106243614617d83cdd19056acde91c030b0a7dbe.png" />
 </div>
 </div>
 </section>
 <section id="stress-along-axes">
-<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Permalink to this heading">#</a></h2>
+<h2>Stress along axes<a class="headerlink" href="#stress-along-axes" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_stress_tensor&#39;</span><span class="p">]</span>
@@ -1147,12 +1168,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" src="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" />
+<img alt="../../_images/d56bc4843077a1cf77f138347b526b994cbbae24a8031ba1bb3c96dee9486707.png" src="../../_images/d56bc4843077a1cf77f138347b526b994cbbae24a8031ba1bb3c96dee9486707.png" />
 </div>
 </div>
 </section>
 <section id="extrema-analysis">
-<h2>Extrema analysis<a class="headerlink" href="#extrema-analysis" title="Permalink to this heading">#</a></h2>
+<h2>Extrema analysis<a class="headerlink" href="#extrema-analysis" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_all_pairs&#39;</span><span class="p">]</span>
@@ -1164,12 +1185,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" src="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" />
+<img alt="../../_images/be129c89210e14619a4d4992190e7dfeee3907afef05047a9db63e338bdb6a5b.png" src="../../_images/be129c89210e14619a4d4992190e7dfeee3907afef05047a9db63e338bdb6a5b.png" />
 </div>
 </div>
 </section>
 <section id="autocorrelations-spatial">
-<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Permalink to this heading">#</a></h2>
+<h2>Autocorrelations: Spatial<a class="headerlink" href="#autocorrelations-spatial" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_spatial_autocorrelation&#39;</span><span class="p">]</span>
@@ -1181,12 +1202,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" src="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" />
+<img alt="../../_images/9d4a275d66d0dd77a5308e9710ada6ded8e0ed7caa496d70e146cf737a7acaf7.png" src="../../_images/9d4a275d66d0dd77a5308e9710ada6ded8e0ed7caa496d70e146cf737a7acaf7.png" />
 </div>
 </div>
 </section>
 <section id="autocorrelations-temporal">
-<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Permalink to this heading">#</a></h2>
+<h2>Autocorrelations: Temporal<a class="headerlink" href="#autocorrelations-temporal" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_temporal_autocorrelation&#39;</span><span class="p">]</span>
@@ -1198,12 +1219,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" src="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" />
+<img alt="../../_images/5f5d3bc9a51d39ad160c220395a7226c46bab66533d31070d40fa0f403abc8d5.png" src="../../_images/5f5d3bc9a51d39ad160c220395a7226c46bab66533d31070d40fa0f403abc8d5.png" />
 </div>
 </div>
 </section>
 <section id="ellipsoid-deviation">
-<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsoid deviation<a class="headerlink" href="#ellipsoid-deviation" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">figures_dict</span><span class="p">[</span><span class="s1">&#39;fig_ellipsoid_contribution&#39;</span><span class="p">]</span>
@@ -1215,12 +1236,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" src="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" />
+<img alt="../../_images/49a3ddb858e2b12a2c14b141b21c93fc91ed6e51c67de6281e2c194fc2a54ae1.png" src="../../_images/49a3ddb858e2b12a2c14b141b21c93fc91ed6e51c67de6281e2c194fc2a54ae1.png" />
 </div>
 </div>
 </section>
 <section id="droplet-movement">
-<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Permalink to this heading">#</a></h2>
+<h2>Droplet movement<a class="headerlink" href="#droplet-movement" title="Link to this heading">#</a></h2>
 <p>This analyzes how much the center of the droplet moves over time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1235,15 +1256,15 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" src="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" />
+<img alt="../../_images/8d268ecf07dea6420f47eceb00a76856b58964d853fae6ede7070862192f0646.png" src="../../_images/8d268ecf07dea6420f47eceb00a76856b58964d853fae6ede7070862192f0646.png" />
 </div>
 </div>
 </section>
 <section id="export-data">
-<h2>Export data<a class="headerlink" href="#export-data" title="Permalink to this heading">#</a></h2>
+<h2>Export data<a class="headerlink" href="#export-data" title="Link to this heading">#</a></h2>
 <p>We first agregate the data from the spatial autocorrelations in a separate dataframe. This dataframe has a column for autocorrelations of total, cell and tissue-scale stresses.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1264,18 +1285,6 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>
@@ -1399,7 +1408,7 @@ By Johannes Soltwedel
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Validation &#8212; Napari-stress documentation</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../_static/design-tabs.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04_FAQ/validation/analyze_validation';</script>
@@ -162,7 +165,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -428,7 +442,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="validation">
-<span id="validation-theoretical-analysis"></span><h1>Validation<a class="headerlink" href="#validation" title="Permalink to this heading">#</a></h1>
+<span id="validation-theoretical-analysis"></span><h1>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h1>
 <p>This notebook will perform a theoretical analysis of measured curvatures on an ideal ellipsoid. In the second part, it compares the outputs of measurements done with napari-stress to those of the legacy-version <a class="reference external" href="https://github.com/campaslab/STRESS">STRESS</a> as well as .</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -446,14 +460,14 @@ document.write(`
 </div>
 </div>
 <section id="benchmarking">
-<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h2>
+<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Link to this heading">#</a></h2>
 <p>In this section, we benchmark the performance of napari-stress. This is done by performing two tests on synthetic image data of a blurry ellipsoid:</p>
 <ul class="simple">
 <li><p>We reconstruct the pointcloud with napari-stress. We then measure the deviation of the recovered point cloud from the original pointcloud.</p></li>
 <li><p>We measure the mean curvatures of the ellipsoid with napari-stress. We then compare the measured mean curvatures to the theoretical mean curvatures of the same ellipsoid.</p></li>
 </ul>
 <section id="relative-deviation-of-pointcloud">
-<h3>Relative deviation of pointcloud<a class="headerlink" href="#relative-deviation-of-pointcloud" title="Permalink to this heading">#</a></h3>
+<h3>Relative deviation of pointcloud<a class="headerlink" href="#relative-deviation-of-pointcloud" title="Link to this heading">#</a></h3>
 <p>In the next cell, we create a list of major axis lengths for which we want to calculate the theoretical mean curvatures. The different set of major axis lengths is used to test the robustness of the mean curvature calculation and corresponds to ellipsoids of different aspect ratios.</p>
 <p>The relative deviation of the pointcloud is calculated as the average deviation of every traced point from its corresponding correct location in x,y and z divided by the respective point’s true location in x,y and z. In order to calculate the corresponding location of a point on the surface of a given ellipsoid, we transform both te query point and the ellipsoid into a coordinate system where the ellipsoid is centered at the origin and has major axes lengths of 1. In this coordinate system, the location of a point on the surface of the ellipsoid can be found by calculating its coordinates in polar coordinates; its elevation and azimuth can be kept and the radius is replaced by the major axis length of the ellipsoid. The point is then transformed back into the original coordinate system.</p>
 <p>In formulas:</p>
@@ -580,7 +594,7 @@ document.write(`
 </div>
 </section>
 <section id="relative-and-absolute-mean-curvature-deviation">
-<h3>Relative and absolute mean curvature deviation<a class="headerlink" href="#relative-and-absolute-mean-curvature-deviation" title="Permalink to this heading">#</a></h3>
+<h3>Relative and absolute mean curvature deviation<a class="headerlink" href="#relative-and-absolute-mean-curvature-deviation" title="Link to this heading">#</a></h3>
 <p>Mean curvature <span class="math notranslate nohighlight">\(H\)</span> on an ellipse is given by the <a class="reference external" href="https://mathworld.wolfram.com/Ellipsoid.html">following formula</a>:</p>
 <p><span class="math notranslate nohighlight">\(H = \frac{a b c [3(a^2+b^2) + 2c^2 + (a^2 + b^2 -2c^2)cos(2\phi) - 2(a^2 - b^2)cos(2\theta)sin^2(\phi)]}{8[a^2b^2cos^2(\phi) + c^2(b^2 cos^2(\theta) + a^2 sin^2 (\theta)) sin^2\phi]^{3/2}}\)</span></p>
 <p>where a, b and c are the major axis length of the ellipsoid. The angles <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span> denote the location on the surface of the ellipsoid in polar coordinates (azimuth <span class="math notranslate nohighlight">\(\theta \in [0, 2\pi]\)</span>, elevation <span class="math notranslate nohighlight">\(\phi \in [0, \pi]\)</span>). We can thus compare all measurements of mean curvature on an ellipsoid to the “true” mean curvature.</p>
@@ -669,7 +683,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="legacy-validation">
-<h1>Legacy validation<a class="headerlink" href="#legacy-validation" title="Permalink to this heading">#</a></h1>
+<h1>Legacy validation<a class="headerlink" href="#legacy-validation" title="Link to this heading">#</a></h1>
 <p>In this section, we compare the results of the legacy version of STRESS to the results of napari-stress using the same synthetic data.</p>
 <p>We compare <strong>three analysis workflows</strong>:</p>
 <ul class="simple">
@@ -683,7 +697,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 <li><p>Ideal ellipsoid</p></li>
 </ul>
 <section id="comparisons">
-<h2>Comparisons:<a class="headerlink" href="#comparisons" title="Permalink to this heading">#</a></h2>
+<h2>Comparisons:<a class="headerlink" href="#comparisons" title="Link to this heading">#</a></h2>
 <p>For all workflows, we compare the following quantities:</p>
 <ul class="simple">
 <li><p>The reconstructed pointcloud: Since the reconstructed object should be perfectly spherical, we can convert the reconstructed pointcloud coordinates to <a class="reference external" href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> and compare the distribution of radii of both reconstructions.</p></li>
@@ -699,7 +713,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="sphere">
-<h2>Sphere<a class="headerlink" href="#sphere" title="Permalink to this heading">#</a></h2>
+<h2>Sphere<a class="headerlink" href="#sphere" title="Link to this heading">#</a></h2>
 <p>We begin with comparing measurements for the ideal sphere. For this we load the data that was created with all listed measurement approaches:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -717,7 +731,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </div>
 <section id="radii">
-<h3>Radii<a class="headerlink" href="#radii" title="Permalink to this heading">#</a></h3>
+<h3>Radii<a class="headerlink" href="#radii" title="Link to this heading">#</a></h3>
 <p>To better compare the two pointcouds visually, we can convert both to relative coordinates by subtracting the pointcloud’s center from every point:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -777,7 +791,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="mean-curvatures">
-<h3>Mean curvatures<a class="headerlink" href="#mean-curvatures" title="Permalink to this heading">#</a></h3>
+<h3>Mean curvatures<a class="headerlink" href="#mean-curvatures" title="Link to this heading">#</a></h3>
 <p>Here, we compare the measured mean curvatures for each of the above-described workflows. We can observe that the mean curvatures for the workflows “napari_stress_analysis_and_stress_pointcloud” and “stress_analysis_and_stress_pointcloud” overlap perfectly. This indicates that any differences between the napari-stress implementation and the legacy version of STRESS are due to the reconstruction of the pointcloud.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -808,7 +822,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="compare-stresses">
-<h3>Compare stresses<a class="headerlink" href="#compare-stresses" title="Permalink to this heading">#</a></h3>
+<h3>Compare stresses<a class="headerlink" href="#compare-stresses" title="Link to this heading">#</a></h3>
 <p>Here we compare total/cell/tissue stresses for the three workflows:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -851,7 +865,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </section>
 </section>
 <section id="ellipsoid">
-<h2>Ellipsoid<a class="headerlink" href="#ellipsoid" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsoid<a class="headerlink" href="#ellipsoid" title="Link to this heading">#</a></h2>
 <p>In this section, we repeat the analysis workflow from above for synthetic data of an ellipsoid with major axis lengths of <code class="docutils literal notranslate"><span class="pre">(20,</span> <span class="pre">15,</span> <span class="pre">15)</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -868,8 +882,8 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </div>
 <section id="id1">
-<h3>Mean curvatures<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
-<p>We now plot the distribution of mean curvatures on the synthetic ellipsoid for the three experimental workflows described above.  It is not clear whether the process of creating the synthetic image data delivers an ellipsoid image with the same major axis lengths which were used to create the initial pointcloud (see <a class="reference internal" href="create_validation_data.html"><span class="doc std std-doc">this notebook</span></a>).</p>
+<h3>Mean curvatures<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>We now plot the distribution of mean curvatures on the synthetic ellipsoid for the three experimental workflows described above.  It is not clear whether the process of creating the synthetic image data delivers an ellipsoid image with the same major axis lengths which were used to create the initial pointcloud (see <a class="reference internal" href="create_validation_data.html"><span class="std std-doc">this notebook</span></a>).</p>
 <p>Hence, we compare the measured mean curvatures with both the originally used major axis lenghts (<code class="docutils literal notranslate"><span class="pre">20,</span> <span class="pre">15,</span> <span class="pre">15</span></code>) as well as with the axis lengths of the pointclouds that were recovered with the respective methods:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -914,7 +928,7 @@ Error in PyGeodesicAlgorithmExact.geodesicDistances: zero-size array to reductio
 </div>
 </section>
 <section id="total-stress">
-<h3>Total stress<a class="headerlink" href="#total-stress" title="Permalink to this heading">#</a></h3>
+<h3>Total stress<a class="headerlink" href="#total-stress" title="Link to this heading">#</a></h3>
 <p>We plot the same curve for total stress:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1059,7 +1073,7 @@ By Johannes Soltwedel
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
