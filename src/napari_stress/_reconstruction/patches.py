@@ -320,7 +320,7 @@ def _estimate_patch_radii(
     -------
     patch_radii : np.ndarray
     """
-    from .._approximation import least_squares_ellipsoid
+    from .._approximation import EllipsoidExpander
     from .._measurements import curvature_on_ellipsoid
     from ..types import (
         _METADATAKEY_PRINCIPAL_CURVATURES1,
@@ -329,8 +329,9 @@ def _estimate_patch_radii(
 
     if k1 is None:
         # measure curvature on fitted patches first: Approximate by ellipsoid
-
-        ellipsoid = least_squares_ellipsoid(pointcloud)
+        expander = EllipsoidExpander()
+        expander.fit(pointcloud)
+        ellipsoid = expander.coefficients_
         curvatures = curvature_on_ellipsoid(ellipsoid, pointcloud)[1]["features"]
         principal_curvatures = [
             curvatures[key]
