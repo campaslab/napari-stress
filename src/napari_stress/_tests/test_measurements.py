@@ -580,10 +580,11 @@ def test_curvature3():
 
     pointcloud = get_droplet_point_cloud_4d()[0][0]
 
-    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
-    approximated_pointcloud = approximation.expand_points_on_ellipse(
-        ellipsoid, pointcloud
-    )
+    expander = approximation.EllipsoidExpander()
+    expander.fit(pointcloud[:, 1:])
+
+    ellipsoid = expander.coefficients_
+    approximated_pointcloud = expander.expand(pointcloud[:, 1:])
     curvature = measurements.curvature_on_ellipsoid(ellipsoid, approximated_pointcloud)
 
     assert curvature is not None

@@ -13,8 +13,7 @@ def _axes_lengths_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
 
 
 def _orientation_from_ellipsoid(ellipsoid: VectorsData) -> np.ndarray:
-    lengths = _axes_lengths_from_ellipsoid(ellipsoid)
-    return ellipsoid[:, 1] / lengths[:, None]
+    return ellipsoid[:, 1] / np.linalg.norm(ellipsoid[:, 1], axis=1)
 
 
 def polynomial_to_parameters3D(coefficients: np.ndarray):
@@ -84,14 +83,16 @@ def polynomial_to_parameters3D(coefficients: np.ndarray):
 
 
 # Convert input R^3 points into Ellipsoidal coors:
-def cartesian_to_elliptical(ellipsoid: VectorsData, points: PointsData) -> np.ndarray:
-    # first, get lengths of ellipsoid axes:
+def cartesian_to_elliptical(
+    ellipsoid: VectorsData, points: PointsData, invert: bool = False
+) -> np.ndarray:
+    # get center, axes lengths and rientation of ellipsoid
+    center = ellipsoid[0, 0]
     lengths = np.linalg.norm(ellipsoid[:, 1], axis=1)
+    R_inverse = ellipsoid[:, 1] / lengths[:, None]
 
-    # get center of ellipsoid
-    center = _center_from_ellipsoid(ellipsoid)
-    lengths = _axes_lengths_from_ellipsoid(ellipsoid)
-    R_inverse = _orientation_from_ellipsoid(ellipsoid).T
+    if invert:
+        R_inverse = R_inverse.T
 
     n_points = len(points)
     U_coors_calc = np.zeros((n_points, 1))
@@ -132,11 +133,18 @@ def cartesian_to_elliptical(ellipsoid: VectorsData, points: PointsData) -> np.nd
 
 # Convert Ellipsoidal Coordinates to R^3 points:
 def elliptical_to_cartesian(
-    U_pts_cloud: np.ndarray, V_pts_cloud: np.ndarray, ellipsoid: VectorsData
+    U_pts_cloud: np.ndarray,
+    V_pts_cloud: np.ndarray,
+    ellipsoid: VectorsData,
+    invert: bool = False,
 ) -> PointsData:
-    R_inverse = _orientation_from_ellipsoid(ellipsoid).T
-    lengths = _axes_lengths_from_ellipsoid(ellipsoid)
-    center = _center_from_ellipsoid(ellipsoid)
+    # get center, axes lengths and orientation of ellipsoid
+    LS_Ellps_center = ellipsoid[0, 0]
+    LS_Ellps_axes = np.linalg.norm(ellipsoid[:, 1], axis=1)
+    LS_Ellps_Inv_Rot_Mat = ellipsoid[:, 1] / LS_Ellps_axes[:, None]
+
+    if invert:
+        LS_Ellps_Inv_Rot_Mat = LS_Ellps_Inv_Rot_Mat.T
 
     num_pts_used = len(U_pts_cloud)
     X_LS_Ellps_calc_pts = np.zeros((num_pts_used, 1))
@@ -146,20 +154,26 @@ def elliptical_to_cartesian(
     for pt_test in range(num_pts_used):  # pt_test_theta in range(num_test_pts_per_dim):
         theta_tp = U_pts_cloud[pt_test, 0]  # theta_pts[pt_test_theta]
         phi_tp = V_pts_cloud[pt_test, 0]  # phi_pts[pt_test_phi]
-        pt = np.array(
-            [
-                [np.sin(phi_tp) * np.cos(theta_tp)],
-                [np.sin(phi_tp) * np.sin(theta_tp)],
-                [np.cos(phi_tp)],
-            ]
-        )
+
         Test_pt = np.dot(
-            R_inverse, np.multiply(pt, lengths.reshape(3, 1))
-        ) + center.reshape(3, 1)
+            LS_Ellps_Inv_Rot_Mat,
+            np.multiply(
+                np.array(
+                    [
+                        [np.sin(phi_tp) * np.cos(theta_tp)],
+                        [np.sin(phi_tp) * np.sin(theta_tp)],
+                        [np.cos(phi_tp)],
+                    ]
+                ),
+                LS_Ellps_axes.reshape(3, 1),
+            ),
+        ) + LS_Ellps_center.reshape(3, 1)
 
         X_LS_Ellps_calc_pts[pt_test, 0] = Test_pt[0, 0]
         Y_LS_Ellps_calc_pts[pt_test, 0] = Test_pt[1, 0]
         Z_LS_Ellps_calc_pts[pt_test, 0] = Test_pt[2, 0]
 
-    pts = np.stack([X_LS_Ellps_calc_pts, Y_LS_Ellps_calc_pts, Z_LS_Ellps_calc_pts])
-    return pts.squeeze().transpose()
+    points_expanded = np.stack(
+        [X_LS_Ellps_calc_pts, Y_LS_Ellps_calc_pts, Z_LS_Ellps_calc_pts], axis=1
+    ).squeeze()
+    return points_expanded

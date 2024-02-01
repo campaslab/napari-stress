@@ -96,11 +96,11 @@ contributions:
       title: Move points along vector (absolute)
 
     - id: napari-stress.fit_lsq_ellipsoid
-      python_name: napari_stress.approximation:least_squares_ellipsoid
+      python_name: napari_stress.approximation:fit_ellipsoid_to_pointcloud
       title: Fit least squares ellipsoid
 
     - id: napari-stress.expand_ellipsoid
-      python_name: napari_stress.approximation:expand_points_on_ellipse
+      python_name: napari_stress.approximation:expand_points_on_fitted_ellipsoid
       title: Expand points on ellipsoid
 
     - id: napari-stress.pairwise_distance
