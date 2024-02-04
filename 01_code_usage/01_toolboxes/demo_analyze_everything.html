@@ -240,7 +240,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../04_FAQ/Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/validation_stress_paper.html">Napari-stress validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/analyze_validation.html">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/analyze_validation.html">Technical validation</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/create_validation_data.html">Create synthetic validation data</a></li>
 </ul>
@@ -473,6 +473,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -514,12 +519,12 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">voxel_size_z</span><span class="p">,</span> <span class="n">voxel_size_y</span><span class="p">,</span> <span class="n">voxel_size_x</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;droplet&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;raw&#39; at 0x16bcf27b370&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;droplet&#39; at 0x1cc5d3c7640&gt;
 </pre></div>
 </div>
 </div>
@@ -550,20 +555,20 @@ document.write(`
     <span class="s1">&#39;smoothing_sigma&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s1">&#39;n_smoothing_iterations&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
     <span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
-    <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;n_tracing_iterations&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
     <span class="s1">&#39;resampling_length&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s1">&#39;fit_type&#39;</span><span class="p">:</span> <span class="s1">&#39;fancy&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;fancy&#39; or &#39;quick&#39;</span>
     <span class="s1">&#39;edge_type&#39;</span><span class="p">:</span> <span class="s1">&#39;interior&#39;</span><span class="p">,</span>   <span class="c1"># can be &#39;interior&#39; or &#39;surface&#39;</span>
-    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s1">&#39;trace_length&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
     <span class="s1">&#39;sampling_distance&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="s1">&#39;linear&#39;</span><span class="p">,</span>  <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
+    <span class="s1">&#39;interpolation_method&#39;</span><span class="p">:</span>  <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="c1"># can be &#39;linear&#39; &#39;cubic&#39; or &#39;nearest&#39;</span>
     <span class="s1">&#39;outlier_tolerance&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
     <span class="s1">&#39;remove_outliers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s1">&#39;return_intermediate_results&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
 <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>  <span class="c1"># spherical harmonics degree</span>
-    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">590</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5180)</span>
+    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">5810</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5810)</span>
     <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">}</span>  <span class="c1"># interfacial tension of droplet</span>
 <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
 </pre></div>
@@ -583,6 +588,13 @@ document.write(`
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="analysis">
 <h1>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p>We run the reconstruction and the stress analysis:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -595,7 +607,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:58280&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:2771&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -616,7 +628,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:58280&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:2771&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -697,13 +709,6 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_frames</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
 <p>To make handling further down easier, we store all data and metadata in a few simple dataframes</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -726,13 +731,6 @@ document.write(`
     <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
     <span class="n">n_frames</span><span class="o">=</span><span class="n">n_frames</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>01-Feb-24 00:01:33 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-01-Feb-24 00:01:34 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-01-Feb-24 00:01:36 - matplotlib.legend - WARNING  - No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>
@@ -805,101 +803,101 @@ document.write(`
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>15.190590</td>
-      <td>186.590676</td>
-      <td>-0.637550</td>
-      <td>-1.769709</td>
-      <td>5.090815e-18</td>
-      <td>0.074060</td>
-      <td>4.265049</td>
-      <td>0.016540</td>
-      <td>0.540916</td>
-      <td>0.816536</td>
-      <td>0.992969</td>
-      <td>1.037978</td>
-      <td>0.000211</td>
-      <td>-8.465725</td>
-      <td>15.190590</td>
+      <td>20.038060</td>
+      <td>176.410074</td>
+      <td>-0.673943</td>
+      <td>-1.168319</td>
+      <td>5.635342e-21</td>
+      <td>0.046692</td>
+      <td>2.582523</td>
+      <td>0.012938</td>
+      <td>0.307836</td>
+      <td>0.566715</td>
+      <td>1.099935</td>
+      <td>20.258588</td>
+      <td>0.004435</td>
+      <td>-5.418269</td>
+      <td>20.038060</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>14.926727</td>
-      <td>178.492325</td>
-      <td>-0.643215</td>
-      <td>-0.984888</td>
-      <td>3.771187e-17</td>
-      <td>0.068326</td>
-      <td>3.992880</td>
-      <td>0.015777</td>
-      <td>0.502648</td>
-      <td>0.788083</td>
-      <td>1.019120</td>
-      <td>0.820574</td>
-      <td>0.000164</td>
-      <td>-8.716182</td>
-      <td>14.926727</td>
+      <td>20.022970</td>
+      <td>163.568574</td>
+      <td>-0.638402</td>
+      <td>0.379484</td>
+      <td>5.801871e-20</td>
+      <td>0.047045</td>
+      <td>2.415064</td>
+      <td>0.011208</td>
+      <td>0.275461</td>
+      <td>0.485907</td>
+      <td>1.096523</td>
+      <td>6.303079</td>
+      <td>0.001248</td>
+      <td>-6.686001</td>
+      <td>20.022970</td>
       <td>0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>14.959481</td>
-      <td>164.666211</td>
-      <td>-0.611056</td>
-      <td>0.510714</td>
-      <td>3.991062e-14</td>
-      <td>0.105730</td>
-      <td>6.152544</td>
-      <td>0.023461</td>
-      <td>0.702990</td>
-      <td>1.345746</td>
-      <td>1.070382</td>
-      <td>1.026360</td>
-      <td>0.000201</td>
-      <td>-8.513504</td>
-      <td>14.959481</td>
+      <td>20.025373</td>
+      <td>193.241882</td>
+      <td>-0.673261</td>
+      <td>-2.377305</td>
+      <td>1.105363e-18</td>
+      <td>0.044558</td>
+      <td>2.653163</td>
+      <td>0.012399</td>
+      <td>0.321597</td>
+      <td>0.599573</td>
+      <td>1.118844</td>
+      <td>33.818727</td>
+      <td>0.007118</td>
+      <td>-4.945125</td>
+      <td>20.025373</td>
       <td>0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>14.830856</td>
-      <td>195.543753</td>
-      <td>-0.631073</td>
-      <td>-2.641501</td>
-      <td>7.447230e-20</td>
-      <td>0.054265</td>
-      <td>3.331564</td>
-      <td>0.013456</td>
-      <td>0.390239</td>
-      <td>0.794023</td>
-      <td>0.885630</td>
-      <td>3.340005</td>
-      <td>0.000650</td>
-      <td>-7.338394</td>
-      <td>14.830856</td>
+      <td>20.025144</td>
+      <td>163.228150</td>
+      <td>-0.641118</td>
+      <td>0.257747</td>
+      <td>1.050280e-21</td>
+      <td>0.047898</td>
+      <td>2.453388</td>
+      <td>0.011553</td>
+      <td>0.280831</td>
+      <td>0.497366</td>
+      <td>1.031139</td>
+      <td>10.032599</td>
+      <td>0.002014</td>
+      <td>-6.207605</td>
+      <td>20.025144</td>
       <td>0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>15.206147</td>
-      <td>158.597999</td>
-      <td>-0.628247</td>
-      <td>1.100596</td>
-      <td>9.382679e-18</td>
-      <td>0.110401</td>
-      <td>5.953907</td>
-      <td>0.021396</td>
-      <td>0.762282</td>
-      <td>0.967384</td>
-      <td>1.059356</td>
-      <td>8.197669</td>
-      <td>0.001653</td>
-      <td>-6.404902</td>
-      <td>15.206147</td>
+      <td>20.003002</td>
+      <td>176.165984</td>
+      <td>-0.670779</td>
+      <td>-0.900805</td>
+      <td>3.894165e-20</td>
+      <td>0.048619</td>
+      <td>2.688891</td>
+      <td>0.013215</td>
+      <td>0.319999</td>
+      <td>0.577805</td>
+      <td>1.076209</td>
+      <td>10.776100</td>
+      <td>0.002299</td>
+      <td>-6.075363</td>
+      <td>20.003002</td>
       <td>0</td>
     </tr>
     <tr>
@@ -923,108 +921,108 @@ document.write(`
       <td>...</td>
     </tr>
     <tr>
-      <th>15466</th>
+      <th>15363</th>
+      <td>725</td>
+      <td>19.998929</td>
+      <td>197.393986</td>
+      <td>-0.627523</td>
+      <td>-3.770775</td>
+      <td>3.674853e-01</td>
+      <td>0.018869</td>
+      <td>0.962047</td>
+      <td>0.004784</td>
+      <td>0.103862</td>
+      <td>0.237850</td>
+      <td>1.031559</td>
+      <td>17.381213</td>
+      <td>0.003572</td>
+      <td>-5.634499</td>
+      <td>19.998929</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>15364</th>
       <td>726</td>
-      <td>15.006962</td>
-      <td>171.272077</td>
-      <td>-0.631978</td>
-      <td>-2.080011</td>
-      <td>1.284121e-20</td>
-      <td>0.049272</td>
-      <td>2.690719</td>
-      <td>0.012635</td>
-      <td>0.306373</td>
-      <td>0.670693</td>
-      <td>1.099160</td>
-      <td>3.606373</td>
-      <td>0.000788</td>
-      <td>-7.146100</td>
-      <td>15.006962</td>
+      <td>20.040515</td>
+      <td>171.130068</td>
+      <td>-0.677091</td>
+      <td>-1.781954</td>
+      <td>9.062434e-27</td>
+      <td>0.029972</td>
+      <td>1.458708</td>
+      <td>0.009370</td>
+      <td>0.152389</td>
+      <td>0.390393</td>
+      <td>1.131636</td>
+      <td>18.180630</td>
+      <td>0.003845</td>
+      <td>-5.560944</td>
+      <td>20.040515</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>15467</th>
+      <th>15365</th>
       <td>727</td>
-      <td>14.811968</td>
-      <td>202.240041</td>
-      <td>-0.577040</td>
-      <td>-4.562579</td>
-      <td>2.586749e-21</td>
-      <td>0.084006</td>
-      <td>4.682874</td>
-      <td>0.011969</td>
-      <td>0.693325</td>
-      <td>0.679159</td>
-      <td>1.010812</td>
-      <td>3.527341</td>
-      <td>0.000697</td>
-      <td>-7.268336</td>
-      <td>14.811968</td>
+      <td>19.995650</td>
+      <td>179.673155</td>
+      <td>-0.667468</td>
+      <td>-2.447227</td>
+      <td>5.983036e-22</td>
+      <td>0.025293</td>
+      <td>1.271881</td>
+      <td>0.007640</td>
+      <td>0.134070</td>
+      <td>0.340887</td>
+      <td>1.085063</td>
+      <td>15.463419</td>
+      <td>0.003340</td>
+      <td>-5.701835</td>
+      <td>19.995650</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>15468</th>
+      <th>15366</th>
       <td>728</td>
-      <td>14.788477</td>
-      <td>172.161817</td>
-      <td>-0.637328</td>
-      <td>-1.547502</td>
-      <td>8.964412e-17</td>
-      <td>0.072624</td>
-      <td>4.005649</td>
-      <td>0.016042</td>
-      <td>0.517047</td>
-      <td>0.768873</td>
-      <td>1.088644</td>
-      <td>1.571945</td>
-      <td>0.000319</td>
-      <td>-8.050002</td>
-      <td>14.788477</td>
+      <td>19.992451</td>
+      <td>192.269614</td>
+      <td>-0.652319</td>
+      <td>-3.107447</td>
+      <td>1.783490e-16</td>
+      <td>0.023568</td>
+      <td>1.246877</td>
+      <td>0.006769</td>
+      <td>0.131455</td>
+      <td>0.335429</td>
+      <td>1.074865</td>
+      <td>19.436407</td>
+      <td>0.003839</td>
+      <td>-5.562531</td>
+      <td>19.992451</td>
       <td>20</td>
     </tr>
     <tr>
-      <th>15469</th>
+      <th>15367</th>
       <td>729</td>
-      <td>14.855324</td>
-      <td>182.943367</td>
-      <td>-0.622595</td>
-      <td>-2.827291</td>
-      <td>2.077865e-21</td>
-      <td>0.045157</td>
-      <td>2.570799</td>
-      <td>0.010947</td>
-      <td>0.299882</td>
-      <td>0.622296</td>
-      <td>1.092942</td>
-      <td>2.640551</td>
-      <td>0.000544</td>
-      <td>-7.517404</td>
-      <td>14.855324</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <th>15470</th>
-      <td>730</td>
-      <td>14.846577</td>
-      <td>195.132127</td>
-      <td>-0.609866</td>
-      <td>-3.446526</td>
-      <td>4.244949e-20</td>
-      <td>0.078359</td>
-      <td>4.697219</td>
-      <td>0.016085</td>
-      <td>0.605184</td>
-      <td>0.961180</td>
-      <td>1.073644</td>
-      <td>2.717995</td>
-      <td>0.000511</td>
-      <td>-7.579925</td>
-      <td>14.846577</td>
+      <td>20.031781</td>
+      <td>169.547019</td>
+      <td>-0.675956</td>
+      <td>-1.752051</td>
+      <td>1.256208e-20</td>
+      <td>0.030450</td>
+      <td>1.467549</td>
+      <td>0.009474</td>
+      <td>0.153349</td>
+      <td>0.391578</td>
+      <td>NaN</td>
+      <td>19.566017</td>
+      <td>0.004307</td>
+      <td>-5.447400</td>
+      <td>20.031781</td>
       <td>20</td>
     </tr>
   </tbody>
 </table>
-<p>15471 rows × 17 columns</p>
+<p>15368 rows × 17 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1044,7 +1042,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/6c1b9e478d25d30d1658535f000e9800a8f83268129859bfb17a1429c892cd14.png" src="../../_images/6c1b9e478d25d30d1658535f000e9800a8f83268129859bfb17a1429c892cd14.png" />
+<img alt="../../_images/73b2e58dff8f8f4a944bbaab4b549eb665387927f2733ebdb025f662739ceb58.png" src="../../_images/73b2e58dff8f8f4a944bbaab4b549eb665387927f2733ebdb025f662739ceb58.png" />
 </div>
 </div>
 </section>
@@ -1064,7 +1062,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/90c7cf3de72b2ccadcb58553ca606028809514c864a59b2fb8e9a02db325ac4a.png" src="../../_images/90c7cf3de72b2ccadcb58553ca606028809514c864a59b2fb8e9a02db325ac4a.png" />
+<img alt="../../_images/3b228998247e9a3a8c8ae5377482945af478bc76fb23d7a98b47b95f61e2bb87.png" src="../../_images/3b228998247e9a3a8c8ae5377482945af478bc76fb23d7a98b47b95f61e2bb87.png" />
 </div>
 </div>
 </section>
@@ -1082,7 +1080,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/57662f0bc45906d51498a4d1785ea51f8985e6a847fdcb0b747797b122e256b8.png" src="../../_images/57662f0bc45906d51498a4d1785ea51f8985e6a847fdcb0b747797b122e256b8.png" />
+<img alt="../../_images/397e70409c3470bf4d8fc233de79837660cf86040e6f7969d4edd8df061342cf.png" src="../../_images/397e70409c3470bf4d8fc233de79837660cf86040e6f7969d4edd8df061342cf.png" />
 </div>
 </div>
 </section>
@@ -1106,7 +1104,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/471719cea214ad533180b66fe4dca83d6da5661b82384714a066c4b4b9121e2d.png" src="../../_images/471719cea214ad533180b66fe4dca83d6da5661b82384714a066c4b4b9121e2d.png" />
+<img alt="../../_images/3eb3f32f208ab543c30ed2adec8748be932ba415e2123455c0bdafc8e0848477.png" src="../../_images/3eb3f32f208ab543c30ed2adec8748be932ba415e2123455c0bdafc8e0848477.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1120,7 +1118,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/df3c94eeaff32854bda140c848279bc730c0561542e3f42ca1462d4bcb6b4730.png" src="../../_images/df3c94eeaff32854bda140c848279bc730c0561542e3f42ca1462d4bcb6b4730.png" />
+<img alt="../../_images/b2be64b43bf4f47ecc48d7e327cbac6a5cfe56d409e7adf9767fb27b13b4a1fd.png" src="../../_images/b2be64b43bf4f47ecc48d7e327cbac6a5cfe56d409e7adf9767fb27b13b4a1fd.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1134,7 +1132,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/c85fff58c1ed079e8362635356272a034ef759ebf6829d08e6e2c5d9479c0d60.png" src="../../_images/c85fff58c1ed079e8362635356272a034ef759ebf6829d08e6e2c5d9479c0d60.png" />
+<img alt="../../_images/1c8fefd349523c0880f3974f0311521384183c02cd5c46f24a13ea71f0c75d88.png" src="../../_images/1c8fefd349523c0880f3974f0311521384183c02cd5c46f24a13ea71f0c75d88.png" />
 </div>
 </div>
 </section>
@@ -1151,7 +1149,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/9be88957da2e1b8b0df860be106243614617d83cdd19056acde91c030b0a7dbe.png" src="../../_images/9be88957da2e1b8b0df860be106243614617d83cdd19056acde91c030b0a7dbe.png" />
+<img alt="../../_images/07546cbd483e7578804e7c45c27815808dfebb661bc7c7e0a397924555457501.png" src="../../_images/07546cbd483e7578804e7c45c27815808dfebb661bc7c7e0a397924555457501.png" />
 </div>
 </div>
 </section>
@@ -1168,7 +1166,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/d56bc4843077a1cf77f138347b526b994cbbae24a8031ba1bb3c96dee9486707.png" src="../../_images/d56bc4843077a1cf77f138347b526b994cbbae24a8031ba1bb3c96dee9486707.png" />
+<img alt="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" src="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" />
 </div>
 </div>
 </section>
@@ -1185,7 +1183,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/be129c89210e14619a4d4992190e7dfeee3907afef05047a9db63e338bdb6a5b.png" src="../../_images/be129c89210e14619a4d4992190e7dfeee3907afef05047a9db63e338bdb6a5b.png" />
+<img alt="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" src="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" />
 </div>
 </div>
 </section>
@@ -1202,7 +1200,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/9d4a275d66d0dd77a5308e9710ada6ded8e0ed7caa496d70e146cf737a7acaf7.png" src="../../_images/9d4a275d66d0dd77a5308e9710ada6ded8e0ed7caa496d70e146cf737a7acaf7.png" />
+<img alt="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" src="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" />
 </div>
 </div>
 </section>
@@ -1219,7 +1217,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/5f5d3bc9a51d39ad160c220395a7226c46bab66533d31070d40fa0f403abc8d5.png" src="../../_images/5f5d3bc9a51d39ad160c220395a7226c46bab66533d31070d40fa0f403abc8d5.png" />
+<img alt="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" src="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" />
 </div>
 </div>
 </section>
@@ -1236,7 +1234,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/49a3ddb858e2b12a2c14b141b21c93fc91ed6e51c67de6281e2c194fc2a54ae1.png" src="../../_images/49a3ddb858e2b12a2c14b141b21c93fc91ed6e51c67de6281e2c194fc2a54ae1.png" />
+<img alt="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" src="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" />
 </div>
 </div>
 </section>
@@ -1256,10 +1254,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/8d268ecf07dea6420f47eceb00a76856b58964d853fae6ede7070862192f0646.png" src="../../_images/8d268ecf07dea6420f47eceb00a76856b58964d853fae6ede7070862192f0646.png" />
+<img alt="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" src="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" />
 </div>
 </div>
 </section>
@@ -1285,6 +1283,18 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>

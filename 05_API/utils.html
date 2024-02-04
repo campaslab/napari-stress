@@ -239,7 +239,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04_FAQ/Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/validation_stress_paper.html">Napari-stress validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Technical validation</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/create_validation_data.html">Create synthetic validation data</a></li>
 </ul>
@@ -380,7 +380,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -396,6 +398,22 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter.data_to_list_of_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.data_to_list_of_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter.list_of_data_to_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.list_of_data_to_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.compile_data_from_layers"><code class="docutils literal notranslate"><span class="pre">compile_data_from_layers()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.export_settings"><code class="docutils literal notranslate"><span class="pre">export_settings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.frame_by_frame"><code class="docutils literal notranslate"><span class="pre">frame_by_frame()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.import_settings"><code class="docutils literal notranslate"><span class="pre">import_settings()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -405,8 +423,210 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="utilities-module">
-<h1><cite>Utilities module</cite><a class="headerlink" href="#utilities-module" title="Link to this heading">#</a></h1>
+  <section id="module-napari_stress.utils">
+<span id="utilities-module"></span><h1><cite>Utilities module</cite><a class="headerlink" href="#module-napari_stress.utils" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stress.utils.TimelapseConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stress.utils.</span></span><span class="sig-name descname"><span class="pre">TimelapseConverter</span></span><a class="headerlink" href="#napari_stress.utils.TimelapseConverter" title="Link to this definition">#</a></dt>
+<dd><p>This class allows converting napari 4D layer data between different formats.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.utils.TimelapseConverter.data_to_list_of_data">
+<span class="sig-name descname"><span class="pre">data_to_list_of_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layertype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#napari_stress.utils.TimelapseConverter.data_to_list_of_data" title="Link to this definition">#</a></dt>
+<dd><p>Convert 4D data into a list of 3D data frames</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>4D data to be converted</em>) – </p></li>
+<li><p><strong>layertype</strong> (layerdata type. Can be any of ‘PointsData’, <cite>SurfaceData</cite>,) – </p></li>
+<li><p><strong>ImageData</strong> – </p></li>
+<li><p><strong>LabelsData</strong> – </p></li>
+<li><p><strong>List</strong><strong>[</strong><strong>LayerDataTuple</strong><strong>]</strong> – </p></li>
+<li><p><strong>or</strong> (<em>LayerDataTuple</em>) – </p></li>
+<li><p><strong>pd.DataFrame.</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – Error to indicate that the converter does not support the passed
+    layertype</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list</strong></p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of 3D objects of input layertype</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.utils.TimelapseConverter.list_of_data_to_data">
+<span class="sig-name descname"><span class="pre">list_of_data_to_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layertype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.utils.TimelapseConverter.list_of_data_to_data" title="Link to this definition">#</a></dt>
+<dd><p>Function to convert a list of 3D frames into 4D data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em><em> of </em><em>3D data</em><em> (</em><em>time</em><em>)</em><em>frames</em>) – </p></li>
+<li><p><strong>layertype</strong> (layerdata type. Can be any of ‘PointsData’, <cite>SurfaceData</cite>,) – </p></li>
+<li><p><strong>ImageData</strong> – </p></li>
+<li><p><strong>LabelsData</strong> – </p></li>
+<li><p><strong>List</strong><strong>[</strong><strong>LayerDataTuple</strong><strong>]</strong> – </p></li>
+<li><p><strong>or</strong> (<em>LayerDataTuple</em>) – </p></li>
+<li><p><strong>pd.DataFrame.</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – Error to indicate that the converter does not support the passed
+    layertype</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>4D data of type <cite>layertype</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.utils.compile_data_from_layers">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.utils.</span></span><span class="sig-name descname"><span class="pre">compile_data_from_layers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_stress_analysis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#napari_stress.utils.compile_data_from_layers" title="Link to this definition">#</a></dt>
+<dd><p>Compile data from the results of the stress analysis into a list of
+dataframes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_stress_analysis</strong> (<em>list</em>) – List of tuples containing the results of the stress analysis</p></li>
+<li><p><strong>n_frames</strong> (<em>int</em>) – Number of frames in the data</p></li>
+<li><p><strong>time_step</strong> (<em>float</em>) – Time step between frames</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul>
+<li><p><strong>df_over_time</strong> (<em>pd.DataFrame</em>) – Dataframe containing the singular values results, e.g. results
+from the stress analysis that refer to a single value per frame.
+Columns:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>time<span class="classifier">float</span></dt><dd><p>Time of the frame</p>
+</dd>
+</dl>
+<p>etc.</p>
+</div></blockquote>
+</li>
+<li><p><strong>df_nearest_pairs</strong> (<em>pd.DataFrame</em>) – Dataframe containing the nearest pair extrema results.
+Columns:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>time<span class="classifier">float</span></dt><dd><p>Time of the frame</p>
+</dd>
+<dt>nearest_pair_distance<span class="classifier">float</span></dt><dd><p>Distance between the nearest pairs of extrema</p>
+</dd>
+<dt>nearest_pair_anisotropy<span class="classifier">float</span></dt><dd><p>Stress Anisotropy of the nearest pair</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>df_all_pairs</strong> (<em>pd.DataFrame</em>) – Dataframe containing the all pair extrema results.
+Columns:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>time<span class="classifier">float</span></dt><dd><p>Time of the frame</p>
+</dd>
+<dt>all_pair_distance<span class="classifier">float</span></dt><dd><p>Distance between all pairs of extrema</p>
+</dd>
+<dt>all_pair_anisotropy<span class="classifier">float</span></dt><dd><p>Stress Anisotropy of all pairs</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>df_autocorrelations</strong> (<em>pd.DataFrame</em>) – Dataframe containing the spatial autocorrelation results.
+Columns:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>time<span class="classifier">float</span></dt><dd><p>Time of the frame</p>
+</dd>
+<dt>distances<span class="classifier">float</span></dt><dd><p>Distances at which the autocorrelation was calculated</p>
+</dd>
+<dt>autocorrelation_total<span class="classifier">float</span></dt><dd><p>Autocorrelation of the total stress</p>
+</dd>
+<dt>autocorrelation_cell<span class="classifier">float</span></dt><dd><p>Autocorrelation of the cell stress</p>
+</dd>
+<dt>autocorrelation_tissue<span class="classifier">float</span></dt><dd><p>Autocorrelation of the tissue stress</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.utils.export_settings">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.utils.</span></span><span class="sig-name descname"><span class="pre">export_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#napari_stress.utils.export_settings" title="Link to this definition">#</a></dt>
+<dd><p>Export settings to yaml file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>settings</strong> (<em>dict</em>) – Dictionary of settings</p></li>
+<li><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) – Parent widget for dialog, by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.utils.frame_by_frame">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.utils.</span></span><span class="sig-name descname"><span class="pre">frame_by_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_bar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.utils.frame_by_frame" title="Link to this definition">#</a></dt>
+<dd><p>Decorator to apply a function frame by frame to 4D data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> (<em>callable</em>) – <p>Function to be wrapped. If the optional argument <cite>use_dask</cite> is passed
+to the function, the function will be parallelized using dask:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@frame_by_frame</span><span class="p">(</span><span class="n">some_function</span><span class="p">)(</span><span class="n">argument1</span><span class="p">,</span> <span class="n">argument2</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Note</em>: For this to work, the arguments (e.g., the input data) must not be passed as keyword
+argument. I.e., this works:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@frame_by_frame</span><span class="p">(</span><span class="n">some_function</span><span class="p">)(</span><span class="n">argument1</span><span class="p">,</span> <span class="n">argument2</span><span class="p">,</span> <span class="n">some_keyword</span><span class="o">=</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This does not work:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@frame_by_frame</span><span class="p">(</span><span class="n">some_function</span><span class="p">)(</span><span class="n">image1</span><span class="o">=</span><span class="n">argument1</span><span class="p">,</span> <span class="n">image2</span><span class="o">=</span><span class="n">argument2</span><span class="p">,</span> <span class="n">some_keyword</span><span class="o">=</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="n">use_dask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>progress_bar</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show progress bar, by default False. Has no effect if <cite>use_dask=True</cite> is passed as an argument
+to the input function <cite>function</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wrapped function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.utils.import_settings">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.utils.</span></span><span class="sig-name descname"><span class="pre">import_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stress.utils.import_settings" title="Link to this definition">#</a></dt>
+<dd><p>Import settings from yaml file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> (<em>QWidget</em><em>, </em><em>optional</em>) – Parent widget for dialog, by default None</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of settings</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -455,7 +675,28 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter.data_to_list_of_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.data_to_list_of_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.TimelapseConverter.list_of_data_to_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.list_of_data_to_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.compile_data_from_layers"><code class="docutils literal notranslate"><span class="pre">compile_data_from_layers()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.export_settings"><code class="docutils literal notranslate"><span class="pre">export_settings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.frame_by_frame"><code class="docutils literal notranslate"><span class="pre">frame_by_frame()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.utils.import_settings"><code class="docutils literal notranslate"><span class="pre">import_settings()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

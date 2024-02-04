@@ -240,7 +240,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04_FAQ/Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/validation_stress_paper.html">Napari-stress validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Technical validation</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/create_validation_data.html">Create synthetic validation data</a></li>
 </ul>
@@ -410,11 +410,63 @@ document.write(`
 <h1><cite>napari_stress</cite><a class="headerlink" href="#napari-stress" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="measurements.html"><cite>Measurements module</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="measurements.html"><cite>Measurements module</cite></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.anisotropic_stress"><code class="docutils literal notranslate"><span class="pre">anisotropic_stress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.average_mean_curvatures_on_manifold"><code class="docutils literal notranslate"><span class="pre">average_mean_curvatures_on_manifold()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.calculate_anisotropy"><code class="docutils literal notranslate"><span class="pre">calculate_anisotropy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.calculate_mean_curvature_on_manifold"><code class="docutils literal notranslate"><span class="pre">calculate_mean_curvature_on_manifold()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_pointcloud"><code class="docutils literal notranslate"><span class="pre">calculate_patch_fitted_curvature_on_pointcloud()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface"><code class="docutils literal notranslate"><span class="pre">calculate_patch_fitted_curvature_on_surface()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.comprehensive_analysis"><code class="docutils literal notranslate"><span class="pre">comprehensive_analysis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.correlation_on_surface"><code class="docutils literal notranslate"><span class="pre">correlation_on_surface()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.curvature_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">curvature_on_ellipsoid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.deviation_from_ellipsoidal_mode"><code class="docutils literal notranslate"><span class="pre">deviation_from_ellipsoidal_mode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.distance_to_k_nearest_neighbors"><code class="docutils literal notranslate"><span class="pre">distance_to_k_nearest_neighbors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.gauss_bonnet_test"><code class="docutils literal notranslate"><span class="pre">gauss_bonnet_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.geodesic_distance_matrix"><code class="docutils literal notranslate"><span class="pre">geodesic_distance_matrix()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.geodesic_path"><code class="docutils literal notranslate"><span class="pre">geodesic_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.haversine_distances"><code class="docutils literal notranslate"><span class="pre">haversine_distances()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.local_extrema_analysis"><code class="docutils literal notranslate"><span class="pre">local_extrema_analysis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.maximal_tissue_anisotropy"><code class="docutils literal notranslate"><span class="pre">maximal_tissue_anisotropy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.mean_curvature_differences_radial_cartesian_manifolds"><code class="docutils literal notranslate"><span class="pre">mean_curvature_differences_radial_cartesian_manifolds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.mean_curvature_on_ellipse_cardinal_points"><code class="docutils literal notranslate"><span class="pre">mean_curvature_on_ellipse_cardinal_points()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.mean_curvature_on_radial_manifold"><code class="docutils literal notranslate"><span class="pre">mean_curvature_on_radial_manifold()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.measure_intensity_on_surface"><code class="docutils literal notranslate"><span class="pre">measure_intensity_on_surface()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.radial_surface_averaged_mean_curvature"><code class="docutils literal notranslate"><span class="pre">radial_surface_averaged_mean_curvature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.sample_intensity_along_vector"><code class="docutils literal notranslate"><span class="pre">sample_intensity_along_vector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.spatio_temporal_autocorrelation"><code class="docutils literal notranslate"><span class="pre">spatio_temporal_autocorrelation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.temporal_autocorrelation"><code class="docutils literal notranslate"><span class="pre">temporal_autocorrelation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="measurements.html#napari_stress.measurements.tissue_stress_tensor"><code class="docutils literal notranslate"><span class="pre">tissue_stress_tensor()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vectors module</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="approximation.html"><cite>Approximation module</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="reconstruction.html"><cite>Reconstruction module</cite></a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html"><cite>Utilities module</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="approximation.html"><cite>Approximation module</cite></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reconstruction.html"><cite>Reconstruction module</cite></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.fit_patches"><code class="docutils literal notranslate"><span class="pre">fit_patches()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting"><code class="docutils literal notranslate"><span class="pre">iterative_curvature_adaptive_patch_fitting()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.reconstruct_droplet"><code class="docutils literal notranslate"><span class="pre">reconstruct_droplet()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.reconstruct_surface_from_quadrature_points"><code class="docutils literal notranslate"><span class="pre">reconstruct_surface_from_quadrature_points()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.resample_pointcloud"><code class="docutils literal notranslate"><span class="pre">resample_pointcloud()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reconstruction.html#napari_stress.reconstruction.trace_refinement_of_surface"><code class="docutils literal notranslate"><span class="pre">trace_refinement_of_surface()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html"><cite>Utilities module</cite></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#napari_stress.utils.TimelapseConverter"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#napari_stress.utils.TimelapseConverter.data_to_list_of_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.data_to_list_of_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#napari_stress.utils.TimelapseConverter.list_of_data_to_data"><code class="docutils literal notranslate"><span class="pre">TimelapseConverter.list_of_data_to_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#napari_stress.utils.compile_data_from_layers"><code class="docutils literal notranslate"><span class="pre">compile_data_from_layers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#napari_stress.utils.export_settings"><code class="docutils literal notranslate"><span class="pre">export_settings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#napari_stress.utils.frame_by_frame"><code class="docutils literal notranslate"><span class="pre">frame_by_frame()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#napari_stress.utils.import_settings"><code class="docutils literal notranslate"><span class="pre">import_settings()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

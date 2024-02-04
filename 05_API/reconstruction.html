@@ -240,7 +240,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04_FAQ/Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/validation_stress_paper.html">Napari-stress validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/analyze_validation.html">Technical validation</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../04_FAQ/validation/create_validation_data.html">Create synthetic validation data</a></li>
 </ul>
@@ -381,7 +381,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -397,6 +399,19 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.fit_patches"><code class="docutils literal notranslate"><span class="pre">fit_patches()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting"><code class="docutils literal notranslate"><span class="pre">iterative_curvature_adaptive_patch_fitting()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.reconstruct_droplet"><code class="docutils literal notranslate"><span class="pre">reconstruct_droplet()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.reconstruct_surface_from_quadrature_points"><code class="docutils literal notranslate"><span class="pre">reconstruct_surface_from_quadrature_points()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.resample_pointcloud"><code class="docutils literal notranslate"><span class="pre">resample_pointcloud()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.trace_refinement_of_surface"><code class="docutils literal notranslate"><span class="pre">trace_refinement_of_surface()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -406,8 +421,168 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reconstruction-module">
-<h1><cite>Reconstruction module</cite><a class="headerlink" href="#reconstruction-module" title="Link to this heading">#</a></h1>
+  <section id="module-napari_stress.reconstruction">
+<span id="reconstruction-module"></span><h1><cite>Reconstruction module</cite><a class="headerlink" href="#module-napari_stress.reconstruction" title="Link to this heading">#</a></h1>
+<p>Reconstruction of surfaces from point clouds.</p>
+<p>This module contains functions to reconstruct, refine, and resample surfaces
+from point clouds. The surfaces can be reconstructed from point clouds using
+the marching cubes algorithm. The surfaces can be refined by tracing the
+surface and fitting patches to the traced surface. The surfaces can be
+resampled by fitting patches to the surface and resampling the surface
+according to the fitted patches.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.fit_patches">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">fit_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.fit_patches" title="Link to this definition">#</a></dt>
+<dd><p>Fit a quadratic surface to each point’s neighborhood in a point cloud and
+adjust the point positions to the fitted surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_cloud</strong> (<em>np.ndarray</em>) – A numpy array with shape (n_points, 3), where each row represents a point
+with coordinates [Z, Y, X].</p></li>
+<li><p><strong>search_radius</strong> (<em>float</em><em> or </em><em>np.ndarray</em>) – The radius around each point to search for neighbors. Can be a single value or
+a numpy array with the same length as point_cloud.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fitted_point_cloud</strong> – The point cloud with points adjusted to the fitted quadratic surface.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">iterative_curvature_adaptive_patch_fitting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.reconstruct_droplet">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">reconstruct_droplet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ImageData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voxelsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_voxelsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_smoothing_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_tracing_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resampling_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fancy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'interior'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_outliers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outlier_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cubic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_intermediate_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LayerDataTuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.reconstruction.reconstruct_droplet" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct droplet surface from points layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>ImageData</em>) – Image data.</p></li>
+<li><p><strong>voxelsize</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Voxel size of image. The default is None.</p></li>
+<li><p><strong>target_voxelsize</strong> (<em>float</em><em>, </em><em>optional</em>) – Target voxel size for reconstruction. The default is 1.0.</p></li>
+<li><p><strong>smoothing_sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – Sigma for gaussian smoothing. The default is 1.0.</p></li>
+<li><p><strong>n_smoothing_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of smoothing iterations. The default is 10.</p></li>
+<li><p><strong>n_points</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of points to be sampled. The default is 256.</p></li>
+<li><p><strong>n_tracing_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of tracing iterations. The default is 1.</p></li>
+<li><p><strong>resampling_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between sampled point locations. The default is 5.
+Choose smaller values for more accurate reconstruction.</p></li>
+<li><p><strong>fit_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of fit to be used. The default is “fancy”. Can also be “quick”.</p></li>
+<li><p><strong>edge_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of edge to be used. The default is “interior”. Can also be “surface”.</p></li>
+<li><p><strong>trace_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of traces along which to measure intensity. The default is 10.</p></li>
+<li><p><strong>remove_outliers</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to remove outliers. The default is True.</p></li>
+<li><p><strong>outlier_tolerance</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for outlier removal. The default is 1.5.</p></li>
+<li><p><strong>sampling_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between points sampled on traces. The default is 0.5.</p></li>
+<li><p><strong>interpolation_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Interpolation method to be used. The default is “cubic”. Can also be “linear”.
+“cubic” is more accurate but slower.</p></li>
+<li><p><strong>use_dask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use dask for parallelization. The default is False.</p></li>
+<li><p><strong>return_intermediate_results</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return intermediate results. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>List of napari layers:</dt><dd><ul class="simple">
+<li><p>rescaled image: image rescaled to target voxel size</p></li>
+<li><p>label image: connected components of rescaled image</p></li>
+<li><p>points first guess: points sampled on fibonacci grid</p></li>
+<li><p>traced points: points after tracing</p></li>
+<li><p>trace vectors: vectors along which intensity was measured</p></li>
+<li><p>droplet center: center of droplet</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[LayerDataTuple]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.reconstruct_surface_from_quadrature_points">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">reconstruct_surface_from_quadrature_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SurfaceData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.reconstruct_surface_from_quadrature_points" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct the surface for a given set of quadrature points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n_quadrature_points</strong> (<em>int</em>) – Number of used quadrature points</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Sphere_Triangulation_Array</strong> – DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.resample_pointcloud">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">resample_pointcloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.resample_pointcloud" title="Link to this definition">#</a></dt>
+<dd><p>Resampe a spherical-like pointcloud on fibonacci grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>PointsData</em>) – </p></li>
+<li><p><strong>sampling_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between sampled point locations. The default is 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>resampled_points</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.reconstruction.trace_refinement_of_surface">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">trace_refinement_of_surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intensity_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ImageData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_fit_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fit_types</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">fit_types.fancy_edge_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_edge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">edge_functions</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">edge_functions.interior</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_outliers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outlier_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">interpolation_types</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">interpolation_types.cubic</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LayerDataTuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#napari_stress.reconstruction.trace_refinement_of_surface" title="Link to this definition">#</a></dt>
+<dd><p>Generate intensity profiles along traces.</p>
+<p>This function receives an intensity image and a pointcloud with points on
+the surface of an object in the intensity image. It assumes that the
+pointcloud corresponds to the vertices on a surface around that object.</p>
+<p>As a first step, the function calculates normals on the surface and
+multiplies the length of this vector with <cite>trace_length</cite>. The intensity of
+the input image is then sampled along this vector perpendicular to the
+surface with a distance of <cite>sampling distance</cite> between each point along the
+normal vector.</p>
+<p>The location of the object’s surface is then determined by fitting a
+selected function to the intensity profile along the prolonged normal
+vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>intensity_image</strong> (<em>ImageData</em>) – Intensity image</p></li>
+<li><p><strong>points</strong> (<em>PointsData</em>) – Pointcloud with points on the surface of the object</p></li>
+<li><p><strong>selected_fit_type</strong> (<em>fit_types</em><em>, </em><em>optional</em>) – Type of fit to use for determining the surface location, by default
+fit_types.fancy_edge_fit</p></li>
+<li><p><strong>selected_edge</strong> (<em>edge_functions</em><em>, </em><em>optional</em>) – Type of edge to detect, by default edge_functions.interior</p></li>
+<li><p><strong>trace_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of the normal vector, by default 10.0</p></li>
+<li><p><strong>sampling_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – Distance between each point along the normal vector, by default 0.5</p></li>
+<li><p><strong>remove_outliers</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to remove outliers from the intensity profile, by default True</p></li>
+<li><p><strong>outlier_tolerance</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for outlier removal, by default 1.5</p></li>
+<li><p><strong>interpolation_method</strong> (<em>interpolation_types</em><em>, </em><em>optional</em>) – Interpolation method to use for sampling the intensity image, by
+default interpolation_types.cubic</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of napari layer data tuples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[LayerDataTuple]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -465,7 +640,25 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.fit_patches"><code class="docutils literal notranslate"><span class="pre">fit_patches()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.iterative_curvature_adaptive_patch_fitting"><code class="docutils literal notranslate"><span class="pre">iterative_curvature_adaptive_patch_fitting()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.reconstruct_droplet"><code class="docutils literal notranslate"><span class="pre">reconstruct_droplet()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.reconstruct_surface_from_quadrature_points"><code class="docutils literal notranslate"><span class="pre">reconstruct_surface_from_quadrature_points()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.resample_pointcloud"><code class="docutils literal notranslate"><span class="pre">resample_pointcloud()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.reconstruction.trace_refinement_of_surface"><code class="docutils literal notranslate"><span class="pre">trace_refinement_of_surface()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
