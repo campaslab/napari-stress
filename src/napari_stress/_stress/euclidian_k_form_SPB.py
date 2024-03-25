@@ -1701,12 +1701,12 @@ class euc_k_form(object):
                         A_inv_from_G_pt, dPhi_Vec_X_A_pt
                     )  # np.linalg.solve(A_Mat_pt, dPhi_Vec_X_A_pt)
 
-                    V_local_coors_theta_dtheta_V_A[
-                        quad_pt, 0
-                    ] = dTheta_Vec_X_local_coors_A_pt[0]
-                    V_local_coors_phi_dphi_V_A[
-                        quad_pt, 0
-                    ] = dPhi_Vec_X_local_coors_A_pt[1]
+                    V_local_coors_theta_dtheta_V_A[quad_pt, 0] = (
+                        dTheta_Vec_X_local_coors_A_pt[0]
+                    )
+                    V_local_coors_phi_dphi_V_A[quad_pt, 0] = (
+                        dPhi_Vec_X_local_coors_A_pt[1]
+                    )
 
                     neg_A_inv_A_theta = np.dot(
                         A_inv_from_G_pt, A_theta_Mat_pt
@@ -1766,12 +1766,12 @@ class euc_k_form(object):
                         B_Mat_pt, dPhi_Vec_X_B_pt
                     )
 
-                    V_local_coors_theta_dtheta_V_B[
-                        quad_pt, 0
-                    ] = dTheta_Vec_X_local_coors_B_pt[0]
-                    V_local_coors_phi_dphi_V_B[
-                        quad_pt, 0
-                    ] = dPhi_Vec_X_local_coors_B_pt[1]
+                    V_local_coors_theta_dtheta_V_B[quad_pt, 0] = (
+                        dTheta_Vec_X_local_coors_B_pt[0]
+                    )
+                    V_local_coors_phi_dphi_V_B[quad_pt, 0] = (
+                        dPhi_Vec_X_local_coors_B_pt[1]
+                    )
 
                     neg_B_inv_B_theta = -1.0 * np.linalg.solve(B_Mat_pt, B_theta_Mat_pt)
                     neg_B_inv_B_phi = -1.0 * np.linalg.solve(B_Mat_pt, B_phi_Mat_pt)

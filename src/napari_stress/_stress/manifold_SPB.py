@@ -896,12 +896,8 @@ class manifold(object):
             + self.Z_theta_B_Pts * self.Z_phi_B_Pts
         )
 
-        self.G_A_pts = (
-            self.X_phi_A_Pts**2 + self.Y_phi_A_Pts**2 + self.Z_phi_A_Pts**2
-        )
-        self.G_B_pts = (
-            self.X_phi_B_Pts**2 + self.Y_phi_B_Pts**2 + self.Z_phi_B_Pts**2
-        )
+        self.G_A_pts = self.X_phi_A_Pts**2 + self.Y_phi_A_Pts**2 + self.Z_phi_A_Pts**2
+        self.G_B_pts = self.X_phi_B_Pts**2 + self.Y_phi_B_Pts**2 + self.Z_phi_B_Pts**2
 
         # |g| = (\sqrt|g|)^2
         self.Metric_Factor_Squared_A = self.E_A_pts * self.G_A_pts - self.F_A_pts**2
