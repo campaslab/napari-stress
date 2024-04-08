@@ -75,6 +75,28 @@ class EllipsoidExpander(Expander):
     def _measure_properties(self):
         """
         Measure properties of the expansion.
+        """
+
+        # maximum/minimum curvatures
+        # get and remove the largest, smallest and medial axis
+        axes = list(self.axes_)
+        largest_axis = max(axes)
+        axes.remove(largest_axis)
+        smallest_axis = min(axes)
+        axes.remove(smallest_axis)
+        medial_axis = axes[0]
+
+        # accoording to paper (https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.full)
+        maximum_mean_curvature = largest_axis / (
+            2 * smallest_axis**2
+        ) + largest_axis / (2 * medial_axis**2)
+        minimum_mean_curvature = smallest_axis / (
+            2 * medial_axis**2
+        ) + smallest_axis / (2 * largest_axis**2)
+
+        self.properties["maximum_mean_curvature"] = maximum_mean_curvature
+        self.properties["minimum_mean_curvature"] = minimum_mean_curvature
+
     def _measure_residuals(self):
         """
         Measure residuals of the expansion.

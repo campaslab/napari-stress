@@ -74,22 +74,20 @@ def maximal_tissue_anisotropy(
         Maximum stress anisotropy on ellipsoid
 
     """
-    from .._utils.coordinate_conversion import _axes_lengths_from_ellipsoid
-    from .._approximation import expand_points_on_ellipse
-    from .._measurements import curvature_on_ellipsoid
+    from .._approximation import EllipsoidExpander
 
-    lengths = _axes_lengths_from_ellipsoid(ellipsoid)
+    expander = EllipsoidExpander(get_measurements=True)
+    expander.coefficients_ = ellipsoid
+    expander._measure_properties()
 
-    # sort ellipsoid axes according to lengths
-    sorted_lengths = np.argsort(lengths)[::-1]
-    major_minor_axes = ellipsoid[:, 1][sorted_lengths]
-
-    points = ellipsoid[:, 0] + major_minor_axes
-    points_on_ellipsoid = expand_points_on_ellipse(ellipsoid, points)
-
-    result = curvature_on_ellipsoid(ellipsoid, points_on_ellipsoid)
-    mean_curvature = result[1]["features"][_METADATAKEY_MEAN_CURVATURE]
-    return 2 * gamma * (mean_curvature[0] - mean_curvature[-1])
+    return (
+        2
+        * gamma
+        * (
+            expander.properties["maximum_mean_curvature"]
+            - expander["minimum_mean_curvature"]
+        )
+    )
 
 
 def tissue_stress_tensor(
