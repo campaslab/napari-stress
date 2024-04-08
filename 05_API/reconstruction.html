@@ -53,18 +53,10 @@
     <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '05_API/reconstruction';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -432,7 +424,7 @@ resampled by fitting patches to the surface and resampling the surface
 according to the fitted patches.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="napari_stress.reconstruction.fit_patches">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">fit_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.fit_patches" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">napari_stress.reconstruction.</span></span><span class="sig-name descname"><span class="pre">fit_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.reconstruction.fit_patches" title="Link to this definition">#</a></dt>
 <dd><p>Fit a quadratic surface to each point’s neighborhood in a point cloud and
 adjust the point positions to the fitted surface.</p>
 <dl class="field-list simple">
@@ -441,7 +433,7 @@ adjust the point positions to the fitted surface.</p>
 <li><p><strong>point_cloud</strong> (<em>np.ndarray</em>) – A numpy array with shape (n_points, 3), where each row represents a point
 with coordinates [Z, Y, X].</p></li>
 <li><p><strong>search_radius</strong> (<em>float</em><em> or </em><em>np.ndarray</em>) – The radius around each point to search for neighbors. Can be a single value or
-a numpy array with the same length as point_cloud.</p></li>
+a numpy array with the same length as point_cloud. Default is 2.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

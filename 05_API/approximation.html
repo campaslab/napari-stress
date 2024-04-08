@@ -53,18 +53,10 @@
     <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../_static/design-tabs.js?v=36754332"></script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
-    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
-const thebe_selector = ".thebe,.cell"
-const thebe_selector_input = "pre"
-const thebe_selector_output = ".output, .cell_output"
-</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '05_API/approximation';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -404,7 +396,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_fitted_ellipsoid"><code class="docutils literal notranslate"><span class="pre">expand_points_on_fitted_ellipsoid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud"><code class="docutils literal notranslate"><span class="pre">fit_ellipsoid_to_pointcloud()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
 </ul>
@@ -421,6 +416,17 @@ document.write(`
   <section id="module-napari_stress.approximation">
 <span id="approximation-module"></span><h1><cite>Approximation module</cite><a class="headerlink" href="#module-napari_stress.approximation" title="Link to this heading">#</a></h1>
 <p>Approximation subpackage for napari-stress.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">EllipsoidExpander</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_measurements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander" title="Link to this definition">#</a></dt>
+<dd><p>Expand a set of points to fit an ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>napari.types.PointsData</em>) – The points to expand.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="napari_stress.approximation.expand_points_on_ellipse">
 <span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">expand_points_on_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitted_ellipsoid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">VectorsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointcloud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PointsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.expand_points_on_ellipse" title="Link to this definition">#</a></dt>
@@ -438,6 +444,43 @@ locations on the surface of the fitted ellipsoid.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>PointsData</p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.3.3: </span>This will be removed in 0.4.0. Use approximateion.EllipseExpander instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.approximation.expand_points_on_fitted_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">expand_points_on_fitted_ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.PointsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.expand_points_on_fitted_ellipsoid" title="Link to this definition">#</a></dt>
+<dd><p>Project a set of points on a fitted ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>napari.types.PointsData</em>) – The points to project.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>projected_points</strong> – The projected points.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>napari.types.PointsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="napari_stress.approximation.fit_ellipsoid_to_pointcloud">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">fit_ellipsoid_to_pointcloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud" title="Link to this definition">#</a></dt>
+<dd><p>Fit an ellipsoid to a set of points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>napari.types.PointsData</em>) – The points to fit an ellipsoid to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ellipsoid</strong> – The fitted ellipsoid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>napari.types.VectorsData</p>
 </dd>
 </dl>
 </dd></dl>
@@ -460,6 +503,9 @@ representing the major and minor axes of the ellipsoid.</p>
 <dd class="field-odd"><p>Major/minor axis of the ellipsoid</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.3.3: </span>This will be removed in 0.4.0. Use approximateion.EllipseExpander instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -547,7 +593,10 @@ ellipsoid fitted to the pointcloud.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_fitted_ellipsoid"><code class="docutils literal notranslate"><span class="pre">expand_points_on_fitted_ellipsoid()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud"><code class="docutils literal notranslate"><span class="pre">fit_ellipsoid_to_pointcloud()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
 </ul>
