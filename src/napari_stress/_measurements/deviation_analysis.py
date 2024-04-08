@@ -19,7 +19,9 @@ def deviation_from_ellipsoidal_mode(
     from ..types import _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB
 
     # calculate errors
-    ellipsoid = approximation.least_squares_ellipsoid(points)
+    expander = approximation.EllipsoidExpander()
+    expander.fit(points)
+    ellipsoid = expander.coefficients_
     ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, points)
     errors = vectors.pairwise_point_distances(points, ellipsoid_points)[:, 1]
     normals = approximation.normals_on_ellipsoid(ellipsoid_points)[:, 1]

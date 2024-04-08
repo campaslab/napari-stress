@@ -320,7 +320,7 @@ def _estimate_patch_radii(
     -------
     patch_radii : np.ndarray
     """
-    from .._approximation import least_squares_ellipsoid
+    from .._approximation import EllipsoidExpander
     from .._measurements import curvature_on_ellipsoid
     from ..types import (
         _METADATAKEY_PRINCIPAL_CURVATURES1,
@@ -329,8 +329,9 @@ def _estimate_patch_radii(
 
     if k1 is None:
         # measure curvature on fitted patches first: Approximate by ellipsoid
-
-        ellipsoid = least_squares_ellipsoid(pointcloud)
+        expander = EllipsoidExpander()
+        expander.fit(pointcloud)
+        ellipsoid = expander.coefficients_
         curvatures = curvature_on_ellipsoid(ellipsoid, pointcloud)[1]["features"]
         principal_curvatures = [
             curvatures[key]
@@ -384,7 +385,7 @@ def _estimate_patch_radii(
 
 @frame_by_frame
 def fit_patches(
-    point_cloud: "napari.types.PointsData", search_radius: float = 1
+    point_cloud: "napari.types.PointsData", search_radius: float = 2
 ) -> "napari.types.PointsData":
     """
     Fit a quadratic surface to each point's neighborhood in a point cloud and
@@ -397,7 +398,7 @@ def fit_patches(
         with coordinates [Z, Y, X].
     search_radius : float or np.ndarray
         The radius around each point to search for neighbors. Can be a single value or
-        a numpy array with the same length as point_cloud.
+        a numpy array with the same length as point_cloud. Default is 2.
 
     Returns
     -------

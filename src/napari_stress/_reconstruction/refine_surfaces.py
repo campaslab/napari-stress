@@ -230,6 +230,7 @@ def trace_refinement_of_surface(
 
 
 @register_function(menu="Points > Resample spherical pointcloud (n-STRESS)")
+@frame_by_frame
 def resample_pointcloud(
     points: "napari.types.PointsData", sampling_length: float = 5
 ) -> "napari.types.PointsData":
