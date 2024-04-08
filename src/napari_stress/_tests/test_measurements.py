@@ -380,7 +380,8 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
-    viewer.add_points(pointcloud[0], **pointcloud[1])
+    pointcloud_3tp = pointcloud[pointcloud[:, 0] <= 1, :]
+    viewer.add_points(pointcloud_3tp[0])
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
