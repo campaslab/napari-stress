@@ -57,7 +57,7 @@ def anisotropic_stress(
 
 
 def maximal_tissue_anisotropy(
-    ellipsoid: "napari.types.VectorsData", gamma: float = 26.0
+    ellipsoid: "napari.types.VectorsData", gamma: float
 ) -> float:
     """
     Calculate maximaum stress anisotropy on ellipsoid.
@@ -66,7 +66,7 @@ def maximal_tissue_anisotropy(
     ----------
     ellipsoid : 'napari.types.VectorsData'
     gamma : float, optional
-        Interfacial surface tension in mN/m. The default is 26.0.
+        Interfacial surface tension in mN/m.
 
     Returns
     -------
