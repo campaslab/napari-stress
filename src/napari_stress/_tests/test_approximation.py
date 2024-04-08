@@ -52,9 +52,9 @@ def test_lsq_ellipsoid0(n_tests=10):
         axes_lengths = np.sort(expander.axes_)
 
         assert np.allclose(center, x0)
-        assert np.allclose(a2, axes_lengths[2] * 2)
-        assert np.allclose(a1, axes_lengths[1] * 2)
-        assert np.allclose(a0, axes_lengths[0] * 2)
+        assert np.allclose(a2, axes_lengths[2])
+        assert np.allclose(a1, axes_lengths[1])
+        assert np.allclose(a0, axes_lengths[0])
 
         assert np.allclose(expander.properties.mean(), 0, atol=0.01)
         assert len(expanded_points) == len(points)

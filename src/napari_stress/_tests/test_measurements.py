@@ -19,21 +19,18 @@ def test_patch_fitted_curvature():
 
 
 def test_intensity_measurement_on_normals():
-    from napari_stress import vectors, measurements, sample_data, frame_by_frame
+    from napari_stress import vectors, measurements, sample_data
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     import napari_process_points_and_surfaces as nppas
+    import vedo
 
-    droplet = sample_data.get_droplet_4d()[0][0]
-    droplet_rescaled = frame_by_frame(nsbatwm.rescale)(
-        droplet, scale_x=1, scale_y=1, scale_z=2
-    )
-    droplet_binary = frame_by_frame(nsbatwm.threshold_otsu)(droplet_rescaled)
+    droplet = sample_data.get_droplet_4d()[0][0][0]
+    droplet_rescaled = nsbatwm.rescale(droplet, scale_x=1, scale_y=1, scale_z=2)
+    droplet_binary = nsbatwm.threshold_otsu(droplet_rescaled)
 
-    surface = frame_by_frame(nppas.label_to_surface)(droplet_binary, 1)
-    surface_smooth = frame_by_frame(nppas.smooth_surface)(surface)
-    surface_decimated = frame_by_frame(nppas.decimate_quadric)(
-        surface_smooth, number_of_vertices=1000
-    )
+    surface = nppas.label_to_surface(droplet_binary)
+    mesh = vedo.Mesh(surface).smooth().decimate(n=1000)
+    surface_decimated = (mesh.vertices, np.asarray(mesh.cells))
 
     # measure intensity on normal vectors
     normals = vectors.normal_vectors_on_surface(
@@ -50,7 +47,7 @@ def test_intensity_measurement_on_normals():
         surface_decimated, droplet_rescaled
     )
     assert len(intensities[0][2]) == len(surface_decimated[0])
-    assert "intensity_mean" in intensities[1]["metadata"]["features"][0].keys()
+    assert "intensity_mean" in intensities[1]["metadata"]["features"].keys()
 
 
 def test_mean_curvature_on_ellipsoid():
@@ -383,7 +380,8 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
-    viewer.add_points(pointcloud[0], **pointcloud[1])
+    pointcloud_2tp = pointcloud[0][pointcloud[0][:, 0] <= 1, :]
+    viewer.add_points(pointcloud_2tp)
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)

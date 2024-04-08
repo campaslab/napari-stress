@@ -267,6 +267,7 @@ def reconstruct_droplet(
 
     """
     import copy
+    import vedo
     import napari_process_points_and_surfaces as nppas
     import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
@@ -288,11 +289,12 @@ def reconstruct_droplet(
     surface = nppas.remove_duplicate_vertices(surface)
 
     # Smooth and decimate
-    surface = nppas.smooth_surface(
-        surface, n_smoothing_iterations, feature_angle=120, edge_angle=90
+    mesh = (
+        vedo.Mesh(surface)
+        .smooth(niter=n_smoothing_iterations, feature_angle=120, edge_angle=90)
+        .decimate(n=n_points)
     )
-    surface = nppas.decimate_quadric(surface, number_of_vertices=n_points)
-    points_first_guess = surface[0]
+    points_first_guess = mesh.vertices
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
