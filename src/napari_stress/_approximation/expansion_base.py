@@ -1,11 +1,10 @@
 import numpy as np
-import pandas as pd
 
 
 class Expander:
     def __init__(self, get_measurements: bool = False):
         self.coefficients_ = None
-        self.properties = pd.DataFrame()
+        self.properties = dict()
         self._get_measurements = get_measurements
 
     def fit(self, points: np.ndarray):
