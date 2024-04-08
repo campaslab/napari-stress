@@ -57,6 +57,7 @@ def test_lsq_ellipsoid0(n_tests=10):
         assert np.allclose(a0, axes_lengths[0] * 2)
 
         assert np.allclose(expander.properties.mean(), 0, atol=0.01)
+        assert np.allclose(expander.properties["residuals"].mean(), 0, atol=0.01)
         assert len(expanded_points) == len(points)
 
 

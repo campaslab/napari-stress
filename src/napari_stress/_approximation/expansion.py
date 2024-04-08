@@ -75,6 +75,9 @@ class EllipsoidExpander(Expander):
     def _measure_properties(self, input_points, output_points):
         """
         Measure properties of the expansion.
+    def _measure_residuals(self):
+        """
+        Measure residuals of the expansion.
 
         Parameters
         ----------
@@ -83,9 +86,14 @@ class EllipsoidExpander(Expander):
         output_points : napari.types.PointsData
             The points after expansion.
         """
+        if self._data is None:
+            return
+        input_points = self._data
+        output_points = self._expand(input_points)
 
-        distance = np.linalg.norm(input_points - output_points, axis=1)
-        self.properties["euclidian_distance"] = distance
+        # residuals
+        residuals = np.linalg.norm(input_points - output_points, axis=1)
+        self.properties["residuals"] = residuals
 
     def _fit_ellipsoid_to_points(
         self,

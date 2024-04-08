@@ -17,6 +17,7 @@ class Expander:
         expanded_points = self._expand(points)
         if self._get_measurements:
             self._measure_properties(points, expanded_points)
+            self._measure_residuals()
         return expanded_points
 
     def fit_expand(self, points: "napari.types.PointsData"):
@@ -30,4 +31,7 @@ class Expander:
         raise NotImplementedError
 
     def _measure_properties(self, input_points, output_points):
+    def _measure_residuals(self):
+        raise NotImplementedError
+
         raise NotImplementedError
