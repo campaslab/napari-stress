@@ -47,7 +47,7 @@ def test_intensity_measurement_on_normals():
         surface_decimated, droplet_rescaled
     )
     assert len(intensities[0][2]) == len(surface_decimated[0])
-    assert "intensity_mean" in intensities[1]["metadata"]["features"][0].keys()
+    assert "intensity_mean" in intensities[1]["metadata"]["features"].keys()
 
 
 def test_mean_curvature_on_ellipsoid():
