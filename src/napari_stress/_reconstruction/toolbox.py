@@ -33,7 +33,8 @@ class droplet_reconstruction_toolbox(QWidget):
         # populate comboboxes with allowed values
         self.comboBox_fittype.addItems(["fancy", "quick"])
         self.comboBox_fluorescence_type.addItems(["interior", "surface"])
-        self.comboBox_interpolation_method.addItems(["linear", "cubic"])
+        self.comboBox_interpolation_method.addItems(["cubic", "linear"])
+        self.comboBox_interpolation_method.setCurrentText("linear")
 
         # calculate density/point number
         self.spinBox_n_vertices.setValue(256)
@@ -59,6 +60,10 @@ class droplet_reconstruction_toolbox(QWidget):
             self.doubleSpinBox_voxelsize_x.setValue(scales[2])
             self.doubleSpinBox_voxelsize_y.setValue(scales[1])
             self.doubleSpinBox_voxelsize_z.setValue(scales[0])
+
+            # set target voxel size to mean of scales as default
+            mean_scale = np.mean([scales[0], scales[2]])
+            self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
         except Exception:
             pass
 
@@ -327,7 +332,7 @@ def reconstruct_droplet(
         "surface",
     )
 
-    properties = {"name": "points_patch_fitted", "size": 0.5}
+    properties = {"name": "Droplet pointcloud (smoothed)", "size": 0.5}
     layer_patch_fitted = (
         points * target_voxelsize,
         properties,
@@ -338,6 +343,7 @@ def reconstruct_droplet(
     layer_label_image = (label_image, properties, "labels")
 
     traced_points = list(traced_points)
+    traced_points[1]["name"] = "Droplet pointcloud (traced)"
     traced_points[0] *= target_voxelsize
 
     trace_vectors = list(trace_vectors)
