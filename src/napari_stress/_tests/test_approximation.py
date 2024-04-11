@@ -88,23 +88,32 @@ def test_lsq_ellipsoid0(n_tests=10):
     a2 = 30
     x0 = np.asarray([0, 0, 0])
 
+    max_mean_curvatures = []
+    min_mean_curvatures = []
     for i in range(n_tests):
         points = generate_pointclouds(a0=a0, a1=a1, a2=a2, x0=x0)
 
-        expander = approximation.EllipsoidExpander()
+        expander = approximation.EllipsoidExpander(get_measurements=True)
         expander.fit(points)
 
         expanded_points = expander.expand(points)
         center = expander.center_
         axes_lengths = np.sort(expander.axes_)
 
+        max_mean_curvatures.append(expander.properties["maximum_mean_curvature"])
+        min_mean_curvatures.append(expander.properties["minimum_mean_curvature"])
+
         assert np.allclose(center, x0)
         assert np.allclose(a2, axes_lengths[2])
         assert np.allclose(a1, axes_lengths[1])
         assert np.allclose(a0, axes_lengths[0])
 
-        assert np.allclose(expander.properties.mean(), 0, atol=0.01)
+        assert np.allclose(expander.properties["residuals"].mean(), 0, atol=0.01)
         assert len(expanded_points) == len(points)
+
+    # all elements in either list should be the same
+    assert np.allclose(max_mean_curvatures, max_mean_curvatures[0])
+    assert np.allclose(min_mean_curvatures, min_mean_curvatures[0])
 
 
 def test_lsq_ellipsoid():

@@ -1,11 +1,10 @@
 import numpy as np
-import pandas as pd
 
 
 class Expander:
     def __init__(self, get_measurements: bool = False):
         self.coefficients_ = None
-        self.properties = pd.DataFrame()
+        self.properties = dict()
         self._get_measurements = get_measurements
 
     def fit(self, points: np.ndarray):
@@ -16,7 +15,8 @@ class Expander:
     def expand(self, points: "napari.types.PointsData"):
         expanded_points = self._expand(points)
         if self._get_measurements:
-            self._measure_properties(points, expanded_points)
+            self._measure_residuals()
+            self._measure_properties()
         return expanded_points
 
     def fit_expand(self, points: "napari.types.PointsData"):
@@ -29,5 +29,8 @@ class Expander:
     def _expand(self, points: "napari.types.PointsData"):
         raise NotImplementedError
 
-    def _measure_properties(self, input_points, output_points):
+    def _measure_residuals(self):
+        raise NotImplementedError
+
+    def _measure_properties(self):
         raise NotImplementedError
