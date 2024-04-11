@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/pypi/l/napari-stress.svg?color=green)](https://github.com/campaslab/napari-stress/raw/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-stress.svg?color=green)](https://github.com/campaslab/napari-stress/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-stress.svg?color=green)](https://pypi.org/project/napari-stress)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-stress.svg?color=green)](https://python.org)
 [![tests](https://github.com/campaslab/napari-stress/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/campaslab/napari-stress/actions/workflows/test_and_deploy.yml)
