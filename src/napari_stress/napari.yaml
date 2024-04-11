@@ -34,13 +34,20 @@ contributions:
       python_name: napari_stress._reconstruction.toolbox:droplet_reconstruction_toolbox
       title: Droplet reconstruction toolbox
 
-    # Spherical harmonics
+    # Approximation
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._approximation.expansion:spherical_harmonics_napari:expand_spherical_harmonics
+      python_name: napari_stress._approximation.expansion_napari:expand_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
+    - id: napari-stress.fit_lsq_ellipsoid
+      python_name: napari_stress._approximation.expansion_napari:fit_ellipsoid_to_pointcloud
+      title: Fit least squares ellipsoid
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
+
+    - id: napari-stress.expand_ellipsoid
+      python_name: napari_stress._approximation.expansion_napari:expand_points_on_fitted_ellipsoid
+      title: Expand points on ellipsoid
 
     # Spherical harmonics measurements & curvature
     - id: napari-stress.measure_curvature
@@ -94,14 +101,6 @@ contributions:
     - id: napari-stress.move_point_along_vector_absolute
       python_name: napari_stress._vectors:absolute_move_points_along_vector
       title: Move points along vector (absolute)
-
-    - id: napari-stress.fit_lsq_ellipsoid
-      python_name: napari_stress.approximation:fit_ellipsoid_to_pointcloud
-      title: Fit least squares ellipsoid
-
-    - id: napari-stress.expand_ellipsoid
-      python_name: napari_stress.approximation:expand_points_on_fitted_ellipsoid
-      title: Expand points on ellipsoid
 
     - id: napari-stress.pairwise_distance
       python_name: napari_stress.approximation:pairwise_point_distances
