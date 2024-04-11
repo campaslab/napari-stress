@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/pypi/l/napari-stress.svg?color=green)](https://github.com/campaslab/napari-stress/raw/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-stress.svg?color=green)](https://github.com/campaslab/napari-stress/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-stress.svg?color=green)](https://pypi.org/project/napari-stress)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-stress.svg?color=green)](https://python.org)
 [![tests](https://github.com/campaslab/napari-stress/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/campaslab/napari-stress/actions/workflows/test_and_deploy.yml)
@@ -22,16 +22,13 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 
 ## Installation
 
-In order to make napari-stress on your machine, you can follow these tutorials:
-
-- [Getting started with Python and Anaconda](https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html): If you have not yet installed Python or Anaconda on your computer, this explains how to set it up and create an environment that contain the most basic functionality ([napari](https://napari.org/stable/) & [Jupyterlab](https://jupyter.org/))
-- [Devbio-napari](https://github.com/haesleinhuepf/devbio-napari): Not strictly necessary but strongly recommended - this package brings many handy functionalities to an otherwise quite plain napari-viewer.
-
-After both of these are installed, install napari-stress into the environment you created by typing
+To install nappari-STRESS in your environment (provided you have Python and napari already installed), simply type this in your command:
 
 ```
 pip install napari-stress
 ```
+
+For more detailed installation instructions,, hints and some known issues, please refer to the [installation section](FAQ:installation).
 
 ### Other useful packages
 

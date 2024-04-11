@@ -396,6 +396,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-python">Setting up Python</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-packages">Related packages</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-failing-on-mac">Installation failing on Mac</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pygeodesic-installation-fail">Pygeodesic installation fail</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#oserror-windows-during-installation">OSError (Windows) during installation</a></li>
@@ -413,6 +417,32 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="installation-issues">
 <span id="faq-installation"></span><h1>Installation issues<a class="headerlink" href="#installation-issues" title="Link to this heading">#</a></h1>
 <p>In this section you find some known installation issues and how to fix them.</p>
+<section id="setting-up-python">
+<h2>Setting up Python<a class="headerlink" href="#setting-up-python" title="Link to this heading">#</a></h2>
+<p>Depending on how you have your Python set up on your machine, different preparation may be advisable. Here are some suggestions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html">Getting started with Python and Anaconda</a>: If you have not yet installed Python or Anaconda on your computer <strong>at all</strong>, this explains how to set it up and create an environment that contain the most basic functionality (<a class="reference external" href="https://napari.org/stable/">napari</a> &amp; <a class="reference external" href="https://jupyter.org/">Jupyterlab</a>)</p></li>
+<li><p>Setting up a new environment: If you already have Python installed and want to create a new environment for napari-stress, follow these steps to create a new environment and install napari-stress into it.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>stress<span class="w"> </span><span class="nv">Python</span><span class="o">=</span><span class="m">3</span>.9
+conda<span class="w"> </span>acticate<span class="w"> </span>stress
+conda<span class="w"> </span>install<span class="w"> </span>mamba<span class="w"> </span>-c<span class="w"> </span>conda-forge
+
+mamba<span class="w"> </span>install<span class="w"> </span>napari<span class="w"> </span>pyqt<span class="w"> </span>devbio-napari
+pip<span class="w"> </span>install<span class="w"> </span>napari-stress
+</pre></div>
+</div>
+<p>If you want to make sure you are using the latest version, replace <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-stress</span></code> with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-stress==version.number</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-stress==0.1.0</span></code>). You find the current version number on the <a class="reference external" href="https://pypi.org/project/napari-stress/">pypi page</a> and on top of the <a class="reference external" href="https://campaslab.github.io/napari-stress/intro.html">documentation frontpage</a>.</p>
+<section id="related-packages">
+<h3>Related packages<a class="headerlink" href="#related-packages" title="Link to this heading">#</a></h3>
+<p>Some packages work well in conjunction with napari-stress, e.g., for better 3D interactivity, visualization of the results and/or data export. Here are some suggestions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/haesleinhuepf/devbio-napari">Devbio-napari</a>: Not strictly necessary but strongly recommended - this package brings many handy functionalities to an otherwise quite plain napari-viewer.</p></li>
+<li><p><a class="reference external" href="https://www.napari-hub.org/plugins/napari-threedee">Napari-threedee</a>: Enhance rendering options in napari with a set of interesting tools for mesh lighting, plane rendering, etc.install type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-threedee</span></code>.</p></li>
+<li><p><a class="reference external" href="https://www.napari-hub.org/plugins/napari-process-points-and-surfaces">napari-process-points-and-surfaces</a>: A plugin that allows you to process points and surfaces in 3D. To install, type <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">napari-process-points-and-surfaces</span></code>.</p></li>
+</ul>
+</section>
+</section>
 <section id="installation-failing-on-mac">
 <h2>Installation failing on Mac<a class="headerlink" href="#installation-failing-on-mac" title="Link to this heading">#</a></h2>
 <p id="faq-installation-xcode">When pip-installing napari-stress on M1 or M2 Macs, you may encounter the following error message (<a class="reference external" href="https://forum.image.sc/t/napari-stress-problem-loading-some-dependancies/73758">link to report</a>):</p>
@@ -521,6 +551,10 @@ Consider using the `--user` option or check the permissions.
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-python">Setting up Python</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-packages">Related packages</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-failing-on-mac">Installation failing on Mac</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pygeodesic-installation-fail">Pygeodesic installation fail</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#oserror-windows-during-installation">OSError (Windows) during installation</a></li>
