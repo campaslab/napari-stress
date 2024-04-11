@@ -109,9 +109,12 @@ def stress_spherical_harmonics_expansion(
     from .._stress.charts_SPB import Cart_To_Coor_A
 
     if expansion_type == "cartesian":
+        ellipsoid_expander = approximation.EllipsoidExpander()
+        ellipsoid_expander.fit(points)
         # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
-        ellipsoid = approximation.least_squares_ellipsoid(points)
-        longitude, latitude = cartesian_to_elliptical(ellipsoid, points)
+        longitude, latitude = cartesian_to_elliptical(
+            ellipsoid_expander.coefficients_, points, invert=True
+        )
 
         # This implementation fits a superposition of three sets of spherical harmonics
         # to the data, one for each cardinal direction (x/y/z).
@@ -276,11 +279,11 @@ def create_manifold(
         manifold_type = "radial"
         coordinates = np.stack(
             [
-                lebedev_fit.X.squeeze() * points,
-                lebedev_fit.Y.squeeze() * points,
-                lebedev_fit.Z.squeeze() * points,
+                lebedev_fit.X * points[:, None],
+                lebedev_fit.Y * points[:, None],
+                lebedev_fit.Z * points[:, None],
             ]
-        ).T
+        ).T.squeeze()
         Manny_Name_Dict["coordinates"] = coordinates
 
     elif len(points.shape) == 2:
@@ -356,7 +359,7 @@ def calculate_mean_curvature_on_manifold(
     normals = get_normals_on_manifold(manifold, lebedev_fit)
 
     # Test orientation:
-    points = manifold.get_coordinates()
+    points = manifold.get_coordinates().squeeze()
     centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
     # Makre sure orientation is inward, so H is positive

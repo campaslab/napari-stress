@@ -349,9 +349,11 @@ class TimelapseConverter:
             if "features" in properties[0].keys():
                 _properties["features"] = data[0][1]["features"]
                 _properties["features"]["frame"] = np.zeros(len(data[0][0]), dtype=int)
+                [frame.pop("features") for frame in properties]
             if "metadata" in properties[0].keys():
                 _properties["metadata"] = data[0][1]["metadata"]
                 _properties["metadata"]["frame"] = [0]
+                [frame.pop("metadata") for frame in properties]
         else:
             # Stack features
             if "features" in properties[0].keys():

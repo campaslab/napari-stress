@@ -49,6 +49,64 @@ def test_spherical_harmonics_expand(ellipsoid_points):
     np.testing.assert_allclose(expanded_points, ellipsoid_points, atol=1e-1)
 
 
+def generate_pointclouds(
+    a0: float = 10, a1: float = 20, a2: float = 30, x0: tuple = (0, 0, 0)
+):
+    import vedo
+
+    ellipsoid = vedo.Ellipsoid(
+        pos=x0,
+        axis1=(a0, 0, 0),
+        axis2=(0, a1, 0),
+        axis3=(0, 0, a2),
+    )
+
+    points = ellipsoid.vertices
+
+    # rotate all points around the z-axis by random angle between
+    # 0 and 360 degrees using only numpy
+    angle = np.radians(np.random.randint(0, 360))
+    c, s = np.cos(angle), np.sin(angle)
+    R = np.array(((c, -s, 0), (s, c, 0), (0, 0, 1)))
+    points = points @ R
+
+    # rotate also around x-axis by random angle between
+    # 0 and 180 degrees using only numpy
+    angle = np.radians(np.random.randint(0, 180))
+    c, s = np.cos(angle), np.sin(angle)
+    R = np.array(((1, 0, 0), (0, c, -s), (0, s, c)))
+    points = points @ R
+
+    return points
+
+
+def test_lsq_ellipsoid0(n_tests=10):
+    from napari_stress import approximation
+
+    a0 = 10
+    a1 = 20
+    a2 = 30
+    x0 = np.asarray([0, 0, 0])
+
+    for i in range(n_tests):
+        points = generate_pointclouds(a0=a0, a1=a1, a2=a2, x0=x0)
+
+        expander = approximation.EllipsoidExpander()
+        expander.fit(points)
+
+        expanded_points = expander.expand(points)
+        center = expander.center_
+        axes_lengths = np.sort(expander.axes_)
+
+        assert np.allclose(center, x0)
+        assert np.allclose(a2, axes_lengths[2])
+        assert np.allclose(a1, axes_lengths[1])
+        assert np.allclose(a0, axes_lengths[0])
+
+        assert np.allclose(expander.properties.mean(), 0, atol=0.01)
+        assert len(expanded_points) == len(points)
+
+
 def test_lsq_ellipsoid():
     from napari_stress import approximation, get_droplet_point_cloud
 

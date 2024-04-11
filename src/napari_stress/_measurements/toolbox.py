@@ -122,9 +122,15 @@ class stress_analysis_toolbox(QWidget):
 
     def _check_minimal_point_number(self) -> None:
         """Check if number of quadrature point complies with max_degree."""
-        minimal_point_number = lebedev_info_SPB.pts_of_lbdv_lookup[
-            self.spinBox_max_degree.value()
-        ]
+        # lebedev_info_SPB.pts_of_lbdv_lookup is a dictionary of the form
+        # {degree: number of quadrature points}
+        # if no value for the given key exists, pick the next higher value.
+        max_degree = self.spinBox_max_degree.value()
+        lookup = lebedev_info_SPB.pts_of_lbdv_lookup
+        for degree in range(max_degree, list(lookup.keys())[-1] + 1):
+            if degree in lookup.keys():
+                minimal_point_number = lookup.get(degree)
+                break
 
         if self.comboBox_quadpoints.currentData() < minimal_point_number:
             index = self.comboBox_quadpoints.findData(minimal_point_number)
@@ -323,7 +329,6 @@ def comprehensive_analysis(
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
-
     # CARTESIAN
     fitted_pointcloud, coefficients = stress_spherical_harmonics_expansion(
         pointcloud, max_degree=max_degree
@@ -352,7 +357,7 @@ def comprehensive_analysis(
     )
 
     manifold_droplet_radial = create_manifold(
-        quadrature_points_radial, lebedev_info, max_degree
+        quadrature_points, lebedev_info, max_degree
     )
 
     # Gauss Bonnet test
@@ -368,8 +373,10 @@ def comprehensive_analysis(
     # Ellipsoid fit
     # =====================================================================
 
-    ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
-    ellipsoid_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+    ellipsoid_expander = approximation.EllipsoidExpander()
+    ellipsoid_expander.fit(pointcloud)
+    ellipsoid = ellipsoid_expander.coefficients_
+    ellipsoid_points = ellipsoid_expander.expand(pointcloud)
 
     fitted_ellipsoid, coefficients_ell = stress_spherical_harmonics_expansion(
         ellipsoid_points, max_degree=max_degree
@@ -389,6 +396,8 @@ def comprehensive_analysis(
     quadrature_points_ellipsoid = approximation.expand_points_on_ellipse(
         ellipsoid, quadrature_points
     )
+
+    quadrature_points_ellipsoid = ellipsoid_expander.expand(quadrature_points)
 
     # =========================================================================
     # Evaluate fit quality
@@ -421,22 +430,48 @@ def comprehensive_analysis(
     H0_surface_droplet = averaged_curvatures[1]
 
     # Droplet (radial)
-    mean_curvature_radial = measurements.mean_curvature_on_radial_manifold(
-        manifold_droplet_radial
+    from napari_stress._stress.euclidian_k_form_SPB import (
+        Combine_Chart_Quad_Vals,
+        Integral_on_Manny,
     )
+
     averaged_curvatures_radial = measurements.average_mean_curvatures_on_manifold(
         manifold_droplet_radial
     )
-
     H0_volume_droplet = averaged_curvatures_radial[2]
     S2_volume_droplet = averaged_curvatures_radial[3]
-    H0_radial_surface = averaged_curvatures_radial[4]
-    stress_total_radial = gamma * (mean_curvature_radial - H0_radial_surface)
 
-    delta_mean_curvature = (
-        measurements.mean_curvature_differences_radial_cartesian_manifolds(
-            manifold_droplet, manifold_droplet_radial
-        )
+    mean_curvature_radial = Combine_Chart_Quad_Vals(
+        manifold_droplet_radial.H_A_pts,
+        manifold_droplet_radial.H_B_pts,
+        manifold_droplet_radial.lebedev_info,
+    ).squeeze()
+    H0_radial_surface = Integral_on_Manny(
+        mean_curvature_radial,
+        manifold_droplet_radial,
+        manifold_droplet_radial.lebedev_info,
+    )
+    H0_radial_surface /= Integral_on_Manny(
+        np.ones_like(mean_curvature_radial),
+        manifold_droplet_radial,
+        manifold_droplet_radial.lebedev_info,
+    )
+    mean_curvature_radial *= abs(H0_radial_surface) / H0_radial_surface
+    stress_total_radial = 2 * gamma * (mean_curvature_radial - abs(H0_radial_surface))
+
+    delta_mean_curvature = np.mean(
+        [
+            Integral_on_Manny(
+                mean_curvature_radial - mean_curvature_radial,
+                manifold_droplet_radial,
+                manifold_droplet_radial.lebedev_info,
+            ),
+            Integral_on_Manny(
+                mean_curvature_radial - mean_curvature_radial,
+                manifold_droplet,
+                manifold_droplet.lebedev_info,
+            ),
+        ]
     )
 
     # Ellipsoid

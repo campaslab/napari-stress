@@ -3,10 +3,10 @@ import pandas as pd
 
 
 class Expander:
-    def __init__(self, max_degree: int = 5):
-        self.max_degree = max_degree
+    def __init__(self, get_measurements: bool = False):
         self.coefficients_ = None
         self.properties = pd.DataFrame()
+        self._get_measurements = get_measurements
 
     def fit(self, points: np.ndarray):
         self._data = points
@@ -15,7 +15,8 @@ class Expander:
 
     def expand(self, points: "napari.types.PointsData"):
         expanded_points = self._expand(points)
-        self._measure_properties(points, expanded_points)
+        if self._get_measurements:
+            self._measure_properties(points, expanded_points)
         return expanded_points
 
     def fit_expand(self, points: "napari.types.PointsData"):
