@@ -299,7 +299,7 @@ class EllipsoidExpander(Expander):
         self.properties["maximum_mean_curvature"] = maximum_mean_curvature
         self.properties["minimum_mean_curvature"] = minimum_mean_curvature
 
-    def _measure_residuals(self):
+    def _measure_residuals(self, input_points, output_points):
         """
         Measure residuals of the expansion.
 
@@ -310,9 +310,6 @@ class EllipsoidExpander(Expander):
         output_points : napari.types.PointsData
             The points after expansion.
         """
-        if self._data is None:
-            return
-        input_points = self._data
         output_points = self._expand(input_points)
 
         distance = np.linalg.norm(input_points - output_points, axis=1)
