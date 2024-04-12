@@ -5,8 +5,6 @@ class SphericalHarmonicsExpander(Expander):
     def __init__(self,
                  max_degree: int = 5,
                  expansion_type: str = "cartesian",
-                 get_measurements: bool = True):
-        super().__init__(get_measurements=get_measurements)
         self.expansion_type = expansion_type
         self._coordinates_ellipsoidal = None
         self.max_degree = max_degree
