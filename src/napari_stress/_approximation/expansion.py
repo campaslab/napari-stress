@@ -138,36 +138,39 @@ class SphericalHarmonicsExpander(Expander):
             raise ValueError("No coefficients found. Run fit() first.")
 
         if len(self.coefficients_.shape) > 2:
-            coeffs = self.coefficients_.copy()
-            spectra = []
-            for i in range(coeffs.shape[0]):
-                self.coefficients_ = coeffs[i]
-                spectra.append(self._calculate_power_spectrum(normalize=normalize))
-            self.coefficients_ = coeffs
-            return np.stack(spectra)
+            # Handling multiple sets of coefficients without modifying the class state
+            power_spectrum = np.zeros(self.coefficients_.shape[1])  # assuming the same degrees across all dimensions
+            for i in range(self.coefficients_.shape[0]):
+                # Recursively calculate the spectrum for each set of coefficients, but avoid modifying self.coefficients_
+                temp_spectrum = self._calculate_power_spectrum_individual(self.coefficients_[i], normalize=False)
+                power_spectrum += temp_spectrum
+            if normalize:
+                power_spectrum /= np.sum(power_spectrum)
+        else:
+            power_spectrum = self._calculate_power_spectrum_individual(self.coefficients_, normalize=normalize)
 
-        power_spectrum = np.zeros(self.coefficients_.shape[0])
+        self.properties["power_spectrum"] = power_spectrum
+        return power_spectrum
 
-        for level in range(self.coefficients_.shape[0]):
-            # Extract coefficients for degree l
-            real_parts = np.concatenate(
-                (
-                    [self.coefficients_[level, level]],
-                    self.coefficients_[level, level + 1 :],
-                )
-            )
-            imag_parts = self.coefficients_[:level, level]
+    def _calculate_power_spectrum_individual(self, coefficients, normalize=True):
+        power_spectrum = np.zeros(coefficients.shape[0])
+        for l in range(coefficients.shape[0]):
+            # Assume the real coefficients are on the diagonal and immediately right (if exist)
+            # and imaginary coefficients are symmetrically below the diagonal.
+            real_parts = coefficients[l, l:]
+            if l > 0:
+                imag_parts = coefficients[:l, l]
+            else:
+                imag_parts = np.array([])
 
-            # Combine real and imaginary parts
             coeffs = np.concatenate((real_parts, imag_parts))
+            power_spectrum[l] = np.sum(np.abs(coeffs) ** 2)
 
-            # Calculate power (sum of squares of magnitudes)
-            power_spectrum[level] = np.sum(np.abs(coeffs) ** 2)
-
-        if normalize:
+        if normalize and np.sum(power_spectrum) != 0:
             power_spectrum /= np.sum(power_spectrum)
 
-        self.properties["power_spectrum"] = power_spectrum 
+        return power_spectrum
+
 
     def _least_squares_harmonic_fit(self, fit_degree, sample_locations, values):
         """
