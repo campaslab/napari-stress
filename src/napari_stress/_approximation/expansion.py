@@ -281,7 +281,6 @@ class EllipsoidExpander(Expander):
         self._measure_residuals(input_points, output_points)
         self._measure_max_min_curvatures()
 
-        # maximum/minimum curvatures
     def _measure_max_min_curvatures(self):
         """
         Measure maximum and minimum curvatures of the ellipsoid.
