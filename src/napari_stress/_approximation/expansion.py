@@ -278,8 +278,23 @@ class EllipsoidExpander(Expander):
         """
         Measure properties of the expansion.
         """
+        self._measure_residuals(input_points, output_points)
+        self._measure_max_min_curvatures()
 
         # maximum/minimum curvatures
+    def _measure_max_min_curvatures(self):
+        """
+        Measure maximum and minimum curvatures of the ellipsoid.
+
+        The maximum and minimum curvatures are calculated as follows:
+        - Maximum curvature: 1 / (2 * a^2) + 1 / (2 * b^2)
+        - Minimum curvature: 1 / (2 * b^2) + 1 / (2 * a^2)
+        where a, b are the largest and smallest axes of the ellipsoid, respectively.
+
+        Returns
+        -------
+
+        """
         # get and remove the largest, smallest and medial axis
         axes = list(self.axes_)
         largest_axis = max(axes)
