@@ -11,7 +11,7 @@ class SphericalHarmonicsExpander(Expander):
         self._coordinates_ellipsoidal = None
         self.max_degree = max_degree
 
-    def calculate_power_spectrum(self, normalize=True):
+                 normalize_spectrum: bool = True):
         """
         Expand a set of points using spherical harmonics.
 
@@ -29,41 +29,6 @@ class SphericalHarmonicsExpander(Expander):
         power_spectrum : np.ndarray
             Power spectrum of spherical harmonics coefficients.
         """
-
-        if len(self.coefficients_.shape) > 2:
-            coeffs = self.coefficients_.copy()
-            spectra = []
-            for i in range(coeffs.shape[0]):
-                self.coefficients_ = coeffs[i]
-                spectra.append(self.calculate_power_spectrum(normalize=normalize))
-            self.coefficients_ = coeffs
-            return np.stack(spectra)
-
-        if self.coefficients_ is None:
-            raise ValueError("No coefficients found. Run fit() first.")
-
-        power_spectrum = np.zeros(self.coefficients_.shape[0])
-
-        for level in range(self.coefficients_.shape[0]):
-            # Extract coefficients for degree l
-            real_parts = np.concatenate(
-                (
-                    [self.coefficients_[level, level]],
-                    self.coefficients_[level, level + 1 :],
-                )
-            )
-            imag_parts = self.coefficients_[:level, level]
-
-            # Combine real and imaginary parts
-            coeffs = np.concatenate((real_parts, imag_parts))
-
-            # Calculate power (sum of squares of magnitudes)
-            power_spectrum[level] = np.sum(np.abs(coeffs) ** 2)
-
-        if normalize:
-            power_spectrum /= np.sum(power_spectrum)
-
-        return power_spectrum
 
     def _fit(self, points: "napari.types.PointsData"):
         """
