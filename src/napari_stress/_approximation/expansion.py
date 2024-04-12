@@ -5,10 +5,6 @@ class SphericalHarmonicsExpander(Expander):
     def __init__(self,
                  max_degree: int = 5,
                  expansion_type: str = "cartesian",
-        self.expansion_type = expansion_type
-        self._coordinates_ellipsoidal = None
-        self.max_degree = max_degree
-
                  normalize_spectrum: bool = True):
         """
         Expand a set of points using spherical harmonics.
@@ -21,12 +17,12 @@ class SphericalHarmonicsExpander(Expander):
             Type of expansion to perform. Currently only "cartesian" is supported.
         normalize_spectrum : bool
             Normalize power spectrum to sum to 1.
-
-        Returns
-        -------
-        power_spectrum : np.ndarray
-            Power spectrum of spherical harmonics coefficients.
         """
+        super().__init__()
+        self.expansion_type = expansion_type
+        self._coordinates_ellipsoidal = None
+        self.max_degree = max_degree
+        self.normalize_spectrum = normalize_spectrum
 
     def _fit(self, points: "napari.types.PointsData"):
         """
