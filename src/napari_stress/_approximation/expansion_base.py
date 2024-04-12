@@ -6,7 +6,7 @@ class Expander(ABC):
         self.coefficients_ = None
         self.properties = {}
 
-    def fit(self, points: np.ndarray):
+    def fit(self, points: "napari.types.PointsData"):
         self.coefficients_ = self._fit(points)
         return self
 
