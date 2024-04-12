@@ -77,19 +77,15 @@ def expand_spherical_harmonics(
 
     # convert dataframe expander.properties to dict so that one column is one key
     # and the values are the entries in the columns
-    features = {}
-    for key in expander.properties:
-        features[key] = expander.properties[key].values
-
-    points_layer = (
-        expanded_points,
-        {
-            "features": features,
+    properties = {
+            "features": {'residuals': expander.properties['residuals']},
+            "metadata": {'coefficients': expander.coefficients_,
+                         'max_degree': max_degree,
+                         'power_spectrum': expander.properties['power_spectrum']},
             "name": "Spherical Harmonics Expansion",
-            "face_color": "euclidian_distance",
+            "face_color": "residuals",
             "size": 0.5,
             "face_colormap": "inferno",
-        },
-        "points",
-    )
+        }
+    points_layer = (expanded_points, properties, "points")
     return points_layer
