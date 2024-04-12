@@ -217,8 +217,8 @@ class EllipsoidExpander(Expander):
         The points to expand.
     """
 
-    def __init__(self, get_measurements: bool = False):
-        super().__init__(get_measurements)
+    def __init__(self):
+        super().__init__()
 
     def _fit(self, points: "napari.types.PointsData") -> "napari.types.VectorsData":
         """
@@ -274,7 +274,7 @@ class EllipsoidExpander(Expander):
 
         return expanded_points
 
-    def _measure_properties(self):
+    def _calculate_properties(self, input_points, output_points):
         """
         Measure properties of the expansion.
         """
@@ -315,9 +315,8 @@ class EllipsoidExpander(Expander):
         input_points = self._data
         output_points = self._expand(input_points)
 
-        # residuals
-        residuals = np.linalg.norm(input_points - output_points, axis=1)
-        self.properties["residuals"] = residuals
+        distance = np.linalg.norm(input_points - output_points, axis=1)
+        self.properties["residuals"] = distance
 
     def _fit_ellipsoid_to_points(
         self,
