@@ -24,7 +24,7 @@ class SphericalHarmonicsExpander(Expander):
         expansion_type : str
             Type of expansion to perform. Currently only "cartesian" is supported.
         normalize_spectrum : bool
-            Normalize power spectrum to sum to 1.
+            Normalize power spectrum sum to 1.
         """
         super().__init__()
         self.expansion_type = expansion_type
@@ -119,6 +119,7 @@ class SphericalHarmonicsExpander(Expander):
         # Calculate residuals between input points and expanded points
         residuals = np.linalg.norm(input_points - expanded_points, axis=1)
         self.properties["residuals"] = residuals
+
 
     def _calculate_power_spectrum(self, normalize=True):
         """
