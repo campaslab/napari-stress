@@ -85,7 +85,7 @@ class EllipsoidExpander(Expander):
         """
 
         distance = np.linalg.norm(input_points - output_points, axis=1)
-        self.properties["euclidian_distance"] = distance
+        self.properties["residuals"] = distance
 
     def _fit_ellipsoid_to_points(
         self,

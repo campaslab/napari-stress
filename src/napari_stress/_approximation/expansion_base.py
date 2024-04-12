@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from abc import ABC, abstractmethod
 
 
@@ -7,7 +6,6 @@ class Expander:
     def __init__(self, get_measurements: bool = False):
 class Expander(ABC):
         self.coefficients_ = None
-        self.properties = pd.DataFrame()
         self._get_measurements = get_measurements
 
     def fit(self, points: np.ndarray):
