@@ -72,7 +72,7 @@ class EllipsoidExpander(Expander):
 
         return expanded_points
 
-    def _measure_properties(self, input_points, output_points):
+    def _calculate_properties(self, input_points, output_points):
         """
         Measure properties of the expansion.
 
