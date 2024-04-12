@@ -9,6 +9,14 @@ class SphericalHarmonicsExpander(Expander):
         """
         Expand a set of points using spherical harmonics.
 
+        The spherical harmonics expansion is performed using the following equation:
+
+        .. math::
+            f(\\theta, \\phi) = \\sum_{l=0}^{L} \\sum_{m=-l}^{l} a_{lm} Y_{lm}(\\theta, \\phi)
+
+        where :math:`a_{lm}` are the spherical harmonics coefficients and :math:`Y_{lm}(\\theta, \\phi)`
+        are the spherical harmonics functions. The expansion is performed in the spherical coordinate system.
+
         Parameters
         ----------
         max_degree : int
