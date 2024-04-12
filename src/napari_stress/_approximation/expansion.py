@@ -134,10 +134,69 @@ class SphericalHarmonicsExpander(Expander):
         ).T
         return fitted_points
 
-    def _measure_properties(self, input_points, expanded_points):
-        # Calculate distance between points and expanded points
-        distance = np.linalg.norm(input_points - expanded_points, axis=1)
-        self.properties["euclidian_distance"] = distance
+    def _calculate_properties(self, input_points, expanded_points):
+        """
+        Calculate properties of the expansion.
+        """
+        self._calculate_residuals(input_points, expanded_points)
+        self._calculate_power_spectrum(normalize=self.normalize_spectrum)
+
+    def _calculate_residuals(self, input_points, expanded_points):
+        """
+        Calculate residuals between input points and expanded points.
+        """
+        # Calculate residuals between input points and expanded points
+        residuals = np.linalg.norm(input_points - expanded_points, axis=1)
+        self.properties["residuals"] = residuals
+
+    def _calculate_power_spectrum(self, normalize=True):
+        """
+        Calculate power spectrum of spherical harmonics coefficients.
+
+        Parameters
+        ----------
+        normalize : bool
+            Normalize power spectrum to sum to 1.
+
+        Returns
+        -------
+        power_spectrum : np.ndarray
+            Power spectrum of spherical harmonics coefficients.
+        """
+        if self.coefficients_ is None:
+            raise ValueError("No coefficients found. Run fit() first.")
+
+        if len(self.coefficients_.shape) > 2:
+            coeffs = self.coefficients_.copy()
+            spectra = []
+            for i in range(coeffs.shape[0]):
+                self.coefficients_ = coeffs[i]
+                spectra.append(self._calculate_power_spectrum(normalize=normalize))
+            self.coefficients_ = coeffs
+            return np.stack(spectra)
+
+        power_spectrum = np.zeros(self.coefficients_.shape[0])
+
+        for level in range(self.coefficients_.shape[0]):
+            # Extract coefficients for degree l
+            real_parts = np.concatenate(
+                (
+                    [self.coefficients_[level, level]],
+                    self.coefficients_[level, level + 1 :],
+                )
+            )
+            imag_parts = self.coefficients_[:level, level]
+
+            # Combine real and imaginary parts
+            coeffs = np.concatenate((real_parts, imag_parts))
+
+            # Calculate power (sum of squares of magnitudes)
+            power_spectrum[level] = np.sum(np.abs(coeffs) ** 2)
+
+        if normalize:
+            power_spectrum /= np.sum(power_spectrum)
+
+        self.properties["power_spectrum"] = power_spectrum 
 
     def _least_squares_harmonic_fit(self, fit_degree, sample_locations, values):
         """
