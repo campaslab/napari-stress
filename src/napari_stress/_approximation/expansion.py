@@ -13,11 +13,15 @@ class SphericalHarmonicsExpander(Expander):
 
     def calculate_power_spectrum(self, normalize=True):
         """
-        Calculate power spectrum of spherical harmonics coefficients.
+        Expand a set of points using spherical harmonics.
 
         Parameters
         ----------
-        normalize : bool
+        max_degree : int
+            Maximum degree of spherical harmonics expansion.
+        expansion_type : str
+            Type of expansion to perform. Currently only "cartesian" is supported.
+        normalize_spectrum : bool
             Normalize power spectrum to sum to 1.
 
         Returns
