@@ -493,7 +493,8 @@ def comprehensive_analysis(
         gamma=gamma,
     )
 
-    max_min_anisotropy = measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
+    max_min_anisotropy = Expander_ellipsoid.properties['maximum_mean_curvature'] -\
+        Expander_ellipsoid.properties['minimum_mean_curvature']
 
     result = measurements.tissue_stress_tensor(
         ellipsoid, H0_surface_ellipsoid, gamma=gamma

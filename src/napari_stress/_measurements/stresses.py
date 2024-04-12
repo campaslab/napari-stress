@@ -76,9 +76,9 @@ def maximal_tissue_anisotropy(
     """
     from .._approximation import EllipsoidExpander
 
-    expander = EllipsoidExpander(get_measurements=True)
+    expander = EllipsoidExpander()
     expander.coefficients_ = ellipsoid
-    expander._measure_properties()
+    expander._measure_max_min_curvatures()
 
     return (
         2
