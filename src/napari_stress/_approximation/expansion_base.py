@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class Expander(ABC):
+    def __init__(self):
         self.coefficients_ = None
         self.properties = {}
 
