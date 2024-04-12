@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+from abc import ABC, abstractmethod
 
 
 class Expander:
     def __init__(self, get_measurements: bool = False):
+class Expander(ABC):
         self.coefficients_ = None
         self.properties = pd.DataFrame()
         self._get_measurements = get_measurements
@@ -23,11 +25,14 @@ class Expander:
         self.fit(points)
         return self.expand(points)
 
+    @abstractmethod
     def _fit(self, points: "napari.types.PointsData"):
         raise NotImplementedError
 
+    @abstractmethod
     def _expand(self, points: "napari.types.PointsData"):
         raise NotImplementedError
 
     def _measure_properties(self, input_points, output_points):
+    @abstractmethod
         raise NotImplementedError
