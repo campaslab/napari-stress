@@ -329,13 +329,11 @@ def comprehensive_analysis(
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
-    # CARTESIAN
-    fitted_pointcloud, coefficients = stress_spherical_harmonics_expansion(
-        pointcloud, max_degree=max_degree
-    )
+    Expander_SH = approximation.SphericalHarmonicsExpander(max_degree=max_degree)
+    fitted_pointcloud = Expander_SH.fit_expand(pointcloud)
 
     quadrature_points, lebedev_info = lebedev_quadrature(
-        coefficients=coefficients,
+        coefficients=Expander_SH.coefficients_,
         number_of_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
@@ -373,17 +371,16 @@ def comprehensive_analysis(
     # Ellipsoid fit
     # =====================================================================
 
-    ellipsoid_expander = approximation.EllipsoidExpander()
-    ellipsoid_expander.fit(pointcloud)
-    ellipsoid = ellipsoid_expander.coefficients_
-    ellipsoid_points = ellipsoid_expander.expand(pointcloud)
+    Expander_ellipsoid = approximation.EllipsoidExpander()
+    Expander_ellipsoid_SH  = approximation.SphericalHarmonicsExpander(max_degree=max_degree)
 
-    fitted_ellipsoid, coefficients_ell = stress_spherical_harmonics_expansion(
-        ellipsoid_points, max_degree=max_degree
-    )
+    ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
+    ellipsoid = Expander_ellipsoid.coefficients_
+
+    Expander_ellipsoid_SH.fit(ellipsoid_points)
 
     quadrature_points_ellipsoid, lebedev_info_ellipsoid = lebedev_quadrature(
-        coefficients=coefficients_ell,
+        coefficients=Expander_ellipsoid_SH.coefficients_,
         number_of_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
@@ -393,11 +390,7 @@ def comprehensive_analysis(
     )
 
     # expand quadrature points on droplet on ellipsoid surface
-    quadrature_points_ellipsoid = approximation.expand_points_on_ellipse(
-        ellipsoid, quadrature_points
-    )
-
-    quadrature_points_ellipsoid = ellipsoid_expander.expand(quadrature_points)
+    quadrature_points_ellipsoid = Expander_ellipsoid.expand(quadrature_points)
 
     # =========================================================================
     # Evaluate fit quality
