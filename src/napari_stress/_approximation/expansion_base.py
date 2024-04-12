@@ -2,11 +2,9 @@ import numpy as np
 from abc import ABC, abstractmethod
 
 
-class Expander:
-    def __init__(self, get_measurements: bool = False):
 class Expander(ABC):
         self.coefficients_ = None
-        self._get_measurements = get_measurements
+        self.properties = {}
 
     def fit(self, points: np.ndarray):
         self._data = points
@@ -15,8 +13,7 @@ class Expander(ABC):
 
     def expand(self, points: "napari.types.PointsData"):
         expanded_points = self._expand(points)
-        if self._get_measurements:
-            self._measure_properties(points, expanded_points)
+        self._calculate_properties(points, expanded_points)
         return expanded_points
 
     def fit_expand(self, points: "napari.types.PointsData"):
@@ -31,6 +28,6 @@ class Expander(ABC):
     def _expand(self, points: "napari.types.PointsData"):
         raise NotImplementedError
 
-    def _measure_properties(self, input_points, output_points):
     @abstractmethod
+    def _calculate_properties(self, input_points, output_points):
         raise NotImplementedError
