@@ -295,9 +295,9 @@ def create_manifold(
     Manny_Dict["Maniold_lbdv"] = lebedev_fit
 
     Manny_Dict["Manifold_SPH_deg"] = max_degree
-    Manny_Dict[
-        "use_manifold_name"
-    ] = False  # we are NOT using named shapes in these tests
+    Manny_Dict["use_manifold_name"] = (
+        False  # we are NOT using named shapes in these tests
+    )
     Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
 
     return mnfd.manifold(

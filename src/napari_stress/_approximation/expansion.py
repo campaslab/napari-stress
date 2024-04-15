@@ -113,9 +113,7 @@ class EllipsoidExpander(Expander):
         z = points[:, 2, np.newaxis]
 
         # Construct the design matrix for the ellipsoid equation
-        design_matrix = np.hstack(
-            (x**2, y**2, z**2, x * y, x * z, y * z, x, y, z)
-        )
+        design_matrix = np.hstack((x**2, y**2, z**2, x * y, x * z, y * z, x, y, z))
         column_of_ones = np.ones_like(x)  # Column vector of ones
 
         # Perform least squares fitting to solve for the coefficients
