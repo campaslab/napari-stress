@@ -19,7 +19,7 @@ pip install napari-stress
 
 If you want to make sure you are using the latest version, replace `pip install napari-stress` with `pip install napari-stress==version.number` (e.g., `pip install napari-stress==0.1.0`). You find the current version number on the [pypi page](https://pypi.org/project/napari-stress/) and on top of the [documentation frontpage](https://campaslab.github.io/napari-stress/intro.html).
 
-### Related packages 
+### Related packages
 
 Some packages work well in conjunction with napari-stress, e.g., for better 3D interactivity, visualization of the results and/or data export. Here are some suggestions:
 - [Devbio-napari](https://github.com/haesleinhuepf/devbio-napari): Not strictly necessary but strongly recommended - this package brings many handy functionalities to an otherwise quite plain napari-viewer.
