@@ -527,18 +527,18 @@ class lbdv_info(object):  # Generates (ONCE) and stores Lebedev Info
                 (Max_SPH_Deg + 1, Max_SPH_Deg + 1, self.lbdv_quad_pts, 4)
             )
 
-            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[
-                :, :, :, 0
-            ] = self.SPH_Basis_Wt_At_Quad_Pts
-            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[
-                :, :, :, 1
-            ] = self.SPH_Basis_At_Quad_Pts
-            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[
-                :, :, :, 2
-            ] = self.SPH_Phi_Der_At_Quad_Pts
-            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[
-                :, :, :, 3
-            ] = self.SPH_Phi_Phi_Der_At_Quad_Pts
+            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:, :, :, 0] = (
+                self.SPH_Basis_Wt_At_Quad_Pts
+            )
+            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:, :, :, 1] = (
+                self.SPH_Basis_At_Quad_Pts
+            )
+            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:, :, :, 2] = (
+                self.SPH_Phi_Der_At_Quad_Pts
+            )
+            To_Pickle_LBDV_Basis_at_Quad_Pts_Mats[:, :, :, 3] = (
+                self.SPH_Phi_Phi_Der_At_Quad_Pts
+            )
 
             with open(LBDV_Basis_at_Quad_Pts_Mats_filepath, "wb") as f_lbdv_basis:
                 pkl.dump(To_Pickle_LBDV_Basis_at_Quad_Pts_Mats, f_lbdv_basis)
