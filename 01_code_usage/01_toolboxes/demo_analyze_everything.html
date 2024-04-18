@@ -42,7 +42,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -465,11 +465,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -516,7 +511,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;droplet&#39; at 0x1cc5d3c7640&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;droplet&#39; at 0x19610584bb0&gt;
 </pre></div>
 </div>
 </div>
@@ -560,7 +555,7 @@ document.write(`
 
 <span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>  <span class="c1"># spherical harmonics degree</span>
-    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">5810</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5810)</span>
+    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">590</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5810)</span>
     <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">}</span>  <span class="c1"># interfacial tension of droplet</span>
 <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
 </pre></div>
@@ -599,7 +594,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:2771&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client up and running &lt;Client: &#39;tcp://127.0.0.1:50124&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -609,8 +604,8 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">stress_backend</span><span class="o">.</span><span class="n">lbdv_info</span><span class="p">(</span><span class="n">Max_SPH_Deg</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;max_degree&#39;</span><span class="p">],</span>
                              <span class="n">Num_Quad_Pts</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">])</span>
 
-<span class="n">input_data</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;points_patch_fitted&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-<span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">,</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;Droplet pointcloud (smoothed)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">results_stress_analysis</span> <span class="o">=</span> <span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">,</span>
                                                               <span class="n">use_dask</span><span class="o">=</span><span class="n">parallelize</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results_stress_analysis</span><span class="p">:</span>
@@ -620,7 +615,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:2771&#39; processes=8 threads=40, memory=511.51 GiB&gt;  Log: http://127.0.0.1:8787/status
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:50124&#39; processes=4 threads=4, memory=31.96 GiB&gt;  Log: http://127.0.0.1:8787/status
 </pre></div>
 </div>
 </div>
@@ -795,101 +790,101 @@ document.write(`
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>20.038060</td>
-      <td>176.410074</td>
-      <td>-0.673943</td>
-      <td>-1.168319</td>
-      <td>5.635342e-21</td>
-      <td>0.046692</td>
-      <td>2.582523</td>
+      <td>20.038063</td>
+      <td>176.410822</td>
+      <td>-0.673940</td>
+      <td>-1.168413</td>
+      <td>4.609321e-21</td>
+      <td>0.046695</td>
+      <td>2.582717</td>
       <td>0.012938</td>
-      <td>0.307836</td>
-      <td>0.566715</td>
-      <td>1.099935</td>
-      <td>20.258588</td>
+      <td>0.307859</td>
+      <td>0.566758</td>
+      <td>1.099930</td>
+      <td>20.261058</td>
       <td>0.004435</td>
-      <td>-5.418269</td>
-      <td>20.038060</td>
+      <td>-5.418143</td>
+      <td>20.038063</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>20.022970</td>
-      <td>163.568574</td>
-      <td>-0.638402</td>
-      <td>0.379484</td>
-      <td>5.801871e-20</td>
-      <td>0.047045</td>
-      <td>2.415064</td>
-      <td>0.011208</td>
-      <td>0.275461</td>
-      <td>0.485907</td>
+      <td>20.022966</td>
+      <td>163.568899</td>
+      <td>-0.638404</td>
+      <td>0.379437</td>
+      <td>5.848198e-20</td>
+      <td>0.047042</td>
+      <td>2.414873</td>
+      <td>0.011207</td>
+      <td>0.275440</td>
+      <td>0.485870</td>
       <td>1.096523</td>
-      <td>6.303079</td>
+      <td>6.302603</td>
       <td>0.001248</td>
-      <td>-6.686001</td>
-      <td>20.022970</td>
+      <td>-6.686067</td>
+      <td>20.022966</td>
       <td>0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>20.025373</td>
-      <td>193.241882</td>
-      <td>-0.673261</td>
-      <td>-2.377305</td>
-      <td>1.105363e-18</td>
-      <td>0.044558</td>
-      <td>2.653163</td>
+      <td>20.025295</td>
+      <td>193.242245</td>
+      <td>-0.673258</td>
+      <td>-2.377362</td>
+      <td>1.104042e-18</td>
+      <td>0.044560</td>
+      <td>2.653223</td>
       <td>0.012399</td>
-      <td>0.321597</td>
+      <td>0.321607</td>
       <td>0.599573</td>
-      <td>1.118844</td>
-      <td>33.818727</td>
+      <td>1.118846</td>
+      <td>33.819470</td>
       <td>0.007118</td>
-      <td>-4.945125</td>
-      <td>20.025373</td>
+      <td>-4.945105</td>
+      <td>20.025295</td>
       <td>0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>20.025144</td>
-      <td>163.228150</td>
-      <td>-0.641118</td>
-      <td>0.257747</td>
-      <td>1.050280e-21</td>
-      <td>0.047898</td>
-      <td>2.453388</td>
-      <td>0.011553</td>
-      <td>0.280831</td>
-      <td>0.497366</td>
-      <td>1.031139</td>
-      <td>10.032599</td>
-      <td>0.002014</td>
-      <td>-6.207605</td>
-      <td>20.025144</td>
+      <td>20.025143</td>
+      <td>163.229563</td>
+      <td>-0.641114</td>
+      <td>0.257542</td>
+      <td>1.242458e-21</td>
+      <td>0.047908</td>
+      <td>2.453894</td>
+      <td>0.011555</td>
+      <td>0.280890</td>
+      <td>0.497471</td>
+      <td>1.031137</td>
+      <td>10.036452</td>
+      <td>0.002015</td>
+      <td>-6.207211</td>
+      <td>20.025143</td>
       <td>0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>20.003002</td>
-      <td>176.165984</td>
-      <td>-0.670779</td>
-      <td>-0.900805</td>
-      <td>3.894165e-20</td>
+      <td>20.003009</td>
+      <td>176.166124</td>
+      <td>-0.670780</td>
+      <td>-0.900823</td>
+      <td>3.622026e-20</td>
       <td>0.048619</td>
-      <td>2.688891</td>
-      <td>0.013215</td>
-      <td>0.319999</td>
-      <td>0.577805</td>
-      <td>1.076209</td>
-      <td>10.776100</td>
-      <td>0.002299</td>
-      <td>-6.075363</td>
-      <td>20.003002</td>
+      <td>2.688943</td>
+      <td>0.013216</td>
+      <td>0.320005</td>
+      <td>0.577818</td>
+      <td>1.076207</td>
+      <td>10.774460</td>
+      <td>0.002298</td>
+      <td>-6.075505</td>
+      <td>20.003009</td>
       <td>0</td>
     </tr>
     <tr>
@@ -913,108 +908,108 @@ document.write(`
       <td>...</td>
     </tr>
     <tr>
-      <th>15363</th>
-      <td>725</td>
-      <td>19.998929</td>
-      <td>197.393986</td>
-      <td>-0.627523</td>
-      <td>-3.770775</td>
-      <td>3.674853e-01</td>
-      <td>0.018869</td>
-      <td>0.962047</td>
-      <td>0.004784</td>
-      <td>0.103862</td>
-      <td>0.237850</td>
-      <td>1.031559</td>
-      <td>17.381213</td>
-      <td>0.003572</td>
-      <td>-5.634499</td>
-      <td>19.998929</td>
-      <td>20</td>
-    </tr>
-    <tr>
       <th>15364</th>
-      <td>726</td>
-      <td>20.040515</td>
-      <td>171.130068</td>
-      <td>-0.677091</td>
-      <td>-1.781954</td>
-      <td>9.062434e-27</td>
-      <td>0.029972</td>
-      <td>1.458708</td>
-      <td>0.009370</td>
-      <td>0.152389</td>
-      <td>0.390393</td>
-      <td>1.131636</td>
-      <td>18.180630</td>
-      <td>0.003845</td>
-      <td>-5.560944</td>
-      <td>20.040515</td>
+      <td>725</td>
+      <td>19.998927</td>
+      <td>197.392632</td>
+      <td>-0.627527</td>
+      <td>-3.770612</td>
+      <td>3.676951e-01</td>
+      <td>0.018876</td>
+      <td>0.962403</td>
+      <td>0.004785</td>
+      <td>0.103900</td>
+      <td>0.237937</td>
+      <td>1.031561</td>
+      <td>17.373360</td>
+      <td>0.003571</td>
+      <td>-5.634947</td>
+      <td>19.998927</td>
       <td>20</td>
     </tr>
     <tr>
       <th>15365</th>
-      <td>727</td>
-      <td>19.995650</td>
-      <td>179.673155</td>
-      <td>-0.667468</td>
-      <td>-2.447227</td>
-      <td>5.983036e-22</td>
-      <td>0.025293</td>
-      <td>1.271881</td>
-      <td>0.007640</td>
-      <td>0.134070</td>
-      <td>0.340887</td>
-      <td>1.085063</td>
-      <td>15.463419</td>
-      <td>0.003340</td>
-      <td>-5.701835</td>
-      <td>19.995650</td>
+      <td>726</td>
+      <td>20.040552</td>
+      <td>171.129640</td>
+      <td>-0.677093</td>
+      <td>-1.781867</td>
+      <td>3.194370e-14</td>
+      <td>0.029979</td>
+      <td>1.459065</td>
+      <td>0.009372</td>
+      <td>0.152425</td>
+      <td>0.390491</td>
+      <td>1.131636</td>
+      <td>18.176025</td>
+      <td>0.003844</td>
+      <td>-5.561195</td>
+      <td>20.040552</td>
       <td>20</td>
     </tr>
     <tr>
       <th>15366</th>
-      <td>728</td>
-      <td>19.992451</td>
-      <td>192.269614</td>
-      <td>-0.652319</td>
-      <td>-3.107447</td>
-      <td>1.783490e-16</td>
-      <td>0.023568</td>
-      <td>1.246877</td>
-      <td>0.006769</td>
-      <td>0.131455</td>
-      <td>0.335429</td>
-      <td>1.074865</td>
-      <td>19.436407</td>
-      <td>0.003839</td>
-      <td>-5.562531</td>
-      <td>19.992451</td>
+      <td>727</td>
+      <td>19.995654</td>
+      <td>179.672688</td>
+      <td>-0.667468</td>
+      <td>-2.447113</td>
+      <td>6.488004e-22</td>
+      <td>0.025294</td>
+      <td>1.271959</td>
+      <td>0.007641</td>
+      <td>0.134078</td>
+      <td>0.340907</td>
+      <td>1.085043</td>
+      <td>15.459548</td>
+      <td>0.003339</td>
+      <td>-5.702091</td>
+      <td>19.995654</td>
       <td>20</td>
     </tr>
     <tr>
       <th>15367</th>
+      <td>728</td>
+      <td>19.992411</td>
+      <td>192.269531</td>
+      <td>-0.652320</td>
+      <td>-3.107330</td>
+      <td>1.823652e-16</td>
+      <td>0.023571</td>
+      <td>1.247022</td>
+      <td>0.006770</td>
+      <td>0.131471</td>
+      <td>0.335464</td>
+      <td>1.074869</td>
+      <td>19.429097</td>
+      <td>0.003838</td>
+      <td>-5.562913</td>
+      <td>19.992411</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>15368</th>
       <td>729</td>
-      <td>20.031781</td>
-      <td>169.547019</td>
-      <td>-0.675956</td>
-      <td>-1.752051</td>
-      <td>1.256208e-20</td>
+      <td>20.031783</td>
+      <td>169.546593</td>
+      <td>-0.675959</td>
+      <td>-1.751943</td>
+      <td>1.263994e-20</td>
       <td>0.030450</td>
-      <td>1.467549</td>
+      <td>1.467567</td>
       <td>0.009474</td>
-      <td>0.153349</td>
-      <td>0.391578</td>
+      <td>0.153350</td>
+      <td>0.391583</td>
       <td>NaN</td>
-      <td>19.566017</td>
-      <td>0.004307</td>
-      <td>-5.447400</td>
-      <td>20.031781</td>
+      <td>19.560836</td>
+      <td>0.004306</td>
+      <td>-5.447669</td>
+      <td>20.031783</td>
       <td>20</td>
     </tr>
   </tbody>
 </table>
-<p>15368 rows × 17 columns</p>
+<p>15369 rows × 17 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1034,7 +1029,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/73b2e58dff8f8f4a944bbaab4b549eb665387927f2733ebdb025f662739ceb58.png" src="../../_images/73b2e58dff8f8f4a944bbaab4b549eb665387927f2733ebdb025f662739ceb58.png" />
+<img alt="../../_images/c50a325e502d7b16ca0ed63fc2e403b854d9da78d465d346f903b1c699180c3a.png" src="../../_images/c50a325e502d7b16ca0ed63fc2e403b854d9da78d465d346f903b1c699180c3a.png" />
 </div>
 </div>
 </section>
@@ -1054,7 +1049,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/3b228998247e9a3a8c8ae5377482945af478bc76fb23d7a98b47b95f61e2bb87.png" src="../../_images/3b228998247e9a3a8c8ae5377482945af478bc76fb23d7a98b47b95f61e2bb87.png" />
+<img alt="../../_images/daf1fa8822a3e2094cca7eb37692f63a0123e551028d42d5a7662c60f68ca1a0.png" src="../../_images/daf1fa8822a3e2094cca7eb37692f63a0123e551028d42d5a7662c60f68ca1a0.png" />
 </div>
 </div>
 </section>
@@ -1072,7 +1067,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/397e70409c3470bf4d8fc233de79837660cf86040e6f7969d4edd8df061342cf.png" src="../../_images/397e70409c3470bf4d8fc233de79837660cf86040e6f7969d4edd8df061342cf.png" />
+<img alt="../../_images/f9e6df0c4b07984980237224a16743d06e93182f093d17f976e8fc0969012fc7.png" src="../../_images/f9e6df0c4b07984980237224a16743d06e93182f093d17f976e8fc0969012fc7.png" />
 </div>
 </div>
 </section>
@@ -1096,7 +1091,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/3eb3f32f208ab543c30ed2adec8748be932ba415e2123455c0bdafc8e0848477.png" src="../../_images/3eb3f32f208ab543c30ed2adec8748be932ba415e2123455c0bdafc8e0848477.png" />
+<img alt="../../_images/64b4539ac55d48f7d4ff0952100f782a1152cb20e1488911ab57960cc7e44d0b.png" src="../../_images/64b4539ac55d48f7d4ff0952100f782a1152cb20e1488911ab57960cc7e44d0b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1110,7 +1105,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b2be64b43bf4f47ecc48d7e327cbac6a5cfe56d409e7adf9767fb27b13b4a1fd.png" src="../../_images/b2be64b43bf4f47ecc48d7e327cbac6a5cfe56d409e7adf9767fb27b13b4a1fd.png" />
+<img alt="../../_images/9313d4ebfaa19975a5e04ee67690ca3062e58cae6c350afec3be70a097e300f5.png" src="../../_images/9313d4ebfaa19975a5e04ee67690ca3062e58cae6c350afec3be70a097e300f5.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1124,7 +1119,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1c8fefd349523c0880f3974f0311521384183c02cd5c46f24a13ea71f0c75d88.png" src="../../_images/1c8fefd349523c0880f3974f0311521384183c02cd5c46f24a13ea71f0c75d88.png" />
+<img alt="../../_images/1342418c428023525d0f9c97b4e9253c26ebefffedb4c05835a8d3aebc19e7c6.png" src="../../_images/1342418c428023525d0f9c97b4e9253c26ebefffedb4c05835a8d3aebc19e7c6.png" />
 </div>
 </div>
 </section>
@@ -1141,7 +1136,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/07546cbd483e7578804e7c45c27815808dfebb661bc7c7e0a397924555457501.png" src="../../_images/07546cbd483e7578804e7c45c27815808dfebb661bc7c7e0a397924555457501.png" />
+<img alt="../../_images/df3f245ccaa6ce6f9ba68048f4583cab75ebb5cbcf946a706d17a9cfc8b27d64.png" src="../../_images/df3f245ccaa6ce6f9ba68048f4583cab75ebb5cbcf946a706d17a9cfc8b27d64.png" />
 </div>
 </div>
 </section>
@@ -1158,7 +1153,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" src="../../_images/2a3cbd03fd53d6bd66de78c9dce84b5fcb2121a7dec30132db495a63da281710.png" />
+<img alt="../../_images/24e3f97cdc4019cb5611aec4d537845a83210c01bb87a05963f6cb05cf51ff6a.png" src="../../_images/24e3f97cdc4019cb5611aec4d537845a83210c01bb87a05963f6cb05cf51ff6a.png" />
 </div>
 </div>
 </section>
@@ -1175,7 +1170,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" src="../../_images/206618db6df40adab852e72313e14d8de317ab5235ab5ce8611e1ae0b0061be3.png" />
+<img alt="../../_images/354ba331bbd6b73f5fe6ac3b5ccbd402a47c5183a434490e31216b699212d69b.png" src="../../_images/354ba331bbd6b73f5fe6ac3b5ccbd402a47c5183a434490e31216b699212d69b.png" />
 </div>
 </div>
 </section>
@@ -1192,7 +1187,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" src="../../_images/1da2876f8c6ceb3c3a78438356f713fd9319a0dcf32313e000897cd6e0e3d7de.png" />
+<img alt="../../_images/b7b2813c7a193c9a1c8e6884e065348c50f4759cd85c6fd1844646f5b77269f2.png" src="../../_images/b7b2813c7a193c9a1c8e6884e065348c50f4759cd85c6fd1844646f5b77269f2.png" />
 </div>
 </div>
 </section>
@@ -1209,7 +1204,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" src="../../_images/1b62bf4b14b3ab02ae833884671ae4ce93e73fbab708a79fd8a53e70b7f01d5c.png" />
+<img alt="../../_images/4b9b27a6c4303cc710bf30afa6713318f0126afff37050dd969137701ec0b447.png" src="../../_images/4b9b27a6c4303cc710bf30afa6713318f0126afff37050dd969137701ec0b447.png" />
 </div>
 </div>
 </section>
@@ -1226,7 +1221,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" src="../../_images/c930c62fae51ae3e223d3270089a862255b8b3ee1ce03d20719207d1ab4aaa08.png" />
+<img alt="../../_images/38b4ac5890129ec5c18c0e606879a115f4035f5b828fee1fbf704be9e7ce1d3b.png" src="../../_images/38b4ac5890129ec5c18c0e606879a115f4035f5b828fee1fbf704be9e7ce1d3b.png" />
 </div>
 </div>
 </section>
@@ -1249,7 +1244,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;time&#39;, ylabel=&#39;droplet_center_displacement&#39;&gt;
 </pre></div>
 </div>
-<img alt="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" src="../../_images/1e280b33aa267ec4308113f7c321bf9b3cf51ee5548573ddb33adf5158a820e2.png" />
+<img alt="../../_images/2803c4b07844b0f8340c2fc082a7e8f216ae03ae821fc8d649d4232bcd329c4b.png" src="../../_images/2803c4b07844b0f8340c2fc082a7e8f216ae03ae821fc8d649d4232bcd329c4b.png" />
 </div>
 </div>
 </section>
@@ -1275,18 +1270,6 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-Dask client already running &lt;Client: &#39;tcp://127.0.0.1:57291&#39; processes=4 threads=16, memory=31.72 GiB&gt;  Log: http://127.0.0.1:8787/status
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
-No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
 </pre></div>
 </div>
 </div>
