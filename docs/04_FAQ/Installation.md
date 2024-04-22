@@ -2,6 +2,30 @@
 # Installation issues
 In this section you find some known installation issues and how to fix them.
 
+## Setting up Python
+
+Depending on how you have your Python set up on your machine, different preparation may be advisable. Here are some suggestions:
+- [Getting started with Python and Anaconda](https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html): If you have not yet installed Python or Anaconda on your computer **at all**, this explains how to set it up and create an environment that contain the most basic functionality ([napari](https://napari.org/stable/) & [Jupyterlab](https://jupyter.org/))
+- Setting up a new environment: If you already have Python installed and want to create a new environment for napari-stress, follow these steps to create a new environment and install napari-stress into it.
+
+```bash
+conda create -n stress Python=3.9
+conda acticate stress
+conda install mamba -c conda-forge
+
+mamba install napari pyqt devbio-napari
+pip install napari-stress
+```
+
+If you want to make sure you are using the latest version, replace `pip install napari-stress` with `pip install napari-stress==version.number` (e.g., `pip install napari-stress==0.1.0`). You find the current version number on the [pypi page](https://pypi.org/project/napari-stress/) and on top of the [documentation frontpage](https://campaslab.github.io/napari-stress/intro.html).
+
+### Related packages
+
+Some packages work well in conjunction with napari-stress, e.g., for better 3D interactivity, visualization of the results and/or data export. Here are some suggestions:
+- [Devbio-napari](https://github.com/haesleinhuepf/devbio-napari): Not strictly necessary but strongly recommended - this package brings many handy functionalities to an otherwise quite plain napari-viewer.
+- [Napari-threedee](https://www.napari-hub.org/plugins/napari-threedee): Enhance rendering options in napari with a set of interesting tools for mesh lighting, plane rendering, etc.install type `pip install napari-threedee`.
+- [napari-process-points-and-surfaces](https://www.napari-hub.org/plugins/napari-process-points-and-surfaces): A plugin that allows you to process points and surfaces in 3D. To install, type `pip install napari-process-points-and-surfaces`.
+
 
 ## Installation failing on Mac
 (FAQ:installation:xcode)=

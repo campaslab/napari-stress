@@ -15,8 +15,8 @@ class EllipsoidExpander(Expander):
         The points to expand.
     """
 
-    def __init__(self, get_measurements: bool = False):
-        super().__init__(get_measurements)
+    def __init__(self):
+        super().__init__()
 
     def _fit(self, points: "napari.types.PointsData") -> "napari.types.VectorsData":
         """
@@ -72,7 +72,7 @@ class EllipsoidExpander(Expander):
 
         return expanded_points
 
-    def _measure_properties(self, input_points, output_points):
+    def _calculate_properties(self, input_points, output_points):
         """
         Measure properties of the expansion.
 
@@ -85,7 +85,7 @@ class EllipsoidExpander(Expander):
         """
 
         distance = np.linalg.norm(input_points - output_points, axis=1)
-        self.properties["euclidian_distance"] = distance
+        self.properties["residuals"] = distance
 
     def _fit_ellipsoid_to_points(
         self,
@@ -113,9 +113,7 @@ class EllipsoidExpander(Expander):
         z = points[:, 2, np.newaxis]
 
         # Construct the design matrix for the ellipsoid equation
-        design_matrix = np.hstack(
-            (x**2, y**2, z**2, x * y, x * z, y * z, x, y, z)
-        )
+        design_matrix = np.hstack((x**2, y**2, z**2, x * y, x * z, y * z, x, y, z))
         column_of_ones = np.ones_like(x)  # Column vector of ones
 
         # Perform least squares fitting to solve for the coefficients
