@@ -104,7 +104,7 @@ def test_lsq_ellipsoid0(n_tests=10):
     for i in range(n_tests):
         points = generate_pointclouds(a0=a0, a1=a1, a2=a2, x0=x0)
 
-        expander = approximation.EllipsoidExpander(get_measurements=True)
+        expander = approximation.EllipsoidExpander()
         expander.fit(points)
 
         expanded_points = expander.expand(points)
