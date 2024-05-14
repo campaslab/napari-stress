@@ -114,9 +114,7 @@ def cartesian_to_elliptical(
 
         U_coors_calc[pt_numb] = U_pt
 
-        cylinder_r = np.sqrt(
-            yt_0**2 + yt_1**2
-        )  # r in cylinderical coors for y_tilde
+        cylinder_r = np.sqrt(yt_0**2 + yt_1**2)  # r in cylinderical coors for y_tilde
         cyl_r_exp = np.sqrt(
             (lengths[0] * np.cos(U_pt)) ** 2 + (lengths[1] * np.sin(U_pt)) ** 2
         )
