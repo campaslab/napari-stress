@@ -28,7 +28,6 @@ class SphericalHarmonicsExpander(Expander):
         """
         super().__init__()
         self.expansion_type = expansion_type
-        self._coordinates_ellipsoidal = None
         self.max_degree = max_degree
         self.normalize_spectrum = normalize_spectrum
 
@@ -49,7 +48,6 @@ class SphericalHarmonicsExpander(Expander):
 
         # Convert coordinates to ellipsoidal (latitude/longitude)
         longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
-        self._coordinates_ellipsoidal = np.stack([longitude, latitude], axis=0)
 
         # This implementation fits a superposition of three sets of spherical harmonics
         # to the data, one for each cardinal direction (x/y/z).
@@ -95,7 +93,6 @@ class SphericalHarmonicsExpander(Expander):
         """
         from .._stress import sph_func_SPB as sph_f
 
-        if self._coordinates_ellipsoidal is None:
         if self.expansion_type == "cartesian":
             longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
 
