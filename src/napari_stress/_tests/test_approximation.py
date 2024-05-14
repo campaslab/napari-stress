@@ -17,8 +17,19 @@ def ellipsoid_points():
     z = c * np.cos(v)
     return np.column_stack((x.ravel(), y.ravel(), z.ravel()))
 
+@pytest.fixture
+def droplet_points():
+    """
+    Create a droplet point cloud.
+    """
+    from napari_stress import sample_data
 
-def test_spherical_harmonics_fit(ellipsoid_points):
+    pointcloud = sample_data.get_droplet_point_cloud()[0][0][:, 1:]
+    
+    return pointcloud
+
+
+def test_spherical_harmonics_fit(droplet_points):
     """
     Test fitting spherical harmonics to ellipsoid points.
     """
@@ -27,13 +38,13 @@ def test_spherical_harmonics_fit(ellipsoid_points):
     expander = approximation.SphericalHarmonicsExpander(
         max_degree=5, expansion_type="cartesian"
     )
-    expander.fit(ellipsoid_points)
+    expander.fit(droplet_points)
 
     assert expander.coefficients_ is not None
     assert expander.coefficients_.shape == (3, (5 + 1), (5 + 1))
 
 
-def test_spherical_harmonics_expand(ellipsoid_points):
+def test_spherical_harmonics_expand(droplet_points):
     """
     Test expanding points using spherical harmonics.
     """
@@ -42,11 +53,11 @@ def test_spherical_harmonics_expand(ellipsoid_points):
     expander = approximation.SphericalHarmonicsExpander(
         max_degree=5, expansion_type="cartesian"
     )
-    expander.fit(ellipsoid_points)
-    expanded_points = expander.expand(ellipsoid_points)
+    expander.fit(droplet_points)
+    expanded_points = expander.expand(droplet_points)
 
     # Assert the expanded points are close to the original points
-    np.testing.assert_allclose(expanded_points, ellipsoid_points, atol=1e-1)
+    np.testing.assert_allclose(expanded_points, droplet_points, rtol=0.01)
 
 
 def generate_pointclouds(
