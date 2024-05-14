@@ -75,26 +75,9 @@ class SphericalHarmonicsExpander(Expander):
         from .._stress import sph_func_SPB as sph_f
 
         if self._coordinates_ellipsoidal is None:
+        if self.expansion_type == "cartesian":
             longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
-            self._coordinates_ellipsoidal = np.stack([longitude, latitude], axis=0)
 
-        # Create SPH_func to represent X, Y, Z:
-        X_fit_sph = sph_f.spherical_harmonics_function(
-            self.coefficients_[0], self.max_degree
-        )
-        Y_fit_sph = sph_f.spherical_harmonics_function(
-            self.coefficients_[1], self.max_degree
-        )
-        Z_fit_sph = sph_f.spherical_harmonics_function(
-            self.coefficients_[2], self.max_degree
-        )
-
-        longitude = self._coordinates_ellipsoidal[0]
-        latitude = self._coordinates_ellipsoidal[1]
-
-        X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
-        Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
-        Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
 
         fitted_points = np.stack(
             (X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts)
