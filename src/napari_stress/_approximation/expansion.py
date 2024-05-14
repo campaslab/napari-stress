@@ -36,39 +36,35 @@ class SphericalHarmonicsExpander(Expander):
         """
         Fit spherical harmonics to input data.
         """
+
+        if self.expansion_type == "cartesian":
+            coefficients = self._fit_cartesian(points)
+    def _fit_cartesian(self, points):
         from .._stress import sph_func_SPB as sph_f
 
         # Convert coordinates to ellipsoidal (latitude/longitude)
         longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
         self._coordinates_ellipsoidal = np.stack([longitude, latitude], axis=0)
 
-        if self.expansion_type == "cartesian":
-            # This implementation fits a superposition of three sets of spherical harmonics
-            # to the data, one for each cardinal direction (x/y/z).
-            optimal_fit_parameters = []
-            for i in range(3):
-                params = self._least_squares_harmonic_fit(
-                    fit_degree=self.max_degree,
-                    sample_locations=(longitude, latitude),
-                    values=points[:, i],
-                )
-                optimal_fit_parameters.append(params)
-            optimal_fit_parameters = np.vstack(optimal_fit_parameters).transpose()
+        # This implementation fits a superposition of three sets of spherical harmonics
+        # to the data, one for each cardinal direction (x/y/z).
+        optimal_fit_parameters = []
+        for i in range(3):
+            params = self._least_squares_harmonic_fit(
+                fit_degree=self.max_degree,
+                sample_locations=(longitude, latitude),
+                values=points[:, i],
+            )
+            optimal_fit_parameters.append(params)
+        optimal_fit_parameters = np.vstack(optimal_fit_parameters).transpose()
 
-            # Unflatten coefficients into a 3 x (max_degree + 1)^2 matrix
-            X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
-                optimal_fit_parameters[:, 0], self.max_degree
+        fit_sph_coef_mats = np.empty((3, self.max_degree + 1, self.max_degree + 1))
+        for idx in range(3):
+            fit_sph_coef_mats[idx] = sph_f.Un_Flatten_Coef_Vec(
+                optimal_fit_parameters[:, idx], self.max_degree
             )
-            Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
-                optimal_fit_parameters[:, 1], self.max_degree
-            )
-            Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
-                optimal_fit_parameters[:, 2], self.max_degree
-            )
-
-            coefficients = np.stack(
-                [X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat]
-            )
+        
+        return fit_sph_coef_mats
 
         return coefficients
 
