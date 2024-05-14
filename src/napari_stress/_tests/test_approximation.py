@@ -51,7 +51,7 @@ def test_spherical_harmonics_expand(droplet_points):
     from napari_stress import approximation
 
     expander = approximation.SphericalHarmonicsExpander(
-        max_degree=5, expansion_type="cartesian"
+        max_degree=10, expansion_type="cartesian"
     )
     expander.fit(droplet_points)
     expanded_points = expander.expand(droplet_points)
