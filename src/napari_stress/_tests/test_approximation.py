@@ -60,7 +60,7 @@ def test_spherical_harmonics_expand(droplet_points):
     np.testing.assert_allclose(expanded_points, droplet_points, rtol=0.01)
 
 
-def generate_pointclouds(
+def generate_ellipsoidal_pointclouds(
     a0: float = 10, a1: float = 20, a2: float = 30, x0: tuple = (0, 0, 0)
 ):
     import vedo
@@ -102,7 +102,7 @@ def test_lsq_ellipsoid0(n_tests=10):
     max_mean_curvatures = []
     min_mean_curvatures = []
     for i in range(n_tests):
-        points = generate_pointclouds(a0=a0, a1=a1, a2=a2, x0=x0)
+        points = generate_ellipsoidal_pointclouds(a0=a0, a1=a1, a2=a2, x0=x0)
 
         expander = approximation.EllipsoidExpander()
         expander.fit(points)
