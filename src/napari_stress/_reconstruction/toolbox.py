@@ -274,6 +274,7 @@ def reconstruct_droplet(
     from skimage import filters, transform
     from .refine_surfaces import resample_pointcloud
     from .patches import iterative_curvature_adaptive_patch_fitting
+    from scipy.ndimage import binary_fill_holes
 
     scaling_factors = voxelsize / target_voxelsize
     rescaled_image = transform.rescale(
@@ -282,6 +283,9 @@ def reconstruct_droplet(
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     threshold = filters.threshold_otsu(rescaled_image)
     binarized_image = rescaled_image > threshold
+
+    if edge_type == "surface":
+        binarized_image = binary_fill_holes(binarized_image)
 
     # convert to surface
     label_image = nsbatwm.connected_component_labeling(binarized_image)
