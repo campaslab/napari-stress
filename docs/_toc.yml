@@ -57,6 +57,7 @@ parts:
     chapters:
     - file: 04_FAQ/Installation
     - file: 04_FAQ/Acknowledgement_and_citation
+    - file: 04_FAQ/bulk_vs_surface
     - file: 04_FAQ/Validation
       sections:
       - file: 04_FAQ/validation/validation_stress_paper
