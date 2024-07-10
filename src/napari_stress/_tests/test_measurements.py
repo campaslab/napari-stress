@@ -385,10 +385,10 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
-
     widget._run()
-    widget.checkBox_export.setChecked(False)
-    widget.checkBox_export.setChecked(True)
+
+    widget.checkBox_use_dask.setChecked(True)
+    widget._run()
 
     # test that the directory is created
     assert os.path.isdir(widget.save_directory)
