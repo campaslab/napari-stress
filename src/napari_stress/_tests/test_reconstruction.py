@@ -8,39 +8,27 @@ def test_reconstruction(make_napari_viewer):
     import napari_stress
 
     viewer = make_napari_viewer()
-    image = get_droplet_4d()[0][0]
-    viewer.add_image(image, scale=[1.1, 1.1, 1.1], name="image")
+    image = get_droplet_4d()[0]
+    layer = Layer.create(image[0], image[1], image[2])
+    viewer.add_layer(layer)
 
     widget = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(
         viewer
     )
     viewer.window.add_dock_widget(widget)
 
-    assert widget.doubleSpinBox_voxelsize_x.value() == 1.1
-    assert widget.doubleSpinBox_voxelsize_y.value() == 1.1
-    assert widget.doubleSpinBox_voxelsize_z.value() == 1.1
+    assert widget.doubleSpinBox_voxelsize_x.value() == 1.98
+    assert widget.doubleSpinBox_voxelsize_y.value() == 1.98
+    assert widget.doubleSpinBox_voxelsize_z.value() == 3.998
 
-    results = reconstruction.reconstruct_droplet(
-        image,
-        voxelsize=np.asarray([4, 2, 2]),
-        interpolation_method="linear",
-        target_voxelsize=2,
-        use_dask=True,
-    )
+    widget.doubleSpinBox_target_voxelsize.setValue(2)
+    widget._run()
 
-    for result in results:
-        layer = Layer.create(result[0], result[1], result[2])
-        viewer.add_layer(layer)
+    assert "Droplet pointcloud (smoothed)" in viewer.layers
 
     # test with dask
-    results = reconstruction.reconstruct_droplet(
-        image,
-        voxelsize=np.asarray([1.93, 1, 1]),
-        target_voxelsize=1,
-        interpolation_method="linear",
-        resampling_length=1,
-        use_dask=True,
-    )
+    widget.checkBox_use_dask.setChecked(True)
+    widget._run()
 
     # test saving/loading settings
     widget._export_settings(file_name="test.yaml")
@@ -48,9 +36,9 @@ def test_reconstruction(make_napari_viewer):
         viewer
     )
     widget2._import_settings(file_name="test.yaml")
-    assert widget2.doubleSpinBox_voxelsize_x.value() == 1.1
-    assert widget2.doubleSpinBox_voxelsize_y.value() == 1.1
-    assert widget2.doubleSpinBox_voxelsize_z.value() == 1.1
+    assert widget2.doubleSpinBox_voxelsize_x.value() == 1.98
+    assert widget2.doubleSpinBox_voxelsize_y.value() == 1.98
+    assert widget2.doubleSpinBox_voxelsize_z.value() == 3.998
 
 
 def test_quadrature_point_reconstruction(make_napari_viewer):
