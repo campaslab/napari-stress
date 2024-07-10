@@ -151,9 +151,12 @@ class stress_analysis_toolbox(QWidget):
         import webbrowser
 
         if self.checkBox_use_dask.isChecked():
-            from dask.distributed import get_client
+            from dask.distributed import get_client, Client
 
-            client = get_client()
+            try:
+                client = get_client()
+            except ValueError:
+                client = Client()
             webbrowser.open_new_tab(client.dashboard_link)
 
         # calculate number of frames

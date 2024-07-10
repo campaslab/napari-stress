@@ -385,10 +385,16 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
     viewer.window.add_dock_widget(widget)
-
     widget._run()
-    widget.checkBox_export.setChecked(False)
-    widget.checkBox_export.setChecked(True)
+
+    # get the save directory
+    save_directory = widget.save_directory
+    for file in os.listdir(save_directory):
+        os.remove(os.path.join(save_directory, file))
+    os.rmdir(save_directory)
+
+    widget.checkBox_use_dask.setChecked(True)
+    widget._run()
 
     # test that the directory is created
     assert os.path.isdir(widget.save_directory)
@@ -422,6 +428,11 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     assert os.path.isfile(os.path.join(widget.save_directory, "Stresses_cell.png"))
     assert os.path.isfile(os.path.join(widget.save_directory, "Stresses_tissue.png"))
     assert os.path.isfile(os.path.join(widget.save_directory, "Stresses_total.png"))
+
+    # clean up everything in the directory
+    for file in os.listdir(widget.save_directory):
+        os.remove(os.path.join(widget.save_directory, file))
+    os.rmdir(widget.save_directory)
 
 
 def test_curvature(make_napari_viewer):

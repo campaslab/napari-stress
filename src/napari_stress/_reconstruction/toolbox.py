@@ -154,7 +154,7 @@ class droplet_reconstruction_toolbox(QWidget):
     def _run(self):
         """Call analysis function."""
         import webbrowser
-        from dask.distributed import get_client
+        from dask.distributed import get_client, Client
 
         current_voxel_size = np.asarray(
             [
@@ -165,7 +165,10 @@ class droplet_reconstruction_toolbox(QWidget):
         )
 
         if self.checkBox_use_dask.isChecked():
-            client = get_client()
+            try:
+                client = get_client()
+            except ValueError:
+                client = Client()
             webbrowser.open_new_tab(client.dashboard_link)
 
         results = reconstruct_droplet(
