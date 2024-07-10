@@ -2,6 +2,7 @@ from .._utils import frame_by_frame
 from napari_tools_menu import register_function
 from .expansion import EllipsoidExpander, SphericalHarmonicsExpander
 
+
 @register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud(
@@ -51,6 +52,7 @@ def expand_points_on_fitted_ellipsoid(
 
     return expanded_points
 
+
 @register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def expand_spherical_harmonics(
@@ -78,14 +80,16 @@ def expand_spherical_harmonics(
     # convert dataframe expander.properties to dict so that one column is one key
     # and the values are the entries in the columns
     properties = {
-            "features": {'residuals': expander.properties['residuals']},
-            "metadata": {'coefficients': expander.coefficients_,
-                         'max_degree': max_degree,
-                         'power_spectrum': expander.properties['power_spectrum']},
-            "name": "Spherical Harmonics Expansion",
-            "face_color": "residuals",
-            "size": 0.5,
-            "face_colormap": "inferno",
-        }
+        "features": {"residuals": expander.properties["residuals"]},
+        "metadata": {
+            "coefficients": expander.coefficients_,
+            "max_degree": max_degree,
+            "power_spectrum": expander.properties["power_spectrum"],
+        },
+        "name": "Spherical Harmonics Expansion",
+        "face_color": "residuals",
+        "size": 0.5,
+        "face_colormap": "inferno",
+    }
     points_layer = (expanded_points, properties, "points")
     return points_layer

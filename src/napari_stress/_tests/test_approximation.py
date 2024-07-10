@@ -17,6 +17,7 @@ def ellipsoid_points():
     z = c * np.cos(v)
     return np.column_stack((x.ravel(), y.ravel(), z.ravel()))
 
+
 @pytest.fixture
 def droplet_points():
     """
@@ -25,7 +26,7 @@ def droplet_points():
     from napari_stress import sample_data
 
     pointcloud = sample_data.get_droplet_point_cloud()[0][0][:, 1:]
-    
+
     return pointcloud
 
 

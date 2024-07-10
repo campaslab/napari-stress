@@ -1,11 +1,14 @@
 import numpy as np
 from .expansion_base import Expander
 
+
 class SphericalHarmonicsExpander(Expander):
-    def __init__(self,
-                 max_degree: int = 5,
-                 expansion_type: str = "cartesian",
-                 normalize_spectrum: bool = True):
+    def __init__(
+        self,
+        max_degree: int = 5,
+        expansion_type: str = "cartesian",
+        normalize_spectrum: bool = True,
+    ):
         """
         Expand a set of points using spherical harmonics.
 
@@ -42,7 +45,7 @@ class SphericalHarmonicsExpander(Expander):
             coefficients = self._fit_radial(points)
 
         return coefficients
-    
+
     def _fit_cartesian(self, points):
         from .._stress import sph_func_SPB as sph_f
 
@@ -66,14 +69,15 @@ class SphericalHarmonicsExpander(Expander):
             fit_sph_coef_mats[idx] = sph_f.Un_Flatten_Coef_Vec(
                 optimal_fit_parameters[:, idx], self.max_degree
             )
-        
+
         return fit_sph_coef_mats
-    
+
     def _fit_radial(self, points):
         """
         Fit radial spherical harmonics to input data.
         """
         from .._stress import sph_func_SPB as sph_f
+
         radii, longitude, latitude = self._cartesian_to_radial_coordinates(points)
 
         optimal_fit_parameters = self._least_squares_harmonic_fit(
@@ -99,13 +103,18 @@ class SphericalHarmonicsExpander(Expander):
         elif self.expansion_type == "radial":
             _, longitude, latitude = self._cartesian_to_radial_coordinates(points)
 
-        fitted_points = np.array([
-            sph_f.spherical_harmonics_function(coef, self.max_degree).Eval_SPH(longitude, latitude)
-            for coef in self.coefficients_
-        ]).T
+        fitted_points = np.array(
+            [
+                sph_f.spherical_harmonics_function(coef, self.max_degree).Eval_SPH(
+                    longitude, latitude
+                )
+                for coef in self.coefficients_
+            ]
+        ).T
 
         if self.expansion_type == "radial":
             import vedo
+
             fitted_points = (
                 vedo.transformations.spher2cart(
                     fitted_points.squeeze(), latitude, longitude
@@ -130,7 +139,6 @@ class SphericalHarmonicsExpander(Expander):
         residuals = np.linalg.norm(input_points - expanded_points, axis=1)
         self.properties["residuals"] = residuals
 
-
     def _calculate_power_spectrum(self, normalize=True):
         """
         Calculate power spectrum of spherical harmonics coefficients.
@@ -150,19 +158,25 @@ class SphericalHarmonicsExpander(Expander):
 
         if len(self.coefficients_.shape) > 2:
             # Handling multiple sets of coefficients without modifying the class state
-            power_spectrum = np.zeros(self.coefficients_.shape[1])  # assuming the same degrees across all dimensions
+            power_spectrum = np.zeros(
+                self.coefficients_.shape[1]
+            )  # assuming the same degrees across all dimensions
             for i in range(self.coefficients_.shape[0]):
                 # Recursively calculate the spectrum for each set of coefficients, but avoid modifying self.coefficients_
-                temp_spectrum = self._calculate_power_spectrum_individual(self.coefficients_[i], normalize=False)
+                temp_spectrum = self._calculate_power_spectrum_individual(
+                    self.coefficients_[i], normalize=False
+                )
                 power_spectrum += temp_spectrum
             if normalize:
                 power_spectrum /= np.sum(power_spectrum)
         else:
-            power_spectrum = self._calculate_power_spectrum_individual(self.coefficients_, normalize=normalize)
+            power_spectrum = self._calculate_power_spectrum_individual(
+                self.coefficients_, normalize=normalize
+            )
 
         self.properties["power_spectrum"] = power_spectrum
         return power_spectrum
-    
+
     def _least_squares_harmonic_fit(
         self, fit_degree: int, sample_locations: tuple, values: np.ndarray
     ) -> np.ndarray:
@@ -202,7 +216,6 @@ class SphericalHarmonicsExpander(Expander):
         coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
         return coefficients
 
-
     def _calculate_power_spectrum_individual(self, coefficients, normalize=True):
         power_spectrum = np.zeros(coefficients.shape[0])
         for l in range(coefficients.shape[0]):
@@ -221,7 +234,6 @@ class SphericalHarmonicsExpander(Expander):
             power_spectrum /= np.sum(power_spectrum)
 
         return power_spectrum
-
 
     def _least_squares_harmonic_fit(self, fit_degree, sample_locations, values):
         """
@@ -289,12 +301,13 @@ class SphericalHarmonicsExpander(Expander):
         )
 
         return u_coordinates, v_coordinates
-    
+
     def _cartesian_to_radial_coordinates(self, points):
         """
         Calculate radial coordinates for a set of points.
         """
         from .._stress.charts_SPB import Cart_To_Coor_A
+
         points_relative = points - points.mean(axis=0)[None, :]
         radii = np.sqrt(
             points_relative[:, 0] ** 2
@@ -523,4 +536,3 @@ class EllipsoidExpander(Expander):
         axes_lengths = np.sqrt(1.0 / np.abs(eigenvalues))
 
         return center, axes_lengths, eigenvectors
-
