@@ -3,7 +3,7 @@ import numpy as np
 
 
 def test_reconstruction(make_napari_viewer):
-    from napari_stress import reconstruction, get_droplet_4d
+    from napari_stress import get_droplet_4d
     from napari.layers import Layer
     import napari_stress
 
