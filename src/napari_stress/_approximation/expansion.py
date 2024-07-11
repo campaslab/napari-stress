@@ -397,9 +397,9 @@ class EllipsoidExpander(Expander):
     @property
     def coefficients_(self):
         return super().coefficients_
-    
+
     @coefficients_.setter
-    def coefficients_(self, value: 'napari.types.VectorsData'):
+    def coefficients_(self, value: "napari.types.VectorsData"):
         """
         value: (3, 2, D) matrix representing the ellipsoid coefficients.
         """
