@@ -143,6 +143,47 @@ class SphericalHarmonicsExpander(Expander):
             )
 
         return fitted_points
+    
+    @property
+    def coefficients_(self):
+        """
+        The coefficients of the spherical harmonics expansion.
+
+        Returns
+        -------
+        coefficients_ : np.ndarray
+            The coefficients of the spherical harmonics expansion. The shape of the
+            coefficients depends on the type of expansion. If the expansion type is
+            'cartesian', the coefficients are of shape (3, max_degree + 1, max_degree + 1).
+            If the expansion type is 'radial', the coefficients are of shape
+            (1, max_degree + 1, max_degree + 1).
+        """
+        return self._coefficients
+    
+    @property
+    def properties(self):
+        """
+        Get properties of the expansion.
+
+        Returns
+        -------
+        properties : dict
+            Dictionary containing properties of the expansion with following keys:
+
+            - residuals: np.ndarray
+                Residual euclidian distance between input points and expanded points.
+            - power_spectrum: np.ndarray
+                Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
+                is set to True, the power spectrum is normalized to sum to 1.
+
+                The spectrum :math:`P_l` is calculated as follows:
+
+                .. math::
+                    P_l = \\sum_{m=-l}^{l} |a_{lm}|^2
+
+                where :math:`a_{lm}` are the spherical harmonics coefficients.
+        """
+        return self._properties
 
     def _calculate_properties(self, input_points, expanded_points):
         """
@@ -157,7 +198,7 @@ class SphericalHarmonicsExpander(Expander):
         """
         # Calculate residuals between input points and expanded points
         residuals = np.linalg.norm(input_points - expanded_points, axis=1)
-        self.properties["residuals"] = residuals
+        self._properties["residuals"] = residuals
 
     def _calculate_power_spectrum(self, normalize=True):
         """
@@ -194,7 +235,7 @@ class SphericalHarmonicsExpander(Expander):
                 self._coefficients, normalize=normalize
             )
 
-        self.properties["power_spectrum"] = power_spectrum
+        self._properties["power_spectrum"] = power_spectrum
         return power_spectrum
 
     def _least_squares_harmonic_fit(
@@ -398,15 +439,15 @@ class EllipsoidExpander(Expander):
             The fitted ellipsoid.
         """
         coefficients = self._fit_ellipsoid_to_points(points)
-        self.center_, self.axes_, self._eigenvectors = self._extract_characteristics(
+        self._center, self._axes, self._eigenvectors = self._extract_characteristics(
             coefficients
         )
 
         vectors = (
             self._eigenvectors
             / np.linalg.norm(self._eigenvectors, axis=1)[:, np.newaxis]
-        ).T * self.axes_[:, None]
-        base = np.stack([self.center_] * 3)
+        ).T * self._axes[:, None]
+        base = np.stack([self._center] * 3)
         ellipsoid_fitted_ = np.stack([base, vectors], axis=1)
 
         return ellipsoid_fitted_
@@ -464,9 +505,61 @@ class EllipsoidExpander(Expander):
         value: (3, 2, D) matrix representing the ellipsoid coefficients.
         """
         if value is not None:
-            self.center_ = value[0, 0]
-            self.axes_ = np.linalg.norm(value[:, 1], axis=1)
+            self._center = value[0, 0]
+            self._axes = np.linalg.norm(value[:, 1], axis=1)
             self._coefficients = value
+
+    @property
+    def axes_(self):
+        """
+        The lengths of the axes of the ellipsoid.
+
+        Returns
+        -------
+        axes_ : np.ndarray
+            The lengths of the axes of the ellipsoid.
+        """
+        return self._axes
+    
+    @property
+    def center_(self):
+        """
+        The center of the ellipsoid.
+
+        Returns
+        -------
+        center_ : np.ndarray
+            The center of the ellipsoid.
+        """
+        return self._center
+    
+    @property
+    def properties(self):
+        """
+        Get properties of the expansion.
+
+        Returns
+        -------
+        properties : dict
+            Dictionary containing properties of the expansion with following keys:
+
+            - residuals: np.ndarray
+                Residual euclidian distance between input points and expanded points.
+            - maximum_mean_curvature: float
+                Maximum mean curvature of the ellipsoid.
+            - minimum_mean_curvature: float
+                Minimum mean curvature of the ellipsoid.
+
+            The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
+
+            .. math::
+                H_{max} = 1 / (2 * a^2) + 1 / (2 * b^2)
+
+                H_{min} = 1 / (2 * b^2) + 1 / (2 * a^2)
+
+            where a, b are the largest and smallest axes of the ellipsoid, respectively.
+        """
+        return self._properties
 
     def _measure_max_min_curvatures(self):
         """
@@ -478,7 +571,7 @@ class EllipsoidExpander(Expander):
 
         """
         # get and remove the largest, smallest and medial axis
-        axes = list(self.axes_)
+        axes = list(self._axes)
         largest_axis = max(axes)
         axes.remove(largest_axis)
         smallest_axis = min(axes)
@@ -493,8 +586,8 @@ class EllipsoidExpander(Expander):
             2 * medial_axis**2
         ) + smallest_axis / (2 * largest_axis**2)
 
-        self.properties["maximum_mean_curvature"] = maximum_mean_curvature
-        self.properties["minimum_mean_curvature"] = minimum_mean_curvature
+        self._properties["maximum_mean_curvature"] = maximum_mean_curvature
+        self._properties["minimum_mean_curvature"] = minimum_mean_curvature
 
     def _measure_residuals(self, input_points, output_points):
         """
@@ -510,7 +603,7 @@ class EllipsoidExpander(Expander):
         output_points = self._expand(input_points)
 
         distance = np.linalg.norm(input_points - output_points, axis=1)
-        self.properties["residuals"] = distance
+        self._properties["residuals"] = distance
 
     def _fit_ellipsoid_to_points(
         self,

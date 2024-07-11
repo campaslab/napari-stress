@@ -14,7 +14,7 @@ class Expander(ABC):
         Initialize the expander.
         """
         self._coefficients = None
-        self.properties = {}
+        self._properties = {}
 
     def fit(self, points: "napari.types.PointsData"):
         """
