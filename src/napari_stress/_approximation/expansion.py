@@ -322,12 +322,61 @@ class SphericalHarmonicsExpander(Expander):
 
 class EllipsoidExpander(Expander):
     """
-    Expand a set of points to fit an ellipsoid.
+    Expand a set of points to fit an ellipsoid using least squares fitting.
 
-    Parameters
+    The ellipsoid equation is of the form:
+
+    .. math::
+        Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz = 1
+
+    where A, B, C, D, E, F, G, H, I are the coefficients of the ellipsoid equation and
+    x, y, z are the coordinates of the points. The parameters of this equation are
+    fitted to the input points using least squares fitting.
+
+    Methods
+    -------
+    fit(points: "napari.types.PointsData")
+        Fit an ellipsoid to a set of points using leaast square fitting.
+
+    expand(points: "napari.types.PointsData")
+        Project a set of points onto their respective position on the fitted ellipsoid.
+
+    fit_expand(points: "napari.types.PointsData")
+        Fit an ellipsoid to a set of points and then expand them.
+
+    Attributes
     ----------
-    points : napari.types.PointsData
-        The points to expand.
+    coefficients_: 'napari.types.VectorsData'
+
+
+    center_: np.ndarray
+        The center of the ellipsoid (z, y, x).
+
+    axes_: np.ndarray
+        The lengths of the axes of the ellipsoid.
+
+    properties: dict
+        Dictionary containing properties of the expansion:
+
+        - residuals: np.ndarray
+            Residual euclidian distance between input points and expanded points.
+        - maximum_mean_curvature: float
+            Maximum mean curvature of the ellipsoid.
+        - minimum_mean_curvature: float
+            Minimum mean curvature of the ellipsoid.
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        # Instantiate and fit an ellipsoid expander to a set of points
+        expander  = EllipsoidExpander()
+        expander.fit(points)
+
+        # Expand the points on the fitted ellipsoid
+        fitted_points = expander.expand(points)
+
     """
 
     def __init__(self):
@@ -396,6 +445,18 @@ class EllipsoidExpander(Expander):
 
     @property
     def coefficients_(self):
+        """
+        The coefficients of the fitted ellipsoid
+
+        Returns
+        -------
+        coefficients_ : napari.types.VectorsData
+            The coefficients of the ellipsoid equation. The coefficients are of the form
+            (3, 2, 3); The first dimension represents the three axes of the ellipsoid
+            (major, medial and minor). The second dimension represents the components of
+            the ellipsoid vectors (base point and direction vector). The third dimension
+            represents the dimension of the space (z, y, x).
+        """
         return super().coefficients_
 
     @coefficients_.setter
