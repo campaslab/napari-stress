@@ -136,17 +136,20 @@ def test_lsq_ellipsoid0(n_tests=10):
     assert np.allclose(max_mean_curvatures, max_mean_curvatures[0])
     assert np.allclose(min_mean_curvatures, min_mean_curvatures[0])
 
+
 def test_lsq_ellipsoid1():
     "Test whether pproperties in class are correctly set."
     from napari_stress import approximation
+
     expander = approximation.EllipsoidExpander()
 
     random_coefficients = np.random.random((3, 2, 3))
     expander.coefficients_ = random_coefficients
 
-    assert np.array_equal(expander.center_, random_coefficients[0,0])
-    assert np.array_equal(expander.axes_, np.linalg.norm(
-        random_coefficients[:, 1], axis=1))
+    assert np.array_equal(expander.center_, random_coefficients[0, 0])
+    assert np.array_equal(
+        expander.axes_, np.linalg.norm(random_coefficients[:, 1], axis=1)
+    )
 
 
 def test_lsq_ellipsoid():
