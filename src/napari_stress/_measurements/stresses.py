@@ -85,7 +85,7 @@ def maximal_tissue_anisotropy(
         * gamma
         * (
             expander.properties["maximum_mean_curvature"]
-            - expander["minimum_mean_curvature"]
+            - expander.properties["minimum_mean_curvature"]
         )
     )
 
