@@ -403,8 +403,9 @@ class EllipsoidExpander(Expander):
         """
         value: (3, 2, D) matrix representing the ellipsoid coefficients.
         """
-        self.center_ = value[0, 0]
-        self.axes_ = np.linalg.norm(value[1], axis=1)
+        if value is not None:
+            self.center_ = value[0, 0]
+            self.axes_ = np.linalg.norm(value[:, 1], axis=1)
 
     def _measure_max_min_curvatures(self):
         """
