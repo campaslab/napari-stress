@@ -3,32 +3,52 @@ from .expansion_base import Expander
 
 
 class SphericalHarmonicsExpander(Expander):
+    """
+    Expand a set of points using spherical harmonics.
+
+    The spherical harmonics expansion is performed using the following equation:
+
+    .. math::
+        f(\\theta, \\phi) = \\sum_{l=0}^{L} \\sum_{m=-l}^{l} a_{lm} Y_{lm}(\\theta, \\phi)
+
+    where :math:`a_{lm}` are the spherical harmonics coefficients and :math:`Y_{lm}(\\theta, \\phi)`
+    are the spherical harmonics functions. The expansion is performed in the spherical coordinate system.
+
+    Parameters
+    ----------
+    max_degree : int
+        Maximum degree of spherical harmonics expansion.
+    expansion_type : str
+        Type of expansion to perform. Can be either 'cartesian' or 'radial'.
+    normalize_spectrum : bool
+        Normalize power spectrum sum to 1.
+
+    Methods
+    -------
+    fit(points: "napari.types.PointsData")
+        Fit spherical harmonics to input data. If `expansion_type` is 'cartesian', the
+        input points are converted to ellipsoidal coordinates (latitude/longitude)
+        before fitting and each coordinate (z, y, z) is fitted separately. Hence,
+        the derived coefficients are of shape `(3, max_degree + 1, max_degree + 1)`. 
+        If `expansion_type` is 'radial', the input points are converted to radial
+        coordinates ($math:`\\rho, \\theta, \\phi$) before fitting. Only the radial
+        coordinate is fitted, hence the derived coefficients are of shape
+        `(1, max_degree + 1, max_degree + 1)`.
+
+    expand(points: "napari.types.PointsData")
+        Expand input points using spherical harmonics.
+
+    fit_expand(points: "napari.types.PointsData")
+        Fit spherical harmonics to input data and then expand them.
+
+    """
     def __init__(
         self,
         max_degree: int = 5,
         expansion_type: str = "cartesian",
         normalize_spectrum: bool = True,
     ):
-        """
-        Expand a set of points using spherical harmonics.
 
-        The spherical harmonics expansion is performed using the following equation:
-
-        .. math::
-            f(\\theta, \\phi) = \\sum_{l=0}^{L} \\sum_{m=-l}^{l} a_{lm} Y_{lm}(\\theta, \\phi)
-
-        where :math:`a_{lm}` are the spherical harmonics coefficients and :math:`Y_{lm}(\\theta, \\phi)`
-        are the spherical harmonics functions. The expansion is performed in the spherical coordinate system.
-
-        Parameters
-        ----------
-        max_degree : int
-            Maximum degree of spherical harmonics expansion.
-        expansion_type : str
-            Type of expansion to perform. Currently only "cartesian" is supported.
-        normalize_spectrum : bool
-            Normalize power spectrum sum to 1.
-        """
         super().__init__()
         self.expansion_type = expansion_type
         self.max_degree = max_degree
@@ -344,27 +364,6 @@ class EllipsoidExpander(Expander):
     fit_expand(points: "napari.types.PointsData")
         Fit an ellipsoid to a set of points and then expand them.
 
-    Attributes
-    ----------
-    coefficients_: 'napari.types.VectorsData'
-
-
-    center_: np.ndarray
-        The center of the ellipsoid (z, y, x).
-
-    axes_: np.ndarray
-        The lengths of the axes of the ellipsoid.
-
-    properties: dict
-        Dictionary containing properties of the expansion:
-
-        - residuals: np.ndarray
-            Residual euclidian distance between input points and expanded points.
-        - maximum_mean_curvature: float
-            Maximum mean curvature of the ellipsoid.
-        - minimum_mean_curvature: float
-            Minimum mean curvature of the ellipsoid.
-
     Examples
     --------
 
@@ -473,13 +472,9 @@ class EllipsoidExpander(Expander):
         """
         Measure maximum and minimum curvatures of the ellipsoid.
 
-        The maximum and minimum curvatures are calculated as follows:
-        - Maximum curvature: 1 / (2 * a^2) + 1 / (2 * b^2)
-        - Minimum curvature: 1 / (2 * b^2) + 1 / (2 * a^2)
-        where a, b are the largest and smallest axes of the ellipsoid, respectively.
-
         Returns
         -------
+        None
 
         """
         # get and remove the largest, smallest and medial axis
