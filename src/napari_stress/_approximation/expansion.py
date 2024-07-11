@@ -29,7 +29,7 @@ class SphericalHarmonicsExpander(Expander):
         Fit spherical harmonics to input data. If `expansion_type` is 'cartesian', the
         input points are converted to ellipsoidal coordinates (latitude/longitude)
         before fitting and each coordinate (z, y, z) is fitted separately. Hence,
-        the derived coefficients are of shape `(3, max_degree + 1, max_degree + 1)`. 
+        the derived coefficients are of shape `(3, max_degree + 1, max_degree + 1)`.
         If `expansion_type` is 'radial', the input points are converted to radial
         coordinates ($math:`\\rho, \\theta, \\phi$) before fitting. Only the radial
         coordinate is fitted, hence the derived coefficients are of shape
@@ -42,6 +42,7 @@ class SphericalHarmonicsExpander(Expander):
         Fit spherical harmonics to input data and then expand them.
 
     """
+
     def __init__(
         self,
         max_degree: int = 5,
@@ -143,7 +144,7 @@ class SphericalHarmonicsExpander(Expander):
             )
 
         return fitted_points
-    
+
     @property
     def coefficients_(self):
         """
@@ -159,7 +160,7 @@ class SphericalHarmonicsExpander(Expander):
             (1, max_degree + 1, max_degree + 1).
         """
         return self._coefficients
-    
+
     @property
     def properties(self):
         """
@@ -520,7 +521,7 @@ class EllipsoidExpander(Expander):
             The lengths of the axes of the ellipsoid.
         """
         return self._axes
-    
+
     @property
     def center_(self):
         """
@@ -532,7 +533,7 @@ class EllipsoidExpander(Expander):
             The center of the ellipsoid.
         """
         return self._center
-    
+
     @property
     def properties(self):
         """

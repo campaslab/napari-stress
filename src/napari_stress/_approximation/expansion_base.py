@@ -8,7 +8,7 @@ class Expander(ABC):
     This class should be subclassed when creating new types of expanders.
     Subclasses must implement the _fit, _expand, and _calculate_properties methods.
     """
-    
+
     def __init__(self):
         """
         Initialize the expander.
