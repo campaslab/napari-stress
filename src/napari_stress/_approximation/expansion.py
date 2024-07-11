@@ -394,6 +394,18 @@ class EllipsoidExpander(Expander):
         self._measure_residuals(input_points, output_points)
         self._measure_max_min_curvatures()
 
+    @property
+    def coefficients_(self):
+        return super().coefficients_
+    
+    @coefficients_.setter
+    def coefficients_(self, value: 'napari.types.VectorsData'):
+        """
+        value: (3, 2, D) matrix representing the ellipsoid coefficients.
+        """
+        self.center_ = value[0, 0]
+        self.axes_ = np.linalg.norm(value[1], axis=1)
+
     def _measure_max_min_curvatures(self):
         """
         Measure maximum and minimum curvatures of the ellipsoid.
