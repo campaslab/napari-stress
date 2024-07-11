@@ -34,8 +34,7 @@ class Expander(ABC):
     @property
     def coefficients_(self):
         return self._coefficients
-    
+
     @coefficients_.setter
     def coefficients_(self, value):
         self._coefficients = value
-
