@@ -372,7 +372,9 @@ def comprehensive_analysis(
     # =====================================================================
 
     Expander_ellipsoid = approximation.EllipsoidExpander()
-    Expander_ellipsoid_SH  = approximation.SphericalHarmonicsExpander(max_degree=max_degree)
+    Expander_ellipsoid_SH = approximation.SphericalHarmonicsExpander(
+        max_degree=max_degree
+    )
 
     ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
     ellipsoid = Expander_ellipsoid.coefficients_
@@ -493,8 +495,10 @@ def comprehensive_analysis(
         gamma=gamma,
     )
 
-    max_min_anisotropy = Expander_ellipsoid.properties['maximum_mean_curvature'] -\
-        Expander_ellipsoid.properties['minimum_mean_curvature']
+    max_min_anisotropy = (
+        Expander_ellipsoid.properties["maximum_mean_curvature"]
+        - Expander_ellipsoid.properties["minimum_mean_curvature"]
+    )
 
     result = measurements.tissue_stress_tensor(
         ellipsoid, H0_surface_ellipsoid, gamma=gamma
