@@ -108,7 +108,7 @@ class SphericalHarmonicsExpander(Expander):
                 sph_f.spherical_harmonics_function(coef, self.max_degree).Eval_SPH(
                     longitude, latitude
                 )
-                for coef in self.coefficients_
+                for coef in self._coefficients
             ]
         ).T
 
@@ -153,25 +153,25 @@ class SphericalHarmonicsExpander(Expander):
         power_spectrum : np.ndarray
             Power spectrum of spherical harmonics coefficients.
         """
-        if self.coefficients_ is None:
+        if self._coefficients is None:
             raise ValueError("No coefficients found. Run fit() first.")
 
-        if len(self.coefficients_.shape) > 2:
+        if len(self._coefficients.shape) > 2:
             # Handling multiple sets of coefficients without modifying the class state
             power_spectrum = np.zeros(
-                self.coefficients_.shape[1]
+                self._coefficients.shape[1]
             )  # assuming the same degrees across all dimensions
-            for i in range(self.coefficients_.shape[0]):
-                # Recursively calculate the spectrum for each set of coefficients, but avoid modifying self.coefficients_
+            for i in range(self._coefficients.shape[0]):
+                # Recursively calculate the spectrum for each set of coefficients, but avoid modifying self._coefficients
                 temp_spectrum = self._calculate_power_spectrum_individual(
-                    self.coefficients_[i], normalize=False
+                    self._coefficients[i], normalize=False
                 )
                 power_spectrum += temp_spectrum
             if normalize:
                 power_spectrum /= np.sum(power_spectrum)
         else:
             power_spectrum = self._calculate_power_spectrum_individual(
-                self.coefficients_, normalize=normalize
+                self._coefficients, normalize=normalize
             )
 
         self.properties["power_spectrum"] = power_spectrum
@@ -382,8 +382,8 @@ class EllipsoidExpander(Expander):
             elliptical_to_cartesian,
         )
 
-        U, V = cartesian_to_elliptical(self.coefficients_, points, invert=True)
-        expanded_points = elliptical_to_cartesian(U, V, self.coefficients_, invert=True)
+        U, V = cartesian_to_elliptical(self._coefficients, points, invert=True)
+        expanded_points = elliptical_to_cartesian(U, V, self._coefficients, invert=True)
 
         return expanded_points
 
@@ -406,6 +406,7 @@ class EllipsoidExpander(Expander):
         if value is not None:
             self.center_ = value[0, 0]
             self.axes_ = np.linalg.norm(value[:, 1], axis=1)
+            self._coefficients = value
 
     def _measure_max_min_curvatures(self):
         """

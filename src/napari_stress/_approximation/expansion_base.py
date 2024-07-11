@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 
 class Expander(ABC):
     def __init__(self):
-        self.coefficients_ = None
+        self._coefficients = None
         self.properties = {}
 
     def fit(self, points: "napari.types.PointsData"):
-        self.coefficients_ = self._fit(points)
+        self._coefficients = self._fit(points)
         return self
 
     def expand(self, points: "napari.types.PointsData"):
@@ -33,8 +33,9 @@ class Expander(ABC):
 
     @property
     def coefficients_(self):
-        return self.coefficients_
+        return self._coefficients
     
     @coefficients_.setter
     def coefficients_(self, value):
-        self.coefficients_ = value
+        self._coefficients = value
+
