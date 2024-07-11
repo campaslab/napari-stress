@@ -654,8 +654,4 @@ def test_stresses():
     assert stress_cell is not None
 
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
-    measurements.maximal_tissue_anisotropy(ellipsoid)
-
-
-if __name__ == "__main__":
-    test_patch_fitted_curvature()
+    measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
