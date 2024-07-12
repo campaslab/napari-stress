@@ -28,9 +28,9 @@ def geodesic_distance_matrix(
         at `distance_matrix[i, j]`
 
     """
-    from pygeodesic import geodesic
+    import potpourri3d as pp3d
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    solver = pp3d.MeshHeatMethodDistanceSolver(surface[0], surface[1])
 
     n_points = len(surface[0])
     distance_matrix = np.zeros((n_points, n_points))
@@ -42,9 +42,8 @@ def geodesic_distance_matrix(
         iterator = enumerate(points)
 
     for idx, pt in iterator:
-        distances, _ = geoalg.geodesicDistances([idx], np.arange(idx + 1, n_points))
-        distance_matrix[idx, idx + 1 :] = distances
-        distance_matrix[idx + 1 :, idx] = distances
+        distances, _ = solver.compute_distance(idx)
+        distance_matrix[idx] = distances
 
     return distance_matrix
 
@@ -73,10 +72,10 @@ def geodesic_path(
         coordinates, the second dimension is the vector from point to point.
 
     """
-    from pygeodesic import geodesic
+    import potpourri3d as pp3d
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
-    distances, path = geoalg.geodesicDistance(index_1, index_2)
+    path_solver = pp3d.EdgeFlipGeodesicSolver(surface[0], surface[1])
+    path = path_solver.find_geodesic_path(index_1, index_2)
 
     # convert points to vectors from point to point
     vectors = []
