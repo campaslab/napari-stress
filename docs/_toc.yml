@@ -63,6 +63,7 @@ parts:
       - file: 04_FAQ/validation/validation_stress_paper
       - file: 04_FAQ/validation/analyze_validation
       - file: 04_FAQ/validation/create_validation_data
+    - file: 04_FAQ/geodesics_tools
 
   - caption: API
     chapters:
