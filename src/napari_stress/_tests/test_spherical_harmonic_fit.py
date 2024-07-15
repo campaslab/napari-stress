@@ -11,16 +11,8 @@ def test_frontend_spherical_harmonics(make_napari_viewer):
 
     ellipse = vedo.shapes.Ellipsoid()
 
-    # Test pyshtools implementation
-    points1 = napari_stress.fit_spherical_harmonics(
-        ellipse.points(), max_degree=10, implementation="shtools"
-    )
-    assert np.array_equal(ellipse.points().shape, points1[0].shape)
-
     # Test stress implementation
-    points2 = napari_stress.fit_spherical_harmonics(
-        ellipse.points(), max_degree=3, implementation="stress"
-    )
+    points2 = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
     assert np.array_equal(ellipse.points().shape, points2[0].shape)
 
     # Test default implementations
@@ -87,35 +79,6 @@ def test_spherical_harmonics():
     )
     assert pts.shape[1] == 3
     assert pts.shape[0] == len(ellipse_points)
-
-
-def test_interoperatibility():
-    from napari_stress._spherical_harmonics import spherical_harmonics as sh
-    from napari_stress._stress.sph_func_SPB import (
-        convert_coeffcients_stress_to_pyshtools,
-        convert_coefficients_pyshtools_to_stress,
-    )
-
-    deg = 10
-    # get stress expansion of pointcloud
-    points = napari_stress.get_droplet_point_cloud()[0][0][:, 1:]
-    pts_stress, coeffs_stress = sh.stress_spherical_harmonics_expansion(
-        points, max_degree=deg
-    )
-
-    # convert the x/y/z expansions to pysh format
-    coeffs_pysh_x = convert_coeffcients_stress_to_pyshtools(coeffs_stress[0])
-    coeffs_pysh_y = convert_coeffcients_stress_to_pyshtools(coeffs_stress[1])
-    coeffs_pysh_z = convert_coeffcients_stress_to_pyshtools(coeffs_stress[2])
-
-    # convert coeffs back to stress format
-    coeffs_str_x = convert_coefficients_pyshtools_to_stress(coeffs_pysh_x)
-    coeffs_str_y = convert_coefficients_pyshtools_to_stress(coeffs_pysh_y)
-    coeffs_str_z = convert_coefficients_pyshtools_to_stress(coeffs_pysh_z)
-
-    # check if coeffs are still the same
-    _coeffs_stress = np.stack([coeffs_str_x, coeffs_str_y, coeffs_str_z])
-    assert all((_coeffs_stress - coeffs_stress).flatten() == 0)
 
 
 def test_lebedev_points():

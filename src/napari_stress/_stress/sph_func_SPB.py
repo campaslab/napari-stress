@@ -7,8 +7,6 @@ import numpy as np
 from .lebedev_info_SPB import Der_Phi_Basis_Fn, Der_Phi_Phi_Basis_Fn, Eval_SPH_Basis
 from .charts_SPB import Chart_Min_Polar, Chart_Max_Polar, Coor_B_To_A
 
-import pyshtools
-
 
 # Diagonal of Mass matrix is 1, non-diagonal is 1/2 (due to |Re(Y^m_l)|=|Im(Y^m_l)|)
 def Mass_Mat_Exact(m_coef, n_coef):
@@ -271,63 +269,6 @@ def Un_Flatten_Coef_Vec(coefficient_vector, basis_degree):
             row = row + 1
 
     return coefficient_matrix
-
-
-def convert_coefficients_pyshtools_to_stress(
-    coefficients_pysh: pyshtools.SHCoeffs,
-) -> np.ndarray:
-    """
-    Convert a pyshtools-coefficient matrix to stress format.
-
-    In stress format, the upper (np.triu) part of the coefficient matrix
-    corresponds to the real part and the lower section (np.tril) correspond
-    to the imaginary part. The diagonal parts are identical in both.
-
-    Parameters
-    ----------
-    coefficients : pyshtools.SHCoeffs
-    Returns
-    -------
-    stress_coefficients : np.ndarray
-
-    """
-    coefficients = coefficients_pysh.to_array()
-
-    # Separate matrix into real/imag part. Note that pysh format leaves a
-    # blank column for degree l=0 for the imaginary coefficients
-    real = coefficients[0].transpose()
-    imag = coefficients[1, 1:, 1:]
-    imag_mask = np.tril(np.ones_like(imag)) == 1
-
-    # create stress-compliant coefficient matrix
-    stress_coefficients = real
-    stress_coefficients[stress_coefficients == np.tril(stress_coefficients, -1)] = imag[
-        imag_mask
-    ]
-
-    return stress_coefficients
-
-
-def convert_coeffcients_stress_to_pyshtools(
-    coefficients_stress: np.ndarray,
-) -> pyshtools.SHCoeffs:
-    """
-    Convert a stress-coefficient matrix (deg+1 x deg+1) to pyshtools format.
-
-    The pyshtools format follows a (2, deg+1, deg+1) shape codex, whereas the
-    first dimension refers to the cosine/sine parts of the expansion.
-    """
-    real = np.triu(coefficients_stress)
-    imag = np.tril(coefficients_stress, -1)
-
-    coefficients_pysh = np.zeros([2] + list(coefficients_stress.shape))
-    coefficients_pysh[0] = real.transpose()
-    coefficients_pysh[1, 1:, 1:] = imag[1:, :-1]
-
-    return pyshtools.SHCoeffs.from_array(
-        coefficients_pysh, lmax=coefficients_stress.shape[0] - 1
-    )
-
 
 # Gives L_1 Integral on SPHERE pullback:
 def L1_Integral(f_quad_vals, lbdv):
