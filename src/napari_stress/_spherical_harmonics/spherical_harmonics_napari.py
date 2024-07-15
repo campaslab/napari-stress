@@ -6,21 +6,12 @@ from enum import Enum
 
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import (
-    shtools_spherical_harmonics_expansion,
-    stress_spherical_harmonics_expansion,
     lebedev_quadrature,
     create_manifold,
 )
 
 import napari
 from napari_tools_menu import register_function
-
-
-class spherical_harmonics_methods(Enum):
-    """Available methods for spherical harmonics expansion."""
-
-    shtools = {"function": shtools_spherical_harmonics_expansion}
-    stress = {"function": stress_spherical_harmonics_expansion}
 
 
 class expansion_types(Enum):
@@ -30,12 +21,10 @@ class expansion_types(Enum):
     radial = "radial"
 
 
-@register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def fit_spherical_harmonics(
     points: PointsData,
     max_degree: int = 5,
-    implementation: spherical_harmonics_methods = spherical_harmonics_methods.stress,
     expansion_type: expansion_types = expansion_types.cartesian,
 ) -> LayerDataTuple:
     """
@@ -46,9 +35,6 @@ def fit_spherical_harmonics(
     points : PointsData
     max_degree : int
         Order up to which spherical harmonics should be included for the approximation.
-    implementation: spherical_harmonics_methods
-        Which implementation to use for spherical harmonics fit (stress or pyshtools).
-        Default is `spherical_harmonics_methods.stress`
     expansion_type: expansion_type
         Which coordinate to use for expansion. Can be `cartesian` or
         `radial`. For cartesian expansion, x/y/z will be approximated
@@ -67,14 +53,10 @@ def fit_spherical_harmonics(
     [1] https://en.wikipedia.org/wiki/Spherical_harmonics
 
     """
+    from .spherical_harmonics import stress_spherical_harmonics_expansion
+
     # Parse inputs
-    if isinstance(implementation, str):
-        fit_function = spherical_harmonics_methods.__members__[implementation].value[
-            "function"
-        ]
-    else:
-        fit_function = implementation.value["function"]
-    fitted_points, coefficients = fit_function(
+    fitted_points, coefficients = stress_spherical_harmonics_expansion(
         points, max_degree=max_degree, expansion_type=expansion_type.value
     )
 
@@ -82,7 +64,6 @@ def fit_spherical_harmonics(
 
     features["error"] = np.linalg.norm(fitted_points - points, axis=1)
     metadata["spherical_harmonics_coefficients"] = coefficients
-    metadata["spherical_harmonics_implementation"] = implementation
 
     properties["features"] = features
     properties["metadata"] = metadata
