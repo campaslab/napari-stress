@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-import tqdm
 from napari.types import LayerDataTuple, SurfaceData
 from napari_tools_menu import register_function
 
@@ -28,22 +27,11 @@ def geodesic_distance_matrix(
         at `distance_matrix[i, j]`
 
     """
-    import potpourri3d as pp3d
+    import gdist
 
-    solver = pp3d.MeshHeatMethodDistanceSolver(surface[0], surface[1])
-
-    n_points = len(surface[0])
-    distance_matrix = np.zeros((n_points, n_points))
-    points = surface[0]
-
-    if show_progress:
-        iterator = tqdm.tqdm(enumerate(points), desc="Calculating geodesic distances")
-    else:
-        iterator = enumerate(points)
-
-    for idx, pt in iterator:
-        distances, _ = solver.compute_distance(idx)
-        distance_matrix[idx] = distances
+    distance_matrix = gdist.local_gdist_matrix(
+        surface[0], surface[1], max_distance=1e9
+    ).toarray()
 
     return distance_matrix
 
