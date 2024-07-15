@@ -19,4 +19,6 @@ __all__ = [
     "least_squares_ellipsoid",
     "expand_points_on_ellipse",
     "normals_on_ellipsoid",
+    "expand_spherical_harmonics",
+    "expand_points_on_fitted_ellipsoid",
 ]
