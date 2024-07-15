@@ -4,8 +4,6 @@ import numpy as np
 from typing import Tuple
 import pandas as pd
 
-from napari_stress.types import _METADATAKEY_MEAN_CURVATURE
-
 
 def anisotropic_stress(
     mean_curvature_droplet: np.ndarray,
