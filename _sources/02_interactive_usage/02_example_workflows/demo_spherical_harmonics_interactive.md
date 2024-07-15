@@ -20,8 +20,6 @@ This will bring up a dialogue with the available options:
 **Parameters**:
 
 * `max_degree`: Controls the accuracy of the approximation (see [glossary](spherical_harmonics:measurements:fit_residue) for details). A higher-degree expansion will lead to a better approximation of the input pointcloud, but will eventually pick up noise and lead to [overfitting](https://en.wikipedia.org/wiki/Overfitting). A lower degree will lead to a smoother surface, but higher remaining errors.
-* `implementation`: Which implementation to use. Currently supported backends are STRESS (*recommended*) and [pyshtools](https://shtools.github.io/SHTOOLS/).
-* `expansion type`: Controls whether the points should be approximated in a cartesian (*recommended*) or radial (=spherical) coordinate system.
 
 ## Results
 

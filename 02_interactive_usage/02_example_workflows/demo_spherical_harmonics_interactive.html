@@ -425,8 +425,6 @@ document.write(`
 <p><strong>Parameters</strong>:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">max_degree</span></code>: Controls the accuracy of the approximation (see <a class="reference internal" href="../../03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics.html#spherical-harmonics-measurements-fit-residue"><span class="std std-ref">glossary</span></a> for details). A higher-degree expansion will lead to a better approximation of the input pointcloud, but will eventually pick up noise and lead to <a class="reference external" href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>. A lower degree will lead to a smoother surface, but higher remaining errors.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">implementation</span></code>: Which implementation to use. Currently supported backends are STRESS (<em>recommended</em>) and <a class="reference external" href="https://shtools.github.io/SHTOOLS/">pyshtools</a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">expansion</span> <span class="pre">type</span></code>: Controls whether the points should be approximated in a cartesian (<em>recommended</em>) or radial (=spherical) coordinate system.</p></li>
 </ul>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
