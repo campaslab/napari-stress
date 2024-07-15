@@ -280,17 +280,17 @@ class SphericalHarmonicsExpander(Expander):
 
     def _calculate_power_spectrum_individual(self, coefficients, normalize=True):
         power_spectrum = np.zeros(coefficients.shape[0])
-        for l in range(coefficients.shape[0]):
+        for order in range(coefficients.shape[0]):
             # Assume the real coefficients are on the diagonal and immediately right (if exist)
             # and imaginary coefficients are symmetrically below the diagonal.
-            real_parts = coefficients[l, l:]
-            if l > 0:
-                imag_parts = coefficients[:l, l]
+            real_parts = coefficients[order, order:]
+            if order > 0:
+                imag_parts = coefficients[:order, order]
             else:
                 imag_parts = np.array([])
 
             coeffs = np.concatenate((real_parts, imag_parts))
-            power_spectrum[l] = np.sum(np.abs(coeffs) ** 2)
+            power_spectrum[order] = np.sum(np.abs(coeffs) ** 2)
 
         if normalize and np.sum(power_spectrum) != 0:
             power_spectrum /= np.sum(power_spectrum)
