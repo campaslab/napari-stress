@@ -32,7 +32,7 @@ def geodesic_distance_matrix(
     distance_matrix = gdist.local_gdist_matrix(
         np.asarray(surface[0], dtype=np.float64),
         np.asarray(surface[1], dtype=np.int32),
-        max_distance=1e9
+        max_distance=1e9,
     ).toarray()
 
     return distance_matrix
