@@ -177,6 +177,7 @@ class stress_analysis_toolbox(QWidget):
 
         for layer in results:
             _layer = Layer.create(data=layer[0], meta=layer[1], layer_type=layer[2])
+            _layer.translate = self.layer_select.value.translate
             self.viewer.add_layer(_layer)
 
         # Export results
