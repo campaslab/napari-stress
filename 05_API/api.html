@@ -57,6 +57,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '05_API/api';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -437,10 +439,27 @@ document.write(`
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vectors.html"><cite>Vectors module</cite></a></li>
 <li class="toctree-l1"><a class="reference internal" href="approximation.html"><cite>Approximation module</cite></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.fit"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.expand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit_expand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.axes_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.axes_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.center_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.center_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.coefficients_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.EllipsoidExpander.properties"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.properties</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.fit"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.expand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit_expand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.coefficients_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.properties"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.properties</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.expand_points_on_fitted_ellipsoid"><code class="docutils literal notranslate"><span class="pre">expand_points_on_fitted_ellipsoid()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.fit_ellipsoid_to_pointcloud"><code class="docutils literal notranslate"><span class="pre">fit_ellipsoid_to_pointcloud()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.expand_spherical_harmonics"><code class="docutils literal notranslate"><span class="pre">expand_spherical_harmonics()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="approximation.html#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
 </ul>

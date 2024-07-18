@@ -57,6 +57,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '05_API/approximation';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -400,10 +402,27 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.fit"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit_expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.axes_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.axes_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.center_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.center_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.coefficients_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.properties"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.properties</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit_expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.coefficients_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.properties"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.properties</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_fitted_ellipsoid"><code class="docutils literal notranslate"><span class="pre">expand_points_on_fitted_ellipsoid()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud"><code class="docutils literal notranslate"><span class="pre">fit_ellipsoid_to_pointcloud()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_spherical_harmonics"><code class="docutils literal notranslate"><span class="pre">expand_spherical_harmonics()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
 </ul>
@@ -423,12 +442,217 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">EllipsoidExpander</span></span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander" title="Link to this definition">#</a></dt>
-<dd><p>Expand a set of points to fit an ellipsoid.</p>
+<dd><p>Expand a set of points to fit an ellipsoid using least squares fitting.</p>
+<p>The ellipsoid equation is of the form:</p>
+<div class="math notranslate nohighlight">
+\[Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz = 1\]</div>
+<p>where A, B, C, D, E, F, G, H, I are the coefficients of the ellipsoid equation and
+x, y, z are the coordinates of the points. The parameters of this equation are
+fitted to the input points using least squares fitting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.fit" title="Link to this definition">#</a></dt>
+<dd><p>Fit an ellipsoid to a set of points using leaast square fitting.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.expand" title="Link to this definition">#</a></dt>
+<dd><p>Project a set of points onto their respective position on the fitted ellipsoid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.fit_expand">
+<span class="sig-name descname"><span class="pre">fit_expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.fit_expand" title="Link to this definition">#</a></dt>
+<dd><p>Fit an ellipsoid to a set of points and then expand them.</p>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate and fit an ellipsoid expander to a set of points</span>
+<span class="n">expander</span>  <span class="o">=</span> <span class="n">EllipsoidExpander</span><span class="p">()</span>
+<span class="n">expander</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+<span class="c1"># Expand the points on the fitted ellipsoid</span>
+<span class="n">fitted_points</span> <span class="o">=</span> <span class="n">expander</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.axes_">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">axes_</span></span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.axes_" title="Link to this definition">#</a></dt>
+<dd><p>The lengths of the axes of the ellipsoid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>napari.types.PointsData</em>) – The points to expand.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axes_</strong> – The lengths of the axes of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.center_">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">center_</span></span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.center_" title="Link to this definition">#</a></dt>
+<dd><p>The center of the ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>center_</strong> – The center of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.coefficients_">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coefficients_</span></span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.coefficients_" title="Link to this definition">#</a></dt>
+<dd><p>The coefficients of the fitted ellipsoid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coefficients_</strong> – The coefficients of the ellipsoid equation. The coefficients are of the form
+(3, 2, 3); The first dimension represents the three axes of the ellipsoid
+(major, medial and minor). The second dimension represents the components of
+the ellipsoid vectors (base point and direction vector). The third dimension
+represents the dimension of the space (z, y, x).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>napari.types.VectorsData</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.EllipsoidExpander.properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#napari_stress.approximation.EllipsoidExpander.properties" title="Link to this definition">#</a></dt>
+<dd><p>Get properties of the expansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><strong>properties</strong> – Dictionary containing properties of the expansion with following keys:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>residuals: np.ndarray</dt><dd><p>Residual euclidian distance between input points and expanded points.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>maximum_mean_curvature: float</dt><dd><p>Maximum mean curvature of the ellipsoid.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>minimum_mean_curvature: float</dt><dd><p>Minimum mean curvature of the ellipsoid.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The maximum and minimum curvatures <span class="math notranslate nohighlight">\(H_{max}\)</span> and <span class="math notranslate nohighlight">\(H_{min}\)</span> are calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}H_{max} = 1 / (2 * a^2) + 1 / (2 * b^2)\\H_{min} = 1 / (2 * b^2) + 1 / (2 * a^2)\end{aligned}\end{align} \]</div>
+<p>where a, b are the largest and smallest axes of the ellipsoid, respectively.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">SphericalHarmonicsExpander</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cartesian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander" title="Link to this definition">#</a></dt>
+<dd><p>Expand a set of points using spherical harmonics.</p>
+<p>The spherical harmonics expansion is performed using the following equation:</p>
+<div class="math notranslate nohighlight">
+\[f(\theta, \phi) = \sum_{l=0}^{L} \sum_{m=-l}^{l} a_{lm} Y_{lm}(\theta, \phi)\]</div>
+<p>where <span class="math notranslate nohighlight">\(a_{lm}\)</span> are the spherical harmonics coefficients and <span class="math notranslate nohighlight">\(Y_{lm}(\theta, \phi)\)</span>
+are the spherical harmonics functions. The expansion is performed in the spherical coordinate system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_degree</strong> (<em>int</em>) – Maximum degree of spherical harmonics expansion.</p></li>
+<li><p><strong>expansion_type</strong> (<em>str</em>) – Type of expansion to perform. Can be either ‘cartesian’ or ‘radial’.</p></li>
+<li><p><strong>normalize_spectrum</strong> (<em>bool</em>) – Normalize power spectrum sum to 1.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit" title="Link to this definition">#</a></dt>
+<dd><p>Fit spherical harmonics to input data. If <cite>expansion_type</cite> is ‘cartesian’, the
+input points are converted to ellipsoidal coordinates (latitude/longitude)
+before fitting and each coordinate (z, y, z) is fitted separately. Hence,
+the derived coefficients are of shape <cite>(3, max_degree + 1, max_degree + 1)</cite>.
+If <cite>expansion_type</cite> is ‘radial’, the input points are converted to radial
+coordinates ($math:<cite>rho, theta, phi$) before fitting. Only the radial
+coordinate is fitted, hence the derived coefficients are of shape
+`(1, max_degree + 1, max_degree + 1)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander.expand" title="Link to this definition">#</a></dt>
+<dd><p>Expand input points using spherical harmonics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander.fit_expand">
+<span class="sig-name descname"><span class="pre">fit_expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'napari.types.PointsData'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit_expand" title="Link to this definition">#</a></dt>
+<dd><p>Fit spherical harmonics to input data and then expand them.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander.coefficients_">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coefficients_</span></span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander.coefficients_" title="Link to this definition">#</a></dt>
+<dd><p>The coefficients of the spherical harmonics expansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coefficients_</strong> – The coefficients of the spherical harmonics expansion. The shape of the
+coefficients depends on the type of expansion. If the expansion type is
+‘cartesian’, the coefficients are of shape (3, max_degree + 1, max_degree + 1).
+If the expansion type is ‘radial’, the coefficients are of shape
+(1, max_degree + 1, max_degree + 1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="napari_stress.approximation.SphericalHarmonicsExpander.properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#napari_stress.approximation.SphericalHarmonicsExpander.properties" title="Link to this definition">#</a></dt>
+<dd><p>Get properties of the expansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><strong>properties</strong> – Dictionary containing properties of the expansion with following keys:</p>
+<ul>
+<li><dl class="simple">
+<dt>residuals: np.ndarray</dt><dd><p>Residual euclidian distance between input points and expanded points.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>power_spectrum: np.ndarray</dt><dd><p>Power spectrum of spherical harmonics coefficients. If ‘normalize_spectrum’
+is set to True, the power spectrum is normalized to sum to 1.</p>
+<p>The spectrum <span class="math notranslate nohighlight">\(P_l\)</span> is calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[P_l = \sum_{m=-l}^{l} |a_{lm}|^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(a_{lm}\)</span> are the spherical harmonics coefficients.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -473,18 +697,21 @@ locations on the surface of the fitted ellipsoid.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="napari_stress.approximation.fit_ellipsoid_to_pointcloud">
-<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">fit_ellipsoid_to_pointcloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.VectorsData</span></span></span><a class="headerlink" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud" title="Link to this definition">#</a></dt>
-<dd><p>Fit an ellipsoid to a set of points.</p>
+<dt class="sig sig-object py" id="napari_stress.approximation.expand_spherical_harmonics">
+<span class="sig-prename descclassname"><span class="pre">napari_stress.approximation.</span></span><span class="sig-name descname"><span class="pre">expand_spherical_harmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">napari.types.PointsData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">napari.types.LayerDataTuple</span></span></span><a class="headerlink" href="#napari_stress.approximation.expand_spherical_harmonics" title="Link to this definition">#</a></dt>
+<dd><p>Expand points using spherical harmonics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>napari.types.PointsData</em>) – The points to fit an ellipsoid to.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>np.ndarray</em>) – Points to be expanded.</p></li>
+<li><p><strong>max_degree</strong> (<em>int</em>) – Maximum degree of spherical harmonics expansion.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ellipsoid</strong> – The fitted ellipsoid.</p>
+<dd class="field-even"><p><strong>expanded_points</strong> – Expanded points.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>napari.types.VectorsData</p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -597,10 +824,27 @@ ellipsoid fitted to the pointcloud.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.fit"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.fit_expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.axes_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.axes_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.center_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.center_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.coefficients_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.EllipsoidExpander.properties"><code class="docutils literal notranslate"><span class="pre">EllipsoidExpander.properties</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.fit_expand"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.fit_expand()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.coefficients_"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.coefficients_</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.SphericalHarmonicsExpander.properties"><code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsExpander.properties</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_ellipse"><code class="docutils literal notranslate"><span class="pre">expand_points_on_ellipse()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_points_on_fitted_ellipsoid"><code class="docutils literal notranslate"><span class="pre">expand_points_on_fitted_ellipsoid()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.fit_ellipsoid_to_pointcloud"><code class="docutils literal notranslate"><span class="pre">fit_ellipsoid_to_pointcloud()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.expand_spherical_harmonics"><code class="docutils literal notranslate"><span class="pre">expand_spherical_harmonics()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.least_squares_ellipsoid"><code class="docutils literal notranslate"><span class="pre">least_squares_ellipsoid()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#napari_stress.approximation.normals_on_ellipsoid"><code class="docutils literal notranslate"><span class="pre">normals_on_ellipsoid()</span></code></a></li>
 </ul>

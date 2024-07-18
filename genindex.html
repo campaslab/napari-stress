@@ -368,6 +368,7 @@ document.write(`
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -381,6 +382,8 @@ document.write(`
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/measurements.html#napari_stress.measurements.average_mean_curvatures_on_manifold">average_mean_curvatures_on_manifold() (in module napari_stress.measurements)</a>
+</li>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.axes_">axes_ (napari_stress.approximation.EllipsoidExpander property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -396,8 +399,16 @@ document.write(`
 </li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.calculate_patch_fitted_curvature_on_surface">calculate_patch_fitted_curvature_on_surface() (in module napari_stress.measurements)</a>
 </li>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.center_">center_ (napari_stress.approximation.EllipsoidExpander property)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.coefficients_">coefficients_ (napari_stress.approximation.EllipsoidExpander property)</a>
+
+      <ul>
+        <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.coefficients_">(napari_stress.approximation.SphericalHarmonicsExpander property)</a>
+</li>
+      </ul></li>
       <li><a href="05_API/utils.html#napari_stress.utils.compile_data_from_layers">compile_data_from_layers() (in module napari_stress.utils)</a>
 </li>
       <li><a href="05_API/measurements.html#napari_stress.measurements.comprehensive_analysis">comprehensive_analysis() (in module napari_stress.measurements)</a>
@@ -428,11 +439,19 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander">EllipsoidExpander (class in napari_stress.approximation)</a>
 </li>
-      <li><a href="05_API/approximation.html#napari_stress.approximation.expand_points_on_ellipse">expand_points_on_ellipse() (in module napari_stress.approximation)</a>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.expand">expand() (napari_stress.approximation.EllipsoidExpander method)</a>
+
+      <ul>
+        <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.expand">(napari_stress.approximation.SphericalHarmonicsExpander method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.expand_points_on_ellipse">expand_points_on_ellipse() (in module napari_stress.approximation)</a>
+</li>
       <li><a href="05_API/approximation.html#napari_stress.approximation.expand_points_on_fitted_ellipsoid">expand_points_on_fitted_ellipsoid() (in module napari_stress.approximation)</a>
+</li>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.expand_spherical_harmonics">expand_spherical_harmonics() (in module napari_stress.approximation)</a>
 </li>
       <li><a href="05_API/utils.html#napari_stress.utils.export_settings">export_settings() (in module napari_stress.utils)</a>
 </li>
@@ -442,8 +461,18 @@ document.write(`
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="05_API/approximation.html#napari_stress.approximation.fit_ellipsoid_to_pointcloud">fit_ellipsoid_to_pointcloud() (in module napari_stress.approximation)</a>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.fit">fit() (napari_stress.approximation.EllipsoidExpander method)</a>
+
+      <ul>
+        <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.fit">(napari_stress.approximation.SphericalHarmonicsExpander method)</a>
 </li>
+      </ul></li>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.fit_expand">fit_expand() (napari_stress.approximation.EllipsoidExpander method)</a>
+
+      <ul>
+        <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.fit_expand">(napari_stress.approximation.SphericalHarmonicsExpander method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/reconstruction.html#napari_stress.reconstruction.fit_patches">fit_patches() (in module napari_stress.reconstruction)</a>
@@ -579,6 +608,18 @@ document.write(`
   </ul></td>
 </tr></table>
 
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.EllipsoidExpander.properties">properties (napari_stress.approximation.EllipsoidExpander property)</a>
+
+      <ul>
+        <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander.properties">(napari_stress.approximation.SphericalHarmonicsExpander property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -603,6 +644,8 @@ document.write(`
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="05_API/measurements.html#napari_stress.measurements.spatio_temporal_autocorrelation">spatio_temporal_autocorrelation() (in module napari_stress.measurements)</a>
+</li>
+      <li><a href="05_API/approximation.html#napari_stress.approximation.SphericalHarmonicsExpander">SphericalHarmonicsExpander (class in napari_stress.approximation)</a>
 </li>
   </ul></td>
 </tr></table>
