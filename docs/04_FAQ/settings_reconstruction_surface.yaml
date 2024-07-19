@@ -6,7 +6,7 @@ n_smoothing_iterations: 15
 n_tracing_iterations: 1
 outlier_tolerance: 1.5
 remove_outliers: true
-resampling_length: 5.0
+resampling_length: 5.0 # resampling_length is given in pixels
 sampling_distance: 1.0
 smoothing_sigma: 1.0
 target_voxelsize: 0.2868

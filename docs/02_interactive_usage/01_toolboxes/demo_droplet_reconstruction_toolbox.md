@@ -28,7 +28,7 @@ The refinement of the first selection of points consists of two principal steps 
 
 In each iteration, the following steps are done:
 * Resampling: The cartesian coordinates of the points are interpolated according to latitude and longitude. The resampled points are drawn according to a fibonacci-scheme. You can control the number of points that are sampled with the following parameters:
-    * `Point resampling length` field: The larger this value is, the more scarce the points will be on the surface.
+    * `Point resampling length` field: The larger this value is, the more scarce the points will be on the surface. Note that the `Point resampling length` is given in pixels. The size of objects in pixels may change although the phyiscal size of the object is the same. Hence, the results for the same objects may be different for the same parameters if the image is sampled to different voxel sizes.
     * `Number of iterations`: The larger this value is, the more times the entire procedure in this step is repeated. The more iterations you perform, the longer the processing will take.
 * Trace-refinement: Normals are cast outwards from the sample point and the intesity in the rescaled image along the vectors is mmeasured. The surface point is then moved along this line to best fit the intensity distribution. For more details, see [this notebook](glossary:surface_tracing:code). In short, the parameters control:
     * `Fluorescence type`: Whether the droplet is labelled on the surface or in the interior.
