@@ -53,6 +53,10 @@ parts:
       - file: 03_glossary/01_spherical_harmonics/01_spherical_harmonics
       - file: 03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics
 
+    - file: 03_glossary/02_stresses/Readme
+      sections:
+      - file: 03_glossary/02_stresses/01_tissue_stresses
+
   - caption: FAQ
     chapters:
     - file: 04_FAQ/Installation
