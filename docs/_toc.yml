@@ -56,6 +56,7 @@ parts:
     - file: 03_glossary/02_stresses/Readme
       sections:
       - file: 03_glossary/02_stresses/01_tissue_stresses
+      - file: 03_glossary/02_stresses/02_cell_stresses
 
   - caption: FAQ
     chapters:
