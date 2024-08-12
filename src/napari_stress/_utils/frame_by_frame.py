@@ -171,11 +171,11 @@ class TimelapseConverter:
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
         self.tuple_aliases = {
-            "points": 'napari.types.PointsData',
-            "surface": 'napari.types.SurfaceData',
-            "image": 'napari.types.ImageData',
-            "labels": 'napari.types.LabelsData',
-            "vectors": 'napari.types.VectorsData',
+            "points": "napari.types.PointsData",
+            "surface": "napari.types.SurfaceData",
+            "image": "napari.types.ImageData",
+            "labels": "napari.types.LabelsData",
+            "vectors": "napari.types.VectorsData",
         }
 
         self.supported_data = list(self.list_to_data_conversion_functions.keys())
@@ -316,7 +316,7 @@ class TimelapseConverter:
         tuple_data: list,
     ) -> List[LayerDataTuple]:
         """If a function returns a list of LayerDataTuple"""
-        
+
         layertypes = [td[-1] for td in tuple_data[0]]
 
         # Convert data to array with dimensions [frame, results, data]
@@ -337,7 +337,7 @@ class TimelapseConverter:
         layertype_alias = self.tuple_aliases[layertype]
 
         # Convert data to array with dimensions [frame, data]
-        #data = np.stack(tuple_data)
+        # data = np.stack(tuple_data)
         properties = [x[1] for x in tuple_data]
 
         # If data was only 3D
@@ -345,7 +345,9 @@ class TimelapseConverter:
         if len(tuple_data) == 1:
             if "features" in properties[0].keys():
                 _properties["features"] = tuple_data[0][1]["features"]
-                _properties["features"]["frame"] = np.zeros(len(tuple_data[0][0]), dtype=int)
+                _properties["features"]["frame"] = np.zeros(
+                    len(tuple_data[0][0]), dtype=int
+                )
                 [frame.pop("features") for frame in properties]
             if "metadata" in properties[0].keys():
                 _properties["metadata"] = tuple_data[0][1]["metadata"]
