@@ -79,7 +79,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
 
         # apply function frame by frame
         results = [None] * n_frames
-        frames = tqdm.tqdm(range(n_frames)) if progress_bar else range(n_frames)
+        frames = range(n_frames)
 
         # start dask cluster client
         if use_dask:
@@ -110,7 +110,8 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
                 # args_futures = [client.scatter(arg) for arg in _args]
                 jobs.append(client.submit(function, *_args, **kwargs))
             else:
-                results[t] = function(*_args, **kwargs)
+                single_results = function(*_args, **kwargs)
+                results[t] = single_results
 
         if use_dask:
             # gather results
@@ -170,11 +171,11 @@ class TimelapseConverter:
 
         # This list of aliases allows to map LayerDataTuples to the correct napari.types
         self.tuple_aliases = {
-            "points": PointsData,
-            "surface": SurfaceData,
-            "image": ImageData,
-            "labels": LabelsData,
-            "vectors": VectorsData,
+            "points": "napari.types.PointsData",
+            "surface": "napari.types.SurfaceData",
+            "image": "napari.types.ImageData",
+            "labels": "napari.types.LabelsData",
+            "vectors": "napari.types.VectorsData",
         }
 
         self.supported_data = list(self.list_to_data_conversion_functions.keys())
@@ -316,17 +317,12 @@ class TimelapseConverter:
     ) -> List[LayerDataTuple]:
         """If a function returns a list of LayerDataTuple"""
 
+        layertypes = [td[-1] for td in tuple_data[0]]
+
         # Convert data to array with dimensions [frame, results, data]
-        data = np.stack(tuple_data)
-
-        if len(data) == 1:
-            layertypes = data[:, ..., -1].squeeze()
-        else:
-            layertypes = data[:, ..., -1].squeeze()[0]
-
         converted_tuples = []
         for idx, res_type in enumerate(layertypes):
-            tuples_to_convert = data[:, idx]
+            tuples_to_convert = [td[idx] for td in tuple_data]
             converted_tuples.append(
                 self._list_of_ldtuple_to_layerdatatuple(list(tuples_to_convert))
             )
@@ -337,21 +333,24 @@ class TimelapseConverter:
         """
         Convert a list of 3D layerdatatuple objects to a single 4D LayerDataTuple
         """
-        layertype = self.tuple_aliases[tuple_data[-1][-1]]
+        layertype = tuple_data[-1][-1]
+        layertype_alias = self.tuple_aliases[layertype]
 
         # Convert data to array with dimensions [frame, data]
-        data = np.stack(tuple_data)
-        properties = data[:, 1]
+        # data = np.stack(tuple_data)
+        properties = [x[1] for x in tuple_data]
 
         # If data was only 3D
         _properties = {}
-        if len(data) == 1:
+        if len(tuple_data) == 1:
             if "features" in properties[0].keys():
-                _properties["features"] = data[0][1]["features"]
-                _properties["features"]["frame"] = np.zeros(len(data[0][0]), dtype=int)
+                _properties["features"] = tuple_data[0][1]["features"]
+                _properties["features"]["frame"] = np.zeros(
+                    len(tuple_data[0][0]), dtype=int
+                )
                 [frame.pop("features") for frame in properties]
             if "metadata" in properties[0].keys():
-                _properties["metadata"] = data[0][1]["metadata"]
+                _properties["metadata"] = tuple_data[0][1]["metadata"]
                 _properties["metadata"]["frame"] = [0]
                 [frame.pop("metadata") for frame in properties]
         else:
@@ -385,19 +384,18 @@ class TimelapseConverter:
         layer_props = self._list_of_dictionaries_to_dictionary(properties)
 
         # exclude 'scale' from stacked metadata
-        if "scale" in layer_props.keys() and len(data) != 1:
+        if "scale" in layer_props.keys() and len(tuple_data) != 1:
             layer_props["scale"] = properties[0]["scale"]
 
         for key in layer_props.keys():
             _properties[key] = layer_props[key]
 
-        dtype = data[0, -1]
         result = [None] * 3
-        result[0] = self.list_to_data_conversion_functions[layertype](
-            [x for x in data[:, 0]]
+        result[0] = self.list_to_data_conversion_functions[layertype_alias](
+            [x[0] for x in tuple_data]
         )
         result[1] = _properties
-        result[2] = dtype
+        result[2] = layertype
 
         return tuple(result)
 
