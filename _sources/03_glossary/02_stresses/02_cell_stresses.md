@@ -13,7 +13,7 @@ Here, we choose the points $ p $ and $ q $ on the ellipsoid that correspond to t
 
 ### Finding the Extrema on the Deformed Surface
 
-To identify the extreme points (maxima and minima) on the deformed surface, we use a method called surface triangulation on the 5810 Lebedev nodes that represent the surface. Two points are considered neighbors if they are connected by an edge. 
+To identify the extreme points (maxima and minima) on the deformed surface, we use a method called surface triangulation on the 5810 Lebedev nodes that represent the surface. Two points are considered neighbors if they are connected by an edge.
 
 - **Local maxima** are points where the value of cellular stress is greater than or equal to the values of all their neighboring points.
 - **Local minima** are points where the value of cellular stress is less than or equal to the values of all their neighboring points.
