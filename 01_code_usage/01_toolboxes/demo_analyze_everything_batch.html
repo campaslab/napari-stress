@@ -1,0 +1,1558 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Analyze everything &#8212; Napari-stress documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_code_usage/01_toolboxes/demo_analyze_everything_batch';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Other example workflows" href="../02_example_workflows/Readme.html" />
+    <link rel="prev" title="Analyze everything" href="demo_analyze_everything.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Napari-stress documentation - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Napari-stress documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Introduction
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../code_usage.html">From code</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="Readme.html">Toolboxes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="demo_droplet_reconstruction_toolbox_code.html">Droplet reconstruction from code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="demo_anisotropic_stresses.html">Anisotropic stresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="demo_analyze_everything.html">Analyze everything</a></li>
+
+
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Analyze everything</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../02_example_workflows/Readme.html">Other example workflows</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_fit_ellipsoid_code.html">Ellipsoid fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_measure_patch_fitted_curvature.html">Measure patch-fitted curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_surface_reconstruction_code.html">Surface reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_surface_tracing.html">Trace refining a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_patch_fitting_reconstruction.html">Patch smoothing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_spherical_harmonics_code.html">Spherical harmonics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_timelapse_processing.html">Timelapse processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_measure_intensity_on_surface.html">Measureing intensity on a surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02_example_workflows/demo_measure_intensity_on_vectors.html">Measureing intensity on vectors and surfaces</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../02_interactive_usage/interactive_usage.html">Interactive usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/Readme.html">Toolboxes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html">Droplet reconstruction toolbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_stress_toolbox_interactive.html">Comprehensive stress analysis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/Readme.html">Other example workflows</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/demo_fit_ellipsoid_interactive.html">Ellipse fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/demo_surface_reconstruction_interactive.html">Surface reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/demo_spherical_harmonics_interactive.html">Spherical harmonics expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/demo_measure_curvature.html">Measure curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../02_interactive_usage/02_example_workflows/visualize_measurements_in_viewer.html">Visualize measurements</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Glossary</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../03_glossary/01_spherical_harmonics/Readme.html">Spherical harmonics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../03_glossary/01_spherical_harmonics/01_spherical_harmonics.html">Spherical harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics.html">Analyzing spherical harmonics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../03_glossary/02_stresses/Readme.html">Droplet stresses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../03_glossary/02_stresses/01_tissue_stresses.html">Tissue-Scale Stresses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03_glossary/02_stresses/02_cell_stresses.html">Quantifying Higher Order Stresses</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../04_FAQ/Installation.html">Installation issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../04_FAQ/Acknowledgement_and_citation.html">Acknowledgement &amp; Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../04_FAQ/bulk_vs_surface.html">Bulk vs. surface labelling</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../04_FAQ/Validation.html">Validation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/validation_stress_paper.html">Napari-stress validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/analyze_validation.html">Technical validation</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../04_FAQ/validation/create_validation_data.html">Create synthetic validation data</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../05_API/api.html"><cite>napari_stress</cite></a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/measurements.html"><cite>Measurements module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/vectors.html"><cite>Vectors module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/approximation.html"><cite>Approximation module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/reconstruction.html"><cite>Reconstruction module</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05_API/utils.html"><cite>Utilities module</cite></a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/01_code_usage/01_toolboxes/demo_analyze_everything_batch.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Analyze everything</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-dependencies">Additional dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-parallelization">Set up parallelization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#collect-data-to-be-analyzed">Collect data to be analyzed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-output-folder">Set up output folder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-parameters">Analysis parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="analyze-everything">
+<span id="toolboxes-analyze-everything-batch"></span><h1>Analyze everything<a class="headerlink" href="#analyze-everything" title="Link to this heading">#</a></h1>
+<p>This notebook demonstrates how to run a complete STRESS analysis in a batched way. This requires you to assemble a list of complete filenames and then submit all of them for processing. It is strongly required to do this on a sufficiently powerful processing PC.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Visualizing the results is not part of this tutorial. To find out more, check the <a class="reference internal" href="demo_analyze_everything.html#toolboxes-analyze-everything"><span class="std std-ref">analyze-everything</span></a> tutorial.</p>
+</div>
+<section id="additional-dependencies">
+<h2>Additional dependencies<a class="headerlink" href="#additional-dependencies" title="Link to this heading">#</a></h2>
+<p>In case you want to work with proprietory file formats (e.g., czi, nd2, etc), you’ll need to install some packages that can handle them. As a one-fits-all solution, install the bioio package. To find out exactly what extension of bioio you need, <a class="reference external" href="https://pypi.org/project/bioio/">check the documentation</a>. For instance, for working with czi images you’ll need these dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>bioio<span class="w"> </span>bioio-czi
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">napari</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">napari_stress</span> <span class="kn">import</span> <span class="n">reconstruction</span><span class="p">,</span> <span class="n">measurements</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">stress_backend</span><span class="p">,</span> <span class="n">TimelapseConverter</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">BioImage</span>
+
+<span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">get_client</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">import</span> <span class="nn">vedo</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Converter</span> <span class="o">=</span> <span class="n">TimelapseConverter</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">ndisplay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Assistant skips harvesting pyclesperanto as it&#39;s not installed.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="set-up-parallelization">
+<h2>Set up parallelization<a class="headerlink" href="#set-up-parallelization" title="Link to this heading">#</a></h2>
+<p>IT’s important to set this up beforehand. The process may require a lot of memory - and if you don’t set it here, napari-stress will set it for you, which may not be suitable for the load we will be working with in this usecase.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">memory_limit</span><span class="o">=</span><span class="s1">&#39;32GB&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Link to progress dashboard: &#39;</span><span class="p">,</span> <span class="n">client</span><span class="o">.</span><span class="n">dashboard_link</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Link to progress dashboard:  http://127.0.0.1:8787/status
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="collect-data-to-be-analyzed">
+<h2>Collect data to be analyzed<a class="headerlink" href="#collect-data-to-be-analyzed" title="Link to this heading">#</a></h2>
+<p>The easiest way to find samples in a given root folder is to use <code class="docutils literal notranslate"><span class="pre">os.walk</span></code>. In essence, it recursively walks all subdirectories of a given folder, which allows you to look for files that are matching a specific pattern:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D:\Marc&#39;</span><span class="p">,</span> <span class="s1">&#39;Marc_mouse_embryo_droplets_Aug2024&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D:\Marc&#39;</span><span class="p">,</span> <span class="s1">&#39;Marc_genistein_droplets_Aug2024&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D:\Marc&#39;</span><span class="p">,</span> <span class="s1">&#39;Marc_mouse_timepoint_data_Aug2024&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D:\Marc&#39;</span><span class="p">,</span> <span class="s1">&#39;Marc_human_timepoint_data_Aug2024&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">files_to_analyze</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.czi&#39;</span><span class="p">):</span>
+                <span class="n">files_to_analyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+<span class="n">data_records</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files_to_analyze</span>
+<span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;pixel_size_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;pixel_size_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;pixel_size_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_records</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># show all rows</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">data_records</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>pixel_size_z</th>
+      <th>pixel_size_y</th>
+      <th>pixel_size_x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.37</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.094164</td>
+      <td>0.094164</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.38</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.37</td>
+      <td>0.090070</td>
+      <td>0.090070</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.37</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E8....</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.129475</td>
+      <td>0.129475</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.38</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.147972</td>
+      <td>0.147972</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.138107</td>
+      <td>0.138107</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.172634</td>
+      <td>0.172634</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.138107</td>
+      <td>0.138107</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>D:\Marc\Marc_mouse_embryo_droplets_Aug2024\E9....</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\F1G4 d...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\F1G4 d...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\F1G4 d...</td>
+      <td>0.37</td>
+      <td>0.094164</td>
+      <td>0.094164</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\GFP-NL...</td>
+      <td>0.40</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\GFP-NL...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\GFP-NL...</td>
+      <td>0.40</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>D:\Marc\Marc_genistein_droplets_Aug2024\GFP-NL...</td>
+      <td>0.40</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.48</td>
+      <td>0.079677</td>
+      <td>0.079677</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.094164</td>
+      <td>0.094164</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.109032</td>
+      <td>0.109032</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.115089</td>
+      <td>0.115089</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\F1G4...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>55</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>56</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>57</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>58</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.073986</td>
+      <td>0.073986</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.094164</td>
+      <td>0.094164</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.37</td>
+      <td>0.073986</td>
+      <td>0.073986</td>
+    </tr>
+    <tr>
+      <th>62</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.103580</td>
+      <td>0.103580</td>
+    </tr>
+    <tr>
+      <th>64</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.073986</td>
+      <td>0.073986</td>
+    </tr>
+    <tr>
+      <th>65</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>67</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.082864</td>
+      <td>0.082864</td>
+    </tr>
+    <tr>
+      <th>69</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.076726</td>
+      <td>0.076726</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>72</th>
+      <td>D:\Marc\Marc_mouse_timepoint_data_Aug2024\GFP-...</td>
+      <td>0.40</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>73</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.073986</td>
+      <td>0.073986</td>
+    </tr>
+    <tr>
+      <th>74</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.073986</td>
+      <td>0.073986</td>
+    </tr>
+    <tr>
+      <th>76</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>77</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>78</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>79</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.076726</td>
+      <td>0.076726</td>
+    </tr>
+    <tr>
+      <th>80</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>81</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>82</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\48h ...</td>
+      <td>0.37</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\60h ...</td>
+      <td>0.66</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>84</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\60h ...</td>
+      <td>0.66</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+    <tr>
+      <th>85</th>
+      <td>D:\Marc\Marc_human_timepoint_data_Aug2024\60h ...</td>
+      <td>0.66</td>
+      <td>0.069054</td>
+      <td>0.069054</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="set-up-output-folder">
+<h2>Set up output folder<a class="headerlink" href="#set-up-output-folder" title="Link to this heading">#</a></h2>
+<p>Select a folder where you would like to store the results:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_folder</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;D:\Marc\Marc_mouse_embryo_droplets_Aug2024\stress_analysis_2024-08-21&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s pick a sample and put it to napari to determine feasible parameters for the analysis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D:</span><span class="se">\\</span><span class="s1">Marc</span><span class="se">\\</span><span class="s1">Marc_mouse_embryo_droplets_Aug2024</span><span class="se">\\</span><span class="s1">E8.5 embryos</span><span class="se">\\</span><span class="s1">Mouse embryo E8.5_6_tailbud_droplets_40X_droplet1.czi&#39;</span><span class="p">)</span>
+<span class="n">image_data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">channel_names</span><span class="p">):</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image_data</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">),</span> <span class="n">blending</span><span class="o">=</span><span class="s1">&#39;additive&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="analysis-parameters">
+<h3>Analysis parameters<a class="headerlink" href="#analysis-parameters" title="Link to this heading">#</a></h3>
+<p>In case you ran the reconstruction previously interactively from the napari viewer (as explained <a class="reference internal" href="../../02_interactive_usage/01_toolboxes/demo_droplet_reconstruction_toolbox.html#toolboxes-droplet-reconstruction-interactive"><span class="std std-ref">here</span></a>) and exported the settings, you can import the settings here, too. To do so, simply uncomment the line below (remove the <code class="docutils literal notranslate"><span class="pre">#</span></code>) and provide the path to the saved settings file:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstruction_parameters</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">import_settings</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
+<span class="n">reconstruction_parameters</span><span class="p">[</span><span class="s1">&#39;return_intermediate_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">measurement_parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_degree&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>  <span class="c1"># spherical harmonics degree</span>
+    <span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">:</span> <span class="mi">590</span><span class="p">,</span>  <span class="c1"># number of quadrature points to measure on (maximum is 5810)</span>
+    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">}</span>  <span class="c1"># interfacial tension of droplet</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># lower and upper boundary in cumulative distribution function which should be used to calculate the stress anisotropy</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h2>
+<p>In this step, we put the entire analysis as demonstrated in <a class="reference internal" href="demo_analyze_everything.html#toolboxes-analyze-everything"><span class="std std-ref">this notebook</span></a> into a single function. This function will then be called in a parallel fashion on all the datasets to make analysis faster.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tqdm</span>
+
+<span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">data_records</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data_records</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+    <span class="n">iterator</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Processing </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># there&#39;s something weird with this sample</span>
+    <span class="k">if</span> <span class="n">idx</span><span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="c1"># load data</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
+    <span class="n">reconstruction_parameters</span><span class="p">[</span><span class="s1">&#39;voxelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">)</span>
+    <span class="n">reconstruction_parameters</span><span class="p">[</span><span class="s1">&#39;use_dask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">raw_image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">reconstruction</span><span class="o">.</span><span class="n">reconstruct_droplet</span><span class="p">,</span>
+                              <span class="n">raw_image</span><span class="p">,</span>
+                              <span class="o">**</span><span class="n">reconstruction_parameters</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Processing D:\Marc\Marc_human_timepoint_data_Aug2024\60h samples\H2B-GFP p33 800 cells Gastruloid 60h_1_droplet3.czi: 100%|██████████| 86/86 [18:18&lt;00:00, 12.77s/it]                    
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_reconstruction</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">results_reconstruction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">stress_backend</span><span class="o">.</span><span class="n">lbdv_info</span><span class="p">(</span><span class="n">Max_SPH_Deg</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;max_degree&#39;</span><span class="p">],</span>
+                             <span class="n">Num_Quad_Pts</span><span class="o">=</span><span class="n">measurement_parameters</span><span class="p">[</span><span class="s1">&#39;n_quadrature_points&#39;</span><span class="p">])</span>
+
+<span class="n">jobs_measurement</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">result_reconstruction_single</span> <span class="ow">in</span> <span class="n">results_reconstruction</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">result_reconstruction_single</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">jobs_measurement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">jobs_measurement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">measurements</span><span class="o">.</span><span class="n">comprehensive_analysis</span><span class="p">,</span> <span class="n">result_reconstruction_single</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">measurement_parameters</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">finished_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs_measurement</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">job</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">finished_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;finished&#39;</span><span class="p">:</span>
+        <span class="n">finished_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">finished_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results_measurement</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">finished_jobs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Reconstructed droplets: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">)</span><span class="si">}</span><span class="s1">, measured droplets: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results_measurement</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Reconstructed droplets: 85, measured droplets: 85
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">index_visualize</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">image_raw</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">data_records</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index_visualize</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">AICSImage</span><span class="p">(</span><span class="n">data_records</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index_visualize</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="n">reader</span><span class="o">=</span><span class="n">BioformatsReader</span><span class="p">)</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">)</span>
+<span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image_raw</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results_reconstruction</span><span class="p">[</span><span class="n">index_visualize</span><span class="p">]</span> <span class="o">+</span> <span class="n">results_measurement</span><span class="p">[</span><span class="n">index_visualize</span><span class="p">]:</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To make handling further down easier, we store all data and metadata in a few simple dataframes</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">root_export</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;D:\Marc\stress_analysis_2024-08-21&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_to_export</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">result</span><span class="p">,</span> <span class="n">result_reconstruction</span><span class="p">,</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">results_measurement</span><span class="p">,</span> <span class="n">results_reconstruction</span><span class="p">,</span> <span class="n">data_records</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Compile data</span>
+        <span class="n">n_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">df_over_time</span><span class="p">,</span> <span class="n">df_nearest_pairs</span><span class="p">,</span> <span class="n">df_all_pairs</span><span class="p">,</span> <span class="n">df_autocorrelations</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">compile_data_from_layers</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">n_frames</span><span class="o">=</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># create folder for results in separate directory with same name as the original data</span>
+        <span class="n">folder_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_export</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># remove non-scalar properties and save separately</span>
+        <span class="n">ellipsoid_contribution_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;Elipsoid_deviation_contribution_matrix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;ellipsoid_contribution_matrix.tif&#39;</span><span class="p">),</span> <span class="n">ellipsoid_contribution_matrix</span><span class="p">)</span>
+        <span class="n">df_over_time</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Elipsoid_deviation_contribution_matrix&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">Tissue_stress_tensor_cartesian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;Tissue_stress_tensor_cartesian&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;Tissue_stress_tensor_cartesian.npy&#39;</span><span class="p">),</span> <span class="n">Tissue_stress_tensor_cartesian</span><span class="p">)</span>
+        <span class="n">df_over_time</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Tissue_stress_tensor_cartesian&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">Tissue_stress_tensor_elliptical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;Tissue_stress_tensor_elliptical&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;Tissue_stress_tensor_elliptical.npy&#39;</span><span class="p">),</span> <span class="n">Tissue_stress_tensor_elliptical</span><span class="p">)</span>
+        <span class="n">df_over_time</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Tissue_stress_tensor_elliptical&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">df_over_time</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stress_cell_all_pair_distance&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;autocorrelations_spatial_total&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;autocorrelations_spatial_cell&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;autocorrelations_spatial_tissue&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;stress_cell_nearest_pair_anisotropy&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;stress_cell_nearest_pair_distance&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;stress_cell_all_pair_anisotropy&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span>
+        <span class="n">df_nearest_pairs</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span>
+        <span class="n">df_all_pairs</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span>
+        <span class="n">df_autocorrelations</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span>
+
+        <span class="n">df_over_time</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;results_over_time.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df_nearest_pairs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;results_nearest_pairs.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df_all_pairs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;results_all_pairs.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df_autocorrelations</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;results_autocorrelations.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">df_over_time</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span>
+        <span class="n">df_to_export</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_to_export</span><span class="p">,</span> <span class="n">df_over_time</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">pointclouds_reconstruction</span> <span class="o">=</span> <span class="n">Converter</span><span class="o">.</span><span class="n">_ldtuple_to_list_of_ldtuple</span><span class="p">(</span><span class="n">results_reconstruction</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t_idx</span><span class="p">,</span> <span class="n">pointcloud</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pointclouds_reconstruction</span><span class="p">):</span>
+            <span class="n">pointcloud_vedo</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">vedo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pointcloud_vedo</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;reconstructed_points_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s1">.vtk&#39;</span><span class="p">))</span>
+
+        <span class="c1"># same for result[0]</span>
+        <span class="n">pointclouds</span> <span class="o">=</span> <span class="n">Converter</span><span class="o">.</span><span class="n">_ldtuple_to_list_of_ldtuple</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t_idx</span><span class="p">,</span> <span class="n">pointcloud</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pointclouds</span><span class="p">):</span>
+            <span class="n">pointcloud_vedo</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">vedo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pointcloud_vedo</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;spherical_harmonics_expansion_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s1">.vtk&#39;</span><span class="p">))</span>
+
+        <span class="c1"># same for result[3]</span>
+        <span class="n">pointclouds</span> <span class="o">=</span> <span class="n">Converter</span><span class="o">.</span><span class="n">_ldtuple_to_list_of_ldtuple</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t_idx</span><span class="p">,</span> <span class="n">pointcloud</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pointclouds</span><span class="p">):</span>
+            <span class="n">pointcloud_vedo</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pointcloud</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">pointcloud_vedo</span><span class="o">.</span><span class="n">pointdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pointcloud</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+            <span class="n">vedo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pointcloud_vedo</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;lebedev_points_ellipsoid_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s1">.vtk&#39;</span><span class="p">))</span>
+
+        <span class="c1"># same for result[4]</span>
+        <span class="n">pointclouds</span> <span class="o">=</span> <span class="n">Converter</span><span class="o">.</span><span class="n">_ldtuple_to_list_of_ldtuple</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">t_idx</span><span class="p">,</span> <span class="n">pointcloud</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pointclouds</span><span class="p">):</span>
+            <span class="n">pointcloud_vedo</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pointcloud</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">pointcloud_vedo</span><span class="o">.</span><span class="n">pointdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pointcloud</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+            <span class="n">vedo</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pointcloud_vedo</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;lebedev_points_t</span><span class="si">{</span><span class="n">t_idx</span><span class="si">}</span><span class="s1">.vtk&#39;</span><span class="p">))</span>
+
+        <span class="c1"># export pointclouds</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error processing </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error processing D:\Marc\Marc_genistein_droplets_Aug2024\GFP-NLS data\20240728_Genistein_Gastruloid_102h_1_droplet.czi: object of type &#39;numpy.float64&#39; has no len()
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_to_export</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_export</span><span class="p">,</span> <span class="s1">&#39;results_over_time_all_samples.csv&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">reconstruction_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_export</span><span class="p">,</span> <span class="s1">&#39;reconstruction_settings.yaml&#39;</span><span class="p">))</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">export_settings</span><span class="p">(</span><span class="n">measurement_parameters</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_export</span><span class="p">,</span> <span class="s1">&#39;measurement_settings.yaml&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./01_code_usage/01_toolboxes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="demo_analyze_everything.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Analyze everything</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02_example_workflows/Readme.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Other example workflows</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-dependencies">Additional dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-parallelization">Set up parallelization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#collect-data-to-be-analyzed">Collect data to be analyzed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-output-folder">Set up output folder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-parameters">Analysis parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Johannes Soltwedel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
