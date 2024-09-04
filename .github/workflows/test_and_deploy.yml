@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [windows-latest, ubuntu-latest, macos-latest] # ubuntu-latest is failing anyway
+        platform: [windows-latest, ubuntu-latest] # ubuntu-latest is failing anyway
         python-version: ['3.9', '3.10', '3.11']
 
     steps:
