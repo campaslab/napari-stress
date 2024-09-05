@@ -439,19 +439,19 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     # Check against legacy measurements: load legacy data
     legacy_results_file = Path(__file__).parent / "stress_tissue_anisotropy.csv"
     df_legacy = pd.read_csv(legacy_results_file, header=None).T
-    df_legacy.columns = ['tissue_stress_anisotropy']
+    df_legacy.columns = ["tissue_stress_anisotropy"]
 
-    results_layer = viewer.layers['Result of lebedev quadrature on ellipsoid']
+    results_layer = viewer.layers["Result of lebedev quadrature on ellipsoid"]
     result_tissue_stress = results_layer.metadata[
-        types._METADATAKEY_STRESS_TISSUE_ANISO]
-    
-    difference_abs = result_tissue_stress - df_legacy['tissue_stress_anisotropy'].values
-    difference_rel = difference_abs / df_legacy['tissue_stress_anisotropy'].values
+        types._METADATAKEY_STRESS_TISSUE_ANISO
+    ]
+
+    difference_abs = result_tissue_stress - df_legacy["tissue_stress_anisotropy"].values
+    difference_rel = difference_abs / df_legacy["tissue_stress_anisotropy"].values
 
     # make sure that the results are within limits of agreement
     assert np.all(np.abs(difference_rel).mean() < 0.1)
     assert np.all(np.abs(difference_abs).mean() < 0.1)
-
 
 
 def test_curvature(make_napari_viewer):
@@ -687,6 +687,7 @@ def test_stresses():
     measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import napari
+
     test_comprehensive_stress_toolbox_4d(napari.Viewer)
