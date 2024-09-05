@@ -666,7 +666,7 @@ class EllipsoidExpander(Expander):
                     coefficients[6] / 2.0,
                     coefficients[7] / 2.0,
                     coefficients[8] / 2.0,
-                    -1,
+                    coefficients[9],
                 ],
             ]
         )
