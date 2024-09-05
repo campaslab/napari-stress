@@ -124,6 +124,23 @@ def test_lsq_ellipsoid0(n_tests=10):
         max_mean_curvatures.append(expander.properties["maximum_mean_curvature"])
         min_mean_curvatures.append(expander.properties["minimum_mean_curvature"])
 
+        # The mean curvature of an ellipsoid is given by the formula
+        # H = a / (2 * c^2) + a / (2 * b^2) for the maximum mean curvature
+        # and H = c / (2 * b^2) + c / (2 * a^2) for the minimum mean curvature
+        # where a, b, c are the semi-axes of the ellipsoid
+        axes_sorted = np.sort(expander.axes_)
+        a = axes_sorted[2]
+        b = axes_sorted[1]
+        c = axes_sorted[0]
+        h_max_theory = a / (2 * c**2) + a / (2 * b**2)
+        h_min_theory = c / (2 * b**2) + c / (2 * a**2)
+        assert expander.properties["maximum_mean_curvature"] == h_max_theory
+        assert expander.properties["minimum_mean_curvature"] == h_min_theory
+        assert (
+            expander.properties["maximum_mean_curvature"]
+            > expander.properties["minimum_mean_curvature"]
+        )
+
         assert np.allclose(center, x0)
         assert np.allclose(a2, axes_lengths[2])
         assert np.allclose(a1, axes_lengths[1])

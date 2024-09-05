@@ -554,11 +554,11 @@ class EllipsoidExpander(Expander):
             The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
 
             .. math::
-                H_{max} = 1 / (2 * a^2) + 1 / (2 * b^2)
+                H_{max} = a / (2 * c^2) + a / (2 * b^2)
 
-                H_{min} = 1 / (2 * b^2) + 1 / (2 * a^2)
+                H_{min} = c / (2 * b^2) + c / (2 * a^2)
 
-            where a, b are the largest and smallest axes of the ellipsoid, respectively.
+            where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
         """
         return self._properties
 
@@ -572,20 +572,14 @@ class EllipsoidExpander(Expander):
 
         """
         # get and remove the largest, smallest and medial axis
-        axes = list(self._axes)
-        largest_axis = max(axes)
-        axes.remove(largest_axis)
-        smallest_axis = min(axes)
-        axes.remove(smallest_axis)
-        medial_axis = axes[0]
+        semi_axis_sorted = np.sort(self._axes)
+        a = semi_axis_sorted[2]
+        b = semi_axis_sorted[1]
+        c = semi_axis_sorted[0]
 
         # accoording to paper (https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.full)
-        maximum_mean_curvature = largest_axis / (
-            2 * smallest_axis**2
-        ) + largest_axis / (2 * medial_axis**2)
-        minimum_mean_curvature = smallest_axis / (
-            2 * medial_axis**2
-        ) + smallest_axis / (2 * largest_axis**2)
+        maximum_mean_curvature = a / (2 * c**2) + a / (2 * b**2)
+        minimum_mean_curvature = c / (2 * b**2) + c / (2 * a**2)
 
         self._properties["maximum_mean_curvature"] = maximum_mean_curvature
         self._properties["minimum_mean_curvature"] = minimum_mean_curvature
@@ -672,7 +666,7 @@ class EllipsoidExpander(Expander):
                     coefficients[6] / 2.0,
                     coefficients[7] / 2.0,
                     coefficients[8] / 2.0,
-                    -1,
+                    coefficients[9],
                 ],
             ]
         )
