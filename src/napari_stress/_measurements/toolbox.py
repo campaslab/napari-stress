@@ -499,7 +499,7 @@ def comprehensive_analysis(
         gamma=gamma,
     )
 
-    max_min_anisotropy = (
+    max_min_anisotropy = 2 * gamma * (
         Expander_ellipsoid.properties["maximum_mean_curvature"]
         - Expander_ellipsoid.properties["minimum_mean_curvature"]
     )
