@@ -374,13 +374,15 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
-    from napari_stress import get_droplet_point_cloud_4d
+    from napari_stress import get_droplet_point_cloud_4d, types
     import napari_stress
     import os
+    from pathlib import Path
+    import pandas as pd
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
-    pointcloud_2tp = pointcloud[0][pointcloud[0][:, 0] <= 1, :]
+    pointcloud_2tp = pointcloud[0]
     viewer.add_points(pointcloud_2tp)
 
     widget = napari_stress._measurements.toolbox.stress_analysis_toolbox(viewer)
@@ -433,6 +435,23 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     for file in os.listdir(widget.save_directory):
         os.remove(os.path.join(widget.save_directory, file))
     os.rmdir(widget.save_directory)
+
+    # Check against legacy measurements: load legacy data
+    legacy_results_file = Path(__file__).parent / "stress_tissue_anisotropy.csv"
+    df_legacy = pd.read_csv(legacy_results_file, header=None).T
+    df_legacy.columns = ['tissue_stress_anisotropy']
+
+    results_layer = viewer.layers['Result of lebedev quadrature on ellipsoid']
+    result_tissue_stress = results_layer.metadata[
+        types._METADATAKEY_STRESS_TISSUE_ANISO]
+    
+    difference_abs = result_tissue_stress - df_legacy['tissue_stress_anisotropy'].values
+    difference_rel = difference_abs / df_legacy['tissue_stress_anisotropy'].values
+
+    # make sure that the results are within limits of agreement
+    assert np.all(np.abs(difference_rel).mean() < 0.1)
+    assert np.all(np.abs(difference_abs).mean() < 0.1)
+
 
 
 def test_curvature(make_napari_viewer):
@@ -666,3 +685,8 @@ def test_stresses():
 
     measurements.anisotropic_stress(H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma)
     measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
+
+
+if __name__ == '__main__':
+    import napari
+    test_comprehensive_stress_toolbox_4d(napari.Viewer)
