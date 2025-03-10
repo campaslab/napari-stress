@@ -41,6 +41,7 @@ dependencies = [
     "distributed",
     "joblib",
     "mpmath",
+    "numpy",
     "napari",
     "napari-process-points-and-surfaces",
     "napari-segment-blobs-and-things-with-membranes",
