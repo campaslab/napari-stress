@@ -1,9 +1,139 @@
+# https://peps.python.org/pep-0517/
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
+
+[project]
+name = "napari_stress"
+dynamic = ["version"]
+description = "Interactive surface analysis in napari for measuring mechanical stresses in biological tissues"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Johannes Soltwedel, Ben J. Gross, Elijah Shelton, Carlos Gomez, Otger Campas"},
+  {email = "johannes_richard.mueller@tu-dresden.de"},
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Testing",
+]
+requires-python = ">=3.7"
+dependencies = [
+    "dask",
+    "distributed",
+    "joblib",
+    "mpmath",
+    "napari",
+    "napari-process-points-and-surfaces",
+    "napari-segment-blobs-and-things-with-membranes",
+    "napari-tools-menu>=0.1.15",
+    "numpy<1.24.0",
+    "pandas",
+    "pygeodesic",
+    "scikit-image",
+    "scipy>=1.9.0",
+    "seaborn",
+    "tqdm",
+    "vedo>=2023.5.0",
+    "vispy",
+    "deprecation",
+]
+
+[project.optional-dependencies]
+testing = [
+    "tox",
+    "pytest",  # https://docs.pytest.org/en/latest/contents.html
+    "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
+    "pytest-qt",  # https://pytest-qt.readthedocs.io/en/latest/
+    "napari",
+    "pyqt5",
+]
+
+[project.entry-points."napari.manifest"]
+napari_stress = "napari_stress:napari.yaml"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/campaslab/napari-stress/issues"
+"Documentation" = "https://campaslab.github.io/napari-stress"
+"Source Code" = "https://github.com/campaslab/napari-stress"
+"User Support" = "https://github.com/campaslab/napari-stress/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
+
+[tool.setuptools.dynamic]
+version = {attr = "napari_stress.__init__.__version__"}
+
+[tool.black]
+line-length = 79
+target-version = ['py37', 'py38', 'py39', 'py310']
 
 [tool.ruff]
-ignore = ["F821"]
+line-length = 79
+lint.select = [
+    "E", "F", "W", #flake8
+    "UP", # pyupgrade
+    "I", # isort
+    "BLE", # flake8-blind-exception
+    "B", # flake8-bugbear
+    "A", # flake8-builtins
+    "C4", # flake8-comprehensions
+    "ISC", # flake8-implicit-str-concat
+    "G", # flake8-logging-format
+    "PIE", # flake8-pie
+    "SIM", # flake8-simplify
+]
+lint.ignore = [
+    "E501", # line too long. let black handle this
+    "UP006", "UP007", # type annotation. As using magicgui require runtime type annotation then we disable this.
+    "SIM117", # flake8-simplify - some of merged with statements are not looking great with black, reanble after drop python 3.9
+]
 
-[tool.ruff.per-file-ignores]
-"_napari_plugin.py" = ["F401"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "*vendored*",
+    "*_vendor*",
+]
+
+target-version = "py37"
+fix = true
