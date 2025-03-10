@@ -1,4 +1,9 @@
-__version__ = "0.3.8"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("napari-stress")
+except PackageNotFoundError:
+    __version__ = "not-installed"
 
 from . import _measurements as measurements
 from . import _approximation as approximation
