@@ -1,6 +1,6 @@
 import numpy as np
-from napari.types import SurfaceData
 import pandas as pd
+from napari.types import SurfaceData
 
 
 def temporal_autocorrelation(
@@ -20,7 +20,9 @@ def temporal_autocorrelation(
 
     # convert dataframe into list of features for every frame
     assert frame_column_name in df.columns
-    features = [x[1][feature].to_numpy() for x in list(df.groupby(frame_column_name))]
+    features = [
+        x[1][feature].to_numpy() for x in list(df.groupby(frame_column_name))
+    ]
 
     n_frames = len(features)
     inner_product = np.zeros((n_frames, n_frames))
@@ -41,7 +43,9 @@ def temporal_autocorrelation(
 
 
 def spatio_temporal_autocorrelation(
-    surfaces: SurfaceData, distance_matrix: np.ndarray, maximal_distance: float = None
+    surfaces: SurfaceData,
+    distance_matrix: np.ndarray,
+    maximal_distance: float = None,
 ):
     """
     Spatio-temporal autocorrelation.
@@ -52,12 +56,14 @@ def spatio_temporal_autocorrelation(
         maximal_distance (float, optional): _description_. Defaults to None.
     """
     # Calculate Spatio-Temporal Corrs of total stresses:
-    from .geodesics import correlation_on_surface
     from .._utils.frame_by_frame import TimelapseConverter
+    from .geodesics import correlation_on_surface
 
     # Convert 4D surface into list of surfaces
     Converter = TimelapseConverter()
-    list_of_surfaces = Converter.data_to_list_of_data(surfaces, layertype=SurfaceData)
+    list_of_surfaces = Converter.data_to_list_of_data(
+        surfaces, layertype=SurfaceData
+    )
     n_frames = len(list_of_surfaces)
 
     # get bins for spatial correlation on surface
@@ -75,7 +81,9 @@ def spatio_temporal_autocorrelation(
             result = correlation_on_surface(
                 list_of_surfaces[j - i], list_of_surfaces[j], distance_matrix
             )
-            inner_product[i, j, :] = result["auto_correlations_average"].flatten()
+            inner_product[i, j, :] = result[
+                "auto_correlations_average"
+            ].flatten()
 
     # sum vals of cols for each row, gives us a matrix
     sum_inner_product = np.squeeze(np.sum(inner_product, axis=1))
@@ -95,7 +103,9 @@ def spatio_temporal_autocorrelation(
     return results
 
 
-def haversine_distances(degree_lebedev: int, n_lebedev_points: int) -> np.ndarray:
+def haversine_distances(
+    degree_lebedev: int, n_lebedev_points: int
+) -> np.ndarray:
     """
     Calculate geodesic (Great Circle) distance matrix from haversine formula.
 

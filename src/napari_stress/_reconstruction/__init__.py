@@ -9,10 +9,10 @@ resampled by fitting patches to the surface and resampling the surface
 according to the fitted patches.
 """
 
-from .refine_surfaces import trace_refinement_of_surface, resample_pointcloud
-from .toolbox import reconstruct_droplet
-from .reconstruct_surface import reconstruct_surface_from_quadrature_points
 from .patches import fit_patches, iterative_curvature_adaptive_patch_fitting
+from .reconstruct_surface import reconstruct_surface_from_quadrature_points
+from .refine_surfaces import resample_pointcloud, trace_refinement_of_surface
+from .toolbox import reconstruct_droplet
 
 __all__ = [
     "trace_refinement_of_surface",

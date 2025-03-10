@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-import vedo
 import numpy as np
+import vedo
+
 import napari_stress
 
 
@@ -12,11 +12,15 @@ def test_frontend_spherical_harmonics(make_napari_viewer):
     ellipse = vedo.shapes.Ellipsoid()
 
     # Test stress implementation
-    points2 = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
+    points2 = napari_stress.fit_spherical_harmonics(
+        ellipse.points(), max_degree=3
+    )
     assert np.array_equal(ellipse.points().shape, points2[0].shape)
 
     # Test default implementations
-    points = napari_stress.fit_spherical_harmonics(ellipse.points(), max_degree=3)
+    points = napari_stress.fit_spherical_harmonics(
+        ellipse.points(), max_degree=3
+    )
     assert np.array_equal(ellipse.points().shape, points[0].shape)
 
     # Test implementation with viewer
@@ -32,10 +36,10 @@ def test_frontend_spherical_harmonics(make_napari_viewer):
 
 
 def test_front_spherical_harmonics_4d(make_napari_viewer):
+    from napari_stress import get_droplet_point_cloud_4d
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
         perform_lebedev_quadrature,
     )
-    from napari_stress import get_droplet_point_cloud_4d
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0]
@@ -58,7 +62,9 @@ def test_spherical_harmonics():
         ellipse_points, expansion_type="cartesian"
     )
 
-    lebedev_points, lebedev_info = sh.lebedev_quadrature(coeffs_stress)  # with pickle
+    lebedev_points, lebedev_info = sh.lebedev_quadrature(
+        coeffs_stress
+    )  # with pickle
     lebedev_points, lebedev_info = sh.lebedev_quadrature(
         coeffs_stress, use_minimal_point_set=False
     )  # with pickle

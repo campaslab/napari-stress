@@ -1,5 +1,6 @@
-from .._utils import frame_by_frame
 from napari_tools_menu import register_function
+
+from .._utils import frame_by_frame
 from .expansion import EllipsoidExpander, SphericalHarmonicsExpander
 
 
@@ -29,7 +30,9 @@ def fit_ellipsoid_to_pointcloud(
     return ellipsoid
 
 
-@register_function(menu="Points > Expand point locations on ellipsoid (n-STRESS)")
+@register_function(
+    menu="Points > Expand point locations on ellipsoid (n-STRESS)"
+)
 @frame_by_frame
 def expand_points_on_fitted_ellipsoid(
     points: "napari.types.PointsData",

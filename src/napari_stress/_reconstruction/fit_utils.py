@@ -1,10 +1,10 @@
+import inspect
+from enum import Enum
+from typing import List
+
 import numpy as np
 import pandas as pd
-
-from enum import Enum
 from scipy.optimize import curve_fit
-from typing import List
-import inspect
 
 
 def _sigmoid(
@@ -24,14 +24,16 @@ def _sigmoid(
     ) + offset
 
 
-def _gaussian(array: np.ndarray, center: float, sigma: float, amplitude: float):
+def _gaussian(
+    array: np.ndarray, center: float, sigma: float, amplitude: float
+):
     """
     Gaussian normal fit function
     https://en.wikipedia.org/wiki/Normal_distribution
     """
     return (
         amplitude
-        / np.sqrt((2 * np.pi * sigma**2))
+        / np.sqrt(2 * np.pi * sigma**2)
         * np.exp(-((array - center) ** 2) / (2 * sigma**2))
     )
 
@@ -125,7 +127,9 @@ def _identify_outliers(
     return indices
 
 
-def _fibonacci_sampling(number_of_points: int = 256) -> "napari.types.PointsData":
+def _fibonacci_sampling(
+    number_of_points: int = 256,
+) -> "napari.types.PointsData":
     """
     Sample points on unit sphere according to fibonacci-scheme.
 
@@ -155,7 +159,8 @@ def _fibonacci_sampling(number_of_points: int = 256) -> "napari.types.PointsData
 
 
 def _fancy_edge_fit(
-    array: np.ndarray, selected_edge_func: edge_functions = edge_functions.interior
+    array: np.ndarray,
+    selected_edge_func: edge_functions = edge_functions.interior,
 ) -> float:
     """
     Fit a line profile with a gaussian normal curve or a sigmoidal function.
@@ -179,8 +184,8 @@ def _fancy_edge_fit(
     try:
         if selected_edge_func == _sigmoid:
             # estimate parameters and trim intensity array
-            parameter_estimate, trimmed_array, trimmed_idx = estimate_fit_parameters(
-                array
+            parameter_estimate, trimmed_array, trimmed_idx = (
+                estimate_fit_parameters(array)
             )
             trimmed_indices = np.arange(trimmed_idx[0], trimmed_idx[1])
 
@@ -249,7 +254,8 @@ def estimate_fit_parameters(intensity):
 
     # Calculate the first derivative (dY)
     dY = 0.5 * (
-        np.diff([intensity[0]] + intensity) + np.diff(intensity + [intensity[-1]])
+        np.diff([intensity[0]] + intensity)
+        + np.diff(intensity + [intensity[-1]])
     )
 
     # Identify X3 as the position of the maximum change
@@ -285,10 +291,16 @@ def estimate_fit_parameters(intensity):
         lambda_val = (intensity[indX2] - intensity[0]) / (indX2 - 0)
     else:
         offset = intensity[0]
-        lambda_val = (intensity[-1] - intensity[indX4]) / (len(intensity) - 1 - indX4)
+        lambda_val = (intensity[-1] - intensity[indX4]) / (
+            len(intensity) - 1 - indX4
+        )
 
     # Return starting parameters and trimmed intensity values
-    return [center, amp, -k, lambda_val, offset], intensity[indX2:indX4], [indX2, indX4]
+    return (
+        [center, amp, -k, lambda_val, offset],
+        intensity[indX2:indX4],
+        [indX2, indX4],
+    )
 
 
 def _mean_squared_error(
