@@ -101,7 +101,13 @@ def compile_data_from_layers(
         types._METADATAKEY_STRESS_CELL + "_anisotropy"
     ].values
 
-    return df_over_time, df_nearest_pairs, df_all_pairs, df_autocorrelations, ellipsoid_contribution_matrix
+    return (
+        df_over_time,
+        df_nearest_pairs,
+        df_all_pairs,
+        df_autocorrelations,
+        ellipsoid_contribution_matrix,
+    )
 
 
 def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
@@ -131,15 +137,17 @@ def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
                 return pd.DataFrame(layer[1]["features"])
 
 
-
 def aggregate_ellipsoid_contribution_matrix(
-    results_stress_analysis: List[LayerDataTuple]
+    results_stress_analysis: List[LayerDataTuple],
 ) -> np.ndarray:
     from ..types import _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB
 
     values = np.stack(
-        results_stress_analysis[0][1]['metadata'][_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB])
-    
+        results_stress_analysis[0][1]["metadata"][
+            _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB
+        ]
+    )
+
     return values
 
 

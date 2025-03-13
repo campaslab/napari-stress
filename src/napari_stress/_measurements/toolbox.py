@@ -198,7 +198,7 @@ class stress_analysis_toolbox(QWidget):
             df_nearest_pairs,
             df_all_pairs,
             df_autocorrelations,
-            ellipsoid_contribution_matrix
+            ellipsoid_contribution_matrix,
         ) = utils.compile_data_from_layers(
             results_stress_analysis,
             n_frames=self.n_frames,
@@ -228,7 +228,7 @@ class stress_analysis_toolbox(QWidget):
         # export ellipsoid contribution matrix
         np.save(
             os.path.join(raw_values_directory, "ellipsoid_contribution_matrix.npy"),
-            ellipsoid_contribution_matrix
+            ellipsoid_contribution_matrix,
         )
 
         # Export figures
@@ -248,7 +248,9 @@ class stress_analysis_toolbox(QWidget):
             if layer[2] == "points":
                 export_layer = napari.layers.Layer.create(*layer)
                 napari.save_layers(
-                    os.path.join(pointcloud_directory, f"pointcloud_{export_layer.name}.vtp"),
+                    os.path.join(
+                        pointcloud_directory, f"pointcloud_{export_layer.name}.vtp"
+                    ),
                     [export_layer],
                 )
 

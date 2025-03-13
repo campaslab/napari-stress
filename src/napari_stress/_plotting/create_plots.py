@@ -137,7 +137,7 @@ def create_all_stress_plots(
         df_nearest_pairs,
         df_all_pairs,
         df_autocorrelations,
-        ellipsoid_contribution_matrix
+        ellipsoid_contribution_matrix,
     ) = compile_data_from_layers(
         results_stress_analysis, time_step=time_step, n_frames=n_frames
     )
