@@ -7,6 +7,7 @@ from napari.types import (
     LayerDataTuple,
 )
 from napari.layers import Layer, Points
+import vedo
 
 
 def test_fit_functions():
@@ -118,7 +119,6 @@ def test_decorator_points_layers():
 
 def test_decorator_surfaces():
     from napari_stress import TimelapseConverter, frame_by_frame
-    from napari_process_points_and_surfaces import sample_points_from_surface
     from vedo import Sphere
 
     Converter = TimelapseConverter()
@@ -144,11 +144,16 @@ def test_decorator_surfaces():
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-    points_4d = frame_by_frame(sample_points_from_surface)(surface_array_4d)
-    points_3d = frame_by_frame(sample_points_from_surface)(surface_list[0])
+    def decimate(surface: "napari.types.SurfaceData") -> "napari.types.PointsData":
+        mesh = vedo.Mesh((surface[0], surface[1])).decimate(fraction=0.5)
+        points = mesh.vertices
+        return points
 
-    assert np.array_equal(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
-    assert np.array_equal(points_4d.shape, (1010 * n_frames, 4))
+    points_4d = frame_by_frame(decimate)(surface_array_4d)
+    points_3d = frame_by_frame(decimate)(surface_list[0])
+
+    assert np.allclose(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
+    assert np.array_equal(points_4d.shape, (530 * n_frames, 4))
 
 
 def test_decorator_images():
@@ -209,3 +214,6 @@ def test_frame_by_frame_dataframes():
     assert np.array_equal(list_of_dfs[0]["data"], df1["data"])
     assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
     assert np.array_equal(list_of_dfs[2]["data"], df3["data"])
+
+if __name__ == '__main__':
+    test_decorator_surfaces()
