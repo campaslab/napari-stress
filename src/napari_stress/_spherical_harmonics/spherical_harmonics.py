@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 This file bundles up spherical harmonics functionality to have all "behind-the-
 scenes" functionality in one place. This will allow to have all fron-end-related
@@ -6,18 +5,18 @@ functions (e.g., those functions that are visible to napari) in a separated plac
 
 """
 
-from napari.types import PointsData
+import warnings
 from typing import Tuple
+
 import numpy as np
 import vedo
+from napari.types import PointsData
 
-import warnings
-
-from .fit_utils import Least_Squares_Harmonic_Fit
-from .._stress import sph_func_SPB as sph_f
-from .._stress import manifold_SPB as mnfd
 from .._stress import euclidian_k_form_SPB as euc_kf
 from .._stress import lebedev_info_SPB as lebedev_info
+from .._stress import manifold_SPB as mnfd
+from .._stress import sph_func_SPB as sph_f
+from .fit_utils import Least_Squares_Harmonic_Fit
 
 
 def stress_spherical_harmonics_expansion(
@@ -37,8 +36,8 @@ def stress_spherical_harmonics_expansion(
     PointsData
     """
     from .. import _approximation as approximation
-    from .._utils.coordinate_conversion import cartesian_to_elliptical
     from .._stress.charts_SPB import Cart_To_Coor_A
+    from .._utils.coordinate_conversion import cartesian_to_elliptical
 
     if expansion_type == "cartesian":
         ellipsoid_expander = approximation.EllipsoidExpander()
@@ -75,9 +74,15 @@ def stress_spherical_harmonics_expansion(
         )
 
         # Create SPH_func to represent X, Y, Z:
-        X_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
-        Y_fit_sph = sph_f.spherical_harmonics_function(coefficients[1], max_degree)
-        Z_fit_sph = sph_f.spherical_harmonics_function(coefficients[2], max_degree)
+        X_fit_sph = sph_f.spherical_harmonics_function(
+            coefficients[0], max_degree
+        )
+        Y_fit_sph = sph_f.spherical_harmonics_function(
+            coefficients[1], max_degree
+        )
+        Z_fit_sph = sph_f.spherical_harmonics_function(
+            coefficients[2], max_degree
+        )
 
         X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
         Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
@@ -110,12 +115,14 @@ def stress_spherical_harmonics_expansion(
         )
 
         # Add a singleton dimension to be consistent with coefficient array shape
-        coefficients = sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters, max_degree)[
-            None, :
-        ]
+        coefficients = sph_f.Un_Flatten_Coef_Vec(
+            optimal_fit_parameters, max_degree
+        )[None, :]
 
         # expand radii
-        r_fit_sph = sph_f.spherical_harmonics_function(coefficients[0], max_degree)
+        r_fit_sph = sph_f.spherical_harmonics_function(
+            coefficients[0], max_degree
+        )
         r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
 
         fitted_points = (
@@ -166,18 +173,24 @@ def lebedev_quadrature(
     # An expansion of degree 3 will have an Nx4x4 coefficient matrix
     max_degree = coefficients.shape[-1] - 1
 
-    possible_n_points = np.asarray(list(lebedev_info.pts_of_lbdv_lookup.values()))
+    possible_n_points = np.asarray(
+        list(lebedev_info.pts_of_lbdv_lookup.values())
+    )
     index_correct_n_points = np.argmin(
         abs(possible_n_points - number_of_quadrature_points)
     )
     number_of_quadrature_points = possible_n_points[index_correct_n_points]
 
     if use_minimal_point_set:
-        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(max_degree + 1)
+        number_of_quadrature_points = lebedev_info.look_up_lbdv_pts(
+            max_degree + 1
+        )
 
     # Only a specific amount of points are needed for spherical harmonics of a
     # given order. Using more points will not give more precise results.
-    if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(max_degree + 1):
+    if number_of_quadrature_points > lebedev_info.look_up_lbdv_pts(
+        max_degree + 1
+    ):
         warnings.warn(
             r"Note: Only {necessary_n_points} are required for exact results."
         )
@@ -252,13 +265,19 @@ def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
     """
 
     normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
-        manifold.Normal_Vec_X_A_Pts, manifold.Normal_Vec_X_B_Pts, manifold.lebedev_info
+        manifold.Normal_Vec_X_A_Pts,
+        manifold.Normal_Vec_X_B_Pts,
+        manifold.lebedev_info,
     )
     normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
-        manifold.Normal_Vec_Y_A_Pts, manifold.Normal_Vec_Y_B_Pts, manifold.lebedev_info
+        manifold.Normal_Vec_Y_A_Pts,
+        manifold.Normal_Vec_Y_B_Pts,
+        manifold.lebedev_info,
     )
     normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
-        manifold.Normal_Vec_Z_A_Pts, manifold.Normal_Vec_Z_B_Pts, manifold.lebedev_info
+        manifold.Normal_Vec_Z_A_Pts,
+        manifold.Normal_Vec_Z_B_Pts,
+        manifold.lebedev_info,
     )
 
     normals_lbdv_points = np.stack(
@@ -268,7 +287,9 @@ def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
 
 
 def calculate_mean_curvature_on_manifold(
-    lebedev_points: PointsData, lebedev_fit: lebedev_info.lbdv_info, max_degree: int
+    lebedev_points: PointsData,
+    lebedev_fit: lebedev_info.lbdv_info,
+    max_degree: int,
 ) -> np.ndarray:
     """
     Calculate mean curvatures for a set of lebedev points.

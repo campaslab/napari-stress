@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
-from napari.types import SurfaceData, PointsData, VectorsData
-from napari_stress._utils.frame_by_frame import frame_by_frame
+import vedo
+from napari.types import PointsData, SurfaceData, VectorsData
 from napari_tools_menu import register_function
 
-import vedo
+from napari_stress._utils.frame_by_frame import frame_by_frame
 
 
-@register_function(menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)")
+@register_function(
+    menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)"
+)
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(
     points: PointsData, inside_fraction: float = 0.673
@@ -36,7 +36,9 @@ def fit_ellipsoid_to_pointcloud_points(
     return output_points
 
 
-@register_function(menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)")
+@register_function(
+    menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)"
+)
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_vectors(
     points: PointsData, inside_fraction: float = 0.673, normalize: bool = False
@@ -72,7 +74,9 @@ def fit_ellipsoid_to_pointcloud_vectors(
     if normalize:
         vectors = vectors / np.linalg.norm(vectors, axis=0)[None, :]
 
-    base_points = np.stack([ellipsoid.center, ellipsoid.center, ellipsoid.center])
+    base_points = np.stack(
+        [ellipsoid.center, ellipsoid.center, ellipsoid.center]
+    )
     vectors = np.stack([base_points, vectors]).transpose((1, 0, 2))
 
     return vectors
@@ -109,13 +113,18 @@ def reconstruct_surface(
     pointcloud = vedo.pointcloud.Points(points)
 
     surface = pointcloud.reconstruct_surface(
-        radius=radius, sample_size=None, hole_filling=holeFilling, padding=padding
+        radius=radius,
+        sample_size=None,
+        hole_filling=holeFilling,
+        padding=padding,
     )
 
     return (surface.vertices, np.asarray(surface.cells, dtype=int))
 
 
-@register_function(menu="Points > Create points from surface vertices (n-STRESS)")
+@register_function(
+    menu="Points > Create points from surface vertices (n-STRESS)"
+)
 @frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """

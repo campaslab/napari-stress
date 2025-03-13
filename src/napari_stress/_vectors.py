@@ -1,8 +1,9 @@
+from typing import Annotated
+
 import numpy as np
 from napari_tools_menu import register_function
-from ._utils.frame_by_frame import frame_by_frame
 
-from typing import Annotated
+from ._utils.frame_by_frame import frame_by_frame
 
 
 @register_function(
@@ -64,7 +65,9 @@ def relative_move_points_along_vector(
     return points + position * vectors[:, 1]
 
 
-@register_function(menu="Points > Calculate pairwise distance vectors (n-STRESS)")
+@register_function(
+    menu="Points > Calculate pairwise distance vectors (n-STRESS)"
+)
 @frame_by_frame
 def pairwise_point_distances(
     points: "napari.types.PointsData", fitted_points: "napari.types.PointsData"

@@ -1,5 +1,6 @@
-from .._stress import lebedev_info_SPB as lebedev_info
 import numpy as np
+
+from .._stress import lebedev_info_SPB as lebedev_info
 
 
 def Least_Squares_Harmonic_Fit(
@@ -35,7 +36,7 @@ def Least_Squares_Harmonic_Fit(
             Y_mn_coors_in = []
             Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
             All_Y_mn_pt_in.append(Y_mn_coors_in)
-    All_Y_mn_pt_in_mat = np.hstack((All_Y_mn_pt_in))
+    All_Y_mn_pt_in_mat = np.hstack(All_Y_mn_pt_in)
 
     coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
     return coefficients

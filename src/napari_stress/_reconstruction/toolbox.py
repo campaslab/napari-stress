@@ -14,7 +14,9 @@ from qtpy.QtWidgets import QWidget
 from .._utils.frame_by_frame import frame_by_frame
 
 
-@register_dock_widget(menu="Surfaces > Droplet reconstruction toolbox (n-STRESS)")
+@register_dock_widget(
+    menu="Surfaces > Droplet reconstruction toolbox (n-STRESS)"
+)
 class droplet_reconstruction_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -26,7 +28,9 @@ class droplet_reconstruction_toolbox(QWidget):
         uic.loadUi(os.path.join(Path(__file__).parent, "./toolbox.ui"), self)
 
         # add input dropdowns to plugin
-        self.image_layer_select = create_widget(annotation=Image, label="Image_layer")
+        self.image_layer_select = create_widget(
+            annotation=Image, label="Image_layer"
+        )
         self.layout().addWidget(self.image_layer_select.native, 0, 1)
         self.installEventFilter(self)
 
@@ -131,7 +135,9 @@ class droplet_reconstruction_toolbox(QWidget):
         self.doubleSpinBox_sampling_length.setValue(
             reconstruction_parameters["resampling_length"]
         )
-        self.comboBox_fittype.setCurrentText(reconstruction_parameters["fit_type"])
+        self.comboBox_fittype.setCurrentText(
+            reconstruction_parameters["fit_type"]
+        )
         self.comboBox_fluorescence_type.setCurrentText(
             reconstruction_parameters["edge_type"]
         )
@@ -154,7 +160,8 @@ class droplet_reconstruction_toolbox(QWidget):
     def _run(self):
         """Call analysis function."""
         import webbrowser
-        from dask.distributed import get_client, Client
+
+        from dask.distributed import Client, get_client
 
         current_voxel_size = np.asarray(
             [
@@ -192,7 +199,9 @@ class droplet_reconstruction_toolbox(QWidget):
         )
 
         for layer in results:
-            _layer = Layer.create(data=layer[0], meta=layer[1], layer_type=layer[2])
+            _layer = Layer.create(
+                data=layer[0], meta=layer[1], layer_type=layer[2]
+            )
             _layer.translate = self.image_layer_select.value.translate
             self.viewer.add_layer(_layer)
 
@@ -271,12 +280,15 @@ def reconstruct_droplet(
 
     """
     import copy
+
     import vedo
-    from napari_stress import reconstruction
-    from skimage import filters, transform, measure
-    from .refine_surfaces import resample_pointcloud
-    from .patches import iterative_curvature_adaptive_patch_fitting
     from scipy.ndimage import binary_fill_holes
+    from skimage import filters, measure, transform
+
+    from napari_stress import reconstruction
+
+    from .patches import iterative_curvature_adaptive_patch_fitting
+    from .refine_surfaces import resample_pointcloud
 
     scaling_factors = voxelsize / target_voxelsize
     rescaled_image = transform.rescale(
@@ -297,8 +309,12 @@ def reconstruct_droplet(
         if np.sum(label_image == i) > largest_object_size:
             largest_object_size = np.sum(label_image == i)
             largest_object_label = i
-    vertices, faces, _, _ = measure.marching_cubes(label_image == largest_object_label)
-    mesh = vedo.Mesh((vertices.astype(float), np.asarray(faces).astype(int))).clean()
+    vertices, faces, _, _ = measure.marching_cubes(
+        label_image == largest_object_label
+    )
+    mesh = vedo.Mesh(
+        (vertices.astype(float), np.asarray(faces).astype(int))
+    ).clean()
 
     # Smooth and decimate
     mesh = mesh.smooth(
@@ -313,16 +329,18 @@ def reconstruct_droplet(
             points, sampling_length=resampling_length
         )
 
-        traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
-            rescaled_image,
-            resampled_points,
-            selected_fit_type=fit_type,
-            selected_edge=edge_type,
-            trace_length=trace_length,
-            sampling_distance=sampling_distance,
-            remove_outliers=remove_outliers,
-            outlier_tolerance=outlier_tolerance,
-            interpolation_method=interpolation_method,
+        traced_points, trace_vectors = (
+            reconstruction.trace_refinement_of_surface(
+                rescaled_image,
+                resampled_points,
+                selected_fit_type=fit_type,
+                selected_edge=edge_type,
+                trace_length=trace_length,
+                sampling_distance=sampling_distance,
+                remove_outliers=remove_outliers,
+                outlier_tolerance=outlier_tolerance,
+                interpolation_method=interpolation_method,
+            )
         )
         points = traced_points[0]
 
@@ -359,8 +377,17 @@ def reconstruct_droplet(
     trace_vectors = list(trace_vectors)
     trace_vectors[0] *= target_voxelsize
 
-    properties = {"name": "Center", "symbol": "ring", "face_color": "yellow", "size": 3}
-    droplet_center = (traced_points[0].mean(axis=0)[None, :], properties, "points")
+    properties = {
+        "name": "Center",
+        "symbol": "ring",
+        "face_color": "yellow",
+        "size": 3,
+    }
+    droplet_center = (
+        traced_points[0].mean(axis=0)[None, :],
+        properties,
+        "points",
+    )
 
     properties = {
         "name": "Rescaled image",

@@ -31,6 +31,6 @@ def distance_to_k_nearest_neighbors(
     # calculate the mean distance to the k nearest neighbors
     df = pd.DataFrame(
         dist[:, 1:].mean(axis=1),
-        columns=["distance_to_{k}_nearest_neighbor".format(k=k)],
+        columns=[f"distance_to_{k}_nearest_neighbor"],
     )
     return df

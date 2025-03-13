@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from typing import List
 
+from magicgui import register_type
+from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from napari import layers
 from napari.utils._magicgui import find_viewer_ancestor
-from magicgui import register_type
 
 from ._stress.manifold_SPB import manifold
 
@@ -37,8 +36,12 @@ _METADATAKEY_STRESS_TOTAL = "stress_total"
 _METADATAKEY_STRESS_TOTAL_ANISO = "stress_total_anisotropy"
 _METADATAKEY_STRESS_TOTAL_RADIAL = "stress_total_radial"
 
-_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO = "stress_cell_nearest_pair_anisotropy"
-_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST = "stress_cell_nearest_pair_distance"
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO = (
+    "stress_cell_nearest_pair_anisotropy"
+)
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST = (
+    "stress_cell_nearest_pair_distance"
+)
 _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO = "stress_cell_all_pair_anisotropy"
 _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST = "stress_cell_all_pair_distance"
 
@@ -65,7 +68,9 @@ _METADATAKEY_ANGLE_ELLIPSOID_CART_E2 = "angle_ellipsoid_cartesian_e1_x2"
 _METADATAKEY_ANGLE_ELLIPSOID_CART_E3 = "angle_ellipsoid_cartesian_e1_x3"
 
 _METADATAKEY_FIT_RESIDUE = "fit_residue"
-_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = "Elipsoid_deviation_contribution_matrix"
+_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = (
+    "Elipsoid_deviation_contribution_matrix"
+)
 
 
 def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
@@ -96,7 +101,8 @@ def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
     return [
         layer
         for layer in viewer.layers
-        if search_key in list(layer.features.keys()) + list(layer.metadata.keys())
+        if search_key
+        in list(layer.features.keys()) + list(layer.metadata.keys())
     ]
 
 

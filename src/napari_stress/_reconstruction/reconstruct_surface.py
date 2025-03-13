@@ -1,14 +1,17 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData, SurfaceData
-from .._utils.frame_by_frame import frame_by_frame
-
 from napari_tools_menu import register_function
 
+from .._utils.frame_by_frame import frame_by_frame
 
-@register_function(menu="Surfaces > Create surface from lebedev points (n-STRESS)")
+
+@register_function(
+    menu="Surfaces > Create surface from lebedev points (n-STRESS)"
+)
 @frame_by_frame
-def reconstruct_surface_from_quadrature_points(points: PointsData) -> SurfaceData:
+def reconstruct_surface_from_quadrature_points(
+    points: PointsData,
+) -> SurfaceData:
     """
     Reconstruct the surface for a given set of quadrature points.
 
@@ -24,6 +27,7 @@ def reconstruct_surface_from_quadrature_points(points: PointsData) -> SurfaceDat
 
     """
     from scipy.spatial import Delaunay
+
     from .._stress import lebedev_write_SPB as lebedev_write
 
     n_quadrature_points = len(points)
