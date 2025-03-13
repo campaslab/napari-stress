@@ -1,19 +1,21 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 
 def test_reconstruction(make_napari_viewer):
-    from napari_stress import get_droplet_4d
     from napari.layers import Layer
+
     import napari_stress
+    from napari_stress import get_droplet_4d
 
     viewer = make_napari_viewer()
     image = get_droplet_4d()[0]
     layer = Layer.create(image[0], image[1], image[2])
     viewer.add_layer(layer)
 
-    widget = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(
-        viewer
+    widget = (
+        napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(
+            viewer
+        )
     )
     viewer.window.add_dock_widget(widget)
 
@@ -32,8 +34,10 @@ def test_reconstruction(make_napari_viewer):
 
     # test saving/loading settings
     widget._export_settings(file_name="test.yaml")
-    widget2 = napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(
-        viewer
+    widget2 = (
+        napari_stress._reconstruction.toolbox.droplet_reconstruction_toolbox(
+            viewer
+        )
     )
     widget2._import_settings(file_name="test.yaml")
     assert widget2.doubleSpinBox_voxelsize_x.value() == 1.98
@@ -42,8 +46,11 @@ def test_reconstruction(make_napari_viewer):
 
 
 def test_quadrature_point_reconstruction(make_napari_viewer):
-    from napari_stress import get_droplet_point_cloud, fit_spherical_harmonics
-    from napari_stress import reconstruction
+    from napari_stress import (
+        fit_spherical_harmonics,
+        get_droplet_point_cloud,
+        reconstruction,
+    )
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
         perform_lebedev_quadrature,
     )
@@ -60,21 +67,22 @@ def test_quadrature_point_reconstruction(make_napari_viewer):
 
 
 def test_surface_tracing():
-    from napari_stress import reconstruction
     from skimage import filters, morphology
     from vedo import shapes
+
+    from napari_stress import reconstruction
 
     true_radius = 30
 
     # Make a blurry sphere first
     image = np.zeros([100, 100, 100])
-    image[50 - 30 : 50 + 31, 50 - 30 : 50 + 31, 50 - 30 : 50 + 31] = morphology.ball(
-        radius=true_radius
+    image[50 - 30 : 50 + 31, 50 - 30 : 50 + 31, 50 - 30 : 50 + 31] = (
+        morphology.ball(radius=true_radius)
     )
     blurry_sphere = filters.gaussian(image, sigma=5)
 
     # Put surface points on a slightly larger radius and add a bit of noise
-    surf_points = shapes.Sphere().points()
+    surf_points = shapes.Sphere().vertices
     surf_points += (surf_points * true_radius + 2) + 50
 
     # Test different fit methods (fancy/quick)
@@ -124,7 +132,9 @@ def test_surface_tracing():
 
 
 def test_fit_and_create_pointcloud():
-    from napari_stress._reconstruction.patches import _fit_and_create_pointcloud
+    from napari_stress._reconstruction.patches import (
+        _fit_and_create_pointcloud,
+    )
 
     # Mock input data
     mock_pointcloud = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -174,7 +184,9 @@ def test_fit_quadratic_surface():
 
 
 def test_create_fitted_coordinates():
-    from napari_stress._reconstruction.patches import _create_fitted_coordinates
+    from napari_stress._reconstruction.patches import (
+        _create_fitted_coordinates,
+    )
 
     # Mock input data
     x_coords = np.array([0, 1, 2])
@@ -201,10 +213,10 @@ def test_create_fitted_coordinates():
 def test_patch_fitting():
     from napari_stress._reconstruction.fit_utils import _fibonacci_sampling
     from napari_stress._reconstruction.patches import (
-        _find_neighbor_indices,
-        _orient_patch,
         _calculate_mean_curvature_on_patch,
+        _find_neighbor_indices,
         _fit_quadratic_surface,
+        _orient_patch,
         fit_patches,
     )
 
@@ -220,14 +232,18 @@ def test_patch_fitting():
 
     # make sure all points are neighbors of each other for large radius
     patch_indices = _find_neighbor_indices(pointcloud, patch_radius=2)
-    assert np.allclose(np.asarray([len(x) for x in patch_indices]), np.repeat(256, 256))
+    assert np.allclose(
+        np.asarray([len(x) for x in patch_indices]), np.repeat(256, 256)
+    )
 
     # extract a patch around the first point
     # assert that all of these points have a distance of less than radius to the first point
     radius = 0.3
     patch_indices = _find_neighbor_indices(pointcloud, patch_radius=radius)
     assert all(
-        np.linalg.norm(pointcloud[patch_indices[0]] - pointcloud[0][None, :], axis=1)
+        np.linalg.norm(
+            pointcloud[patch_indices[0]] - pointcloud[0][None, :], axis=1
+        )
         < radius
     )
 
@@ -235,7 +251,9 @@ def test_patch_fitting():
     patch = pointcloud[patch_indices[0]]
     transformed_patch, _, orient_matrix = _orient_patch(patch, patch[0])
     assert np.array_equal(transformed_patch.shape, patch.shape)
-    assert np.allclose(transformed_patch.mean(axis=0), 0)  # patch center should be zero
+    assert np.allclose(
+        transformed_patch.mean(axis=0), 0
+    )  # patch center should be zero
 
     # make sure it's aligned with the first axis
     _, _, _orient_matrix = _orient_patch(transformed_patch, [0, 0, 0])
@@ -247,7 +265,9 @@ def test_patch_fitting():
         transformed_patch[0], fit_params
     )
 
-    assert abs(curvature[0] - 1) < 0.1  # curvature error should be smaller than 10%
+    assert (
+        abs(curvature[0] - 1) < 0.1
+    )  # curvature error should be smaller than 10%
 
     # calculate all principal curvatures
     radius = 0.5

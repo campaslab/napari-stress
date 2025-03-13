@@ -1,13 +1,13 @@
 # From https://github.com/campaslab/STRESS
 #!!! WILL DEPEND ON DIFF GEO WHEN WE GO OFF SPHERE !!! #
-import numpy as np
+import os
 
 # import mpmath as mp
-
 # for picking manny inv mats
 # import cPickle as pkl # BJG: py2pt7 version
 import pickle as pkl
-import os
+
+import numpy as np
 
 from . import sph_func_SPB as sph_f
 
@@ -67,15 +67,15 @@ def Non_Radial_Manifold_X_Def(theta, phi, r_0, Manny_Name):
         )
     elif Manny_Name == "Ellipsoid_r0":
         return (1.0 + r_0) * np.cos(theta) * np.sin(phi)
-    elif Manny_Name == "Gen_Pill_nr":
-        return np.cos(theta) * np.sin(phi)
-    elif Manny_Name == "Cone_Head":
+    elif Manny_Name == "Gen_Pill_nr" or Manny_Name == "Cone_Head":
         return np.cos(theta) * np.sin(phi)
     elif Manny_Name == "Cone_Head5x":
         return 5.0 * np.cos(theta) * np.sin(phi)
     elif Manny_Name == "Cone_Head_Logis":
         return np.cos(theta) * np.sin(phi)
-    elif Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2":
+    elif (
+        Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2"
+    ):
         R = 0.0
         if Manny_Name == "Fission_Yeast_R2":
             R = 2.0  # fix for this geo
@@ -129,15 +129,15 @@ def Non_Radial_Manifold_Y_Def(theta, phi, r_0, Manny_Name):
         )
     elif Manny_Name == "Ellipsoid_r0":
         return (1.0 + 2.0 * r_0) * np.sin(theta) * np.sin(phi)
-    elif Manny_Name == "Gen_Pill_nr":
-        return np.sin(theta) * np.sin(phi)
-    elif Manny_Name == "Cone_Head":
+    elif Manny_Name == "Gen_Pill_nr" or Manny_Name == "Cone_Head":
         return np.sin(theta) * np.sin(phi)
     elif Manny_Name == "Cone_Head5x":
         return 5.0 * np.sin(theta) * np.sin(phi)
     elif Manny_Name == "Cone_Head_Logis":
         return np.sin(theta) * np.sin(phi)
-    elif Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2":
+    elif (
+        Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2"
+    ):
         R = 0.0
         if Manny_Name == "Fission_Yeast_R2":
             R = 2.0  # fix for this geo
@@ -196,8 +196,12 @@ def Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name):
     elif Manny_Name == "Cone_Head5x":
         return 5.0 * np.cos(phi) * (1.0 + r_0 * np.exp(-1.0 * 4.0 * phi**2))
     elif Manny_Name == "Cone_Head_Logis":
-        return np.cos(phi) * (1.0 + r_0 / (1.0 + np.exp(-20.0 * (np.pi / 16 - phi))))
-    elif Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2":
+        return np.cos(phi) * (
+            1.0 + r_0 / (1.0 + np.exp(-20.0 * (np.pi / 16 - phi)))
+        )
+    elif (
+        Manny_Name == "Fission_Yeast_R2" or Manny_Name == "Fission_Yeast_R1pt2"
+    ):
         R = 0.0
         if Manny_Name == "Fission_Yeast_R2":
             R = 2.0  # fix for this geo
@@ -220,7 +224,9 @@ def Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name):
             elif phi < phi_2:
                 return r_0 / 2.0 - (phi - phi_1) / omega
             else:  # phi > phi_2, < pi
-                return -1.0 * r_0 / 2.0 - R * np.sin((phi - phi_2) / (R * omega))
+                return -1.0 * r_0 / 2.0 - R * np.sin(
+                    (phi - phi_2) / (R * omega)
+                )
         else:
             return np.where(
                 phi < phi_1,
@@ -465,7 +471,8 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         return 1.0 + r_0 / (1.0 + np.exp(-20.0 * (np.pi / 16 - phi)))
 
     elif (
-        Manny_Name == "Fission_Yeast_Rad_R2" or Manny_Name == "Fission_Yeast_Rad_R1pt2"
+        Manny_Name == "Fission_Yeast_Rad_R2"
+        or Manny_Name == "Fission_Yeast_Rad_R1pt2"
     ):
         R = 0.0
         if Manny_Name == "Fission_Yeast_Rad_R2":
@@ -515,7 +522,9 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
             # Vectorized for manifold functions
             return np.where(
                 np.cos(phi) > 0.9,
-                1.0 - r_0 * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0),
+                1.0
+                - r_0
+                * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0),
                 1,
             )
 
@@ -528,7 +537,9 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
             elif np.sin(phi) * np.cos(theta) > 0.9:
                 return 1.0 - r_0 * np.exp(
-                    -1.0 * (0.19) / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2)
+                    -1.0
+                    * (0.19)
+                    / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2)
                     + 1
                 )
 
@@ -539,13 +550,17 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
             # Vectorized for manifold functions
             return np.where(
                 np.cos(phi) > 0.9,
-                1.0 - r_0 * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0),
+                1.0
+                - r_0
+                * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1.0),
                 np.where(
                     np.sin(phi) * np.cos(theta) > 0.9,
                     1.0
                     - r_0
                     * np.exp(
-                        -1 * (0.19) / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2)
+                        -1
+                        * (0.19)
+                        / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2)
                         + 1.0
                     ),
                     1.0,
@@ -561,7 +576,10 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
             elif np.sin(phi) * np.cos(theta) > 0.9:
                 return 1.0 + r_0 * np.exp(
-                    -1 * (0.19) / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2) + 1
+                    -1
+                    * (0.19)
+                    / ((np.sin(phi) * np.cos(theta)) ** 2 - (0.9) ** 2)
+                    + 1
                 )
 
             else:
@@ -571,7 +589,9 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
             # Vectorized for manifold functions
             return np.where(
                 abs(np.cos(phi)) > 0.9,
-                1.0 - r_0 * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1),
+                1.0
+                - r_0
+                * np.exp(-1 * (0.19) / (np.cos(phi) ** 2 - (0.9) ** 2) + 1),
                 np.where(
                     np.sin(phi) * np.cos(theta) > 0.9,
                     1.0
@@ -593,7 +613,9 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
         )  # previously 2 + r_0, for r_0 = .4
 
     elif Manny_Name == "Muffin_Top":
-        return 1.0 + (r_0) * np.exp(30.0) * np.exp(-30.0 / (1 - np.cos(phi) ** 2))
+        return 1.0 + (r_0) * np.exp(30.0) * np.exp(
+            -30.0 / (1 - np.cos(phi) ** 2)
+        )
 
     else:
         print(
@@ -634,7 +656,7 @@ def Max_Decimal_R0_Array(R0_Values_Array):
 ########################################################################################
 
 
-class manifold(object):
+class manifold:
     # This now represents geo of S^2,
     # will later be adapted to other manifolds with same topology
 
@@ -729,7 +751,9 @@ class manifold(object):
             # print("self.X_A_Pts.shape = "+str(self.X_A_Pts.shape))
 
         # BJG: use rotation conversion between charts
-        self.quad_pts = range(self.num_quad_pts)  # list of quad pts, for vectorization:
+        self.quad_pts = range(
+            self.num_quad_pts
+        )  # list of quad pts, for vectorization:
         quad_pts_inv_rot = lbdv.Eval_Inv_Rot_Lbdv_Quad_vals(
             self.quad_pts
         )  # lbdv.Eval_Rot_Lbdv_Quad_vals(quad_pts)
@@ -741,7 +765,9 @@ class manifold(object):
         self.Cart_Coors_A = np.hstack(
             (self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts)
         )  # Cart Coors uses these
-        self.Cart_Coors_B = np.hstack((self.X_B_Pts, self.Y_B_Pts, self.Z_B_Pts))
+        self.Cart_Coors_B = np.hstack(
+            (self.X_B_Pts, self.Y_B_Pts, self.Z_B_Pts)
+        )
 
         self.X, self.X_Bar = sph_f.Proj_Into_SPH_Charts_At_Quad_Pts(
             self.X_A_Pts, self.Man_SPH_Deg, lbdv
@@ -757,10 +783,16 @@ class manifold(object):
         # with necesary derivatives at these points:
 
         self.X_theta = self.X.Quick_Theta_Der()
-        self.X_theta_A_Pts = self.X_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
+        self.X_theta_A_Pts = self.X_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
         self.X_phi_A_Pts = self.X.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.X_theta_phi_A_Pts = self.X_theta.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.X_phi_phi_A_Pts = self.X.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.X_theta_phi_A_Pts = self.X_theta.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
+        self.X_phi_phi_A_Pts = self.X.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.X_theta_theta = self.X_theta.Quick_Theta_Der()
         self.X_theta_theta_A_Pts = self.X_theta_theta.Eval_SPH_Coef_Mat(
@@ -768,12 +800,18 @@ class manifold(object):
         )
 
         self.X_Bar_theta = self.X_Bar.Quick_Theta_Bar_Der()
-        self.X_theta_B_Pts = self.X_Bar_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
-        self.X_phi_B_Pts = self.X_Bar.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
+        self.X_theta_B_Pts = self.X_Bar_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
+        self.X_phi_B_Pts = self.X_Bar.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
         self.X_theta_phi_B_Pts = self.X_Bar_theta.Eval_SPH_Der_Phi_Coef(
             self.quad_pts, lbdv
         )
-        self.X_phi_phi_B_Pts = self.X_Bar.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.X_phi_phi_B_Pts = self.X_Bar.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.X_Bar_theta_theta = self.X_Bar_theta.Quick_Theta_Bar_Der()
         self.X_theta_theta_B_Pts = self.X_Bar_theta_theta.Eval_SPH_Coef_Mat(
@@ -781,10 +819,16 @@ class manifold(object):
         )
 
         self.Y_theta = self.Y.Quick_Theta_Der()
-        self.Y_theta_A_Pts = self.Y_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
+        self.Y_theta_A_Pts = self.Y_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
         self.Y_phi_A_Pts = self.Y.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.Y_theta_phi_A_Pts = self.Y_theta.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.Y_phi_phi_A_Pts = self.Y.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.Y_theta_phi_A_Pts = self.Y_theta.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
+        self.Y_phi_phi_A_Pts = self.Y.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.Y_theta_theta = self.Y_theta.Quick_Theta_Der()
         self.Y_theta_theta_A_Pts = self.Y_theta_theta.Eval_SPH_Coef_Mat(
@@ -792,12 +836,18 @@ class manifold(object):
         )
 
         self.Y_Bar_theta = self.Y_Bar.Quick_Theta_Bar_Der()
-        self.Y_theta_B_Pts = self.Y_Bar_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
-        self.Y_phi_B_Pts = self.Y_Bar.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
+        self.Y_theta_B_Pts = self.Y_Bar_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
+        self.Y_phi_B_Pts = self.Y_Bar.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
         self.Y_theta_phi_B_Pts = self.Y_Bar_theta.Eval_SPH_Der_Phi_Coef(
             self.quad_pts, lbdv
         )
-        self.Y_phi_phi_B_Pts = self.Y_Bar.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.Y_phi_phi_B_Pts = self.Y_Bar.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.Y_Bar_theta_theta = self.Y_Bar_theta.Quick_Theta_Bar_Der()
         self.Y_theta_theta_B_Pts = self.Y_Bar_theta_theta.Eval_SPH_Coef_Mat(
@@ -805,10 +855,16 @@ class manifold(object):
         )
 
         self.Z_theta = self.Z.Quick_Theta_Der()
-        self.Z_theta_A_Pts = self.Z_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
+        self.Z_theta_A_Pts = self.Z_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
         self.Z_phi_A_Pts = self.Z.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.Z_theta_phi_A_Pts = self.Z_theta.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
-        self.Z_phi_phi_A_Pts = self.Z.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.Z_theta_phi_A_Pts = self.Z_theta.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
+        self.Z_phi_phi_A_Pts = self.Z.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.Z_theta_theta = self.Z_theta.Quick_Theta_Der()
         self.Z_theta_theta_A_Pts = self.Z_theta_theta.Eval_SPH_Coef_Mat(
@@ -816,12 +872,18 @@ class manifold(object):
         )
 
         self.Z_Bar_theta = self.Z_Bar.Quick_Theta_Bar_Der()
-        self.Z_theta_B_Pts = self.Z_Bar_theta.Eval_SPH_Coef_Mat(self.quad_pts, lbdv)
-        self.Z_phi_B_Pts = self.Z_Bar.Eval_SPH_Der_Phi_Coef(self.quad_pts, lbdv)
+        self.Z_theta_B_Pts = self.Z_Bar_theta.Eval_SPH_Coef_Mat(
+            self.quad_pts, lbdv
+        )
+        self.Z_phi_B_Pts = self.Z_Bar.Eval_SPH_Der_Phi_Coef(
+            self.quad_pts, lbdv
+        )
         self.Z_theta_phi_B_Pts = self.Z_Bar_theta.Eval_SPH_Der_Phi_Coef(
             self.quad_pts, lbdv
         )
-        self.Z_phi_phi_B_Pts = self.Z_Bar.Eval_SPH_Der_Phi_Phi_Coef(self.quad_pts, lbdv)
+        self.Z_phi_phi_B_Pts = self.Z_Bar.Eval_SPH_Der_Phi_Phi_Coef(
+            self.quad_pts, lbdv
+        )
 
         self.Z_Bar_theta_theta = self.Z_Bar_theta.Quick_Theta_Bar_Der()
         self.Z_theta_theta_B_Pts = self.Z_Bar_theta_theta.Eval_SPH_Coef_Mat(
@@ -879,10 +941,14 @@ class manifold(object):
 
         ### For Pointwise Explicit LB:
         self.E_A_pts = (
-            self.X_theta_A_Pts**2 + self.Y_theta_A_Pts**2 + self.Z_theta_A_Pts**2
+            self.X_theta_A_Pts**2
+            + self.Y_theta_A_Pts**2
+            + self.Z_theta_A_Pts**2
         )
         self.E_B_pts = (
-            self.X_theta_B_Pts**2 + self.Y_theta_B_Pts**2 + self.Z_theta_B_Pts**2
+            self.X_theta_B_Pts**2
+            + self.Y_theta_B_Pts**2
+            + self.Z_theta_B_Pts**2
         )
 
         self.F_A_pts = (
@@ -896,12 +962,20 @@ class manifold(object):
             + self.Z_theta_B_Pts * self.Z_phi_B_Pts
         )
 
-        self.G_A_pts = self.X_phi_A_Pts**2 + self.Y_phi_A_Pts**2 + self.Z_phi_A_Pts**2
-        self.G_B_pts = self.X_phi_B_Pts**2 + self.Y_phi_B_Pts**2 + self.Z_phi_B_Pts**2
+        self.G_A_pts = (
+            self.X_phi_A_Pts**2 + self.Y_phi_A_Pts**2 + self.Z_phi_A_Pts**2
+        )
+        self.G_B_pts = (
+            self.X_phi_B_Pts**2 + self.Y_phi_B_Pts**2 + self.Z_phi_B_Pts**2
+        )
 
         # |g| = (\sqrt|g|)^2
-        self.Metric_Factor_Squared_A = self.E_A_pts * self.G_A_pts - self.F_A_pts**2
-        self.Metric_Factor_Squared_B = self.E_B_pts * self.G_B_pts - self.F_B_pts**2
+        self.Metric_Factor_Squared_A = (
+            self.E_A_pts * self.G_A_pts - self.F_A_pts**2
+        )
+        self.Metric_Factor_Squared_B = (
+            self.E_B_pts * self.G_B_pts - self.F_B_pts**2
+        )
 
         self.E_theta_A_pts = (
             2.0 * self.X_theta_A_Pts * self.X_theta_theta_A_Pts
@@ -1007,23 +1081,35 @@ class manifold(object):
 
         # For g^(ij)*sqrt(g):
         self.E_over_Metric_Factor_A_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.E_A_pts / self.Metric_Factor_A_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.E_A_pts / self.Metric_Factor_A_pts,
+            0,
         )
         self.F_over_Metric_Factor_A_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.F_A_pts / self.Metric_Factor_A_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.F_A_pts / self.Metric_Factor_A_pts,
+            0,
         )
         self.G_over_Metric_Factor_A_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.G_A_pts / self.Metric_Factor_A_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.G_A_pts / self.Metric_Factor_A_pts,
+            0,
         )
 
         self.E_over_Metric_Factor_B_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.E_B_pts / self.Metric_Factor_B_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.E_B_pts / self.Metric_Factor_B_pts,
+            0,
         )
         self.F_over_Metric_Factor_B_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.F_B_pts / self.Metric_Factor_B_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.F_B_pts / self.Metric_Factor_B_pts,
+            0,
         )
         self.G_over_Metric_Factor_B_pts = np.where(
-            lbdv.Chart_of_Quad_Pts > 0, self.G_B_pts / self.Metric_Factor_B_pts, 0
+            lbdv.Chart_of_Quad_Pts > 0,
+            self.G_B_pts / self.Metric_Factor_B_pts,
+            0,
         )
 
         # d_i(sqrt(g)):
@@ -1197,12 +1283,20 @@ class manifold(object):
         ###
 
         ### From Sharp!/*(1-forms):
-        self.g_Inv_Theta_Theta_A_Pts = self.G_A_pts / self.Metric_Factor_Squared_A
-        self.g_Inv_Theta_Phi_A_Pts = -1.0 * self.F_A_pts / self.Metric_Factor_Squared_A
+        self.g_Inv_Theta_Theta_A_Pts = (
+            self.G_A_pts / self.Metric_Factor_Squared_A
+        )
+        self.g_Inv_Theta_Phi_A_Pts = (
+            -1.0 * self.F_A_pts / self.Metric_Factor_Squared_A
+        )
         self.g_Inv_Phi_Phi_A_Pts = self.E_A_pts / self.Metric_Factor_Squared_A
 
-        self.g_Inv_Theta_Theta_B_Pts = self.G_B_pts / self.Metric_Factor_Squared_B
-        self.g_Inv_Theta_Phi_B_Pts = -1.0 * self.F_B_pts / self.Metric_Factor_Squared_B
+        self.g_Inv_Theta_Theta_B_Pts = (
+            self.G_B_pts / self.Metric_Factor_Squared_B
+        )
+        self.g_Inv_Theta_Phi_B_Pts = (
+            -1.0 * self.F_B_pts / self.Metric_Factor_Squared_B
+        )
         self.g_Inv_Phi_Phi_B_Pts = self.E_B_pts / self.Metric_Factor_Squared_B
 
         self.Sigma_Theta_A_Pts = np.hstack(
@@ -1236,10 +1330,18 @@ class manifold(object):
         )
 
         self.Sigma_Theta_Phi_A_Pts = np.hstack(
-            (self.X_theta_phi_A_Pts, self.Y_theta_phi_A_Pts, self.Z_theta_phi_A_Pts)
+            (
+                self.X_theta_phi_A_Pts,
+                self.Y_theta_phi_A_Pts,
+                self.Z_theta_phi_A_Pts,
+            )
         )
         self.Sigma_Theta_Phi_B_Pts = np.hstack(
-            (self.X_theta_phi_B_Pts, self.Y_theta_phi_B_Pts, self.Z_theta_phi_B_Pts)
+            (
+                self.X_theta_phi_B_Pts,
+                self.Y_theta_phi_B_Pts,
+                self.Z_theta_phi_B_Pts,
+            )
         )
 
         self.Sigma_Phi_Phi_A_Pts = np.hstack(
@@ -1279,10 +1381,18 @@ class manifold(object):
         )
 
         self.Normal_Dirs_A_Pts = np.hstack(
-            (self.Normal_Dir_X_A_Pts, self.Normal_Dir_Y_A_Pts, self.Normal_Dir_Z_A_Pts)
+            (
+                self.Normal_Dir_X_A_Pts,
+                self.Normal_Dir_Y_A_Pts,
+                self.Normal_Dir_Z_A_Pts,
+            )
         )
         self.Normal_Dirs_B_Pts = np.hstack(
-            (self.Normal_Dir_X_B_Pts, self.Normal_Dir_Y_B_Pts, self.Normal_Dir_Z_B_Pts)
+            (
+                self.Normal_Dir_X_B_Pts,
+                self.Normal_Dir_Y_B_Pts,
+                self.Normal_Dir_Z_B_Pts,
+            )
         )
 
         self.Normal_Vec_X_A_Pts = np.where(
@@ -1319,10 +1429,18 @@ class manifold(object):
         )
 
         self.Normal_Vecs_A_Pts = np.hstack(
-            (self.Normal_Vec_X_A_Pts, self.Normal_Vec_Y_A_Pts, self.Normal_Vec_Z_A_Pts)
+            (
+                self.Normal_Vec_X_A_Pts,
+                self.Normal_Vec_Y_A_Pts,
+                self.Normal_Vec_Z_A_Pts,
+            )
         )
         self.Normal_Vecs_B_Pts = np.hstack(
-            (self.Normal_Vec_X_B_Pts, self.Normal_Vec_Y_B_Pts, self.Normal_Vec_Z_B_Pts)
+            (
+                self.Normal_Vec_X_B_Pts,
+                self.Normal_Vec_Y_B_Pts,
+                self.Normal_Vec_Z_B_Pts,
+            )
         )
 
         self.L_A_Pts = (
@@ -1485,7 +1603,9 @@ class manifold(object):
             Inv_Mats_Name = (
                 "Manny_Inv_Mats_" + self.Man_Official_Name + ".p"
             )  # name of file we dump/load the inv_mats from
-            Manny_Inv_Mats_filepath = os.path.join(PICKLE_Manny_DIR, Inv_Mats_Name)
+            Manny_Inv_Mats_filepath = os.path.join(
+                PICKLE_Manny_DIR, Inv_Mats_Name
+            )
 
         if (
             Manifold_Constr_Dict["use_manifold_name"] is False
@@ -1496,7 +1616,9 @@ class manifold(object):
             self.rho_A_Mats = zero_vector_of_basis_mats()  # rho = G*(A^-1)
             self.rho_B_Mats = zero_vector_of_basis_mats()
 
-            self.rho_theta_A_Mats = zero_vector_of_basis_mats()  # rho_i = G_i*(A^-1)
+            self.rho_theta_A_Mats = (
+                zero_vector_of_basis_mats()
+            )  # rho_i = G_i*(A^-1)
             self.rho_theta_B_Mats = zero_vector_of_basis_mats()
 
             self.rho_phi_A_Mats = zero_vector_of_basis_mats()
@@ -1574,11 +1696,19 @@ class manifold(object):
                     rho_A_pt = np.linalg.solve(A_Mat_pt.T, G_A_Mat_pt.T).T
                     rho_B_pt = np.linalg.solve(B_Mat_pt.T, G_B_Mat_pt.T).T
 
-                    rho_theta_A_pt = np.linalg.solve(A_Mat_pt.T, G_theta_A_Mat_pt.T).T
-                    rho_theta_B_pt = np.linalg.solve(B_Mat_pt.T, G_theta_B_Mat_pt.T).T
+                    rho_theta_A_pt = np.linalg.solve(
+                        A_Mat_pt.T, G_theta_A_Mat_pt.T
+                    ).T
+                    rho_theta_B_pt = np.linalg.solve(
+                        B_Mat_pt.T, G_theta_B_Mat_pt.T
+                    ).T
 
-                    rho_phi_A_pt = np.linalg.solve(A_Mat_pt.T, G_phi_A_Mat_pt.T).T
-                    rho_phi_B_pt = np.linalg.solve(B_Mat_pt.T, G_phi_B_Mat_pt.T).T
+                    rho_phi_A_pt = np.linalg.solve(
+                        A_Mat_pt.T, G_phi_A_Mat_pt.T
+                    ).T
+                    rho_phi_B_pt = np.linalg.solve(
+                        B_Mat_pt.T, G_phi_B_Mat_pt.T
+                    ).T
 
                     xi_theta_A_pt = np.linalg.solve(
                         A_Mat_pt.T, np.dot(-1 * A_theta_Mat_pt.T, rho_A_pt.T)
@@ -1624,7 +1754,9 @@ class manifold(object):
                 print("pickling Manny Inv Mats for re-use" + "\n")
 
                 # We save matricies as a list:
-                To_Pickle_inv_Manny_Mats = np.zeros((3, 3, lbdv.lbdv_quad_pts, 10))
+                To_Pickle_inv_Manny_Mats = np.zeros(
+                    (3, 3, lbdv.lbdv_quad_pts, 10)
+                )
 
                 To_Pickle_inv_Manny_Mats[:, :, :, 0] = self.rho_A_Mats
                 To_Pickle_inv_Manny_Mats[:, :, :, 1] = self.rho_B_Mats
@@ -1690,7 +1822,9 @@ class manifold(object):
 
     def get_coordinates(self):
         return (
-            np.stack([self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts]).transpose().squeeze()
+            np.stack([self.X_A_Pts, self.Y_A_Pts, self.Z_A_Pts])
+            .transpose()
+            .squeeze()
         )
 
     ######### Vector (& Derivs) of Manifold, Normals, 2-form Convs #####################
