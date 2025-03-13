@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import napari.layers
 import numpy as np
 
 from qtpy.QtWidgets import QWidget
@@ -189,6 +190,7 @@ class stress_analysis_toolbox(QWidget):
         from .. import plotting
         from .. import utils
         import datetime
+        import napari
 
         # Compile data
         (
@@ -241,6 +243,14 @@ class stress_analysis_toolbox(QWidget):
             figure["figure"].tight_layout()
             figure["figure"].savefig(os.path.join(figure_directory, figure["path"]))
 
+        # Export pointclouds
+        for i, layer in enumerate(results_stress_analysis):
+            if layer[2] == "points":
+                export_layer = napari.layers.Layer.create(*layer)
+                napari.save_layers(
+                    os.path.join(pointcloud_directory, f"pointcloud_{export_layer.name}.vtp"),
+                    [export_layer],
+                )
 
 
 @frame_by_frame
