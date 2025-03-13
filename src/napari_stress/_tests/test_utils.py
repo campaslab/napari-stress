@@ -215,5 +215,6 @@ def test_frame_by_frame_dataframes():
     assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
     assert np.array_equal(list_of_dfs[2]["data"], df3["data"])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_decorator_surfaces()
