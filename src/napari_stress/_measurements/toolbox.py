@@ -208,12 +208,22 @@ class stress_analysis_toolbox(QWidget):
         self.save_directory = os.path.join(
             self.lineEdit_export_location.text(), "stress_analysis_" + now
         )
-        os.makedirs(self.save_directory, exist_ok=True)
-        df_over_time.to_csv(os.path.join(self.save_directory, "stress_data.csv"))
-        df_nearest_pairs.to_csv(os.path.join(self.save_directory, "nearest_pairs.csv"))
-        df_all_pairs.to_csv(os.path.join(self.save_directory, "all_pairs.csv"))
+
+        figure_directory = os.path.join(self.save_directory, "figures")
+        raw_values_directory = os.path.join(self.save_directory, "raw_values")
+        pointcloud_directory = os.path.join(self.save_directory, "pointclouds")
+        os.makedirs(figure_directory, exist_ok=True)
+        os.makedirs(raw_values_directory, exist_ok=True)
+        os.makedirs(pointcloud_directory, exist_ok=True)
+
+        df_over_time.to_csv(os.path.join(raw_values_directory, "stress_data.csv"))
+        df_nearest_pairs.to_csv(os.path.join(raw_values_directory, "nearest_pairs.csv"))
+        df_all_pairs.to_csv(os.path.join(raw_values_directory, "all_pairs.csv"))
         df_autocorrelations.to_csv(
-            os.path.join(self.save_directory, "autocorrelations.csv")
+            os.path.join(raw_values_directory, "autocorrelations.csv")
+        )
+
+        # export ellipsoid contribution matrix
         np.save(
             os.path.join(raw_values_directory, "ellipsoid_contribution_matrix.npy"),
             ellipsoid_contribution_matrix
@@ -229,7 +239,8 @@ class stress_analysis_toolbox(QWidget):
         for fig in figures_dict.keys():
             figure = figures_dict[fig]
             figure["figure"].tight_layout()
-            figure["figure"].savefig(os.path.join(self.save_directory, figure["path"]))
+            figure["figure"].savefig(os.path.join(figure_directory, figure["path"]))
+
 
 
 @frame_by_frame
