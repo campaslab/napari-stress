@@ -6,7 +6,7 @@ import napari
 
 
 def test_reconstruction():
-    points = vedo.shapes.Ellipsoid().points() * 100
+    points = vedo.shapes.Ellipsoid().vertices * 100
 
     surface = napari_stress.reconstruct_surface(points)
 
@@ -16,7 +16,7 @@ def test_reconstruction():
 def test_surface_to_points():
     ellipse = vedo.shapes.Ellipsoid()
 
-    surface = (ellipse.points(), np.asarray(ellipse.faces()))
+    surface = (ellipse.vertices, np.asarray(ellipse.faces()))
     points = napari_stress.extract_vertex_points(surface)
 
     assert isinstance(points, np.ndarray)
@@ -42,7 +42,7 @@ def test_ellipsoid_points():
 
     assert np.array_equal(axis.shape, (3, 2, 3))
 
-    pointcloud = vedo.shapes.Ellipsoid().points() * 10
+    pointcloud = vedo.shapes.Ellipsoid().vertices * 10
     ellipse_points = napari_stress.fit_ellipsoid_to_pointcloud_points(
         pointcloud, inside_fraction=0.5
     )

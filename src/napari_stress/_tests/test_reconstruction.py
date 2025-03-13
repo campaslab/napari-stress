@@ -74,7 +74,7 @@ def test_surface_tracing():
     blurry_sphere = filters.gaussian(image, sigma=5)
 
     # Put surface points on a slightly larger radius and add a bit of noise
-    surf_points = shapes.Sphere().points()
+    surf_points = shapes.Sphere().vertices
     surf_points += (surf_points * true_radius + 2) + 50
 
     # Test different fit methods (fancy/quick)

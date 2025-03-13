@@ -39,7 +39,7 @@ def test_decorator_points():
 
     Converter = TimelapseConverter()
 
-    points_list = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
+    points_list = [Sphere().vertices * k for k in np.arange(1.9, 2.1, 0.1)]
     points_array_4d = Converter.list_of_data_to_data(points_list, PointsData)
     points_array_3d = Converter.list_of_data_to_data([points_list[0]], PointsData)
     points_list_conv = Converter.data_to_list_of_data(points_array_4d, PointsData)
@@ -125,7 +125,7 @@ def test_decorator_surfaces():
 
     surface_list = [
         (
-            Sphere().points() * k,
+            Sphere().vertices * k,
             np.asarray(Sphere().cells),
             k * np.ones(Sphere().npoints),
         )

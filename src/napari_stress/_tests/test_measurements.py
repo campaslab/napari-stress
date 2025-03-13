@@ -328,13 +328,13 @@ def test_geodesics():
     sphere = vedo.Ellipsoid(
         pos=(0, 0, 0), axis1=(1, 0, 0), axis2=(0, 2, 0), axis3=(0, 0, 3)
     )
-    ellipsoid = approximation.least_squares_ellipsoid(sphere.points())
-    expansion = approximation.expand_points_on_ellipse(ellipsoid, sphere.points())
+    ellipsoid = approximation.least_squares_ellipsoid(sphere.vertices)
+    expansion = approximation.expand_points_on_ellipse(ellipsoid, sphere.vertices)
 
     curvature = measurements.curvature_on_ellipsoid(ellipsoid, expansion)
     surface = (
-        sphere.points(),
-        np.asarray(sphere.faces()),
+        sphere.vertices,
+        np.asarray(sphere.cells),
         curvature[1]["features"]["mean_curvature"],
     )
 

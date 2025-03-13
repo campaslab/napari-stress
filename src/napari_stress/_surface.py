@@ -31,7 +31,7 @@ def fit_ellipsoid_to_pointcloud_points(
         vedo.pointcloud.Points(points), pvalue=inside_fraction
     )
 
-    output_points = ellipsoid.points()
+    output_points = ellipsoid.vertices
 
     return output_points
 
@@ -112,7 +112,7 @@ def reconstruct_surface(
         radius=radius, sample_size=None, hole_filling=holeFilling, padding=padding
     )
 
-    return (surface.points(), np.asarray(surface.faces(), dtype=int))
+    return (surface.vertices, np.asarray(surface.cells, dtype=int))
 
 
 @register_function(menu="Points > Create points from surface vertices (n-STRESS)")
@@ -151,7 +151,7 @@ def smooth_sinc(
         featureAngle=feature_angle,
         boundary=boundary,
     )
-    return (mesh.points(), np.asarray(mesh.faces(), dtype=int))
+    return (mesh.vertices, np.asarray(mesh.cells, dtype=int))
 
 
 @register_function(menu="Surfaces > Smoothing (MLS2D, vedo, n-STRESS)")
@@ -163,9 +163,9 @@ def smoothMLS2D(
     pointcloud.smoothMLS2D(f=factor, radius=radius)
 
     if radius is not None:
-        return pointcloud.points()[pointcloud.info["isvalid"]]
+        return pointcloud.vertices[pointcloud.info["isvalid"]]
     else:
-        return pointcloud.points()
+        return pointcloud.vertices
 
 
 @register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
@@ -180,4 +180,4 @@ def decimate(surface: SurfaceData, fraction: float = 0.1) -> SurfaceData:
         _fraction = n_vertices_target / mesh.N()
         mesh.decimate(fraction=_fraction)
 
-    return (mesh.points(), np.asarray(mesh.faces()))
+    return (mesh.vertices, np.asarray(mesh.cells))

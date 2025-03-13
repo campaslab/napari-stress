@@ -339,7 +339,7 @@ def reconstruct_droplet(
 
     properties = {"name": "surface_first_guess"}
     layer_first_guess = (
-        (surface[0] * target_voxelsize, surface[1]),
+        (mesh.vertices * target_voxelsize, np.asarray(mesh.cells)),
         properties,
         "surface",
     )
