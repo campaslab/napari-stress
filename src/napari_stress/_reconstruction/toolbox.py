@@ -272,10 +272,8 @@ def reconstruct_droplet(
     """
     import copy
     import vedo
-    import napari_process_points_and_surfaces as nppas
-    import napari_segment_blobs_and_things_with_membranes as nsbatwm
     from napari_stress import reconstruction
-    from skimage import filters, transform
+    from skimage import filters, transform, measure
     from .refine_surfaces import resample_pointcloud
     from .patches import iterative_curvature_adaptive_patch_fitting
     from scipy.ndimage import binary_fill_holes
@@ -292,13 +290,19 @@ def reconstruct_droplet(
         binarized_image = binary_fill_holes(binarized_image)
 
     # convert to surface
-    label_image = nsbatwm.connected_component_labeling(binarized_image)
-    surface = nppas.largest_label_to_surface(label_image)
-    surface = nppas.remove_duplicate_vertices(surface)
+    label_image = measure.label(binarized_image)
+    largest_object_size = 0
+    largest_object_label = 1
+    for i in range(1, label_image.max() + 1):
+        if np.sum(label_image == i) > largest_object_size:
+            largest_object_size = np.sum(label_image == i)
+            largest_object_label = i
+    vertices, faces, _ , _ = measure.marching_cubes(label_image == largest_object_label)
+    mesh = vedo.Mesh((vertices.astype(float), np.asarray(faces).astype(int))).clean()
 
     # Smooth and decimate
     mesh = (
-        vedo.Mesh(surface)
+        mesh
         .smooth(niter=n_smoothing_iterations, feature_angle=120, edge_angle=90)
         .decimate(n=n_points)
     )

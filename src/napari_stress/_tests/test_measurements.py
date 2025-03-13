@@ -20,15 +20,15 @@ def test_patch_fitted_curvature():
 
 def test_intensity_measurement_on_normals():
     from napari_stress import vectors, measurements, sample_data
-    import napari_segment_blobs_and_things_with_membranes as nsbatwm
-    import napari_process_points_and_surfaces as nppas
     import vedo
+    from skimage import measure, transform, filters
 
     droplet = sample_data.get_droplet_4d()[0][0][0]
-    droplet_rescaled = nsbatwm.rescale(droplet, scale_x=1, scale_y=1, scale_z=2)
-    droplet_binary = nsbatwm.threshold_otsu(droplet_rescaled)
+    droplet_rescaled = transform.rescale(droplet, (1, 1, 2))
+    droplet_binary = droplet_rescaled > filters.threshold_otsu(droplet_rescaled)
 
-    surface = nppas.label_to_surface(droplet_binary)
+    vertices, faces, _, _ = measure.marching_cubes(droplet_binary, level=0.5)
+    surface = (vertices, faces)
     mesh = vedo.Mesh(surface).smooth().decimate(n=1000)
     surface_decimated = (mesh.vertices, np.asarray(mesh.cells))
 
