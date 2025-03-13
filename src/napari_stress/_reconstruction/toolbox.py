@@ -297,15 +297,13 @@ def reconstruct_droplet(
         if np.sum(label_image == i) > largest_object_size:
             largest_object_size = np.sum(label_image == i)
             largest_object_label = i
-    vertices, faces, _ , _ = measure.marching_cubes(label_image == largest_object_label)
+    vertices, faces, _, _ = measure.marching_cubes(label_image == largest_object_label)
     mesh = vedo.Mesh((vertices.astype(float), np.asarray(faces).astype(int))).clean()
 
     # Smooth and decimate
-    mesh = (
-        mesh
-        .smooth(niter=n_smoothing_iterations, feature_angle=120, edge_angle=90)
-        .decimate(n=n_points)
-    )
+    mesh = mesh.smooth(
+        niter=n_smoothing_iterations, feature_angle=120, edge_angle=90
+    ).decimate(n=n_points)
     points_first_guess = mesh.vertices
     points = copy.deepcopy(points_first_guess)
 
