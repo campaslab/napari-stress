@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-import napari.layers
 import numpy as np
 
 from qtpy.QtWidgets import QWidget
