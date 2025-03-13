@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-import numpy as np
-
 from typing import Tuple
+
+import numpy as np
 import pandas as pd
 
 
@@ -173,7 +172,9 @@ def calculate_anisotropy(
 
     # write a function to apply to every group in the dataframe
     def anisotropy(
-        df: pd.DataFrame, alpha: float = 0.05, column: str = "anisotropic_stress"
+        df: pd.DataFrame,
+        alpha: float = 0.05,
+        column: str = "anisotropic_stress",
     ):
         from scipy import stats
 

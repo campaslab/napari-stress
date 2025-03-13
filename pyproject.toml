@@ -1,9 +1,129 @@
+[project]
+name = "napari_stress"
+dynamic = ["version"]
+description = "Interactive surface analysis in napari for measuring mechanical stresses in biological tissues"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Johannes Soltwedel, Ben J. Gross, Elijah Shelton, Carlos Gomez, Otger Campas"},
+  {email = "johannes_richard.mueller@tu-dresden.de"},
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Testing",
+]
+requires-python = ">=3.7"
+dependencies = [
+    "dask",
+    "distributed",
+    "joblib",
+    "mpmath",
+    "napari",
+    "napari-tools-menu>=0.1.15",
+    "numpy<1.24.0",
+    "pandas",
+    "pygeodesic",
+    "scikit-image",
+    "scipy>=1.9.0",
+    "seaborn",
+    "tqdm",
+    "vedo>=2023.5.0",
+    "vispy",
+    "deprecation",
+    # "bokeh >= 3.1.0",
+]
+
+[project.optional-dependencies]
+testing = [
+    "tox",
+    "pytest",
+    "pytest-cov",
+    "pytest-qt",
+    "pyqt5"
+]
+
+[project.entry-points."napari.manifest"]
+napari-stress = "napari_stress:napari.yaml"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/campaslab/napari-stress/issues"
+"Documentation" = "https://campaslab.github.io/napari-stress"
+"Source Code" = "https://github.com/campaslab/napari-stress"
+"User Support" = "https://github.com/campaslab/napari-stress/issues"
+
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=42.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.ruff]
-ignore = ["F821"]
+[tool.setuptools]
+include-package-data = true
 
-[tool.ruff.per-file-ignores]
-"_napari_plugin.py" = ["F401"]
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
+
+[tool.setuptools.dynamic]
+version = {attr = "napari_stress.__version__"}
+
+[tool.black]
+line-length = 79
+target-version = ['py37', 'py38', 'py39', 'py310']
+
+[tool.ruff]
+line-length = 79
+lint.select = [
+    "E", "F", "W",
+    "UP",
+    "I",
+    "BLE",
+    "B",
+    "A",
+    "C4",
+    "ISC",
+    "G",
+    "PIE",
+    "SIM",
+]
+lint.ignore = [
+    "E501",
+    "UP006", "UP007",
+    "SIM117",
+]
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "*vendored*",
+    "*_vendor*",
+]
+
+target-version = "py37"
+fix = true

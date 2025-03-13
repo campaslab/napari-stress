@@ -1,6 +1,7 @@
-import pandas as pd
-import numpy as np
 from typing import List
+
+import numpy as np
+import pandas as pd
 from napari.types import LayerDataTuple
 
 
@@ -61,8 +62,7 @@ def compile_data_from_layers(
             autocorrelation_tissue : float
                 Autocorrelation of the tissue stress
     """
-    from .. import measurements
-    from .. import types
+    from .. import measurements, types
 
     df_over_time = aggregate_singular_values(
         results_stress_analysis,
@@ -152,7 +152,9 @@ def aggregate_ellipsoid_contribution_matrix(
 
 
 def aggregate_singular_values(
-    results_stress_analysis: List[LayerDataTuple], n_frames: int, time_step: float
+    results_stress_analysis: List[LayerDataTuple],
+    n_frames: int,
+    time_step: float,
 ) -> pd.DataFrame:
     """
     Aggregate singular values results into a single dataframe
@@ -176,22 +178,23 @@ def aggregate_singular_values(
                 Time of the frame
             etc.
     """
+    from .._measurements.temporal_correlation import temporal_autocorrelation
     from ..types import (
-        _METADATAKEY_STRESS_TOTAL,
-        _METADATAKEY_STRESS_TISSUE,
-        _METADATAKEY_AUTOCORR_TEMPORAL_TOTAL,
         _METADATAKEY_AUTOCORR_TEMPORAL_CELL,
         _METADATAKEY_AUTOCORR_TEMPORAL_TISSUE,
+        _METADATAKEY_AUTOCORR_TEMPORAL_TOTAL,
+        _METADATAKEY_STRESS_TISSUE,
+        _METADATAKEY_STRESS_TOTAL,
     )
-
-    from .._measurements.temporal_correlation import temporal_autocorrelation
 
     def flatten_dictionary(input_dict, parent_key_prefix="", separator="_"):
         """Flatten a nested dictionary and convert singleton values to lists."""
         flat_dict = {}
         for key, value in input_dict.items():
             current_key = (
-                f"{parent_key_prefix}{separator}{key}" if parent_key_prefix else key
+                f"{parent_key_prefix}{separator}{key}"
+                if parent_key_prefix
+                else key
             )
 
             if isinstance(value, dict):
@@ -214,7 +217,9 @@ def aggregate_singular_values(
     ]
     _metadata = [flatten_dictionary(d) for d in _metadata]
     df_over_time = pd.concat([pd.DataFrame(x) for x in _metadata], axis=1)
-    df_over_time = df_over_time.loc[:, ~df_over_time.columns.duplicated()].copy()
+    df_over_time = df_over_time.loc[
+        :, ~df_over_time.columns.duplicated()
+    ].copy()
 
     # drop columns where entries are not numbers but arrays or lists or similar
     for col in df_over_time.columns:
@@ -234,21 +239,29 @@ def aggregate_singular_values(
             df_tissue_stress["time"] = layer[0][:, 0] * time_step
 
     df_over_time["time"] = df_over_time["frame"] * time_step
-    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = temporal_autocorrelation(
-        df_total_stress, "stress_total_radial", frame_column_name="frame"
+    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = (
+        temporal_autocorrelation(
+            df_total_stress, "stress_total_radial", frame_column_name="frame"
+        )
     )
-    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = temporal_autocorrelation(
-        df_total_stress, "stress_cell", frame_column_name="frame"
+    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = (
+        temporal_autocorrelation(
+            df_total_stress, "stress_cell", frame_column_name="frame"
+        )
     )
-    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TISSUE] = temporal_autocorrelation(
-        df_tissue_stress, "stress_tissue", frame_column_name="frame"
+    df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TISSUE] = (
+        temporal_autocorrelation(
+            df_tissue_stress, "stress_tissue", frame_column_name="frame"
+        )
     )
 
     return df_over_time
 
 
 def aggregate_extrema_results(
-    results_stress_analysis: List[LayerDataTuple], n_frames: int, time_step: float
+    results_stress_analysis: List[LayerDataTuple],
+    n_frames: int,
+    time_step: float,
 ) -> tuple:
     """
     Aggregate extrema results into a single dataframe
@@ -284,17 +297,20 @@ def aggregate_extrema_results(
                 Cell Stress Anisotropy of all pairs
     """
     from ..types import (
-        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
-        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
         _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO,
         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
+        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
+        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
     )
 
     # Find layer with NEAREST EXTREMA data
     for layer in results_stress_analysis:
         if "metadata" not in layer[1].keys():
             continue
-        if _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO in layer[1]["metadata"].keys():
+        if (
+            _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO
+            in layer[1]["metadata"].keys()
+        ):
             break
 
     # stack keys of metadata into dataframe and add frame column
@@ -303,7 +319,12 @@ def aggregate_extrema_results(
         frames = (
             np.concatenate(
                 [
-                    [i] * len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO][i])
+                    [i]
+                    * len(
+                        metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO][
+                            i
+                        ]
+                    )
                     for i in range(n_frames)
                 ]
             )
@@ -316,8 +337,12 @@ def aggregate_extrema_results(
             metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO]
         )
     else:
-        frames = np.zeros(len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]))
-        min_max_pair_distances = metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST]
+        frames = np.zeros(
+            len(metadata[_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST])
+        )
+        min_max_pair_distances = metadata[
+            _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST
+        ]
         min_max_pair_anisotropies = metadata[
             _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO
         ]
@@ -335,7 +360,10 @@ def aggregate_extrema_results(
     for layer in results_stress_analysis:
         if "metadata" not in layer[1].keys():
             continue
-        if _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO in layer[1]["metadata"].keys():
+        if (
+            _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO
+            in layer[1]["metadata"].keys()
+        ):
             break
 
     # stack keys of metadata into dataframe and add frame column
@@ -344,7 +372,8 @@ def aggregate_extrema_results(
         frames = (
             np.concatenate(
                 [
-                    [i] * len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO][i])
+                    [i]
+                    * len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO][i])
                     for i in range(n_frames)
                 ]
             )
@@ -357,9 +386,13 @@ def aggregate_extrema_results(
             metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]
         )
     else:
-        frames = np.zeros(len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]))
+        frames = np.zeros(
+            len(metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO])
+        )
         all_pair_distances = metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_DIST]
-        all_pair_anisotropies = metadata[_METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO]
+        all_pair_anisotropies = metadata[
+            _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO
+        ]
 
     df_all_pair = pd.DataFrame(
         {
@@ -374,7 +407,9 @@ def aggregate_extrema_results(
 
 
 def aggregate_spatial_autocorrelations_results(
-    results_stress_analysis: List[LayerDataTuple], n_frames: int, time_step: float
+    results_stress_analysis: List[LayerDataTuple],
+    n_frames: int,
+    time_step: float,
 ) -> tuple:
     """
     Aggregate spatial autocorrelation results into a single dataframe
@@ -517,7 +552,10 @@ def aggregate_spatial_autocorrelations_results(
         on=["time", "distances"],
     )
     df_autocorrelations = pd.merge(
-        df_autocorrelations, df_autocorrelations_cell, "left", on=["time", "distances"]
+        df_autocorrelations,
+        df_autocorrelations_cell,
+        "left",
+        on=["time", "distances"],
     )
 
     return df_autocorrelations

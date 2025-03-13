@@ -1,6 +1,8 @@
-import numpy as np
-from .._utils import frame_by_frame
 from typing import Tuple
+
+import numpy as np
+
+from .._utils import frame_by_frame
 
 
 def _fit_and_create_pointcloud(
@@ -82,7 +84,8 @@ def _create_fitted_coordinates(points, fitting_params):
 
 
 def _find_neighbor_indices(
-    pointcloud: "napari.types.PointsData", patch_radius: Tuple[float, np.ndarray]
+    pointcloud: "napari.types.PointsData",
+    patch_radius: Tuple[float, np.ndarray],
 ):
     """
     For each point in the pointcloud, find the indices and distances of all points
@@ -119,7 +122,9 @@ def _find_neighbor_indices(
     return indices
 
 
-def compute_orientation_matrix(patch_points: "napari.types.PointsData") -> np.ndarray:
+def compute_orientation_matrix(
+    patch_points: "napari.types.PointsData",
+) -> np.ndarray:
     """
     Compute the orientation matrix for a patch of points.
 
@@ -138,7 +143,9 @@ def compute_orientation_matrix(patch_points: "napari.types.PointsData") -> np.nd
     # Compute the covariance matrix and its eigen decomposition
     n = len(patch_points)
     S = (1 / (n - 1)) * (patch_points.T @ patch_points)
-    eigvals, eigvecs = eigh(S)  # 'eigh' is for symmetric matrices like covariance
+    eigvals, eigvecs = eigh(
+        S
+    )  # 'eigh' is for symmetric matrices like covariance
 
     # # Sort the eigenvectors by eigenvalues in ascending order
     # # Assuming the normal corresponds to the smallest eigenvalue
@@ -190,7 +197,9 @@ def _orient_patch(
     if np.isnan(np.sum(patch_query_point)) or not np.isfinite(
         np.sum(patch_query_point)
     ):
-        raise ValueError("Center point of the patch must be a finite 1x3 array")
+        raise ValueError(
+            "Center point of the patch must be a finite 1x3 array"
+        )
 
     if reference_point is None:
         reference_point = np.asarray([0, 0, 0])
@@ -332,7 +341,9 @@ def _estimate_patch_radii(
         expander = EllipsoidExpander()
         expander.fit(pointcloud)
         ellipsoid = expander.coefficients_
-        curvatures = curvature_on_ellipsoid(ellipsoid, pointcloud)[1]["features"]
+        curvatures = curvature_on_ellipsoid(ellipsoid, pointcloud)[1][
+            "features"
+        ]
         principal_curvatures = [
             curvatures[key]
             for key in [
@@ -350,7 +361,9 @@ def _estimate_patch_radii(
     patch_radii = np.sqrt(small_patch_length_scale * len_scale2)
 
     # Ensure the patch radius is not smaller than the minimum patch radius
-    patch_radii[patch_radii < minimum_permitted_range] = minimum_permitted_range
+    patch_radii[patch_radii < minimum_permitted_range] = (
+        minimum_permitted_range
+    )
 
     # List to store the updated radii
     updated_patch_radii = np.copy(patch_radii)
@@ -407,7 +420,9 @@ def fit_patches(
     """
     num_points = len(point_cloud)  # Number of points in the point cloud
     fitted_point_cloud = np.copy(point_cloud)  # Initialize fitted point cloud
-    min_neighbors = 6  # Minimum number of neighbors required to perform fitting
+    min_neighbors = (
+        6  # Minimum number of neighbors required to perform fitting
+    )
 
     # Compute neighbors for each point in the point cloud
     neighbor_indices = _find_neighbor_indices(point_cloud, search_radius)
@@ -474,8 +489,10 @@ def iterative_curvature_adaptive_patch_fitting(
                 continue  # Not enough neighbors, skip to the next point
 
             # Orient the patch for the current point
-            oriented_patch, oriented_query_point, orient_matrix = _orient_patch(
-                patch, current_point, np.mean(point_cloud, axis=0)
+            oriented_patch, oriented_query_point, orient_matrix = (
+                _orient_patch(
+                    patch, current_point, np.mean(point_cloud, axis=0)
+                )
             )
             patch_center = patch.mean(axis=0)
 

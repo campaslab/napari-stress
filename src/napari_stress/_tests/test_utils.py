@@ -1,25 +1,28 @@
 import numpy as np
+import vedo
+from napari.layers import Layer, Points
 from napari.types import (
-    PointsData,
     ImageData,
+    LayerDataTuple,
+    PointsData,
     SurfaceData,
     VectorsData,
-    LayerDataTuple,
 )
-from napari.layers import Layer, Points
 
 
 def test_fit_functions():
     from napari_stress._reconstruction.fit_utils import (
-        _sigmoid,
-        _gaussian,
-        _detect_maxima,
         _detect_max_gradient,
+        _detect_maxima,
+        _gaussian,
+        _sigmoid,
     )
 
     x = np.arange(0, 100, 1)
 
-    y = _sigmoid(x, center=50, amplitude=1.0, slope=0.5, offset=0, background_slope=0)
+    y = _sigmoid(
+        x, center=50, amplitude=1.0, slope=0.5, offset=0, background_slope=0
+    )
     assert np.max(y) <= 1.0
     assert y[51] > 0.5 and y[49] < 0.5
 
@@ -34,15 +37,20 @@ def test_fit_functions():
 
 
 def test_decorator_points():
-    from napari_stress import TimelapseConverter
     from vedo import Sphere
+
+    from napari_stress import TimelapseConverter
 
     Converter = TimelapseConverter()
 
-    points_list = [Sphere().points() * k for k in np.arange(1.9, 2.1, 0.1)]
+    points_list = [Sphere().vertices * k for k in np.arange(1.9, 2.1, 0.1)]
     points_array_4d = Converter.list_of_data_to_data(points_list, PointsData)
-    points_array_3d = Converter.list_of_data_to_data([points_list[0]], PointsData)
-    points_list_conv = Converter.data_to_list_of_data(points_array_4d, PointsData)
+    points_array_3d = Converter.list_of_data_to_data(
+        [points_list[0]], PointsData
+    )
+    points_list_conv = Converter.data_to_list_of_data(
+        points_array_4d, PointsData
+    )
 
     assert np.array_equal(points_array_3d, points_list[0])
 
@@ -51,9 +59,11 @@ def test_decorator_points():
 
 
 def test_decorator_points_layerdatatuple():
-    from napari_stress import TimelapseConverter, get_droplet_point_cloud
-    import pandas as pd
     from copy import deepcopy
+
+    import pandas as pd
+
+    from napari_stress import TimelapseConverter, get_droplet_point_cloud
 
     np.random.seed(42)
 
@@ -92,7 +102,9 @@ def test_decorator_points_layerdatatuple():
         assert np.array_equal(
             ldt[1]["features"]["feature1"], _ldt[1]["features"]["feature1"]
         )
-        assert np.array_equal(ldt[1]["metadata"]["data1"], _ldt[1]["metadata"]["data1"])
+        assert np.array_equal(
+            ldt[1]["metadata"]["data1"], _ldt[1]["metadata"]["data1"]
+        )
 
 
 def test_decorator_points_layers():
@@ -117,38 +129,51 @@ def test_decorator_points_layers():
 
 
 def test_decorator_surfaces():
-    from napari_stress import TimelapseConverter, frame_by_frame
-    from napari_process_points_and_surfaces import sample_points_from_surface
     from vedo import Sphere
+
+    from napari_stress import TimelapseConverter, frame_by_frame
 
     Converter = TimelapseConverter()
 
     surface_list = [
         (
-            Sphere().points() * k,
+            Sphere().vertices * k,
             np.asarray(Sphere().cells),
             k * np.ones(Sphere().npoints),
         )
         for k in np.arange(1.9, 2.1, 0.1)
     ]
     n_frames = len(surface_list)
-    surface_array_4d = Converter.list_of_data_to_data(surface_list, SurfaceData)
-    surface_array_3d = Converter.list_of_data_to_data([surface_list[0]], SurfaceData)
+    surface_array_4d = Converter.list_of_data_to_data(
+        surface_list, SurfaceData
+    )
+    surface_array_3d = Converter.list_of_data_to_data(
+        [surface_list[0]], SurfaceData
+    )
 
     assert np.array_equal(surface_array_3d[0], surface_list[0][0])
     assert len(surface_array_4d) == 3
 
-    surface_list_conv = Converter.data_to_list_of_data(surface_array_4d, SurfaceData)
+    surface_list_conv = Converter.data_to_list_of_data(
+        surface_array_4d, SurfaceData
+    )
 
     for surf, _surf in zip(surface_list, surface_list_conv):
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
-    points_4d = frame_by_frame(sample_points_from_surface)(surface_array_4d)
-    points_3d = frame_by_frame(sample_points_from_surface)(surface_list[0])
+    def decimate(
+        surface: "napari.types.SurfaceData",
+    ) -> "napari.types.PointsData":
+        mesh = vedo.Mesh((surface[0], surface[1])).decimate(fraction=0.5)
+        points = mesh.vertices
+        return points
 
-    assert np.array_equal(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
-    assert np.array_equal(points_4d.shape, (1010 * n_frames, 4))
+    points_4d = frame_by_frame(decimate)(surface_array_4d)
+    points_3d = frame_by_frame(decimate)(surface_list[0])
+
+    assert np.allclose(points_3d, points_4d[points_4d[:, 0] == 0][:, 1:])
+    assert np.array_equal(points_4d.shape, (530 * n_frames, 4))
 
 
 def test_decorator_images():
@@ -186,15 +211,18 @@ def test_frame_by_frame_vectors():
 
     vectors_list = Converter.data_to_list_of_data(vectors_4d, VectorsData)
     vectors_data_4d = Converter.list_of_data_to_data(vectors_list, VectorsData)
-    vectors_data_3d = Converter.list_of_data_to_data([vectors_list[0]], VectorsData)
+    vectors_data_3d = Converter.list_of_data_to_data(
+        [vectors_list[0]], VectorsData
+    )
 
     assert np.array_equal(vectors_data_3d, vectors_list[0])
     assert np.array_equal(vectors_data_4d, vectors_4d)
 
 
 def test_frame_by_frame_dataframes():
-    from napari_stress import TimelapseConverter
     import pandas as pd
+
+    from napari_stress import TimelapseConverter
 
     Converter = TimelapseConverter()
 
@@ -203,9 +231,17 @@ def test_frame_by_frame_dataframes():
     df2 = pd.DataFrame({"data": np.random.random(100)})
     df3 = pd.DataFrame({"data": np.random.random(100)})
 
-    single_df = Converter.list_of_data_to_data([df1, df2, df3], layertype=pd.DataFrame)
-    list_of_dfs = Converter.data_to_list_of_data(single_df, layertype=pd.DataFrame)
+    single_df = Converter.list_of_data_to_data(
+        [df1, df2, df3], layertype=pd.DataFrame
+    )
+    list_of_dfs = Converter.data_to_list_of_data(
+        single_df, layertype=pd.DataFrame
+    )
 
     assert np.array_equal(list_of_dfs[0]["data"], df1["data"])
     assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
     assert np.array_equal(list_of_dfs[2]["data"], df3["data"])
+
+
+if __name__ == "__main__":
+    test_decorator_surfaces()

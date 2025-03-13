@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from napari.types import PointsData, VectorsData
 
@@ -114,7 +113,9 @@ def cartesian_to_elliptical(
 
         U_coors_calc[pt_numb] = U_pt
 
-        cylinder_r = np.sqrt(yt_0**2 + yt_1**2)  # r in cylinderical coors for y_tilde
+        cylinder_r = np.sqrt(
+            yt_0**2 + yt_1**2
+        )  # r in cylinderical coors for y_tilde
         cyl_r_exp = np.sqrt(
             (lengths[0] * np.cos(U_pt)) ** 2 + (lengths[1] * np.sin(U_pt)) ** 2
         )
@@ -149,7 +150,9 @@ def elliptical_to_cartesian(
     Y_LS_Ellps_calc_pts = np.zeros((num_pts_used, 1))
     Z_LS_Ellps_calc_pts = np.zeros((num_pts_used, 1))
 
-    for pt_test in range(num_pts_used):  # pt_test_theta in range(num_test_pts_per_dim):
+    for pt_test in range(
+        num_pts_used
+    ):  # pt_test_theta in range(num_test_pts_per_dim):
         theta_tp = U_pts_cloud[pt_test, 0]  # theta_pts[pt_test_theta]
         phi_tp = V_pts_cloud[pt_test, 0]  # phi_pts[pt_test_phi]
 

@@ -1,6 +1,7 @@
 # From https://github.com/campaslab/STRESS
-import numpy as np
 import math
+
+import numpy as np
 
 #####  Size of Charts: #######
 Chart_Min_Polar = np.pi / 4  # Minimum Phi Val in Chart
@@ -29,7 +30,9 @@ def Domain(Theta, Phi):  # Which coordinates to use
         return -1
 
 
-def Domain_Unaffected(Theta, Phi):  # Where fns in each chart arent affected by eta fns
+def Domain_Unaffected(
+    Theta, Phi
+):  # Where fns in each chart arent affected by eta fns
     if eta_Min_Polar <= Phi and Phi <= eta_Max_Polar:  # Use Coordinates A
         Bar_Coors = Coor_A_To_B(Theta, Phi)
         Phi_Bar = Bar_Coors[1]
@@ -60,16 +63,22 @@ def Bump_Fn(
     # return 0
 
 
-def eta_A(func, Theta, Phi):  # Cutoff fn for phi in [eta_Min_Polar, eta_Max_Polar]
+def eta_A(
+    func, Theta, Phi
+):  # Cutoff fn for phi in [eta_Min_Polar, eta_Max_Polar]
     # if Phi=< eta_Min_Polar - eta_Polar_Decay or Phi=> eta_Max_Polar + eta_Polar_Decay
     if eta_Min_Polar <= Phi and Phi <= eta_Max_Polar:
         return func(Theta, Phi)
 
     elif eta_Max_Polar < Phi and Phi < eta_Max_Polar + eta_Polar_Decay:
-        return Bump_Fn(Phi, 1, eta_Max_Polar, eta_Polar_Decay) * func(Theta, Phi)
+        return Bump_Fn(Phi, 1, eta_Max_Polar, eta_Polar_Decay) * func(
+            Theta, Phi
+        )
 
     elif eta_Min_Polar - eta_Polar_Decay < Phi and Phi < eta_Min_Polar:
-        return Bump_Fn(Phi, 1, eta_Min_Polar, eta_Polar_Decay) * func(Theta, Phi)
+        return Bump_Fn(Phi, 1, eta_Min_Polar, eta_Polar_Decay) * func(
+            Theta, Phi
+        )
         # Bump is SYMETRIC around start
     else:
         return 0

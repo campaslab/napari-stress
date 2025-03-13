@@ -1,8 +1,9 @@
-import seaborn as sns
-import pandas as pd
+from typing import Tuple
+
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Tuple
+import pandas as pd
+import seaborn as sns
 
 
 def draw_chronological_kde_plot(
@@ -127,9 +128,12 @@ def create_all_stress_plots(
     results_stress_analysis: list, time_step: float, n_frames: int
 ) -> dict:
     import matplotlib as mpl
-    from .._utils._aggregate_measurements import find_metadata_in_layers
+
     from .. import types
-    from .._utils._aggregate_measurements import compile_data_from_layers
+    from .._utils._aggregate_measurements import (
+        compile_data_from_layers,
+        find_metadata_in_layers,
+    )
 
     # Compile data
     (
@@ -151,7 +155,9 @@ def create_all_stress_plots(
     df["time"] = df["frame"] * time_step
     fig_residue, axes = plt.subplots(ncols=2, figsize=(10, 5))
     draw_chronological_kde_plot(df, x="fit_residue", hue="time", ax=axes[0])
-    draw_chronological_lineplot_with_errors(df, y="fit_residue", ax=axes[1], error="sd")
+    draw_chronological_lineplot_with_errors(
+        df, y="fit_residue", ax=axes[1], error="sd"
+    )
 
     # Fit quality
     fig_GaussBonnet_error, axes = plt.subplots(ncols=2, figsize=(10, 5))
@@ -176,7 +182,11 @@ def create_all_stress_plots(
         colormap="flare",
     )
     draw_chronological_lineplot_with_errors(
-        df, y=types._METADATAKEY_MEAN_CURVATURE, x="time", ax=axes[1], error="sd"
+        df,
+        y=types._METADATAKEY_MEAN_CURVATURE,
+        x="time",
+        ax=axes[1],
+        error="sd",
     )
 
     # Total stress
@@ -190,7 +200,11 @@ def create_all_stress_plots(
         df=df, x=types._METADATAKEY_STRESS_TOTAL, ax=axes[0], legend=False
     )
     draw_chronological_lineplot_with_errors(
-        df=df, x="time", y=types._METADATAKEY_STRESS_TOTAL, ax=axes[1], error="sd"
+        df=df,
+        x="time",
+        y=types._METADATAKEY_STRESS_TOTAL,
+        ax=axes[1],
+        error="sd",
     )
     draw_chronological_lineplot_with_errors(
         df=df_over_time,
@@ -211,7 +225,11 @@ def create_all_stress_plots(
         df=df, x=types._METADATAKEY_STRESS_CELL, ax=axes[0], legend=False
     )
     draw_chronological_lineplot_with_errors(
-        df=df, x="time", y=types._METADATAKEY_STRESS_CELL, ax=axes[1], error="sd"
+        df=df,
+        x="time",
+        y=types._METADATAKEY_STRESS_CELL,
+        ax=axes[1],
+        error="sd",
     )
     draw_chronological_lineplot_with_errors(
         df=df_over_time,
@@ -284,7 +302,9 @@ def create_all_stress_plots(
         legend=False,
     )
     draw_chronological_kde_plot(
-        df_nearest_pairs, types._METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO, ax=axes[3]
+        df_nearest_pairs,
+        types._METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
+        ax=axes[3],
     )
 
     # Spatial autocorrelations
@@ -352,13 +372,22 @@ def create_all_stress_plots(
             "figure": fig_mean_curvature,
             "path": "mean_curvatures.png",
         },
-        "fig_total_stress": {"figure": fig_total_stress, "path": "Stresses_total.png"},
-        "fig_cell_stress": {"figure": fig_cell_stress, "path": "Stresses_cell.png"},
+        "fig_total_stress": {
+            "figure": fig_total_stress,
+            "path": "Stresses_total.png",
+        },
+        "fig_cell_stress": {
+            "figure": fig_cell_stress,
+            "path": "Stresses_cell.png",
+        },
         "fig_tissue_stress": {
             "figure": fig_tissue_stress,
             "path": "Stresses_tissue.png",
         },
-        "fig_stress_tensor": {"figure": fig_stress_tensor, "path": "Stress_tensor.png"},
+        "fig_stress_tensor": {
+            "figure": fig_stress_tensor,
+            "path": "Stress_tensor.png",
+        },
         "fig_all_pairs": {
             "figure": fig_all_pairs,
             "path": "Autocorrelations_spatial_all_pairs.png",
