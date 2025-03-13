@@ -233,13 +233,13 @@ def create_all_stress_plots(
     # ellipsoidal stress tensor
     fig_stress_tensor, axes = plt.subplots(ncols=3, figsize=(13, 5))
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E1, ax=axes[0]
+        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E11, ax=axes[0]
     )
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E2, ax=axes[0]
+        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E22, ax=axes[0]
     )
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E3, ax=axes[0]
+        df_over_time, types._METADATAKEY_STRESS_TENSOR_ELLI_E33, ax=axes[0]
     )
 
     draw_chronological_lineplot_with_errors(
@@ -253,13 +253,13 @@ def create_all_stress_plots(
     )
 
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E1, ax=axes[2]
+        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1, ax=axes[2]
     )
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E2, ax=axes[2]
+        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2, ax=axes[2]
     )
     draw_chronological_lineplot_with_errors(
-        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E3, ax=axes[2]
+        df_over_time, types._METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X3, ax=axes[2]
     )
 
     # All pairs
