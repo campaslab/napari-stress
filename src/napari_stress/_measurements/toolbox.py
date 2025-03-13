@@ -190,6 +190,7 @@ class stress_analysis_toolbox(QWidget):
     def _export(self, results_stress_analysis):
         """Export results to csv file."""
         import datetime
+
         import napari
 
         from .. import plotting, utils
@@ -220,16 +221,24 @@ class stress_analysis_toolbox(QWidget):
         os.makedirs(raw_values_directory, exist_ok=True)
         os.makedirs(pointcloud_directory, exist_ok=True)
 
-        df_over_time.to_csv(os.path.join(raw_values_directory, "stress_data.csv"))
-        df_nearest_pairs.to_csv(os.path.join(raw_values_directory, "nearest_pairs.csv"))
-        df_all_pairs.to_csv(os.path.join(raw_values_directory, "all_pairs.csv"))
+        df_over_time.to_csv(
+            os.path.join(raw_values_directory, "stress_data.csv")
+        )
+        df_nearest_pairs.to_csv(
+            os.path.join(raw_values_directory, "nearest_pairs.csv")
+        )
+        df_all_pairs.to_csv(
+            os.path.join(raw_values_directory, "all_pairs.csv")
+        )
         df_autocorrelations.to_csv(
             os.path.join(raw_values_directory, "autocorrelations.csv")
         )
 
         # export ellipsoid contribution matrix
         np.save(
-            os.path.join(raw_values_directory, "ellipsoid_contribution_matrix.npy"),
+            os.path.join(
+                raw_values_directory, "ellipsoid_contribution_matrix.npy"
+            ),
             ellipsoid_contribution_matrix,
         )
 
@@ -243,7 +252,9 @@ class stress_analysis_toolbox(QWidget):
         for fig in figures_dict.keys():
             figure = figures_dict[fig]
             figure["figure"].tight_layout()
-            figure["figure"].savefig(os.path.join(figure_directory, figure["path"]))
+            figure["figure"].savefig(
+                os.path.join(figure_directory, figure["path"])
+            )
 
         # Export pointclouds
         for i, layer in enumerate(results_stress_analysis):
@@ -251,7 +262,8 @@ class stress_analysis_toolbox(QWidget):
                 export_layer = napari.layers.Layer.create(*layer)
                 napari.save_layers(
                     os.path.join(
-                        pointcloud_directory, f"pointcloud_{export_layer.name}.vtp"
+                        pointcloud_directory,
+                        f"pointcloud_{export_layer.name}.vtp",
                     ),
                     [export_layer],
                 )
@@ -315,6 +327,9 @@ def comprehensive_analysis(
     """
     from .. import approximation, measurements, reconstruction, vectors
     from ..types import (
+        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1,
+        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2,
+        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X3,
         _METADATAKEY_AUTOCORR_SPATIAL_CELL,
         _METADATAKEY_AUTOCORR_SPATIAL_TISSUE,
         _METADATAKEY_AUTOCORR_SPATIAL_TOTAL,
@@ -329,36 +344,6 @@ def comprehensive_analysis(
         _METADATAKEY_H0_ARITHMETIC,
         _METADATAKEY_H0_SURFACE_INTEGRAL,
         _METADATAKEY_H0_VOLUME_INTEGRAL,
-        _METADATAKEY_GAUSS_BONNET_ABS,
-        _METADATAKEY_GAUSS_BONNET_REL,
-        _METADATAKEY_GAUSS_BONNET_ABS_RAD,
-        _METADATAKEY_GAUSS_BONNET_REL_RAD,
-        _METADATAKEY_STRESS_TENSOR_ELLI_E11,
-        _METADATAKEY_STRESS_TENSOR_ELLI_E22,
-        _METADATAKEY_STRESS_TENSOR_ELLI_E33,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E11,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E22,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E33,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E12,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E13,
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E23,
-        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1,
-        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2,
-        _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X3,
-        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12,
-        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23,
-        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13,
-        _METADATAKEY_EXTREMA_CELL_STRESS,
-        _METADATAKEY_EXTREMA_TOTAL_STRESS,
-        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
-        _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
-        _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO,
-        _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
-        _METADATAKEY_AUTOCORR_SPATIAL_CELL,
-        _METADATAKEY_AUTOCORR_SPATIAL_TISSUE,
-        _METADATAKEY_AUTOCORR_SPATIAL_TOTAL,
-        _METADATAKEY_FIT_RESIDUE,
-        _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB,
         _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
@@ -368,6 +353,18 @@ def comprehensive_analysis(
         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST,
         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO,
         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST,
+        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12,
+        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13,
+        _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E11,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E12,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E13,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E22,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E23,
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E33,
+        _METADATAKEY_STRESS_TENSOR_ELLI_E11,
+        _METADATAKEY_STRESS_TENSOR_ELLI_E22,
+        _METADATAKEY_STRESS_TENSOR_ELLI_E33,
         _METADATAKEY_STRESS_TISSUE,
         _METADATAKEY_STRESS_TISSUE_ANISO,
         _METADATAKEY_STRESS_TOTAL,
@@ -693,19 +690,37 @@ def comprehensive_analysis(
         _METADATAKEY_STRESS_TISSUE: stress_tissue,
     }
 
-    sigma_e13 = stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[2, 2]
-    sigma_e23 = stress_tensor_ellipsoidal[1, 1] - stress_tensor_ellipsoidal[2, 2]
-    sigma_e12 = stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[1, 1]
+    sigma_e13 = (
+        stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[2, 2]
+    )
+    sigma_e23 = (
+        stress_tensor_ellipsoidal[1, 1] - stress_tensor_ellipsoidal[2, 2]
+    )
+    sigma_e12 = (
+        stress_tensor_ellipsoidal[0, 0] - stress_tensor_ellipsoidal[1, 1]
+    )
     metadata = {
         _METADATAKEY_STRESS_TENSOR_ELLI_E11: stress_tensor_ellipsoidal[0, 0],
         _METADATAKEY_STRESS_TENSOR_ELLI_E22: stress_tensor_ellipsoidal[1, 1],
         _METADATAKEY_STRESS_TENSOR_ELLI_E33: stress_tensor_ellipsoidal[2, 2],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E11: stress_tensor_cartesian[0, 0],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E22: stress_tensor_cartesian[1, 1],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E33: stress_tensor_cartesian[2, 2],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E12: stress_tensor_cartesian[0, 1],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E13: stress_tensor_cartesian[0, 2],
-        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E23: stress_tensor_cartesian[1, 2],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E11: stress_tensor_cartesian[
+            0, 0
+        ],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E22: stress_tensor_cartesian[
+            1, 1
+        ],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E33: stress_tensor_cartesian[
+            2, 2
+        ],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E12: stress_tensor_cartesian[
+            0, 1
+        ],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E13: stress_tensor_cartesian[
+            0, 2
+        ],
+        _METADATAKEY_STRESS_TENSOR_CARTESIAN_E23: stress_tensor_cartesian[
+            1, 2
+        ],
         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12: sigma_e12,
         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23: sigma_e23,
         _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13: sigma_e13,
