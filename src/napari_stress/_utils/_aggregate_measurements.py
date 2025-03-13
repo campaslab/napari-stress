@@ -183,7 +183,7 @@ def aggregate_singular_values(
 
         return flat_dict
 
-    # Single values over time
+    # Get metadata from layers if it exists
     _metadata = [
         layer[1]["metadata"]
         for layer in results_stress_analysis
@@ -192,6 +192,11 @@ def aggregate_singular_values(
     _metadata = [flatten_dictionary(d) for d in _metadata]
     df_over_time = pd.concat([pd.DataFrame(x) for x in _metadata], axis=1)
     df_over_time = df_over_time.loc[:, ~df_over_time.columns.duplicated()].copy()
+
+    # drop columns where entries are not numbers but arrays or lists or similar
+    for col in df_over_time.columns:
+        if not np.issubdtype(df_over_time[col].dtype, np.number):
+            df_over_time = df_over_time.drop(col, axis=1)
 
     # Find layer with stress_tissue in features
     for layer in results_stress_analysis:
