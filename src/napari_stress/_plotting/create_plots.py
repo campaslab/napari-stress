@@ -137,6 +137,7 @@ def create_all_stress_plots(
         df_nearest_pairs,
         df_all_pairs,
         df_autocorrelations,
+        ellipsoid_contribution_matrix
     ) = compile_data_from_layers(
         results_stress_analysis, time_step=time_step, n_frames=n_frames
     )
@@ -326,7 +327,6 @@ def create_all_stress_plots(
     )
 
     # Ellipsoid contribution
-    data = df_over_time[types._METADATAKEY_ELIPSOID_DEVIATION_CONTRIB].values
     fig_ellipsoid_contribution, axes = plt.subplots(
         ncols=4, nrows=n_frames // 4 + 1, figsize=(12, n_frames)
     )
@@ -334,7 +334,7 @@ def create_all_stress_plots(
         if t >= n_frames:
             ax.axis("off")
             continue
-        ax.imshow(np.triu(data[t]), cmap="inferno")
+        ax.imshow(np.triu(ellipsoid_contribution_matrix[t]), cmap="inferno")
         ax.tick_params(
             labelbottom=False, labeltop=True, labelleft=False, labelright=True
         )
