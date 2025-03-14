@@ -402,6 +402,7 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     import os
+    import shutil
     from pathlib import Path
 
     import pandas as pd
@@ -422,9 +423,7 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     # get the save directory
     save_directory = widget.save_directory
-    for file in os.listdir(save_directory):
-        os.remove(os.path.join(save_directory, file))
-    os.rmdir(save_directory)
+    shutil.rmtree(save_directory)
 
     widget.checkBox_use_dask.setChecked(True)
     widget._run()
@@ -434,58 +433,107 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     # test that the files are created
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "stress_data.csv")
+        os.path.join(widget.save_directory, "raw_values", "stress_data.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "nearest_pairs.csv")
+        os.path.join(widget.save_directory, "raw_values", "nearest_pairs.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "autocorrelations.csv")
+        os.path.join(
+            widget.save_directory, "raw_values", "autocorrelations.csv"
+        )
     )
-    assert os.path.isfile(os.path.join(widget.save_directory, "all_pairs.csv"))
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "raw_values", "all_pairs.csv")
+    )
 
     assert os.path.isfile(
         os.path.join(
-            widget.save_directory, "Autocorrelations_spatial_all_pairs.png"
+            widget.save_directory,
+            "figures",
+            "Autocorrelations_spatial_all_pairs.png",
+        )
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "raw_values", "nearest_pairs.csv")
+    )
+    assert os.path.isfile(
+        os.path.join(
+            widget.save_directory, "raw_values", "autocorrelations.csv"
+        )
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "raw_values", "all_pairs.csv")
+    )
+
+    assert os.path.isfile(
+        os.path.join(
+            widget.save_directory,
+            "figures",
+            "Autocorrelations_spatial_all_pairs.png",
         )
     )
     assert os.path.isfile(
         os.path.join(
-            widget.save_directory, "Autocorrelations_spatial_nearest_pairs.png"
+            widget.save_directory,
+            "figures",
+            "Autocorrelations_spatial_nearest_pairs.png",
         )
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Autocorrelations_temporal.png")
+        os.path.join(
+            widget.save_directory, "figures", "Autocorrelations_temporal.png"
+        )
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Ellipsoid_contribution.png")
+        os.path.join(widget.save_directory, "figures", "fit_residues.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "fit_residues.png")
+        os.path.join(
+            widget.save_directory, "figures", "Ellipsoid_contribution.png"
+        )
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "gauss_bonnet_errors.png")
+        os.path.join(widget.save_directory, "figures", "fit_residues.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "mean_curvatures.png")
+        os.path.join(
+            widget.save_directory, "figures", "gauss_bonnet_errors.png"
+        )
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stress_tensor.png")
+        os.path.join(widget.save_directory, "figures", "mean_curvatures.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_cell.png")
+        os.path.join(widget.save_directory, "figures", "Stress_tensor.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_tissue.png")
+        os.path.join(widget.save_directory, "figures", "Stresses_cell.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_total.png")
+        os.path.join(widget.save_directory, "figures", "Stresses_tissue.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "Stresses_total.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "mean_curvatures.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "Stress_tensor.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "Stresses_cell.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "Stresses_tissue.png")
+    )
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "figures", "Stresses_total.png")
     )
 
     # clean up everything in the directory
-    for file in os.listdir(widget.save_directory):
-        os.remove(os.path.join(widget.save_directory, file))
-    os.rmdir(widget.save_directory)
+    shutil.rmtree(widget.save_directory)
 
     # Check against legacy measurements: load legacy data
     legacy_results_file = (
