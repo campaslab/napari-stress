@@ -439,13 +439,19 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
         os.path.join(widget.save_directory, "raw_values", "nearest_pairs.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "raw_values", "autocorrelations.csv")
+        os.path.join(
+            widget.save_directory, "raw_values", "autocorrelations.csv"
+        )
     )
-    assert os.path.isfile(os.path.join(widget.save_directory, "raw_values", "all_pairs.csv"))
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "raw_values", "all_pairs.csv")
+    )
 
     assert os.path.isfile(
         os.path.join(
-            widget.save_directory, "figures", "Autocorrelations_spatial_all_pairs.png"
+            widget.save_directory,
+            "figures",
+            "Autocorrelations_spatial_all_pairs.png",
         )
     )
     assert os.path.isfile(
