@@ -402,10 +402,10 @@ def test_comprehenive_stress_toolbox(make_napari_viewer):
 
 def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     import os
+    import shutil
     from pathlib import Path
 
     import pandas as pd
-    import shutil
 
     import napari_stress
     from napari_stress import get_droplet_point_cloud_4d, types
@@ -452,7 +452,9 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
         os.path.join(widget.save_directory, "raw_values", "nearest_pairs.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "raw_values", "autocorrelations.csv")
+        os.path.join(
+            widget.save_directory, "raw_values", "autocorrelations.csv"
+        )
     )
     assert os.path.isfile(
         os.path.join(widget.save_directory, "raw_values", "all_pairs.csv")
@@ -460,7 +462,9 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     assert os.path.isfile(
         os.path.join(
-            widget.save_directory, "figures", "Autocorrelations_spatial_all_pairs.png"
+            widget.save_directory,
+            "figures",
+            "Autocorrelations_spatial_all_pairs.png",
         )
     )
     assert os.path.isfile(
@@ -471,19 +475,25 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
         )
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "figures", "Autocorrelations_temporal.png")
+        os.path.join(
+            widget.save_directory, "figures", "Autocorrelations_temporal.png"
+        )
     )
     assert os.path.isfile(
         os.path.join(widget.save_directory, "figures", "fit_residues.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "figures", "Ellipsoid_contribution.png")
+        os.path.join(
+            widget.save_directory, "figures", "Ellipsoid_contribution.png"
+        )
     )
     assert os.path.isfile(
         os.path.join(widget.save_directory, "figures", "fit_residues.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "figures", "gauss_bonnet_errors.png")
+        os.path.join(
+            widget.save_directory, "figures", "gauss_bonnet_errors.png"
+        )
     )
     assert os.path.isfile(
         os.path.join(widget.save_directory, "figures", "mean_curvatures.png")
