@@ -441,7 +441,7 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
     assert os.path.isfile(
         os.path.join(widget.save_directory, "raw_values", "autocorrelations.csv")
     )
-    assert os.path.isfile(os.path.join(widget.save_director, "raw_values", "all_pairs.csv"))
+    assert os.path.isfile(os.path.join(widget.save_directory, "raw_values", "all_pairs.csv"))
 
     assert os.path.isfile(
         os.path.join(
