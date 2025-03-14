@@ -433,19 +433,19 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
 
     # test that the files are created
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "stress_data.csv")
+        os.path.join(widget.save_directory, "raw_values", "stress_data.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "nearest_pairs.csv")
+        os.path.join(widget.save_directory, "raw_values", "nearest_pairs.csv")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "autocorrelations.csv")
+        os.path.join(widget.save_directory, "raw_values", "autocorrelations.csv")
     )
-    assert os.path.isfile(os.path.join(widget.save_directory, "all_pairs.csv"))
+    assert os.path.isfile(os.path.join(widget.save_director, "raw_values", "all_pairs.csv"))
 
     assert os.path.isfile(
         os.path.join(
-            widget.save_directory, "Autocorrelations_spatial_all_pairs.png"
+            widget.save_directory, "figures", "Autocorrelations_spatial_all_pairs.png"
         )
     )
     assert os.path.isfile(
@@ -474,7 +474,7 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
         os.path.join(widget.save_directory, "figures", "Autocorrelations_temporal.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "fit_residues.png")
+        os.path.join(widget.save_directory, "figures", "fit_residues.png")
     )
     assert os.path.isfile(
         os.path.join(widget.save_directory, "figures", "Ellipsoid_contribution.png")
@@ -501,19 +501,19 @@ def test_comprehensive_stress_toolbox_4d(make_napari_viewer):
         os.path.join(widget.save_directory, "figures", "Stresses_total.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "mean_curvatures.png")
+        os.path.join(widget.save_directory, "figures", "mean_curvatures.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stress_tensor.png")
+        os.path.join(widget.save_directory, "figures", "Stress_tensor.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_cell.png")
+        os.path.join(widget.save_directory, "figures", "Stresses_cell.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_tissue.png")
+        os.path.join(widget.save_directory, "figures", "Stresses_tissue.png")
     )
     assert os.path.isfile(
-        os.path.join(widget.save_directory, "Stresses_total.png")
+        os.path.join(widget.save_directory, "figures", "Stresses_total.png")
     )
 
     # clean up everything in the directory
