@@ -38,6 +38,7 @@ dependencies = [
     "scipy>=1.9.0",
     "seaborn",
     "tqdm",
+    "napari-vedo-bridge>=0.2.1",
     "vedo>=2023.5.0",
     "vispy",
     "deprecation",
