@@ -1,5 +1,5 @@
 [project]
-name = "napari_stress"
+name = "napari-stress"
 dynamic = ["version"]
 description = "Interactive surface analysis in napari for measuring mechanical stresses in biological tissues"
 readme = "README.md"
