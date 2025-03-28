@@ -215,7 +215,7 @@ def reconstruct_droplet(
     n_smoothing_iterations: int = 10,
     n_points: int = 256,
     n_tracing_iterations: int = 1,
-    resampling_length: float = 5,
+    resampling_length: float = 5,  # resampling_length is given in pixels
     fit_type: str = "fancy",
     edge_type: str = "interior",
     trace_length: float = 10,
@@ -244,9 +244,10 @@ def reconstruct_droplet(
         Number of points to be sampled. The default is 256.
     n_tracing_iterations : int, optional
         Number of tracing iterations. The default is 1.
-    resampling_length : float, optional
+    resampling_length: float, optional
         Distance between sampled point locations. The default is 5.
         Choose smaller values for more accurate reconstruction.
+        Note that the resampling_length is given in pixels.
     fit_type : str, optional
         Type of fit to be used. The default is "fancy". Can also be "quick".
     edge_type : str, optional
