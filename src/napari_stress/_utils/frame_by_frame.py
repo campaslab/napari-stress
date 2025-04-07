@@ -61,7 +61,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
 
         # Inspect arguments and check if `use_dask` is passed as keyword argument
         use_dask = False
-        if "use_dask" in kwargs.keys():
+        if "use_dask" in kwargs:
             use_dask = kwargs["use_dask"]
             del kwargs["use_dask"]
 
