@@ -513,7 +513,7 @@ def iterative_curvature_adaptive_patch_fitting(
                 fitted_query_point, fitting_params
             )
 
-            mean_curvatures[idx] = mean_curv
+            mean_curvatures[idx] = mean_curv[0]
             principal_curvatures[idx] = principal_curv[0]
 
         # Update the search radii
