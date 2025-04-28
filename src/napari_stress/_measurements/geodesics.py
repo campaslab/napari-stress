@@ -102,9 +102,8 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     import vedo
 
     # Reorder the faces of the surface to ensure consistent orientation
+    faces = reorder_edges_of_faces(np.asarray(surface[1], dtype=np.int32))
     vertices = np.asarray(surface[0], dtype=np.float64)
-    faces = np.asarray(surface[1], dtype=np.int32)
-    faces = reorder_edges_of_faces(faces)
 
     distance_matrix = gdist.local_gdist_matrix(
         vertices, faces, max_distance=1e9).toarray()
