@@ -31,7 +31,7 @@ dependencies = [
     "mpmath",
     "napari",
     "napari-tools-menu>=0.1.15",
-    "pandas",
+    "pandas>=2.1.2",
     "scikit-image",
     "scipy>=1.9.0",
     "seaborn",
