@@ -28,6 +28,12 @@ def geodesic_distance_matrix(
 
     """
     import gdist
+    import vedo
+
+    # first clean the surface of duplicate/non-manifold edges
+    mesh = vedo.Mesh((surface[0], surface[1]))
+    mesh.clean()
+    surface = mesh.vertices, np.asarray(mesh.cells, dtype=np.int32)
 
     distance_matrix = gdist.local_gdist_matrix(
         np.asarray(surface[0], dtype=np.float64),
