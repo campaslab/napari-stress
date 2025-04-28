@@ -87,7 +87,7 @@ def test_decorator_points_layerdatatuple():
         list_of_ldtuples, layertype=LayerDataTuple
     )
     ldtuple_3d = Converter.list_of_data_to_data(
-        [list_of_ldtuples[0]], layertype=PointsData
+        [list_of_ldtuples[0]], layertype=LayerDataTuple
     )
 
     assert np.array_equal(ldtuple_3d[0][0], list_of_ldtuples[0][0])
@@ -244,4 +244,4 @@ def test_frame_by_frame_dataframes():
 
 
 if __name__ == "__main__":
-    test_decorator_surfaces()
+    test_decorator_points_layerdatatuple()
