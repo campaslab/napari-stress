@@ -60,7 +60,7 @@ contributions:
       python_name: napari_stress.approximation:curvature_on_ellipsoid
       title: Measure curvature on ellipsoid
     - id: napari-stress.calculate_patch_fitted_curvature_surface
-      python_name: napari_stress.measurements:calculate_patch_fitted_curvature_on_surface
+      python_name: napari_stress._measurements.curvature:_calculate_patch_fitted_curvature_on_surface
       title: Calculate patch-fitted curvature on surface
 
     # stress measurements
