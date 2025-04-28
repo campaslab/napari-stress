@@ -1,39 +1,38 @@
-# -*- coding: utf-8 -*-
+from typing import Tuple
 
-from .._stress import euclidian_k_form_SPB as euc_kf
-from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
-
-from napari_tools_menu import register_function
 import numpy as np
 import pandas as pd
-
 from napari.layers import Layer
+from napari_tools_menu import register_function
 
+from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
+from .._stress import euclidian_k_form_SPB as euc_kf
 from .._utils import coordinate_conversion as conversion
 from .._utils.frame_by_frame import frame_by_frame
 from ..types import (
-    _METADATAKEY_MEAN_CURVATURE,
-    _METADATAKEY_H0_ELLIPSOID,
-    _METADATAKEY_H_E123_ELLIPSOID,
-    _METADATAKEY_H0_SURFACE_INTEGRAL,
-    _METADATAKEY_S2_VOLUME_INTEGRAL,
-    _METADATAKEY_H0_VOLUME_INTEGRAL,
-    _METADATAKEY_H0_ARITHMETIC,
-    _METADATAKEY_H0_RADIAL_SURFACE,
-    _METADATAKEY_GAUSS_BONNET_REL,
     _METADATAKEY_GAUSS_BONNET_ABS,
+    _METADATAKEY_GAUSS_BONNET_REL,
+    _METADATAKEY_H0_ARITHMETIC,
+    _METADATAKEY_H0_ELLIPSOID,
+    _METADATAKEY_H0_RADIAL_SURFACE,
+    _METADATAKEY_H0_SURFACE_INTEGRAL,
+    _METADATAKEY_H0_VOLUME_INTEGRAL,
+    _METADATAKEY_H_E123_ELLIPSOID,
+    _METADATAKEY_MEAN_CURVATURE,
     _METADATAKEY_PRINCIPAL_CURVATURES1,
     _METADATAKEY_PRINCIPAL_CURVATURES2,
+    _METADATAKEY_S2_VOLUME_INTEGRAL,
     manifold,
 )
 
-from typing import Tuple
 
-
-@register_function(menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)")
+@register_function(
+    menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)"
+)
 @frame_by_frame
 def curvature_on_ellipsoid(
-    ellipsoid: "napari.types.VectorsData", sample_points: "napari.types.PointsData"
+    ellipsoid: "napari.types.VectorsData",
+    sample_points: "napari.types.PointsData",
 ) -> "napari.types.LayerDataTuple":
     """
     Calculate mean curvature on ellipsoid.
@@ -65,7 +64,9 @@ def curvature_on_ellipsoid(
     a0 = lengths[0]
     a1 = lengths[1]
     a2 = lengths[2]
-    U, V = conversion.cartesian_to_elliptical(ellipsoid, sample_points, invert=True)
+    U, V = conversion.cartesian_to_elliptical(
+        ellipsoid, sample_points, invert=True
+    )
 
     # calculate point-wise mean curvature H_i
     num_H_ellps = (
@@ -83,7 +84,8 @@ def curvature_on_ellipsoid(
         8.0
         * (
             (a0 * a1 * np.cos(V)) ** 2
-            + (a2 * np.sin(V)) ** 2 * ((a1 * np.cos(U)) ** 2 + (a0 * np.sin(U)) ** 2)
+            + (a2 * np.sin(V)) ** 2
+            * ((a1 * np.cos(U)) ** 2 + (a0 * np.sin(U)) ** 2)
         )
         ** 1.5
     )
@@ -93,7 +95,9 @@ def curvature_on_ellipsoid(
     k_upstairs = a0**2 * a1**2 * a2**2
     K_downstairs = (
         a0**2 * a1**2 * np.cos(V) ** 2
-        + a2**2 * (a1**2 * np.cos(U) ** 2 + a0**2 * np.sin(U) ** 2) * np.sin(V) ** 2
+        + a2**2
+        * (a1**2 * np.cos(U) ** 2 + a0**2 * np.sin(U) ** 2)
+        * np.sin(V) ** 2
     ) ** 2
     k = k_upstairs / K_downstairs.squeeze()
     k1 = H_ellps_pts + np.sqrt(H_ellps_pts**2 - k)
@@ -102,7 +106,9 @@ def curvature_on_ellipsoid(
     # calculate averaged curvatures H_0: 1st method of H0 computation, for Ellipsoid in UV points
     H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
 
-    H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(ellipsoid)
+    H0_ellipsoid_major_minor = mean_curvature_on_ellipse_cardinal_points(
+        ellipsoid
+    )
 
     # add to viewer if it doesn't exist.
     properties, features, metadata = {}, {}, {}
@@ -148,8 +154,12 @@ def _calculate_patch_fitted_curvature_on_surface(
     # add to viewer if it doesn't exist.
     properties, features, metadata = {}, {}, {}
     features[_METADATAKEY_MEAN_CURVATURE] = df["mean_curvature"].values
-    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = df["principal_curvature_1"].values
-    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = df["principal_curvature_2"].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES1] = df[
+        "principal_curvature_1"
+    ].values
+    features[_METADATAKEY_PRINCIPAL_CURVATURES2] = df[
+        "principal_curvature_2"
+    ].values
     metadata["features"] = features
     properties["metadata"] = metadata
     properties["name"] = "Result of mean curvature on ellipsoid"
@@ -180,7 +190,9 @@ def calculate_patch_fitted_curvature_on_surface(
     """
     points = surface[0]
 
-    return calculate_patch_fitted_curvature_on_pointcloud(points, search_radius)
+    return calculate_patch_fitted_curvature_on_pointcloud(
+        points, search_radius
+    )
 
 
 def calculate_patch_fitted_curvature_on_pointcloud(
@@ -202,13 +214,14 @@ def calculate_patch_fitted_curvature_on_pointcloud(
         "principal_curvature_2" for the mean curvature and principal curvatures
         of the patch fitted to every point in the pointcloud.
     """
+    import numpy as np
+
     from .._reconstruction.patches import (
         _calculate_mean_curvature_on_patch,
-        _orient_patch,
         _find_neighbor_indices,
         _fit_quadratic_surface,
+        _orient_patch,
     )
-    import numpy as np
 
     num_points = len(points)  # Number of points in the point cloud
 
@@ -241,6 +254,7 @@ def calculate_patch_fitted_curvature_on_pointcloud(
     df = pd.DataFrame(
         {
             "mean_curvature": mean_curvatures,
+            "gaussian_curvature": principal_curvatures[:, 0] * principal_curvatures[:, 1],
             "principal_curvature_1": principal_curvatures[:, 0],
             "principal_curvature_2": principal_curvatures[:, 1],
         }
@@ -316,7 +330,9 @@ def gauss_bonnet_test(
         input_manifold = input_manifold.metadata[manifold.__name__]
 
     K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
-        input_manifold.K_A_pts, input_manifold.K_B_pts, input_manifold.lebedev_info
+        input_manifold.K_A_pts,
+        input_manifold.K_B_pts,
+        input_manifold.lebedev_info,
     )
     Gauss_Bonnet_Err = (
         euc_kf.Integral_on_Manny(
@@ -333,7 +349,9 @@ def gauss_bonnet_test(
     return Gauss_Bonnet_Err, Gauss_Bonnet_Rel_Err
 
 
-@register_function(menu="Measurement > Measure mean curvature on manifold (n-STRESS)")
+@register_function(
+    menu="Measurement > Measure mean curvature on manifold (n-STRESS)"
+)
 def calculate_mean_curvature_on_manifold(
     input_manifold: manifold,
 ) -> Tuple[np.ndarray, float, float]:
@@ -374,7 +392,9 @@ def calculate_mean_curvature_on_manifold(
     mean_curvatures = (
         Orientation
         * euc_kf.Combine_Chart_Quad_Vals(
-            input_manifold.H_A_pts, input_manifold.H_B_pts, input_manifold.lebedev_info
+            input_manifold.H_A_pts,
+            input_manifold.H_B_pts,
+            input_manifold.lebedev_info,
         ).squeeze()
     )
 
@@ -447,8 +467,12 @@ def average_mean_curvatures_on_manifold(
     H0_volume_integral = None
     H0_radial_surface = None
     if input_manifold.manifold_type == "radial":
-        S2_volume, H0_volume_integral = volume_integrated_mean_curvature(input_manifold)
-        H0_radial_surface = radial_surface_averaged_mean_curvature(input_manifold)
+        S2_volume, H0_volume_integral = volume_integrated_mean_curvature(
+            input_manifold
+        )
+        H0_radial_surface = radial_surface_averaged_mean_curvature(
+            input_manifold
+        )
 
     # if a layer was passed instead of manifold - put result in metadata
     if layer is not None:
@@ -472,13 +496,17 @@ def numerical_averaged_mean_curvature(curvatures: np.ndarray) -> float:
     return curvatures.flatten().mean()
 
 
-def surface_integrated_mean_curvature(mean_curvatures: np.ndarray, manifold: manifold):
+def surface_integrated_mean_curvature(
+    mean_curvatures: np.ndarray, manifold: manifold
+):
     """Calculate mean curvature by integrating surface area."""
     Integral_on_surface = euc_kf.Integral_on_Manny(
         mean_curvatures, manifold, manifold.lebedev_info
     )
     Integral_on_sphere = euc_kf.Integral_on_Manny(
-        np.ones_like(mean_curvatures).astype(float), manifold, manifold.lebedev_info
+        np.ones_like(mean_curvatures).astype(float),
+        manifold,
+        manifold.lebedev_info,
     )
 
     return Integral_on_surface / Integral_on_sphere
@@ -559,7 +587,9 @@ def mean_curvature_differences_radial_cartesian_manifolds(
     mean_curvature_cartesian, _, _ = calculate_mean_curvature_on_manifold(
         manifold_cartesian
     )
-    mean_curvature_radial = mean_curvature_on_radial_manifold(manifold_cartesian)
+    mean_curvature_radial = mean_curvature_on_radial_manifold(
+        manifold_cartesian
+    )
 
     on_radial = euc_kf.Integral_on_Manny(
         mean_curvature_radial - mean_curvature_cartesian,

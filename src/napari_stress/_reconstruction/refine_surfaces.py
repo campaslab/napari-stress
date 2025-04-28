@@ -78,7 +78,11 @@ def trace_refinement_of_surface(
     from .. import _vectors as vectors
     from .._measurements.intensity import sample_intensity_along_vector
     from .._measurements.measurements import distance_to_k_nearest_neighbors
-    from .fit_utils import _mean_squared_error, _identify_outliers, _fancy_edge_fit
+    from .fit_utils import (
+        _fancy_edge_fit,
+        _identify_outliers,
+        _mean_squared_error,
+    )
 
     if isinstance(selected_fit_type, str):
         selected_fit_type = fit_types(selected_fit_type)
@@ -87,9 +91,9 @@ def trace_refinement_of_surface(
         interpolation_method = interpolation_types(interpolation_method)
 
     if isinstance(selected_edge, str):
-        edge_detection_function = edge_functions.__members__[selected_edge].value[
-            selected_fit_type.value
-        ]
+        edge_detection_function = edge_functions.__members__[
+            selected_edge
+        ].value[selected_fit_type.value]
     else:
         edge_detection_function = selected_edge.value[selected_fit_type.value]
 
@@ -176,7 +180,9 @@ def trace_refinement_of_surface(
         intensity_along_vector = intensity_along_vector[good_points]
 
     # get indeces of rows with nans
-    no_nan_idx = np.where(~np.isnan(fit_data["surface_points_x"].to_numpy()))[0]
+    no_nan_idx = np.where(~np.isnan(fit_data["surface_points_x"].to_numpy()))[
+        0
+    ]
     fit_data = fit_data.iloc[no_nan_idx]
     intensity_along_vector = intensity_along_vector.iloc[no_nan_idx]
 
@@ -221,7 +227,9 @@ def trace_refinement_of_surface(
     # reformat to layerdatatuple: normal vectors
     start_points = np.stack(fit_data["start_points"].to_numpy()).squeeze()
     trace_vectors = trace_vectors[fit_data.index.to_numpy()]
-    trace_vectors = np.stack([start_points, trace_vectors]).transpose((1, 0, 2))
+    trace_vectors = np.stack([start_points, trace_vectors]).transpose(
+        (1, 0, 2)
+    )
 
     properties = {"name": "Normals"}
     layer_normals = (trace_vectors, properties, "vectors")
@@ -248,8 +256,9 @@ def resample_pointcloud(
     resampled_points : TYPE
 
     """
-    from scipy.interpolate import griddata
     import vedo
+    from scipy.interpolate import griddata
+
     from .fit_utils import _fibonacci_sampling
 
     # convert to spherical, relative coordinates
@@ -272,7 +281,11 @@ def resample_pointcloud(
 
     # interpolate cartesian coordinates on (theta, phi) grid
     theta_interpolation = np.concatenate(
-        [points_spherical[:, 1], points_spherical[:, 1], points_spherical[:, 1]]
+        [
+            points_spherical[:, 1],
+            points_spherical[:, 1],
+            points_spherical[:, 1],
+        ]
     )
     phi_interpolation = np.concatenate(
         [

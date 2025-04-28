@@ -1,4 +1,5 @@
 import numpy as np
+
 from .expansion_base import Expander
 
 
@@ -71,7 +72,9 @@ class SphericalHarmonicsExpander(Expander):
         from .._stress import sph_func_SPB as sph_f
 
         # Convert coordinates to ellipsoidal (latitude/longitude)
-        longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
+        longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(
+            points
+        )
 
         # This implementation fits a superposition of three sets of spherical harmonics
         # to the data, one for each cardinal direction (x/y/z).
@@ -85,7 +88,9 @@ class SphericalHarmonicsExpander(Expander):
             optimal_fit_parameters.append(params)
         optimal_fit_parameters = np.vstack(optimal_fit_parameters).transpose()
 
-        fit_sph_coef_mats = np.empty((3, self.max_degree + 1, self.max_degree + 1))
+        fit_sph_coef_mats = np.empty(
+            (3, self.max_degree + 1, self.max_degree + 1)
+        )
         for idx in range(3):
             fit_sph_coef_mats[idx] = sph_f.Un_Flatten_Coef_Vec(
                 optimal_fit_parameters[:, idx], self.max_degree
@@ -99,7 +104,9 @@ class SphericalHarmonicsExpander(Expander):
         """
         from .._stress import sph_func_SPB as sph_f
 
-        radii, longitude, latitude = self._cartesian_to_radial_coordinates(points)
+        radii, longitude, latitude = self._cartesian_to_radial_coordinates(
+            points
+        )
 
         optimal_fit_parameters = self._least_squares_harmonic_fit(
             fit_degree=self.max_degree,
@@ -108,9 +115,9 @@ class SphericalHarmonicsExpander(Expander):
         )
 
         # Add a singleton dimension to be consistent with coefficient array shape
-        return sph_f.Un_Flatten_Coef_Vec(optimal_fit_parameters, self.max_degree)[
-            None, :
-        ]
+        return sph_f.Un_Flatten_Coef_Vec(
+            optimal_fit_parameters, self.max_degree
+        )[None, :]
 
     def _expand(self, points: "napari.types.PointsData"):
         """
@@ -119,16 +126,20 @@ class SphericalHarmonicsExpander(Expander):
         from .._stress import sph_func_SPB as sph_f
 
         if self.expansion_type == "cartesian":
-            longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(points)
+            longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(
+                points
+            )
 
         elif self.expansion_type == "radial":
-            _, longitude, latitude = self._cartesian_to_radial_coordinates(points)
+            _, longitude, latitude = self._cartesian_to_radial_coordinates(
+                points
+            )
 
         fitted_points = np.array(
             [
-                sph_f.spherical_harmonics_function(coef, self.max_degree).Eval_SPH(
-                    longitude, latitude
-                )
+                sph_f.spherical_harmonics_function(
+                    coef, self.max_degree
+                ).Eval_SPH(longitude, latitude)
                 for coef in self._coefficients
             ]
         ).T
@@ -273,12 +284,14 @@ class SphericalHarmonicsExpander(Expander):
                 Y_mn_coors_in = []
                 Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
                 All_Y_mn_pt_in.append(Y_mn_coors_in)
-        All_Y_mn_pt_in_mat = np.hstack((All_Y_mn_pt_in))
+        All_Y_mn_pt_in_mat = np.hstack(All_Y_mn_pt_in)
 
         coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
         return coefficients
 
-    def _calculate_power_spectrum_individual(self, coefficients, normalize=True):
+    def _calculate_power_spectrum_individual(
+        self, coefficients, normalize=True
+    ):
         power_spectrum = np.zeros(coefficients.shape[0])
         for order in range(coefficients.shape[0]):
             # Assume the real coefficients are on the diagonal and immediately right (if exist)
@@ -297,7 +310,9 @@ class SphericalHarmonicsExpander(Expander):
 
         return power_spectrum
 
-    def _least_squares_harmonic_fit(self, fit_degree, sample_locations, values):
+    def _least_squares_harmonic_fit(
+        self, fit_degree, sample_locations, values
+    ):
         """
         Perform least squares harmonic fit on input points using vectorized spherical harmonics.
         """
@@ -348,7 +363,9 @@ class SphericalHarmonicsExpander(Expander):
         )
 
         # Calculate V coordinates (similar to latitude)
-        cylinder_radius = np.sqrt(aligned_points[:, 0] ** 2 + aligned_points[:, 1] ** 2)
+        cylinder_radius = np.sqrt(
+            aligned_points[:, 0] ** 2 + aligned_points[:, 1] ** 2
+        )
         cylinder_radius_expanded = np.sqrt(
             (axis_lengths[0] * np.cos(u_coordinates)) ** 2
             + (axis_lengths[1] * np.sin(u_coordinates)) ** 2
@@ -423,7 +440,9 @@ class EllipsoidExpander(Expander):
     def __init__(self):
         super().__init__()
 
-    def _fit(self, points: "napari.types.PointsData") -> "napari.types.VectorsData":
+    def _fit(
+        self, points: "napari.types.PointsData"
+    ) -> "napari.types.VectorsData":
         """
         Fit a 3D ellipsoid to given points using least squares fitting.
 
@@ -440,8 +459,8 @@ class EllipsoidExpander(Expander):
             The fitted ellipsoid.
         """
         coefficients = self._fit_ellipsoid_to_points(points)
-        self._center, self._axes, self._eigenvectors = self._extract_characteristics(
-            coefficients
+        self._center, self._axes, self._eigenvectors = (
+            self._extract_characteristics(coefficients)
         )
 
         vectors = (
@@ -473,7 +492,9 @@ class EllipsoidExpander(Expander):
         )
 
         U, V = cartesian_to_elliptical(self._coefficients, points, invert=True)
-        expanded_points = elliptical_to_cartesian(U, V, self._coefficients, invert=True)
+        expanded_points = elliptical_to_cartesian(
+            U, V, self._coefficients, invert=True
+        )
 
         return expanded_points
 
@@ -554,11 +575,11 @@ class EllipsoidExpander(Expander):
             The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
 
             .. math::
-                H_{max} = 1 / (2 * a^2) + 1 / (2 * b^2)
+                H_{max} = a / (2 * c^2) + a / (2 * b^2)
 
-                H_{min} = 1 / (2 * b^2) + 1 / (2 * a^2)
+                H_{min} = c / (2 * b^2) + c / (2 * a^2)
 
-            where a, b are the largest and smallest axes of the ellipsoid, respectively.
+            where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
         """
         return self._properties
 
@@ -572,20 +593,14 @@ class EllipsoidExpander(Expander):
 
         """
         # get and remove the largest, smallest and medial axis
-        axes = list(self._axes)
-        largest_axis = max(axes)
-        axes.remove(largest_axis)
-        smallest_axis = min(axes)
-        axes.remove(smallest_axis)
-        medial_axis = axes[0]
+        semi_axis_sorted = np.sort(self._axes)
+        a = semi_axis_sorted[2]
+        b = semi_axis_sorted[1]
+        c = semi_axis_sorted[0]
 
         # accoording to paper (https://www.biorxiv.org/content/10.1101/2021.03.26.437148v1.full)
-        maximum_mean_curvature = largest_axis / (
-            2 * smallest_axis**2
-        ) + largest_axis / (2 * medial_axis**2)
-        minimum_mean_curvature = smallest_axis / (
-            2 * medial_axis**2
-        ) + smallest_axis / (2 * largest_axis**2)
+        maximum_mean_curvature = a / (2 * c**2) + a / (2 * b**2)
+        minimum_mean_curvature = c / (2 * b**2) + c / (2 * a**2)
 
         self._properties["maximum_mean_curvature"] = maximum_mean_curvature
         self._properties["minimum_mean_curvature"] = minimum_mean_curvature
@@ -632,14 +647,18 @@ class EllipsoidExpander(Expander):
         z = points[:, 2, np.newaxis]
 
         # Construct the design matrix for the ellipsoid equation
-        design_matrix = np.hstack((x**2, y**2, z**2, x * y, x * z, y * z, x, y, z))
+        design_matrix = np.hstack(
+            (x**2, y**2, z**2, x * y, x * z, y * z, x, y, z)
+        )
         column_of_ones = np.ones_like(x)  # Column vector of ones
 
         # Perform least squares fitting to solve for the coefficients
         transposed_matrix = design_matrix.transpose()
         matrix_product = np.dot(transposed_matrix, design_matrix)
         inverse_matrix = np.linalg.inv(matrix_product)
-        coefficients = np.dot(inverse_matrix, np.dot(transposed_matrix, column_of_ones))
+        coefficients = np.dot(
+            inverse_matrix, np.dot(transposed_matrix, column_of_ones)
+        )
 
         # Append -1 to the coefficients to represent the constant term on the right side of the equation
         ellipsoid_coefficients = np.append(coefficients, -1)
@@ -672,7 +691,7 @@ class EllipsoidExpander(Expander):
                     coefficients[6] / 2.0,
                     coefficients[7] / 2.0,
                     coefficients[8] / 2.0,
-                    -1,
+                    coefficients[9],
                 ],
             ]
         )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 
@@ -67,7 +66,9 @@ def test_spherical_harmonics_expand(droplet_points):
     expanded_points_radial = expander_radial.expand(droplet_points)
 
     # Assert the expanded points are close to the original points
-    np.testing.assert_allclose(expanded_points_radial, droplet_points, rtol=0.01)
+    np.testing.assert_allclose(
+        expanded_points_radial, droplet_points, rtol=0.01
+    )
 
 
 def generate_ellipsoidal_pointclouds(
@@ -121,15 +122,38 @@ def test_lsq_ellipsoid0(n_tests=10):
         center = expander.center_
         axes_lengths = np.sort(expander.axes_)
 
-        max_mean_curvatures.append(expander.properties["maximum_mean_curvature"])
-        min_mean_curvatures.append(expander.properties["minimum_mean_curvature"])
+        max_mean_curvatures.append(
+            expander.properties["maximum_mean_curvature"]
+        )
+        min_mean_curvatures.append(
+            expander.properties["minimum_mean_curvature"]
+        )
+
+        # The mean curvature of an ellipsoid is given by the formula
+        # H = a / (2 * c^2) + a / (2 * b^2) for the maximum mean curvature
+        # and H = c / (2 * b^2) + c / (2 * a^2) for the minimum mean curvature
+        # where a, b, c are the semi-axes of the ellipsoid
+        axes_sorted = np.sort(expander.axes_)
+        a = axes_sorted[2]
+        b = axes_sorted[1]
+        c = axes_sorted[0]
+        h_max_theory = a / (2 * c**2) + a / (2 * b**2)
+        h_min_theory = c / (2 * b**2) + c / (2 * a**2)
+        assert expander.properties["maximum_mean_curvature"] == h_max_theory
+        assert expander.properties["minimum_mean_curvature"] == h_min_theory
+        assert (
+            expander.properties["maximum_mean_curvature"]
+            > expander.properties["minimum_mean_curvature"]
+        )
 
         assert np.allclose(center, x0)
         assert np.allclose(a2, axes_lengths[2])
         assert np.allclose(a1, axes_lengths[1])
         assert np.allclose(a0, axes_lengths[0])
 
-        assert np.allclose(expander.properties["residuals"].mean(), 0, atol=0.01)
+        assert np.allclose(
+            expander.properties["residuals"].mean(), 0, atol=0.01
+        )
         assert len(expanded_points) == len(points)
 
     # all elements in either list should be the same
@@ -158,7 +182,9 @@ def test_lsq_ellipsoid():
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
     ellipsoid = approximation.least_squares_ellipsoid(pointcloud)
 
-    fitted_points = approximation.expand_points_on_ellipse(ellipsoid, pointcloud)
+    fitted_points = approximation.expand_points_on_ellipse(
+        ellipsoid, pointcloud
+    )
 
     assert fitted_points is not None
 
@@ -176,9 +202,9 @@ def test_ellipse_normals():
 def test_curvature_on_ellipsoid(make_napari_viewer):
     from napari_stress import (
         approximation,
+        get_droplet_point_cloud,
         measurements,
         types,
-        get_droplet_point_cloud,
     )
 
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]

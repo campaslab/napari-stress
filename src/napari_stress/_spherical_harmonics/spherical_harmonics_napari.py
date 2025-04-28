@@ -1,17 +1,16 @@
-# -*- coding: utf-8 -*-
-from napari.types import LayerDataTuple, PointsData
-from napari.layers import Points
-import numpy as np
 from enum import Enum
+
+import napari
+import numpy as np
+from napari.layers import Points
+from napari.types import LayerDataTuple, PointsData
+from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import (
-    lebedev_quadrature,
     create_manifold,
+    lebedev_quadrature,
 )
-
-import napari
-from napari_tools_menu import register_function
 
 
 class expansion_types(Enum):

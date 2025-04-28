@@ -18,6 +18,7 @@ parts:
         - file: 01_code_usage/01_toolboxes/demo_droplet_reconstruction_toolbox_code
         - file: 01_code_usage/01_toolboxes/demo_anisotropic_stresses
         - file: 01_code_usage/01_toolboxes/demo_analyze_everything
+        - file: 01_code_usage/01_toolboxes/demo_analyze_everything_batch
 
       - file: 01_code_usage/02_example_workflows/Readme
         sections:
@@ -27,7 +28,6 @@ parts:
         - file: 01_code_usage/02_example_workflows/demo_surface_tracing
         - file: 01_code_usage/02_example_workflows/demo_patch_fitting_reconstruction
         - file: 01_code_usage/02_example_workflows/demo_spherical_harmonics_code
-        - file: 01_code_usage/02_example_workflows/demo_timelapse_processing
         - file: 01_code_usage/02_example_workflows/demo_measure_intensity_on_surface
         - file: 01_code_usage/02_example_workflows/demo_measure_intensity_on_vectors
 
@@ -52,6 +52,11 @@ parts:
       sections:
       - file: 03_glossary/01_spherical_harmonics/01_spherical_harmonics
       - file: 03_glossary/01_spherical_harmonics/02_analyzing_spherical_harmonics
+
+    - file: 03_glossary/02_stresses/Readme
+      sections:
+      - file: 03_glossary/02_stresses/01_tissue_stresses
+      - file: 03_glossary/02_stresses/02_cell_stresses
 
   - caption: FAQ
     chapters:

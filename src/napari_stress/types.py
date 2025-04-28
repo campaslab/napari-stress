@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from typing import List
 
+from magicgui import register_type
+from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from napari import layers
 from napari.utils._magicgui import find_viewer_ancestor
-from magicgui import register_type
 
 from ._stress.manifold_SPB import manifold
 
@@ -37,8 +36,12 @@ _METADATAKEY_STRESS_TOTAL = "stress_total"
 _METADATAKEY_STRESS_TOTAL_ANISO = "stress_total_anisotropy"
 _METADATAKEY_STRESS_TOTAL_RADIAL = "stress_total_radial"
 
-_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO = "stress_cell_nearest_pair_anisotropy"
-_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST = "stress_cell_nearest_pair_distance"
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO = (
+    "stress_cell_nearest_pair_anisotropy"
+)
+_METADATAKEY_STRESS_CELL_NEAREST_PAIR_DIST = (
+    "stress_cell_nearest_pair_distance"
+)
 _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO = "stress_cell_all_pair_anisotropy"
 _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST = "stress_cell_all_pair_distance"
 
@@ -53,19 +56,30 @@ _METADATAKEY_EXTREMA_CELL_STRESS = "stress_cell_extrema"
 _METADATAKEY_EXTREMA_TOTAL_STRESS = "stress_total_extrema"
 
 _METADATAKEY_STRESS_TENSOR_ELLI = "Tissue_stress_tensor_elliptical"
-_METADATAKEY_STRESS_TENSOR_ELLI_E1 = "Tissue_stress_tensor_elliptical_e1"
-_METADATAKEY_STRESS_TENSOR_ELLI_E2 = "Tissue_stress_tensor_elliptical_e2"
-_METADATAKEY_STRESS_TENSOR_ELLI_E3 = "Tissue_stress_tensor_elliptical_e3"
+_METADATAKEY_STRESS_TENSOR_ELLI_E11 = "Tissue_stress_tensor_elliptical_e11"
+_METADATAKEY_STRESS_TENSOR_ELLI_E22 = "Tissue_stress_tensor_elliptical_e22"
+_METADATAKEY_STRESS_TENSOR_ELLI_E33 = "Tissue_stress_tensor_elliptical_e33"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E11 = "Tissue_stress_tensor_cartesian_e11"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E22 = "Tissue_stress_tensor_cartesian_e22"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E33 = "Tissue_stress_tensor_cartesian_e33"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E12 = "Tissue_stress_tensor_cartesian_e12"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E13 = "Tissue_stress_tensor_cartesian_e13"
+_METADATAKEY_STRESS_TENSOR_CARTESIAN_E23 = "Tissue_stress_tensor_cartesian_e23"
+
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1 = "angle_ellipsoid_cartesian_e1_x1"
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2 = "angle_ellipsoid_cartesian_e1_x2"
+_METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X3 = "angle_ellipsoid_cartesian_e1_x3"
+
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E12 = "stress_ellipsoid_anisotropy_e12"
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E13 = "stress_ellipsoid_anisotropy_e13"
 _METADATAKEY_STRESS_ELLIPSOID_ANISO_E23 = "stress_ellipsoid_anisotropy_e23"
 _METADATAKEY_STRESS_TENSOR_CART = "Tissue_stress_tensor_cartesian"
-_METADATAKEY_ANGLE_ELLIPSOID_CART_E1 = "angle_ellipsoid_cartesian_e1_x1"
-_METADATAKEY_ANGLE_ELLIPSOID_CART_E2 = "angle_ellipsoid_cartesian_e1_x2"
-_METADATAKEY_ANGLE_ELLIPSOID_CART_E3 = "angle_ellipsoid_cartesian_e1_x3"
+
 
 _METADATAKEY_FIT_RESIDUE = "fit_residue"
-_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = "Elipsoid_deviation_contribution_matrix"
+_METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = (
+    "Elipsoid_deviation_contribution_matrix"
+)
 
 
 def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
@@ -96,7 +110,8 @@ def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
     return [
         layer
         for layer in viewer.layers
-        if search_key in list(layer.features.keys()) + list(layer.metadata.keys())
+        if search_key
+        in list(layer.features.keys()) + list(layer.metadata.keys())
     ]
 
 

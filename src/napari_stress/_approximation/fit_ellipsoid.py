@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
-from napari.types import PointsData, VectorsData
-from .._utils.frame_by_frame import frame_by_frame
-from .. import __version__
-from napari_tools_menu import register_function
-import numpy as np
-
 import deprecation
+import numpy as np
+from napari.types import PointsData, VectorsData
+from napari_tools_menu import register_function
+
+from .. import __version__
+from .._utils.frame_by_frame import frame_by_frame
 
 
 @deprecation.deprecated(
@@ -72,7 +70,9 @@ def fit_ellipsoid_to_points(
     transposed_matrix = design_matrix.transpose()
     matrix_product = np.dot(transposed_matrix, design_matrix)
     inverse_matrix = np.linalg.inv(matrix_product)
-    coefficients = np.dot(inverse_matrix, np.dot(transposed_matrix, column_of_ones))
+    coefficients = np.dot(
+        inverse_matrix, np.dot(transposed_matrix, column_of_ones)
+    )
 
     # Append -1 to the coefficients to represent the constant term on the right side of the equation
     ellipsoid_coefficients = np.append(coefficients, -1)
@@ -108,7 +108,12 @@ def fit_ellipsoid(coefficients):
                 coefficients[2],
                 coefficients[8] / 2.0,
             ],
-            [coefficients[6] / 2.0, coefficients[7] / 2.0, coefficients[8] / 2.0, -1],
+            [
+                coefficients[6] / 2.0,
+                coefficients[7] / 2.0,
+                coefficients[8] / 2.0,
+                -1,
+            ],
         ]
     )
 
@@ -175,9 +180,9 @@ def normals_on_ellipsoid(points: PointsData) -> VectorsData:
     grad_F_z = 2.0 * C * zz + E * xx + F * yy + J
 
     grad_F_X = np.hstack((grad_F_x, grad_F_y, grad_F_z))
-    Vec_Norms = np.sqrt(np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)).reshape(
-        len(xx), 1
-    )
+    Vec_Norms = np.sqrt(
+        np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)
+    ).reshape(len(xx), 1)
     grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
 
     return np.stack([points, grad_F_X_normed]).transpose((1, 0, 2))
