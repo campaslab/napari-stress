@@ -1,5 +1,4 @@
 import numpy as np
-from napari.types import PointsData, SurfaceData
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
@@ -10,8 +9,8 @@ from .._utils.frame_by_frame import frame_by_frame
 )
 @frame_by_frame
 def reconstruct_surface_from_quadrature_points(
-    points: PointsData,
-) -> SurfaceData:
+    points: "napari.types.PointsData",
+) -> "napari.types.SurfaceData":
     """
     Reconstruct the surface for a given set of quadrature points.
 
@@ -22,12 +21,12 @@ def reconstruct_surface_from_quadrature_points(
 
     Returns
     -------
-    Sphere_Triangulation_Array : TYPE
-        DESCRIPTION.
+    tuple
+        Tuple of points and faces
 
     """
     from scipy.spatial import Delaunay
-
+    from .._utils import sanitize_faces
     from .._stress import lebedev_write_SPB as lebedev_write
 
     n_quadrature_points = len(points)
@@ -53,4 +52,4 @@ def reconstruct_surface_from_quadrature_points(
                 delauney_triangles[tri_i, vert_ind] = vertex
                 vert_ind = vert_ind + 1
 
-    return (points, delauney_triangles.astype(int))
+    return sanitize_faces((points, delauney_triangles.astype(int)))

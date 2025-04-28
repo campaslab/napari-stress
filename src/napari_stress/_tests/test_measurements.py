@@ -823,9 +823,3 @@ def test_stresses():
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma
     )
     measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
-
-
-if __name__ == "__main__":
-    import napari
-
-    test_comprehensive_stress_toolbox_4d(napari.Viewer)

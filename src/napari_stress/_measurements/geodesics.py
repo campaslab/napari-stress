@@ -1,16 +1,13 @@
 from typing import List
 
 import numpy as np
-import tqdm
 from napari.types import LayerDataTuple, SurfaceData
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
 
-def geodesic_distance_matrix(
-    surface: SurfaceData, show_progress: bool = False
-) -> np.ndarray:
+def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
     Calculate a pairwise distance matrix for vertices of a surface.
 
@@ -28,27 +25,16 @@ def geodesic_distance_matrix(
         at `distance_matrix[i, j]`
 
     """
-    from pygeodesic import geodesic
+    import gdist
+    from .._utils import sanitize_faces
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    # Reorder the faces of the surface to ensure consistent orientation
+    sanitized_surface = sanitize_faces(surface)
+    vertices = sanitized_surface[0]
+    faces = sanitized_surface[1]
 
-    n_points = len(surface[0])
-    distance_matrix = np.zeros((n_points, n_points))
-    points = surface[0]
-
-    if show_progress:
-        iterator = tqdm.tqdm(
-            enumerate(points), desc="Calculating geodesic distances"
-        )
-    else:
-        iterator = enumerate(points)
-
-    for idx, pt in iterator:
-        distances, _ = geoalg.geodesicDistances(
-            [idx], np.arange(idx + 1, n_points)
-        )
-        distance_matrix[idx, idx + 1 :] = distances
-        distance_matrix[idx + 1 :, idx] = distances
+    distance_matrix = gdist.local_gdist_matrix(
+        vertices, faces, max_distance=1e9).toarray()
 
     return distance_matrix
 
@@ -77,10 +63,15 @@ def geodesic_path(
         coordinates, the second dimension is the vector from point to point.
 
     """
-    from pygeodesic import geodesic
+    import potpourri3d as pp3d
+    from .._utils import sanitize_faces
 
-    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
-    distances, path = geoalg.geodesicDistance(index_1, index_2)
+    sanitized_surface = sanitize_faces(surface)
+    vertices = sanitized_surface[0]
+    faces = sanitized_surface[1]
+
+    path_solver = pp3d.EdgeFlipGeodesicSolver(vertices, faces)
+    path = path_solver.find_geodesic_path(index_1, index_2)
 
     # convert points to vectors from point to point
     vectors = []
@@ -240,8 +231,10 @@ def local_extrema_analysis(
             - `min_max_pair_distances`: Distances between all pairs of local minima and maxima.
             - `min_max_pair_anisotropies`: Difference in input value `(vertices, faces, values)` between all pairs of local minima and maxima.
     """
-    triangles = surface[1]
+    from .._utils import sanitize_faces
     feature = surface[2]
+    surface = sanitize_faces(surface)
+    triangles = surface[1]
 
     quad_fit = len(feature)
 

@@ -595,7 +595,7 @@ def comprehensive_analysis(
     GDM = None
     if GDM is None:
         GDM = measurements.geodesic_distance_matrix(
-            surface_cell_stress, show_progress=verbose
+            surface_cell_stress
         )
 
     if maximal_distance is None:

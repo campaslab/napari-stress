@@ -33,7 +33,6 @@ dependencies = [
     "napari-tools-menu>=0.1.15",
     "numpy<1.24.0",
     "pandas",
-    "pygeodesic",
     "scikit-image",
     "scipy>=1.9.0",
     "seaborn",
@@ -42,6 +41,8 @@ dependencies = [
     "vedo>=2023.5.0",
     "vispy",
     "deprecation",
+    "gdist",
+    "potpourri3d",
     # "bokeh >= 3.1.0",
 ]
 
