@@ -21,12 +21,12 @@ def reconstruct_surface_from_quadrature_points(
 
     Returns
     -------
-    Sphere_Triangulation_Array : TYPE
-        DESCRIPTION.
+    tuple
+        Tuple of points and faces
 
     """
     from scipy.spatial import Delaunay
-
+    from .._utils import sanitize_faces
     from .._stress import lebedev_write_SPB as lebedev_write
 
     n_quadrature_points = len(points)
@@ -52,15 +52,4 @@ def reconstruct_surface_from_quadrature_points(
                 delauney_triangles[tri_i, vert_ind] = vertex
                 vert_ind = vert_ind + 1
 
-    # go through every triangle and make sure that they are all oriented
-    # counter-clockwise with respect to the center point
-    for i in range(num_tris):
-        p1 = points[int(delauney_triangles[i, 0])]
-        p2 = points[int(delauney_triangles[i, 1])]
-        p3 = points[int(delauney_triangles[i, 2])]
-
-        # check if the triangle is oriented clockwise
-        if np.cross(p2 - p1, p3 - p1)[2] < 0:
-            delauney_triangles[i] = delauney_triangles[i][::-1]
-
-    return (points, delauney_triangles.astype(int))
+    return sanitize_faces((points, delauney_triangles.astype(int)))
