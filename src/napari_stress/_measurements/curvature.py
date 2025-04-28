@@ -254,6 +254,7 @@ def calculate_patch_fitted_curvature_on_pointcloud(
     df = pd.DataFrame(
         {
             "mean_curvature": mean_curvatures,
+            "gaussian_curvature": principal_curvatures[:, 0] * principal_curvatures[:, 1],
             "principal_curvature_1": principal_curvatures[:, 0],
             "principal_curvature_2": principal_curvatures[:, 1],
         }
