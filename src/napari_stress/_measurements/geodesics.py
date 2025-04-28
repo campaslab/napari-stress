@@ -80,9 +80,7 @@ def reorder_edges_of_faces(F: np.ndarray) -> np.ndarray:
     return reorder_neighbours(0, faces_to_neighbours_map, [0])
 
 
-def geodesic_distance_matrix(
-    surface: SurfaceData, show_progress: bool = False
-) -> np.ndarray:
+def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
     Calculate a pairwise distance matrix for vertices of a surface.
 
