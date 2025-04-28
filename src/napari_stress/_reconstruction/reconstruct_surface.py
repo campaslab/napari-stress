@@ -1,5 +1,4 @@
 import numpy as np
-from napari.types import PointsData, SurfaceData
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
@@ -10,8 +9,8 @@ from .._utils.frame_by_frame import frame_by_frame
 )
 @frame_by_frame
 def reconstruct_surface_from_quadrature_points(
-    points: PointsData,
-) -> SurfaceData:
+    points: "napari.types.PointsData",
+) -> "napari.types.SurfaceData":
     """
     Reconstruct the surface for a given set of quadrature points.
 
