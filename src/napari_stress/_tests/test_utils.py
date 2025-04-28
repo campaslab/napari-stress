@@ -90,7 +90,7 @@ def test_decorator_points_layerdatatuple():
         [list_of_ldtuples[0]], layertype=LayerDataTuple
     )
 
-    assert np.array_equal(ldtuple_3d[0][0], list_of_ldtuples[0][0])
+    assert np.array_equal(ldtuple_3d[0], list_of_ldtuples[0][0])
     assert "data1" in ldtuple_4d[1]["metadata"].keys()
     assert ldtuple_4d[0][-1, 0] == 9
 
@@ -241,7 +241,3 @@ def test_frame_by_frame_dataframes():
     assert np.array_equal(list_of_dfs[0]["data"], df1["data"])
     assert np.array_equal(list_of_dfs[1]["data"], df2["data"])
     assert np.array_equal(list_of_dfs[2]["data"], df3["data"])
-
-
-if __name__ == "__main__":
-    test_decorator_points_layerdatatuple()
