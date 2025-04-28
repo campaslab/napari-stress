@@ -7,6 +7,79 @@ from napari_tools_menu import register_function
 from .._utils.frame_by_frame import frame_by_frame
 
 
+import numpy as np
+from sys import setrecursionlimit
+
+def reorder_edges_of_faces(F: np.ndarray) -> np.ndarray:
+    """
+    Reorder edges of faces to ensure consistent orientation.
+
+    The faces are reordered such that the edges are consistently oriented.
+    This is done by checking the orientation of the edges and flipping them if necessary.
+    The function modifies the input array in place.
+
+    Taken from https://github.com/nmwsharp/potpourri3d/issues/21
+    
+    Parameters
+    ----------
+    F : np.ndarray
+        Array of faces, where each face is defined by three vertices.
+        Shape should be (n_faces, 3).
+
+    Returns
+    -------
+    np.ndarray
+        The reordered faces with consistent edge orientation.
+    """
+    setrecursionlimit(5 * F.shape[0])
+
+    def get_duplicate_edges(faces):
+        edges = np.array([[[a, b], [b, c], [c, a]] for a, b, c in faces]).reshape(-1, 2)
+        e, c = np.unique(edges, axis=0, return_counts=True)
+        return e[c > 1].tolist()
+
+    def reorder_neighbours(current_face, faces_to_neighbours_map, reordered_faces):
+        neighbours = faces_to_neighbours_map[current_face]
+        for neighbour in neighbours:
+            if get_duplicate_edges(F[[current_face, neighbour]]):
+                F[neighbour] = F[neighbour][::-1]
+            reordered_faces.append(neighbour)
+            faces_to_neighbours_map[current_face].remove(neighbour)
+            faces_to_neighbours_map[neighbour].remove(current_face)
+
+        for i in reordered_faces:
+            if faces_to_neighbours_map[i]:
+                reorder_neighbours(i, faces_to_neighbours_map, reordered_faces)
+                break
+
+        if not any(faces_to_neighbours_map.values()):
+            return F
+        else:
+            raise RecursionError("Could not reach all vertices.")
+
+    edges = np.array([[[a, b], [b, c], [c, a]] for a, b, c in F]).reshape(-1, 2)
+    edges_to_faces_map = {(min(e), max(e)): [] for e in edges}
+    for i, f in enumerate(F):
+        edges_to_faces_map[(min(f[0], f[1]), max(f[0], f[1]))].append(i)
+        edges_to_faces_map[(min(f[1], f[2]), max(f[1], f[2]))].append(i)
+        edges_to_faces_map[(min(f[2], f[0]), max(f[2], f[0]))].append(i)
+
+    faces_to_neighbours_map = {i: [] for i in range(F.shape[0])}
+    for neighbours in edges_to_faces_map.values():
+        if len(neighbours) > 1:
+            faces_to_neighbours_map[neighbours[0]].append(neighbours[1])
+            faces_to_neighbours_map[neighbours[1]].append(neighbours[0])
+        if len(neighbours) > 2:
+            faces_to_neighbours_map[neighbours[0]].append(neighbours[2])
+            faces_to_neighbours_map[neighbours[2]].append(neighbours[0])
+            faces_to_neighbours_map[neighbours[1]].append(neighbours[2])
+            faces_to_neighbours_map[neighbours[2]].append(neighbours[1])
+        if len(neighbours) > 3:
+            raise ValueError("Something weird is happening.")
+
+    return reorder_neighbours(0, faces_to_neighbours_map, [0])
+
+
 def geodesic_distance_matrix(
     surface: SurfaceData, show_progress: bool = False
 ) -> np.ndarray:
@@ -30,16 +103,13 @@ def geodesic_distance_matrix(
     import gdist
     import vedo
 
-    # first clean the surface of duplicate/non-manifold edges
-    mesh = vedo.Mesh((surface[0], surface[1]))
-    mesh.clean()
-    surface = mesh.vertices, np.asarray(mesh.cells, dtype=np.int32)
+    # Reorder the faces of the surface to ensure consistent orientation
+    vertices = np.asarray(surface[0], dtype=np.float64)
+    faces = np.asarray(surface[1], dtype=np.int32)
+    faces = reorder_edges_of_faces(faces)
 
     distance_matrix = gdist.local_gdist_matrix(
-        np.asarray(surface[0], dtype=np.float64),
-        np.asarray(surface[1], dtype=np.int32),
-        max_distance=1e9,
-    ).toarray()
+        vertices, faces, max_distance=1e9).toarray()
 
     return distance_matrix
 
