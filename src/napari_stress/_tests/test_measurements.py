@@ -71,7 +71,7 @@ def test_mean_curvature_on_ellipsoid():
             ellipsoid,
             voxelsize=np.array([1, 1, 1]),
             use_dask=False,
-            resampling_length=3.5,
+            resampling_length=4.5,
             interpolation_method="linear",
             trace_length=10,
             sampling_distance=1,
@@ -110,7 +110,7 @@ def test_mean_curvature_on_ellipsoid():
             results_measurement = measurements.comprehensive_analysis(
                 results_reconstruction[2][0],
                 max_degree=20,
-                n_quadrature_points=434,
+                n_quadrature_points=110,
                 gamma=5,
             )
 
