@@ -255,44 +255,82 @@ def test_distances():
     assert df.shape[0] == points.shape[0]
 
 
-def test_autocorrelation():
-    """Test temporal and spatiotemporal autocorrelation."""
-    # Temporal autocorrelation
-    n_frames = 10
-    n_measurements = 100
-    np.random.seed(1)
-    frames = np.repeat(np.arange(n_frames), n_measurements)
-    features = [np.ones(n_measurements)]
-    for i in range(1, n_frames):
-        features.append(
-            features[i - 1] + np.random.normal(size=n_measurements, scale=0.3)
-        )
-    df = pd.DataFrame(np.concatenate(features), columns=["feature"])
-    df["frame"] = frames
-    gradient = np.gradient(
-        measurements.temporal_autocorrelation(df, feature="feature")
-    )
-    assert np.all(gradient < 0)
+def test_spatiotemporal_autocorrelation():
+    from napari.types import SurfaceData
 
-    # Spatiotemporal autocorrelation
+    from napari_stress import (
+        TimelapseConverter,
+        create_manifold,
+        get_droplet_point_cloud,
+        lebedev_quadrature,
+        measurements,
+        reconstruction,
+    )
+    from napari_stress._spherical_harmonics.spherical_harmonics import (
+        stress_spherical_harmonics_expansion,
+    )
+
     max_degree = 5
+    # do sh expansion
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
     _, coefficients = stress_spherical_harmonics_expansion(
         pointcloud, max_degree=max_degree, expansion_type="radial"
     )
     quadrature_points, lbdv_info = lebedev_quadrature(
         coefficients,
-        number_of_quadrature_points=434,
+        number_of_quadrature_points=170,
         use_minimal_point_set=False,
     )
     manifold = create_manifold(
         quadrature_points, lbdv_info, max_degree=max_degree
     )
-    distance_matrix = measurements.haversine_distances(max_degree, 434)
+    quadrature_points = manifold.get_coordinates()
+    surface = reconstruction.reconstruct_surface_from_quadrature_points(
+        quadrature_points
+    )
+
+    Converter = TimelapseConverter()
+    surfaces_4d = Converter.list_of_data_to_data(
+        data=[surface, surface, surface], layertype=SurfaceData
+    )
+
+    # get distance matrix and divide by volume-integrated H0
+    H0 = measurements.average_mean_curvatures_on_manifold(manifold)[2]
+    distance_matrix = measurements.haversine_distances(max_degree, 170) / H0
+
     measurements.spatio_temporal_autocorrelation(
-        surfaces=[manifold, manifold], distance_matrix=distance_matrix
+        surfaces=surfaces_4d, distance_matrix=distance_matrix
     )
 
 
+def test_temporal_autocorrelation():
+    import numpy as np
+    import pandas as pd
+
+    from napari_stress import measurements
+
+    n_frames = 10
+    n_measurements = 100
+
+    np.random.seed(1)
+    # create a set of features in multiple timepoints and add a bit more noise
+    # in every frame - the autocorrelaiton should thus decrease monotonously
+    frames = np.repeat(np.arange(n_frames), n_measurements)
+    feature = np.ones(n_measurements)
+    features = []
+    features.append(feature)
+    for i in range(1, n_frames):
+        features.append(
+            features[i - 1] + np.random.normal(size=n_measurements, scale=0.3)
+        )
+
+    df = pd.DataFrame(np.concatenate(features), columns=["feature"])
+    df["frame"] = frames
+
+    gradient = np.gradient(
+        measurements.temporal_autocorrelation(df, feature="feature")
+    )
+    assert np.all(gradient < 0)
+
 if __name__ == "__main__":
-    test_curvature()
+    test_autocorrelation()
