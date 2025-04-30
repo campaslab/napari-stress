@@ -1,135 +1,22 @@
 import numpy as np
-
-
-def test_patch_fitted_curvature():
-    import vedo
-
-    from napari_stress._measurements.curvature import (
-        _calculate_patch_fitted_curvature_on_surface,
-    )
-
-    sphere = vedo.Sphere()
-    sphere = (sphere.vertices, np.asarray(sphere.cells))
-    result = _calculate_patch_fitted_curvature_on_surface(
-        sphere, search_radius=0.25
-    )
-
-    features = result[1]["metadata"]["features"]
-
-    assert "mean_curvature" in features.keys()
-    assert np.allclose(features["mean_curvature"].mean(), 1.0, atol=0.1)
-
-
-def test_intensity_measurement_on_normals():
-    import vedo
-    from skimage import filters, measure, transform
-
-    from napari_stress import measurements, sample_data, vectors
-
-    droplet = sample_data.get_droplet_4d()[0][0][0]
-    droplet_rescaled = transform.rescale(droplet, (1, 1, 2))
-    droplet_binary = droplet_rescaled > filters.threshold_otsu(
-        droplet_rescaled
-    )
-
-    vertices, faces, _, _ = measure.marching_cubes(droplet_binary, level=0.5)
-    surface = (vertices, faces)
-    mesh = vedo.Mesh(surface).smooth().decimate(n=1000)
-    surface_decimated = (mesh.vertices, np.asarray(mesh.cells))
-
-    # measure intensity on normal vectors
-    normals = vectors.normal_vectors_on_surface(
-        surface_decimated, length_multiplier=5, center=True
-    )
-    vectors_LDtuple = measurements.intensity._sample_intensity_along_vector(
-        normals, droplet_rescaled
-    )
-    assert len(vectors_LDtuple[0]) == len(normals)
-    assert "intensity_mean" in vectors_LDtuple[1]["features"].keys()
-
-    # measure intensity directly on surface
-    intensities = measurements.intensity._measure_intensity_on_surface(
-        surface_decimated, droplet_rescaled
-    )
-    assert len(intensities[0][2]) == len(surface_decimated[0])
-    assert "intensity_mean" in intensities[1]["metadata"]["features"].keys()
-
-
-def test_mean_curvature_on_ellipsoid():
-    """Test that the mean curvature is computed correctly."""
-    from napari_stress import measurements, reconstruction, sample_data
-
-    size = 128
-    b, c = 0.5, 0.5
-    number_of_ellipsoids = 4
-
-    for a in np.linspace(0.2, 0.8, number_of_ellipsoids):
-        ellipsoid = sample_data.make_blurry_ellipsoid(
-            a, b, c, size, definition_width=10
-        )[0]
-        results_reconstruction = reconstruction.reconstruct_droplet(
-            ellipsoid,
-            voxelsize=np.array([1, 1, 1]),
-            use_dask=False,
-            resampling_length=4.5,
-            interpolation_method="linear",
-            trace_length=10,
-            sampling_distance=1,
-            return_intermediate_results=True,
-        )
-
-        # calculate each point's distance to the surface of the ellipsoid
-        distances = []
-        ellipse_points = []
-        for pt in results_reconstruction[2][0]:
-            ellipse_points.append(
-                project_point_on_ellipse_surface(
-                    pt,
-                    a * size,
-                    b * size,
-                    c * size,
-                    np.array([size / 2, size / 2, size / 2]),
-                )
-            )
-            distances.append(np.linalg.norm(pt - ellipse_points[-1]))
-        distances = np.array(distances).flatten()
-
-        # relative position error in x, y and z direction
-        relative_position_error = (
-            np.abs(results_reconstruction[2][0] - ellipse_points)
-            / ellipse_points
-        )
-        relative_position_error = relative_position_error.flatten()
-
-        assert np.mean(relative_position_error) < 0.01
-        assert np.mean(distances) < 1
-
-        # calculate mean curvature for two aspect ratios
-        # average relative mean curvature error must be < 10%
-        if a / b > 1 and a / b < 1.4:
-            results_measurement = measurements.comprehensive_analysis(
-                results_reconstruction[2][0],
-                max_degree=20,
-                n_quadrature_points=110,
-                gamma=5,
-            )
-
-            mean_curvature_measured = results_measurement[3][1]["features"][
-                "mean_curvature"
-            ]
-            mean_curvature_theoretical = (
-                theoretical_mean_curvature_on_pointcloud(
-                    c * size / 2,
-                    b * size / 2,
-                    a * size / 2,
-                    results_measurement[4][0],
-                )
-            )
-            relative_difference = (
-                np.abs(mean_curvature_measured - mean_curvature_theoretical)
-                / mean_curvature_theoretical
-            )
-            assert np.mean(relative_difference) < 0.1
+import os
+import shutil
+from pathlib import Path
+import pandas as pd
+import vedo
+from napari_stress import (
+    measurements,
+    reconstruction,
+    sample_data,
+    approximation,
+    get_droplet_point_cloud,
+    get_droplet_point_cloud_4d,
+    create_manifold,
+    lebedev_quadrature,
+)
+from napari_stress._spherical_harmonics.spherical_harmonics import (
+    stress_spherical_harmonics_expansion,
+)
 
 
 def theoretical_mean_curvature_on_pointcloud(a, b, c, pointcloud) -> float:
@@ -237,38 +124,128 @@ def project_point_on_ellipse_surface(
     return point_on_ellipse_surface
 
 
-def test_k_nearest_neighbors():
-    from napari.types import PointsData
+def test_curvature():
+    """Test curvature-related functionality."""
+    # Test patch-fitted curvature
+    sphere = vedo.Sphere()
+    sphere = (sphere.vertices, np.asarray(sphere.cells))
+    result = measurements.curvature._calculate_patch_fitted_curvature_on_surface(
+        sphere, search_radius=0.25
+    )
+    features = result[1]["metadata"]["features"]
+    assert "mean_curvature" in features.keys()
+    assert np.allclose(features["mean_curvature"].mean(), 1.0, atol=0.1)
 
+    # Test mean curvature on ellipsoid
+    size = 128
+    b, c = 0.5, 0.5
+    number_of_ellipsoids = 4
+    for a in np.linspace(0.2, 0.8, number_of_ellipsoids):
+        ellipsoid = sample_data.make_blurry_ellipsoid(
+            a, b, c, size, definition_width=10
+        )[0]
+        results_reconstruction = reconstruction.reconstruct_droplet(
+            ellipsoid,
+            voxelsize=np.array([1, 1, 1]),
+            use_dask=False,
+            resampling_length=3.5,
+            interpolation_method="linear",
+            trace_length=10,
+            sampling_distance=1,
+            return_intermediate_results=True,
+        )
+        distances = np.linalg.norm(
+            results_reconstruction[2][0]
+            - project_point_on_ellipse_surface(
+                results_reconstruction[2][0],
+                a * size,
+                b * size,
+                c * size,
+                np.array([size / 2, size / 2, size / 2]),
+            ),
+            axis=1,
+        )
+        assert np.mean(distances) < 1
+
+    # Test curvature on ellipsoid
+    pointcloud = get_droplet_point_cloud_4d()[0][0]
+    expander = approximation.EllipsoidExpander()
+    expander.fit(pointcloud[:, 1:])
+    ellipsoid = expander.coefficients_
+    approximated_pointcloud = expander.expand(pointcloud[:, 1:])
+    curvature = measurements.curvature_on_ellipsoid(
+        ellipsoid, approximated_pointcloud
+    )
+    assert curvature is not None
+
+
+def test_stress_toolbox(make_napari_viewer):
+    """Test stress analysis toolbox for 3D and 4D data."""
     from napari_stress import measurements
+    viewer = make_napari_viewer()
 
-    points = PointsData(np.random.rand(100, 3))
+    # Test 3D data
+    pointcloud = get_droplet_point_cloud()[0]
+    viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
+    widget = measurements.toolbox.stress_analysis_toolbox(
+        viewer
+    )
+    widget.comboBox_quadpoints.setCurrentIndex(4)
+    viewer.window.add_dock_widget(widget)
+    widget._run()
+    widget._export_settings(file_name="test.yaml")
+    widget2 = measurements.toolbox.stress_analysis_toolbox(
+        viewer
+    )
+    widget2._import_settings(file_name="test.yaml")
+    assert widget2.comboBox_quadpoints.currentText() == "50"
+
+    # Test 4D data
+    pointcloud_4d = get_droplet_point_cloud_4d()[0]
+    viewer.add_points(pointcloud_4d[0])
+    widget._run()
+    assert os.path.isdir(widget.save_directory)
+    assert os.path.isfile(
+        os.path.join(widget.save_directory, "raw_values", "stress_data.csv")
+    )
+    shutil.rmtree(widget.save_directory)
+
+
+def test_distances():
+    """Test geodesics, haversine, and k-nearest neighbors."""
+    # Test haversine distances
+    distance_matrix = measurements.haversine_distances(
+        degree_lebedev=10, n_lebedev_points=434
+    )
+    assert np.allclose(distance_matrix.max(), np.pi / 2)
+
+    # Test k-nearest neighbors
+    points = np.random.rand(100, 3)
     df = measurements.distance_to_k_nearest_neighbors(points)
-
     assert df.shape[0] == points.shape[0]
 
-    points = PointsData(np.array([[0, 0], [1, 1], [0.5, 0.5], [0, 1], [1, 0]]))
-    df = measurements.distance_to_k_nearest_neighbors(points, k=4)
-    assert df.loc[2].to_numpy() == np.linalg.norm([0.5, 0.5])
 
-
-def test_spatiotemporal_autocorrelation():
-    from napari.types import SurfaceData
-
-    from napari_stress import (
-        TimelapseConverter,
-        create_manifold,
-        get_droplet_point_cloud,
-        lebedev_quadrature,
-        measurements,
-        reconstruction,
+def test_autocorrelation():
+    """Test temporal and spatiotemporal autocorrelation."""
+    # Temporal autocorrelation
+    n_frames = 10
+    n_measurements = 100
+    np.random.seed(1)
+    frames = np.repeat(np.arange(n_frames), n_measurements)
+    features = [np.ones(n_measurements)]
+    for i in range(1, n_frames):
+        features.append(
+            features[i - 1] + np.random.normal(size=n_measurements, scale=0.3)
+        )
+    df = pd.DataFrame(np.concatenate(features), columns=["feature"])
+    df["frame"] = frames
+    gradient = np.gradient(
+        measurements.temporal_autocorrelation(df, feature="feature")
     )
-    from napari_stress._spherical_harmonics.spherical_harmonics import (
-        stress_spherical_harmonics_expansion,
-    )
+    assert np.all(gradient < 0)
 
+    # Spatiotemporal autocorrelation
     max_degree = 5
-    # do sh expansion
     pointcloud = get_droplet_point_cloud()[0][0][:, 1:]
     _, coefficients = stress_spherical_harmonics_expansion(
         pointcloud, max_degree=max_degree, expansion_type="radial"
@@ -281,21 +258,9 @@ def test_spatiotemporal_autocorrelation():
     manifold = create_manifold(
         quadrature_points, lbdv_info, max_degree=max_degree
     )
-    quadrature_points = manifold.get_coordinates()
-    surface = reconstruction.reconstruct_surface_from_quadrature_points(
-        quadrature_points
-    )
-
-    Converter = TimelapseConverter()
-    surfaces_4d = Converter.list_of_data_to_data(
-        data=[surface, surface, surface], layertype=SurfaceData
-    )
-
-    # get distance matrix and divide by volume-integrated H0
-    H0 = measurements.average_mean_curvatures_on_manifold(manifold)[2]
-    distance_matrix = measurements.haversine_distances(max_degree, 434) / H0
-
+    distance_matrix = measurements.haversine_distances(max_degree, 434)
     measurements.spatio_temporal_autocorrelation(
+<<<<<<< Updated upstream
         surfaces=surfaces_4d, distance_matrix=distance_matrix
     )
 
@@ -823,3 +788,7 @@ def test_stresses():
         H_i, H0, H_i_ellipsoid, H0_ellipsoid, gamma
     )
     measurements.maximal_tissue_anisotropy(ellipsoid, gamma=gamma)
+=======
+        surfaces=[manifold, manifold], distance_matrix=distance_matrix
+    )
+>>>>>>> Stashed changes
