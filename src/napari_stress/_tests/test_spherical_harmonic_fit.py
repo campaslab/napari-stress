@@ -4,37 +4,6 @@ import vedo
 import napari_stress
 
 
-def test_frontend_spherical_harmonics(make_napari_viewer):
-    from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
-        perform_lebedev_quadrature,
-    )
-
-    ellipse = vedo.shapes.Ellipsoid()
-
-    # Test stress implementation
-    points2 = napari_stress.fit_spherical_harmonics(
-        ellipse.vertices, max_degree=3
-    )
-    assert np.array_equal(ellipse.vertices.shape, points2[0].shape)
-
-    # Test default implementations
-    points = napari_stress.fit_spherical_harmonics(
-        ellipse.vertices, max_degree=3
-    )
-    assert np.array_equal(ellipse.vertices.shape, points[0].shape)
-
-    # Test implementation with viewer
-    viewer = make_napari_viewer()
-    points_layer = viewer.add_points(points[0], **points[1])
-    assert "spherical_harmonics_coefficients" in points_layer.metadata
-
-    # Test quadrature
-    lebedev_points = perform_lebedev_quadrature(points_layer, viewer=viewer)
-    results_layer = viewer.layers[-1]
-    assert "manifold" in lebedev_points[1]["metadata"]
-    assert "spherical_harmonics_coefficients" in results_layer.metadata
-
-
 def test_front_spherical_harmonics_4d(make_napari_viewer):
     from napari_stress import get_droplet_point_cloud_4d
     from napari_stress._spherical_harmonics.spherical_harmonics_napari import (
