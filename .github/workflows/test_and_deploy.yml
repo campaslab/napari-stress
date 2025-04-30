@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Increase swapfile
+        if: runner.os == 'Linux'
         run: |
           sudo swapoff -a
           sudo fallocate -l 15G /swapfile
