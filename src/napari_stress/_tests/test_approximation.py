@@ -51,14 +51,15 @@ def test_spherical_harmonics(generate_pointclouds):
 
     _, droplet_points, _ = generate_pointclouds
     points = droplet_points()
+    degree = 20
 
     # Test fitting
     expander = approximation.SphericalHarmonicsExpander(
-        max_degree=5, expansion_type="cartesian"
+        max_degree=degree, expansion_type="cartesian"
     )
     expander.fit(points)
     assert expander.coefficients_ is not None
-    assert expander.coefficients_.shape == (3, (5 + 1), (5 + 1))
+    assert expander.coefficients_.shape == (3, (degree + 1), (degree + 1))
 
     # Test expansion
     expanded_points = expander.expand(points)
