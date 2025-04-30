@@ -18,6 +18,38 @@ from napari_stress._spherical_harmonics.spherical_harmonics import (
     stress_spherical_harmonics_expansion,
 )
 
+def cartesian_to_spherical(cartesian_coords):
+    """
+    Convert Cartesian coordinates (z, y, x) to spherical coordinates (r, theta, phi).
+
+    Parameters:
+    cartesian_coords (np.ndarray): Nx3 array of Cartesian coordinates.
+
+    Returns:
+    np.ndarray: Nx3 array of spherical coordinates.
+    """
+    z, y, x = cartesian_coords[:, 0], cartesian_coords[:, 1], cartesian_coords[:, 2]
+    r = np.sqrt(x**2 + y**2 + z**2)
+    theta = np.arctan2(y, x)  # Azimuthal angle
+    phi = np.arccos(z / r)    # Polar angle
+    return np.column_stack((r, theta, phi))
+
+def spherical_to_cartesian(spherical_coords):
+    """
+    Convert spherical coordinates (r, theta, phi) to Cartesian coordinates (z, y, x).
+
+    Parameters:
+    spherical_coords (np.ndarray): Nx3 array of spherical coordinates.
+
+    Returns:
+    np.ndarray: Nx3 array of Cartesian coordinates.
+    """
+    r, theta, phi = spherical_coords[:, 0], spherical_coords[:, 1], spherical_coords[:, 2]
+    x = r * np.sin(phi) * np.cos(theta)
+    y = r * np.sin(phi) * np.sin(theta)
+    z = r * np.cos(phi)
+    return np.column_stack((z, y, x))
+
 
 def theoretical_mean_curvature_on_pointcloud(a, b, c, pointcloud) -> float:
     """Theoretical mean curvature of an ellipsoid.
@@ -97,26 +129,24 @@ def project_point_on_ellipse_surface(
     transformed_query_point = np.dot(query_point - center, T)
 
     # transform query point into spherical coordinates
-    transformed_query_point_spherical = vedo.transformations.cart2spher(
-        transformed_query_point[2],
-        transformed_query_point[1],
-        transformed_query_point[0],
+    transformed_query_point_spherical = cartesian_to_spherical(
+        transformed_query_point
     )
 
     # replace radius of query point with radius of sphere, which in this coordinate
     # system is always 0.5
-    point_on_transformed_ellipse_surface = np.array(
+    point_on_transformed_ellipse_surface = np.stack(
         [
-            0.5,
-            transformed_query_point_spherical[1],
-            transformed_query_point_spherical[2],
+            np.ones(transformed_query_point_spherical.shape[0]) * 0.5,
+            transformed_query_point_spherical[:, 1],
+            transformed_query_point_spherical[:, 2],
         ]
-    )
+    ).T
 
     # transform point on sphere back to cartesian coordinates
-    point_on_transformed_ellipse_surface = vedo.transformations.spher2cart(
-        *point_on_transformed_ellipse_surface
-    )[::-1]
+    point_on_transformed_ellipse_surface = spherical_to_cartesian(
+        point_on_transformed_ellipse_surface
+    )
     point_on_ellipse_surface = (
         np.dot(point_on_transformed_ellipse_surface, np.linalg.inv(T)) + center
     )
@@ -148,7 +178,7 @@ def test_curvature():
             ellipsoid,
             voxelsize=np.array([1, 1, 1]),
             use_dask=False,
-            resampling_length=3.5,
+            resampling_length=4.5,
             interpolation_method="linear",
             trace_length=10,
             sampling_distance=1,
@@ -262,3 +292,7 @@ def test_autocorrelation():
     measurements.spatio_temporal_autocorrelation(
         surfaces=[manifold, manifold], distance_matrix=distance_matrix
     )
+
+
+if __name__ == "__main__":
+    test_curvature()
