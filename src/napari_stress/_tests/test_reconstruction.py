@@ -5,6 +5,7 @@ def test_surface_tracing():
     """Test surface tracing and refinement."""
     from skimage import filters, morphology
     from vedo import shapes
+
     from napari_stress import reconstruction
 
     true_radius = 30
@@ -52,15 +53,13 @@ def test_surface_tracing():
 
 def test_patch_fitting():
     """Test patch fitting and related utilities."""
-    from napari_stress._reconstruction.patches import (
-        _fit_and_create_pointcloud,
-        _fit_quadratic_surface,
-        _create_fitted_coordinates,
-    )
     from napari_stress._reconstruction.fit_utils import _fibonacci_sampling
     from napari_stress._reconstruction.patches import (
         _calculate_mean_curvature_on_patch,
+        _create_fitted_coordinates,
         _find_neighbor_indices,
+        _fit_and_create_pointcloud,
+        _fit_quadratic_surface,
         _orient_patch,
         fit_patches,
     )
