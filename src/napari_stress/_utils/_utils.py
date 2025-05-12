@@ -1,6 +1,9 @@
 import numpy as np
 
-def sanitize_faces(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+
+def sanitize_faces(
+    surface: "napari.types.SurfaceData",
+) -> "napari.types.SurfaceData":
     """
     Sanitize the faces of a surface to ensure they are in the correct format.
 
