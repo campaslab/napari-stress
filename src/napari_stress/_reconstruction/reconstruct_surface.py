@@ -26,8 +26,9 @@ def reconstruct_surface_from_quadrature_points(
 
     """
     from scipy.spatial import Delaunay
-    from .._utils import sanitize_faces
+
     from .._stress import lebedev_write_SPB as lebedev_write
+    from .._utils import sanitize_faces
 
     n_quadrature_points = len(points)
 
