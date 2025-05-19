@@ -1,22 +1,24 @@
-import numpy as np
 import os
 import shutil
-from pathlib import Path
+
+import numpy as np
 import pandas as pd
 import vedo
+
 from napari_stress import (
+    approximation,
+    create_manifold,
+    get_droplet_point_cloud,
+    get_droplet_point_cloud_4d,
+    lebedev_quadrature,
     measurements,
     reconstruction,
     sample_data,
-    approximation,
-    get_droplet_point_cloud,
-    get_droplet_point_cloud_4d,
-    create_manifold,
-    lebedev_quadrature,
 )
 from napari_stress._spherical_harmonics.spherical_harmonics import (
     stress_spherical_harmonics_expansion,
 )
+
 
 def cartesian_to_spherical(cartesian_coords):
     """
@@ -28,11 +30,16 @@ def cartesian_to_spherical(cartesian_coords):
     Returns:
     np.ndarray: Nx3 array of spherical coordinates.
     """
-    z, y, x = cartesian_coords[:, 0], cartesian_coords[:, 1], cartesian_coords[:, 2]
+    z, y, x = (
+        cartesian_coords[:, 0],
+        cartesian_coords[:, 1],
+        cartesian_coords[:, 2],
+    )
     r = np.sqrt(x**2 + y**2 + z**2)
     theta = np.arctan2(y, x)  # Azimuthal angle
-    phi = np.arccos(z / r)    # Polar angle
+    phi = np.arccos(z / r)  # Polar angle
     return np.column_stack((r, theta, phi))
+
 
 def spherical_to_cartesian(spherical_coords):
     """
@@ -44,7 +51,11 @@ def spherical_to_cartesian(spherical_coords):
     Returns:
     np.ndarray: Nx3 array of Cartesian coordinates.
     """
-    r, theta, phi = spherical_coords[:, 0], spherical_coords[:, 1], spherical_coords[:, 2]
+    r, theta, phi = (
+        spherical_coords[:, 0],
+        spherical_coords[:, 1],
+        spherical_coords[:, 2],
+    )
     x = r * np.sin(phi) * np.cos(theta)
     y = r * np.sin(phi) * np.sin(theta)
     z = r * np.cos(phi)
@@ -120,7 +131,6 @@ def project_point_on_ellipse_surface(
     np.ndarray
         Point on the surface of the ellipsoid.
     """
-    import vedo
 
     # transformation matrix to turn ellipsoid into a sphere
     T = np.array([[1 / a, 0, 0], [0, 1 / b, 0], [0, 0, 1 / c]])
@@ -159,8 +169,10 @@ def test_curvature():
     # Test patch-fitted curvature
     sphere = vedo.Sphere()
     sphere = (sphere.vertices, np.asarray(sphere.cells))
-    result = measurements.curvature._calculate_patch_fitted_curvature_on_surface(
-        sphere, search_radius=0.25
+    result = (
+        measurements.curvature._calculate_patch_fitted_curvature_on_surface(
+            sphere, search_radius=0.25
+        )
     )
     features = result[1]["metadata"]["features"]
     assert "mean_curvature" in features.keys()
@@ -212,21 +224,18 @@ def test_curvature():
 def test_stress_toolbox(make_napari_viewer):
     """Test stress analysis toolbox for 3D and 4D data."""
     from napari_stress import measurements
+
     viewer = make_napari_viewer()
 
     # Test 3D data
     pointcloud = get_droplet_point_cloud()[0]
     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
-    widget = measurements.toolbox.stress_analysis_toolbox(
-        viewer
-    )
+    widget = measurements.toolbox.stress_analysis_toolbox(viewer)
     widget.comboBox_quadpoints.setCurrentIndex(4)
     viewer.window.add_dock_widget(widget)
     widget._run()
     widget._export_settings(file_name="test.yaml")
-    widget2 = measurements.toolbox.stress_analysis_toolbox(
-        viewer
-    )
+    widget2 = measurements.toolbox.stress_analysis_toolbox(viewer)
     widget2._import_settings(file_name="test.yaml")
     assert widget2.comboBox_quadpoints.currentText() == "50"
 
@@ -260,14 +269,9 @@ def test_spatiotemporal_autocorrelation():
 
     from napari_stress import (
         TimelapseConverter,
-        create_manifold,
         get_droplet_point_cloud,
-        lebedev_quadrature,
         measurements,
         reconstruction,
-    )
-    from napari_stress._spherical_harmonics.spherical_harmonics import (
-        stress_spherical_harmonics_expansion,
     )
 
     max_degree = 5
@@ -305,7 +309,6 @@ def test_spatiotemporal_autocorrelation():
 
 def test_temporal_autocorrelation():
     import numpy as np
-    import pandas as pd
 
     from napari_stress import measurements
 
@@ -331,6 +334,7 @@ def test_temporal_autocorrelation():
         measurements.temporal_autocorrelation(df, feature="feature")
     )
     assert np.all(gradient < 0)
+
 
 if __name__ == "__main__":
     test_autocorrelation()
