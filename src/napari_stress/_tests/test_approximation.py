@@ -143,6 +143,6 @@ def test_curvature_and_normals(generate_pointclouds, make_napari_viewer):
     viewer.add_points(fitted_points)
     viewer.add_vectors(ellipsoid)
     results = measurements.curvature_on_ellipsoid(ellipsoid, fitted_points)
-    assert types._METADATAKEY_H_E123_ELLIPSOID in results[1]["metadata"].keys()
-    assert types._METADATAKEY_H0_ELLIPSOID in results[1]["metadata"].keys()
-    assert types._METADATAKEY_MEAN_CURVATURE in results[1]["features"].keys()
+    assert types._METADATAKEY_H_E123_ELLIPSOID in results[1]["metadata"]
+    assert types._METADATAKEY_H0_ELLIPSOID in results[1]["metadata"]
+    assert types._METADATAKEY_MEAN_CURVATURE in results[1]["features"]

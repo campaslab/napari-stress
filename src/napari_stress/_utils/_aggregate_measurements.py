@@ -132,12 +132,10 @@ def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
     import pandas as pd
 
     for layer in layers:
-        if "metadata" in layer[1]:
-            if name in layer[1]["metadata"]:
-                return pd.DataFrame(layer[1]["metadata"])
-        if "features" in layer[1]:
-            if name in pd.DataFrame(layer[1]["features"]).columns:
-                return pd.DataFrame(layer[1]["features"])
+        if "metadata" in layer[1] and name in layer[1]["metadata"]:
+            return pd.DataFrame(layer[1]["metadata"])
+        if "features" in layer[1] and name in pd.DataFrame(layer[1]["features"]).columns:
+            return pd.DataFrame(layer[1]["features"])
 
 
 def aggregate_ellipsoid_contribution_matrix(

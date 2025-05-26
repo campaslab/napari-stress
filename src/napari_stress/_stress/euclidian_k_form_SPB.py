@@ -2042,14 +2042,12 @@ class euc_k_form:
 
             if debug_mode is True:
                 print(
-                    "\n"
-                    + "All_A_inv_successful = "
+                    "\nAll_A_inv_successful = "
                     + str(All_A_inv_successful)
                 )
                 print(
                     "All_B_inv_successful = "
-                    + str(All_B_inv_successful)
-                    + "\n"
+                    + str(All_B_inv_successful) + "\n"
                 )
                 return Debug_Dict
             else:
