@@ -78,13 +78,9 @@ class droplet_reconstruction_toolbox(QWidget):
         from .._utils.import_export_settings import export_settings
 
         reconstruction_parameters = {
-            "voxelsize": np.asarray(
-                [
-                    self.doubleSpinBox_voxelsize_z.value(),
-                    self.doubleSpinBox_voxelsize_y.value(),
-                    self.doubleSpinBox_voxelsize_x.value(),
-                ]
-            ),
+            "voxelsize_z": self.doubleSpinBox_voxelsize_z.value(),
+            "voxelsize_y": self.doubleSpinBox_voxelsize_y.value(),
+            "voxelsize_x": self.doubleSpinBox_voxelsize_x.value(),
             "target_voxelsize": self.doubleSpinBox_target_voxelsize.value(),
             "smoothing_sigma": self.doubleSpinBox_gaussian_blur.value(),
             "n_smoothing_iterations": self.spinBox_n_smoothing.value(),
@@ -111,13 +107,13 @@ class droplet_reconstruction_toolbox(QWidget):
         reconstruction_parameters = import_settings(self, file_name=file_name)
 
         self.doubleSpinBox_voxelsize_z.setValue(
-            reconstruction_parameters["voxelsize"][0]
+            reconstruction_parameters["voxelsize_z"]
         )
         self.doubleSpinBox_voxelsize_y.setValue(
-            reconstruction_parameters["voxelsize"][1]
+            reconstruction_parameters["voxelsize_y"]
         )
         self.doubleSpinBox_voxelsize_x.setValue(
-            reconstruction_parameters["voxelsize"][2]
+            reconstruction_parameters["voxelsize_x"]
         )
         self.doubleSpinBox_target_voxelsize.setValue(
             reconstruction_parameters["target_voxelsize"]

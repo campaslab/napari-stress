@@ -19,13 +19,6 @@ def import_settings(parent=None, file_name: str = None) -> dict:
     """
     from qtpy.QtWidgets import QFileDialog
 
-    def ndarray_constructor(
-        loader: yaml.Loader, node: yaml.Node
-    ) -> np.ndarray:
-        return np.array(loader.construct_sequence(node))
-
-    yaml.add_constructor("tag:yaml.org,2002:ndarray", ndarray_constructor)
-
     if not file_name:
         file_name, _ = QFileDialog.getOpenFileName(
             parent,
@@ -53,15 +46,6 @@ def export_settings(
         Parent widget for dialog, by default None
     """
     from qtpy.QtWidgets import QFileDialog
-
-    def ndarray_representer(
-        dumper: yaml.Dumper, data: np.ndarray
-    ) -> yaml.Node:
-        return dumper.represent_sequence(
-            "tag:yaml.org,2002:ndarray", data.tolist()
-        )
-
-    yaml.add_representer(np.ndarray, ndarray_representer)
 
     if not file_name:
         file_name, _ = QFileDialog.getSaveFileName(
