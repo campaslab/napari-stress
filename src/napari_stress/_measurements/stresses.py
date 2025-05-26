@@ -1,4 +1,6 @@
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 import pandas as pd

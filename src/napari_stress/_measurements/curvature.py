@@ -25,6 +25,10 @@ from ..types import (
     manifold,
 )
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
+
 
 @register_function(
     menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)"

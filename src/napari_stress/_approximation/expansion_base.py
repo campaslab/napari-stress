@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+if TYPE_CHECKING:
+    import napari
 
 
 class Expander(ABC):

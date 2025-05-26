@@ -1,4 +1,7 @@
 from napari_tools_menu import register_function
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 from .._utils import frame_by_frame
 from .expansion import EllipsoidExpander, SphericalHarmonicsExpander

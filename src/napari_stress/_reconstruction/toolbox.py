@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 from magicgui.widgets import create_widget

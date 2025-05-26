@@ -6,6 +6,10 @@ from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
+
 
 def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     """
