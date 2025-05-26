@@ -438,7 +438,7 @@ class TimelapseConverter:
 
     def _list_of_dictionaries_to_dictionary(self, dictionaries: list) -> dict:
         _dictionary = {}
-        for key in dictionaries[-1].keys():
+        for key in dictionaries[-1]:
             if isinstance(dictionaries[-1][key], dict):
                 _dictionary[key] = self._list_of_dictionaries_to_dictionary(
                     [frame[key] for frame in dictionaries]

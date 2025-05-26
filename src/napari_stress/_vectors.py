@@ -1,4 +1,7 @@
-from typing import Annotated
+from typing import Annotated, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 from napari_tools_menu import register_function
