@@ -11,7 +11,6 @@ sampling_distance: 2.0
 smoothing_sigma: 2.0
 target_voxelsize: 0.23
 trace_length: 80.0
-voxelsize: !!ndarray
-- 0.37
-- 0.0901
-- 0.0901
+voxelsize_z: 0.37
+voxelsize_y: 0.0901
+voxelsize_x: 0.0901
