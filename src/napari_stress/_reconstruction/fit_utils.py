@@ -1,6 +1,8 @@
 import inspect
 from enum import Enum
-from typing import List
+from typing import List, TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 import pandas as pd
@@ -221,7 +223,7 @@ def _fancy_edge_fit(
         parameter_error = np.sqrt(np.diag(_covariance))
 
     # If fit fails, replace bad values with NaN
-    except Exception:
+    except (RuntimeError, ValueError):
         optimal_fit_parameters = np.repeat(np.nan, len(params))
         parameter_error = np.repeat(np.nan, len(params))
 

@@ -474,7 +474,7 @@ def iterative_curvature_adaptive_patch_fitting(
         point_cloud, minimum_permitted_range=minimum_search_radius
     )
 
-    for it in range(n_iterations):
+    for _ in range(n_iterations):
         neighbor_indices = _find_neighbor_indices(point_cloud, search_radii)
         mean_curvatures = [np.nan] * len(point_cloud)
         principal_curvatures = [np.nan] * len(point_cloud)

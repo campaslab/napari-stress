@@ -70,7 +70,7 @@ class droplet_reconstruction_toolbox(QWidget):
             # set target voxel size to mean of scales as default
             mean_scale = np.mean([scales[0], scales[2]])
             self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
-        except Exception:
+        except Exception as e:
             pass
 
     def _export_settings(self, file_name: str = None):
@@ -322,7 +322,7 @@ def reconstruct_droplet(
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
-    for i in range(n_tracing_iterations):
+    for _ in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
             points, sampling_length=resampling_length
         )
