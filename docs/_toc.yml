@@ -8,7 +8,6 @@ options:
   numbered: False
 
 parts:
-
   - caption: Usage
     chapters:
     - file: 01_code_usage/code_usage
