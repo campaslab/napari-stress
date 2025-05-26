@@ -11,8 +11,8 @@ This tutorial shows how to handle ellipse-fitting in napari-stress. It covers th
 
 To get started, create a pointcloud according to the workflow suggestions in this repository or load the sample data from napari-stress (`File > Open Sample > napari-stress: Dropplet pointcloud`).
 
-![](../../imgs/viewer_screenshots/open_sample_droplet.png)
-![](../../imgs/viewer_screenshots/open_sample_droplet1.png)
+![](../imgs/viewer_screenshots/open_sample_droplet.png)
+![](../imgs/viewer_screenshots/open_sample_droplet1.png)
 
 (fit_ellipsoid:major_minor_axes)=
 ## Finding the major and minor axes
