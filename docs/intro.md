@@ -14,9 +14,9 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 
 ## Contents
 
-- [Usage from code](topic:01_code_usage): Overview about modular functions in napari-stress and how to use them from code or interactively from the napari viewer. Among others, you'll find examples for how to use [toolbox functions](topic:01_code_usage:toolboxes), which bundle up many functionalities of the STRESS workflow in few lines of code.
+- [Usage from code](topic:01_code_usage): Overview about modular functions in napari-stress and how to use them from code or interactively from the napari viewer. Among others, you'll find examples for how to use toolbox functions, which bundle up many functionalities of the STRESS workflow in few lines of code. See demo notebook for [reconstruction and analysis](toolboxes:analyze_everything)
 
-- [Interactive usage](topic:interactive_usage): If you want to do the analysis in an interactive fashion, you can do so directly in the napari viewer. Again, the provided [toolboxes](topic:interactive_usage:toolboxes).
+- [Interactive usage](topic:interactive_usage): If you want to do the analysis in an interactive fashion, you can do so directly in the napari viewer. Again, the provided toolboxes for [reconstruction](glossary:surface_reconstruction:interactive) and [measurement](toolboxes:stress_toolbox:stress_toolbox_interactive) should come in handy.
 
 ![](imgs/viewer_screenshots/all_outputs.png)
 
