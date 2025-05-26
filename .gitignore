@@ -96,3 +96,6 @@ venv/
 
 # Dask
 dask-worker-space/
+
+# MyST build outputs
+_build
