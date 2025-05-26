@@ -334,7 +334,7 @@ class TimelapseConverter:
 
         # Convert data to array with dimensions [frame, results, data]
         converted_tuples = []
-        for idx, res_type in enumerate(layertypes):
+        for idx in range(len(layertypes)):
             tuples_to_convert = [td[idx] for td in tuple_data]
             converted_tuples.append(
                 self._list_of_ldtuple_to_layerdatatuple(

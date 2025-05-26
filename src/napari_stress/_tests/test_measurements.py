@@ -1,8 +1,6 @@
 import numpy as np
 import os
 import shutil
-from pathlib import Path
-import pandas as pd
 import vedo
 from napari_stress import (
     measurements,
@@ -11,11 +9,6 @@ from napari_stress import (
     approximation,
     get_droplet_point_cloud,
     get_droplet_point_cloud_4d,
-    create_manifold,
-    lebedev_quadrature,
-)
-from napari_stress._spherical_harmonics.spherical_harmonics import (
-    stress_spherical_harmonics_expansion,
 )
 
 def cartesian_to_spherical(cartesian_coords):
@@ -331,6 +324,3 @@ def test_temporal_autocorrelation():
         measurements.temporal_autocorrelation(df, feature="feature")
     )
     assert np.all(gradient < 0)
-
-if __name__ == "__main__":
-    test_autocorrelation()

@@ -1,4 +1,7 @@
 import numpy as np
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 def sanitize_faces(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """
