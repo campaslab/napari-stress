@@ -51,7 +51,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
     def wrapper(*args, **kwargs):
         sig = inspect.signature(function)
         annotations = [
-            sig.parameters[key].annotation for key in sig.parameters.keys()
+            sig.parameters[key].annotation for key in sig.parameters
         ]
 
         converter = TimelapseConverter()
@@ -61,7 +61,7 @@ def frame_by_frame(function: callable, progress_bar: bool = False):
 
         # Inspect arguments and check if `use_dask` is passed as keyword argument
         use_dask = False
-        if "use_dask" in kwargs.keys():
+        if "use_dask" in kwargs:
             use_dask = kwargs["use_dask"]
             del kwargs["use_dask"]
 
@@ -205,7 +205,7 @@ class TimelapseConverter:
 
         """
         if layertype not in list(
-            self.data_to_list_conversion_functions.keys()
+            self.data_to_list_conversion_functions
         ):
             raise TypeError(
                 f"{layertype} data to list conversion currently not supported."
@@ -292,7 +292,7 @@ class TimelapseConverter:
 
         else:
             # unstack features
-            if "features" in tuple_data[1].keys():
+            if "features" in tuple_data[1]:
                 # group features by time-stamp
                 features = tuple_data[1]["features"]
                 list_of_features = [
@@ -303,7 +303,7 @@ class TimelapseConverter:
                 list_of_features = [None] * len(list_of_data)
 
             # unstack metadata
-            if "metadata" in tuple_data[1].keys():
+            if "metadata" in tuple_data[1]:
                 metadata = tuple_data[1]["metadata"]
                 list_of_metadata = [
                     {key: value[i] for key, value in metadata.items()}
@@ -360,19 +360,19 @@ class TimelapseConverter:
         # If data was only 3D
         _properties = {}
         if len(tuple_data) == 1:
-            if "features" in properties[0].keys():
+            if "features" in properties[0]:
                 _properties["features"] = tuple_data[0][1]["features"]
                 _properties["features"]["frame"] = np.zeros(
                     len(tuple_data[0][0]), dtype=int
                 )
                 [frame.pop("features") for frame in properties]
-            if "metadata" in properties[0].keys():
+            if "metadata" in properties[0]:
                 _properties["metadata"] = tuple_data[0][1]["metadata"]
                 _properties["metadata"]["frame"] = [0]
                 [frame.pop("metadata") for frame in properties]
         else:
             # Stack features
-            if "features" in properties[0].keys():
+            if "features" in properties[0]:
                 # concatenate features and add time column
                 features = self._list_of_dataframes_to_dataframe(
                     [pd.DataFrame(frame["features"]) for frame in properties]
@@ -387,10 +387,10 @@ class TimelapseConverter:
                 [frame.pop("features") for frame in properties]
 
             # Stack metadata
-            if "metadata" in properties[0].keys():
+            if "metadata" in properties[0]:
                 metadata_list = [frame["metadata"] for frame in properties]
                 new_metadata = {}
-                for key in metadata_list[0].keys():
+                for key in metadata_list[0]:
                     new_metadata[key] = [frame[key] for frame in metadata_list]
 
                 new_metadata["frame"] = [t for t in range(len(metadata_list))]
@@ -401,10 +401,10 @@ class TimelapseConverter:
         layer_props = self._list_of_dictionaries_to_dictionary(properties)
 
         # exclude 'scale' from stacked metadata
-        if "scale" in layer_props.keys() and len(tuple_data) != 1:
+        if "scale" in layer_props and len(tuple_data) != 1:
             layer_props["scale"] = properties[0]["scale"]
 
-        for key in layer_props.keys():
+        for key in layer_props:
             _properties[key] = layer_props[key]
 
         result = [None] * 3

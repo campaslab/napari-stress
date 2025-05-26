@@ -1,4 +1,7 @@
-from typing import List
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 import pandas as pd
@@ -129,10 +132,10 @@ def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
     import pandas as pd
 
     for layer in layers:
-        if "metadata" in layer[1].keys():
-            if name in layer[1]["metadata"].keys():
+        if "metadata" in layer[1]:
+            if name in layer[1]["metadata"]:
                 return pd.DataFrame(layer[1]["metadata"])
-        if "features" in layer[1].keys():
+        if "features" in layer[1]:
             if name in pd.DataFrame(layer[1]["features"]).columns:
                 return pd.DataFrame(layer[1]["features"])
 
@@ -213,7 +216,7 @@ def aggregate_singular_values(
     _metadata = [
         layer[1]["metadata"]
         for layer in results_stress_analysis
-        if "metadata" in layer[1].keys()
+        if "metadata" in layer[1]
     ]
     _metadata = [flatten_dictionary(d) for d in _metadata]
     df_over_time = pd.concat([pd.DataFrame(x) for x in _metadata], axis=1)
@@ -228,13 +231,13 @@ def aggregate_singular_values(
 
     # Find layer with stress_tissue in features
     for layer in results_stress_analysis:
-        if "features" not in layer[1].keys():
+        if "features" not in layer[1]:
             continue
-        if _METADATAKEY_STRESS_TOTAL in layer[1]["features"].keys():
+        if _METADATAKEY_STRESS_TOTAL in layer[1]["features"]:
             df_total_stress = pd.DataFrame(layer[1]["features"])
             df_total_stress["time"] = layer[0][:, 0] * time_step
 
-        if _METADATAKEY_STRESS_TISSUE in layer[1]["features"].keys():
+        if _METADATAKEY_STRESS_TISSUE in layer[1]["features"]:
             df_tissue_stress = pd.DataFrame(layer[1]["features"])
             df_tissue_stress["time"] = layer[0][:, 0] * time_step
 
@@ -305,11 +308,11 @@ def aggregate_extrema_results(
 
     # Find layer with NEAREST EXTREMA data
     for layer in results_stress_analysis:
-        if "metadata" not in layer[1].keys():
+        if "metadata" not in layer[1]:
             continue
         if (
             _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO
-            in layer[1]["metadata"].keys()
+            in layer[1]["metadata"]
         ):
             break
 
@@ -358,11 +361,11 @@ def aggregate_extrema_results(
 
     # Find layer with ALL PAIR EXTREMA data
     for layer in results_stress_analysis:
-        if "metadata" not in layer[1].keys():
+        if "metadata" not in layer[1]:
             continue
         if (
             _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO
-            in layer[1]["metadata"].keys()
+            in layer[1]["metadata"]
         ):
             break
 
@@ -447,9 +450,9 @@ def aggregate_spatial_autocorrelations_results(
 
     # Find layer with SPATIAL AUTOCORRELATIONS
     for layer in results_stress_analysis:
-        if "metadata" not in layer[1].keys():
+        if "metadata" not in layer[1]:
             continue
-        if _METADATAKEY_AUTOCORR_SPATIAL_CELL in layer[1]["metadata"].keys():
+        if _METADATAKEY_AUTOCORR_SPATIAL_CELL in layer[1]["metadata"]:
             break
 
     # TOTAL STRESS
