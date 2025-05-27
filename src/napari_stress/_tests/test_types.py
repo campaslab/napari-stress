@@ -45,5 +45,5 @@ def test_custom_types(make_napari_viewer):
     viewer.window.add_dock_widget(widget)
     results = widget(viewer.layers[-1])
 
-    assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features.keys()
+    assert _METADATAKEY_MEAN_CURVATURE in viewer.layers[-1].features
     assert isinstance(results, tuple)

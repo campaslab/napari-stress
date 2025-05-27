@@ -638,18 +638,16 @@ class lbdv_info:  # Generates (ONCE) and stores Lebedev Info
                         -1 * np.cos(theta_bar_pt_rot) * np.sin(phi_bar_pt_rot)
                     )
 
-                    if abs(x_pt - x_pt_rot) < 1e-7:
-                        if abs(y_pt - y_pt_rot) < 1e-7:
-                            if abs(z_pt - z_pt_rot) < 1e-7:
-                                if rot_pt_found is False:
-                                    rot_pt_found = True
+                    if all(abs(pt - pt_rot) < 1e-7 for pt, pt_rot in zip((x_pt, y_pt, z_pt), (x_pt_rot, y_pt_rot, z_pt_rot))):
+                        if rot_pt_found is False:
+                            rot_pt_found = True
 
-                                    self.Rot_Lbdv_Quad_vals[quad_pt] = (
-                                        quad_pt_rot
-                                    )
-                                    self.Inv_Rot_Lbdv_Quad_vals[
-                                        quad_pt_rot
-                                    ] = quad_pt
+                            self.Rot_Lbdv_Quad_vals[quad_pt] = (
+                                quad_pt_rot
+                            )
+                            self.Inv_Rot_Lbdv_Quad_vals[
+                                quad_pt_rot
+                            ] = quad_pt
 
                 if rot_pt_found is False:
                     print("!!ROTATED QUAD PT NOT FOUND!!")

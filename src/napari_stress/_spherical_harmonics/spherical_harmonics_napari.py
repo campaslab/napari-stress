@@ -107,10 +107,10 @@ def perform_lebedev_quadrature(
     """
     metadata = points.metadata
 
-    if "spherical_harmonics_coefficients" not in metadata.keys():
+    if "spherical_harmonics_coefficients" not in metadata:
         raise ValueError(
             "Missing spherical harmonics coefficients. "
-            + "Use spherical harmonics expansion first"
+            "Use spherical harmonics expansion first"
         )
 
     max_degree = metadata["spherical_harmonics_coefficients"].shape[-1] - 1

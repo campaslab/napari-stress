@@ -2,6 +2,9 @@ import deprecation
 import numpy as np
 from napari.types import PointsData, VectorsData
 from napari_tools_menu import register_function
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 from .. import __version__
 from .._utils.frame_by_frame import frame_by_frame

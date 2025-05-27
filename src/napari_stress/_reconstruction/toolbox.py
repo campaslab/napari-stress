@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 from magicgui.widgets import create_widget
@@ -68,7 +70,7 @@ class droplet_reconstruction_toolbox(QWidget):
             # set target voxel size to mean of scales as default
             mean_scale = np.mean([scales[0], scales[2]])
             self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
-        except Exception:
+        except Exception as e:
             pass
 
     def _export_settings(self, file_name: str = None):
@@ -78,13 +80,9 @@ class droplet_reconstruction_toolbox(QWidget):
         from .._utils.import_export_settings import export_settings
 
         reconstruction_parameters = {
-            "voxelsize": np.asarray(
-                [
-                    self.doubleSpinBox_voxelsize_z.value(),
-                    self.doubleSpinBox_voxelsize_y.value(),
-                    self.doubleSpinBox_voxelsize_x.value(),
-                ]
-            ),
+            "voxelsize_z": self.doubleSpinBox_voxelsize_z.value(),
+            "voxelsize_y": self.doubleSpinBox_voxelsize_y.value(),
+            "voxelsize_x": self.doubleSpinBox_voxelsize_x.value(),
             "target_voxelsize": self.doubleSpinBox_target_voxelsize.value(),
             "smoothing_sigma": self.doubleSpinBox_gaussian_blur.value(),
             "n_smoothing_iterations": self.spinBox_n_smoothing.value(),
@@ -111,13 +109,13 @@ class droplet_reconstruction_toolbox(QWidget):
         reconstruction_parameters = import_settings(self, file_name=file_name)
 
         self.doubleSpinBox_voxelsize_z.setValue(
-            reconstruction_parameters["voxelsize"][0]
+            reconstruction_parameters["voxelsize_z"]
         )
         self.doubleSpinBox_voxelsize_y.setValue(
-            reconstruction_parameters["voxelsize"][1]
+            reconstruction_parameters["voxelsize_y"]
         )
         self.doubleSpinBox_voxelsize_x.setValue(
-            reconstruction_parameters["voxelsize"][2]
+            reconstruction_parameters["voxelsize_x"]
         )
         self.doubleSpinBox_target_voxelsize.setValue(
             reconstruction_parameters["target_voxelsize"]
@@ -324,7 +322,7 @@ def reconstruct_droplet(
     points = copy.deepcopy(points_first_guess)
 
     # repeat tracing `n_tracing_iterations` times
-    for i in range(n_tracing_iterations):
+    for _ in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
             points, sampling_length=resampling_length
         )

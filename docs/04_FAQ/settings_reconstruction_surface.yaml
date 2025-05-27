@@ -12,7 +12,6 @@ smoothing_sigma: 1.0
 target_voxelsize: 0.2868
 trace_length: 30.0
 return_intermediate_results: true
-voxelsize: !!ndarray
-- 0.47
-- 0.1036
-- 0.1036
+voxelsize_z: 0.47
+voxelsize_y: 0.1036
+voxelsize_x: 0.1036

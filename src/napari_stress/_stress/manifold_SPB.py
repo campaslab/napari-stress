@@ -111,11 +111,9 @@ def Non_Radial_Manifold_X_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            "\n"
-            + "ERROR: NON-radial Manifold Name: "
+            + "\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
-            + ", (X-Coor) Not Recognized"
-            + "\n"
+            + ", (X-Coor) Not Recognized\n"
         )
 
 
@@ -173,11 +171,9 @@ def Non_Radial_Manifold_Y_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            "\n"
-            + "ERROR: NON-radial Manifold Name: "
+            + "\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
-            + ", (Y-Coor) Not Recognized"
-            + "\n"
+            + ", (Y-Coor) Not Recognized\n"
         )
 
 
@@ -239,11 +235,9 @@ def Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            "\n"
-            + "ERROR: NON-radial Manifold Name: "
+            + "\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
-            + ", (Z-Coor) Not Recognized"
-            + "\n"
+            + ", (Z-Coor) Not Recognized\n"
         )
 
 
@@ -664,7 +658,7 @@ class manifold:
     Use Manifold name to automatically load/pickle manny inv mats:
     Format: Maniold_Official_Name =
     Man_Shape_Name+"R_0_"+R_0_str+"_Pdeg_"+str(deg_basis)+"_Q"+str(num_quad_pts)
-    Filename "Manny_Inv_Mats_" +
+    Filename "Manny_Inv_Mats_"
       Maniold_Official_Name + ".p", goes in 'Pickled_Manny_Inv_Mat_Files' sub-directory
     Man_Shape_Name = "S2", "Chew_Toy", "Gen_R0_Pill", "Dog_Shit", etc
     R_0_str = "0pt3", "0pt0" for example.

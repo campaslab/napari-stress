@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import napari
 
 import numpy as np
 from magicgui.widgets import create_widget
@@ -41,7 +44,7 @@ class stress_analysis_toolbox(QWidget):
         # populate quadrature dropdown: Only specific n_quadrature points
         # are allowed
         points_lookup = lebedev_info_SPB.quad_deg_lookUp
-        for n_points in points_lookup.keys():
+        for n_points in points_lookup:
             self.comboBox_quadpoints.addItem(str(n_points), n_points)
 
         # select default value corresponding to current max_degree
@@ -128,7 +131,7 @@ class stress_analysis_toolbox(QWidget):
         max_degree = self.spinBox_max_degree.value()
         lookup = lebedev_info_SPB.pts_of_lbdv_lookup
         for degree in range(max_degree, list(lookup.keys())[-1] + 1):
-            if degree in lookup.keys():
+            if degree in lookup:
                 minimal_point_number = lookup.get(degree)
                 break
 
@@ -249,7 +252,7 @@ class stress_analysis_toolbox(QWidget):
             n_frames=self.n_frames,
         )
 
-        for fig in figures_dict.keys():
+        for fig in figures_dict:
             figure = figures_dict[fig]
             figure["figure"].tight_layout()
             figure["figure"].savefig(
@@ -257,7 +260,7 @@ class stress_analysis_toolbox(QWidget):
             )
 
         # Export pointclouds
-        for i, layer in enumerate(results_stress_analysis):
+        for layer in results_stress_analysis:
             if layer[2] == "points":
                 export_layer = napari.layers.Layer.create(*layer)
                 napari.save_layers(

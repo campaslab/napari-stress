@@ -9,6 +9,10 @@ from napari.types import (
     VectorsData,
 )
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import napari
+
 
 def test_fit_functions():
     from napari_stress._reconstruction.fit_utils import (
@@ -91,7 +95,7 @@ def test_decorator_points_layerdatatuple():
     )
 
     assert np.array_equal(ldtuple_3d[0], list_of_ldtuples[0][0])
-    assert "data1" in ldtuple_4d[1]["metadata"].keys()
+    assert "data1" in ldtuple_4d[1]["metadata"]
     assert ldtuple_4d[0][-1, 0] == 9
 
     list_of_ldtuples_conv = Converter.data_to_list_of_data(
