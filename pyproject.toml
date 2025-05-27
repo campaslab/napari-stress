@@ -17,13 +17,12 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Software Development :: Testing",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "dask",
     "distributed",
@@ -65,7 +64,7 @@ napari-stress = "napari_stress:napari.yaml"
 "User Support" = "https://github.com/campaslab/napari-stress/issues"
 
 [build-system]
-requires = ["setuptools>=42.0.0", "wheel"]
+requires = ["setuptools>=42.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -77,12 +76,13 @@ where = ["src"]
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
 
-[tool.setuptools.dynamic]
-version = {attr = "napari_stress.__version__"}
+[tool.setuptools_scm]
+write_to = "src/napari_stress/_version.py"
+fallback_version = "0.0.1+nogit"
 
 [tool.black]
 line-length = 79
-target-version = ['py37', 'py38', 'py39', 'py310']
+target-version = ['py39', 'py310', 'py311']
 
 [tool.ruff]
 line-length = 79
@@ -127,5 +127,5 @@ exclude = [
     "*_vendor*",
 ]
 
-target-version = "py37"
+target-version = "py311"
 fix = true

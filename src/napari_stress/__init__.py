@@ -1,5 +1,3 @@
-__version__ = "0.3.9"
-
 from . import _approximation as approximation
 from . import _measurements as measurements
 from . import _plotting as plotting

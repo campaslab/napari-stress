@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
-from .. import __version__
+from .._version import __version__
 from .._utils.frame_by_frame import frame_by_frame
 
 
