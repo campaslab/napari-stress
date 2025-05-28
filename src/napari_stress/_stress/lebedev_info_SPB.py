@@ -472,47 +472,61 @@ class lbdv_info:  # Generates (ONCE) and stores Lebedev Info
                         Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]
                         Phi_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][1]
                         # Don't need Weight, since Quadrature covers that
-            
-                        if M_Coef == 0:  # We don't need eta_A for first derivative in this case
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Der_Phi_Basis_Fn(
+
+                        if (
+                            M_Coef == 0
+                        ):  # We don't need eta_A for first derivative in this case
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
+                                N_Coef
+                            ][quad_pt] = Der_Phi_Basis_Fn(
                                 M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                             )
-            
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
+                                N_Coef
+                            ][quad_pt] = eta_A(
                                 lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-            
+
                         elif M_Coef >= 0:
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
+                                N_Coef
+                            ][quad_pt] = eta_A(
                                 lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-            
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
+                                N_Coef
+                            ][quad_pt] = eta_A(
                                 lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-            
+
                         else:  # M_Coef < 0
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef][N_Coef - (-1 * M_Coef)][quad_pt] = eta_A(
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef][
+                                N_Coef - (-1 * M_Coef)
+                            ][quad_pt] = eta_A(
                                 lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-            
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef][N_Coef - (-1 * M_Coef)][quad_pt] = eta_A(
+
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef][
+                                N_Coef - (-1 * M_Coef)
+                            ][quad_pt] = eta_A(
                                 lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
@@ -625,7 +639,14 @@ class lbdv_info:  # Generates (ONCE) and stores Lebedev Info
                     )
 
                     if (
-                        all(abs(pt - pt_rot) < 1e-7 for pt, pt_rot in zip((x_pt, y_pt, z_pt), (x_pt_rot, y_pt_rot, z_pt_rot)))
+                        all(
+                            abs(pt - pt_rot) < 1e-7
+                            for pt, pt_rot in zip(
+                                (x_pt, y_pt, z_pt),
+                                (x_pt_rot, y_pt_rot, z_pt_rot),
+                                strict=False,
+                            )
+                        )
                         and not rot_pt_found
                     ):
                         rot_pt_found = True

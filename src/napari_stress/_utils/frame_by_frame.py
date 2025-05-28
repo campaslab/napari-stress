@@ -203,9 +203,7 @@ class TimelapseConverter:
         list: list of 3D objects of input layertype
 
         """
-        if layertype not in list(
-            self.data_to_list_conversion_functions
-        ):
+        if layertype not in list(self.data_to_list_conversion_functions):
             raise TypeError(
                 f"{layertype} data to list conversion currently not supported."
             )
@@ -313,12 +311,14 @@ class TimelapseConverter:
 
         list_of_props = [
             {"features": features, "metadata": metadata}
-            for features, metadata in zip(list_of_features, list_of_metadata)
+            for features, metadata in zip(
+                list_of_features, list_of_metadata, strict=False
+            )
         ]
 
         list_of_ldtuples = [
             (data, props, layertype)
-            for data, props in zip(list_of_data, list_of_props)
+            for data, props in zip(list_of_data, list_of_props, strict=False)
         ]
 
         return list_of_ldtuples
@@ -499,7 +499,7 @@ class TimelapseConverter:
 
         output_vectors = [
             np.stack([pt, vec]).transpose((1, 0, 2))
-            for pt, vec in zip(point_list, vector_list)
+            for pt, vec in zip(point_list, vector_list, strict=False)
         ]
         return output_vectors
 

@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 import vedo
 from napari.layers import Layer, Points
@@ -9,7 +11,6 @@ from napari.types import (
     VectorsData,
 )
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -58,7 +59,7 @@ def test_decorator_points():
 
     assert np.array_equal(points_array_3d, points_list[0])
 
-    for pts, _pts in zip(points_list, points_list_conv):
+    for pts, _pts in zip(points_list, points_list_conv, strict=False):
         assert np.array_equal(pts, _pts)
 
 
@@ -101,7 +102,9 @@ def test_decorator_points_layerdatatuple():
     list_of_ldtuples_conv = Converter.data_to_list_of_data(
         ldtuple_4d, layertype="napari.types:LayerDataTuple"
     )
-    for ldt, _ldt in zip(list_of_ldtuples_copy, list_of_ldtuples_conv):
+    for ldt, _ldt in zip(
+        list_of_ldtuples_copy, list_of_ldtuples_conv, strict=False
+    ):
         assert np.array_equal(ldt[0], _ldt[0])
         assert np.array_equal(
             ldt[1]["features"]["feature1"], _ldt[1]["features"]["feature1"]
@@ -162,7 +165,7 @@ def test_decorator_surfaces():
         surface_array_4d, SurfaceData
     )
 
-    for surf, _surf in zip(surface_list, surface_list_conv):
+    for surf, _surf in zip(surface_list, surface_list_conv, strict=False):
         assert np.array_equal(surf[0], _surf[0])
         assert np.array_equal(surf[1], _surf[1])
 
@@ -195,7 +198,7 @@ def test_decorator_images():
     assert image_array_4d.shape[0] == len(image_list)
 
     image_list_conv = Converter.list_of_data_to_data(image_array_4d, ImageData)
-    for img, _img in zip(image_list, image_list_conv):
+    for img, _img in zip(image_list, image_list_conv, strict=False):
         assert np.array_equiv(img, _img)
 
 

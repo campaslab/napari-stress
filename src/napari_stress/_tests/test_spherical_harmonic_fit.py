@@ -1,4 +1,3 @@
-import numpy as np
 import vedo
 
 import napari_stress
@@ -12,7 +11,9 @@ def test_front_spherical_harmonics_4d(make_napari_viewer):
 
     viewer = make_napari_viewer()
     pointcloud = get_droplet_point_cloud_4d()[0][0]
-    pointcloud = pointcloud[pointcloud[:, 0] < 3, :]  # take only first timepoints
+    pointcloud = pointcloud[
+        pointcloud[:, 0] < 3, :
+    ]  # take only first timepoints
 
     points = napari_stress.fit_spherical_harmonics(pointcloud)
     viewer.add_points(points[0], **points[1])

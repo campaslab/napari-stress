@@ -1,15 +1,18 @@
-import numpy as np
 import os
 import shutil
+
+import numpy as np
 import vedo
+
 from napari_stress import (
-    measurements,
-    reconstruction,
-    sample_data,
     approximation,
     get_droplet_point_cloud,
     get_droplet_point_cloud_4d,
+    measurements,
+    reconstruction,
+    sample_data,
 )
+
 
 def cartesian_to_spherical(cartesian_coords):
     """
@@ -21,11 +24,16 @@ def cartesian_to_spherical(cartesian_coords):
     Returns:
     np.ndarray: Nx3 array of spherical coordinates.
     """
-    z, y, x = cartesian_coords[:, 0], cartesian_coords[:, 1], cartesian_coords[:, 2]
+    z, y, x = (
+        cartesian_coords[:, 0],
+        cartesian_coords[:, 1],
+        cartesian_coords[:, 2],
+    )
     r = np.sqrt(x**2 + y**2 + z**2)
     theta = np.arctan2(y, x)  # Azimuthal angle
-    phi = np.arccos(z / r)    # Polar angle
+    phi = np.arccos(z / r)  # Polar angle
     return np.column_stack((r, theta, phi))
+
 
 def spherical_to_cartesian(spherical_coords):
     """
@@ -37,7 +45,11 @@ def spherical_to_cartesian(spherical_coords):
     Returns:
     np.ndarray: Nx3 array of Cartesian coordinates.
     """
-    r, theta, phi = spherical_coords[:, 0], spherical_coords[:, 1], spherical_coords[:, 2]
+    r, theta, phi = (
+        spherical_coords[:, 0],
+        spherical_coords[:, 1],
+        spherical_coords[:, 2],
+    )
     x = r * np.sin(phi) * np.cos(theta)
     y = r * np.sin(phi) * np.sin(theta)
     z = r * np.cos(phi)
@@ -150,8 +162,10 @@ def test_curvature():
     # Test patch-fitted curvature
     sphere = vedo.Sphere()
     sphere = (sphere.vertices, np.asarray(sphere.cells))
-    result = measurements.curvature._calculate_patch_fitted_curvature_on_surface(
-        sphere, search_radius=0.25
+    result = (
+        measurements.curvature._calculate_patch_fitted_curvature_on_surface(
+            sphere, search_radius=0.25
+        )
     )
     features = result[1]["metadata"]["features"]
     assert "mean_curvature" in features
@@ -203,21 +217,18 @@ def test_curvature():
 def test_stress_toolbox(make_napari_viewer):
     """Test stress analysis toolbox for 3D and 4D data."""
     from napari_stress import measurements
+
     viewer = make_napari_viewer()
 
     # Test 3D data
     pointcloud = get_droplet_point_cloud()[0]
     viewer.add_points(pointcloud[0][:, 1:], **pointcloud[1])
-    widget = measurements.toolbox.stress_analysis_toolbox(
-        viewer
-    )
+    widget = measurements.toolbox.stress_analysis_toolbox(viewer)
     widget.comboBox_quadpoints.setCurrentIndex(4)
     viewer.window.add_dock_widget(widget)
     widget._run()
     widget._export_settings(file_name="test.yaml")
-    widget2 = measurements.toolbox.stress_analysis_toolbox(
-        viewer
-    )
+    widget2 = measurements.toolbox.stress_analysis_toolbox(viewer)
     widget2._import_settings(file_name="test.yaml")
     assert widget2.comboBox_quadpoints.currentText() == "50"
 

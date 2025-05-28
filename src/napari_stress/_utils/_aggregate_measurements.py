@@ -134,7 +134,10 @@ def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
     for layer in layers:
         if "metadata" in layer[1] and name in layer[1]["metadata"]:
             return pd.DataFrame(layer[1]["metadata"])
-        if "features" in layer[1] and name in pd.DataFrame(layer[1]["features"]).columns:
+        if (
+            "features" in layer[1]
+            and name in pd.DataFrame(layer[1]["features"]).columns
+        ):
             return pd.DataFrame(layer[1]["features"])
 
 
@@ -308,10 +311,7 @@ def aggregate_extrema_results(
     for layer in results_stress_analysis:
         if "metadata" not in layer[1]:
             continue
-        if (
-            _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO
-            in layer[1]["metadata"]
-        ):
+        if _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO in layer[1]["metadata"]:
             break
 
     # stack keys of metadata into dataframe and add frame column
@@ -361,10 +361,7 @@ def aggregate_extrema_results(
     for layer in results_stress_analysis:
         if "metadata" not in layer[1]:
             continue
-        if (
-            _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO
-            in layer[1]["metadata"]
-        ):
+        if _METADATAKEY_STRESS_CELL_ALL_PAIR_ANISO in layer[1]["metadata"]:
             break
 
     # stack keys of metadata into dataframe and add frame column

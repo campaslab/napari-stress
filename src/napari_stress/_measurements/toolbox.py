@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import napari
+    pass
 
 import numpy as np
 from magicgui.widgets import create_widget
@@ -597,9 +597,7 @@ def comprehensive_analysis(
 
     GDM = None
     if GDM is None:
-        GDM = measurements.geodesic_distance_matrix(
-            surface_cell_stress
-        )
+        GDM = measurements.geodesic_distance_matrix(surface_cell_stress)
 
     if maximal_distance is None:
         maximal_distance = int(np.floor(np.nanmax(GDM[np.inf != GDM])))

@@ -111,7 +111,7 @@ def Non_Radial_Manifold_X_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            + "\nERROR: NON-radial Manifold Name: "
+            +"\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
             + ", (X-Coor) Not Recognized\n"
         )
@@ -171,7 +171,7 @@ def Non_Radial_Manifold_Y_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            + "\nERROR: NON-radial Manifold Name: "
+            +"\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
             + ", (Y-Coor) Not Recognized\n"
         )
@@ -235,7 +235,7 @@ def Non_Radial_Manifold_Z_Def(theta, phi, r_0, Manny_Name):
             )
     else:
         print(
-            + "\nERROR: NON-radial Manifold Name: "
+            +"\nERROR: NON-radial Manifold Name: "
             + str(Manny_Name)
             + ", (Z-Coor) Not Recognized\n"
         )
@@ -613,7 +613,7 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
     else:
         print(
-            + "\nERROR: RADIAL Manifold Name: "
+            +"\nERROR: RADIAL Manifold Name: "
             + str(Manny_Name)
             + ", Not Recognized\n"
         )

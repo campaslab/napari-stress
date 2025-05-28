@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pandas as pd
 from napari.layers import Layer
@@ -23,7 +25,6 @@ from ..types import (
     manifold,
 )
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -256,7 +257,8 @@ def calculate_patch_fitted_curvature_on_pointcloud(
     df = pd.DataFrame(
         {
             "mean_curvature": mean_curvatures,
-            "gaussian_curvature": principal_curvatures[:, 0] * principal_curvatures[:, 1],
+            "gaussian_curvature": principal_curvatures[:, 0]
+            * principal_curvatures[:, 1],
             "principal_curvature_1": principal_curvatures[:, 0],
             "principal_curvature_2": principal_curvatures[:, 1],
         }
@@ -384,7 +386,9 @@ def calculate_mean_curvature_on_manifold(
 
     # Makre sure orientation is inward,
     # so H is positive (for Ellipsoid, and small deviations):
-    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
+    Orientations = [
+        np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals, strict=False)
+    ]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
     Orientation = 1.0  # unchanged (we want INWARD)

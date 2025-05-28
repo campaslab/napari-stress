@@ -1,9 +1,14 @@
-import numpy as np
 from typing import TYPE_CHECKING
+
+import numpy as np
+
 if TYPE_CHECKING:
     import napari
 
-def sanitize_faces(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+
+def sanitize_faces(
+    surface: "napari.types.SurfaceData",
+) -> "napari.types.SurfaceData":
     """
     Sanitize the faces of a surface to ensure they are in the correct format.
 

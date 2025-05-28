@@ -7,6 +7,7 @@ def generate_pointclouds():
     """
     Generates synthetic point clouds for testing.
     """
+
     def ellipsoid_points(a=5, b=3, c=2):
         u = np.linspace(0, 2 * np.pi, 30)  # Longitude-like angles
         v = np.linspace(0, np.pi, 30)  # Latitude-like angles
@@ -18,10 +19,12 @@ def generate_pointclouds():
 
     def droplet_points():
         from napari_stress import sample_data
+
         return sample_data.get_droplet_point_cloud()[0][0][:, 1:]
 
     def random_ellipsoid_points(a0=10, a1=20, a2=30, x0=(0, 0, 0)):
         import vedo
+
         ellipsoid = vedo.Ellipsoid(
             pos=x0,
             axis1=(a0, 0, 0),
@@ -32,12 +35,20 @@ def generate_pointclouds():
         # Random rotations
         angle_z = np.radians(np.random.randint(0, 360))
         angle_x = np.radians(np.random.randint(0, 180))
-        R_z = np.array([[np.cos(angle_z), -np.sin(angle_z), 0],
-                        [np.sin(angle_z), np.cos(angle_z), 0],
-                        [0, 0, 1]])
-        R_x = np.array([[1, 0, 0],
-                        [0, np.cos(angle_x), -np.sin(angle_x)],
-                        [0, np.sin(angle_x), np.cos(angle_x)]])
+        R_z = np.array(
+            [
+                [np.cos(angle_z), -np.sin(angle_z), 0],
+                [np.sin(angle_z), np.cos(angle_z), 0],
+                [0, 0, 1],
+            ]
+        )
+        R_x = np.array(
+            [
+                [1, 0, 0],
+                [0, np.cos(angle_x), -np.sin(angle_x)],
+                [0, np.sin(angle_x), np.cos(angle_x)],
+            ]
+        )
         return points @ R_z @ R_x
 
     return ellipsoid_points, droplet_points, random_ellipsoid_points

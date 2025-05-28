@@ -317,7 +317,9 @@ def calculate_mean_curvature_on_manifold(
 
     # Makre sure orientation is inward, so H is positive
     # (for Ellipsoid, and small deviations):
-    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
+    Orientations = [
+        np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals, strict=False)
+    ]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
     Orientation = 1.0  # unchanged (we want INWARD)
