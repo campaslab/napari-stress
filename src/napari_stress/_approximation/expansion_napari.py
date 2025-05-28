@@ -1,15 +1,13 @@
 from typing import TYPE_CHECKING
 
-from napari_tools_menu import register_function
+from napari_timelapse_processor import frame_by_frame
 
 if TYPE_CHECKING:
     import napari
 
-from .._utils import frame_by_frame
 from .expansion import EllipsoidExpander, SphericalHarmonicsExpander
 
 
-@register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud(
     points: "napari.types.PointsData",
@@ -35,9 +33,6 @@ def fit_ellipsoid_to_pointcloud(
     return ellipsoid
 
 
-@register_function(
-    menu="Points > Expand point locations on ellipsoid (n-STRESS)"
-)
 @frame_by_frame
 def expand_points_on_fitted_ellipsoid(
     points: "napari.types.PointsData",
@@ -60,7 +55,7 @@ def expand_points_on_fitted_ellipsoid(
 
     return expanded_points
 
-
+@frame_by_frame
 def normals_on_fitted_ellipsoid(
     points: "napari.types.PointsData",
 ) -> "napari.types.VectorsData":
@@ -85,7 +80,6 @@ def normals_on_fitted_ellipsoid(
     return expander.properties["normals"]
 
 
-@register_function(menu="Points > Fit spherical harmonics (n-STRESS")
 @frame_by_frame
 def expand_spherical_harmonics(
     points: "napari.types.PointsData",
@@ -125,26 +119,3 @@ def expand_spherical_harmonics(
     }
     points_layer = (expanded_points, properties, "points")
     return points_layer
-
-
-def normals_on_ellipsoid(
-    points: "napari.types.PointsData",
-    ellipsoid_axes: "napari.types.VectorsData",
-) -> "napari.types.VectorsData":
-    """
-    Calculate normals on the ellipsoid fitted to the pointcloud.
-
-    Parameters
-    ----------
-    points : napari.types.PointsData
-        The points to calculate normals for.
-
-    Returns
-    -------
-    normals : napari.types.VectorsData
-        The normals on the ellipsoid.
-    """
-    expander = EllipsoidExpander()
-    normals = expander.calculate_normals(points)
-
-    return normals

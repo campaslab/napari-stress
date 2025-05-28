@@ -34,20 +34,34 @@ contributions:
       python_name: napari_stress._reconstruction.toolbox:droplet_reconstruction_toolbox
       title: Droplet reconstruction toolbox
 
-    # Approximation
+    # APPROXIMATION
+    # spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress._approximation.expansion_napari:expand_spherical_harmonics
+      python_name: napari_stress.approximation:expand_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
-    - id: napari-stress.fit_lsq_ellipsoid
-      python_name: napari_stress._approximation.expansion_napari:fit_ellipsoid_to_pointcloud
-      title: Fit least squares ellipsoid
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
 
+    # ellipsoids
+    - id: napari-stress.fit_lsq_ellipsoid
+      python_name: napari_stress.approximation:fit_ellipsoid_to_pointcloud
+      title: Fit least squares ellipsoid
     - id: napari-stress.expand_ellipsoid
-      python_name: napari_stress._approximation.expansion_napari:expand_points_on_fitted_ellipsoid
+      python_name: napari_stress.approximation:expand_points_on_fitted_ellipsoid
       title: Expand points on ellipsoid
+    - id: napari-stress.normals_on_lsq_ellipsoid
+      python_name: napari_stress.approximation:normals_on_fitted_ellipsoid
+      title: Calculate normals on least squares ellipsoid
+
+  # vedo functions
+    - id: napari-stress.fit_ellipsoid_points_vedo
+      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
+      title: Expand pointcloud on PCA ellipsoid (vedo)
+
+    - id: napari-stress.fit_ellipsoid_vectors_vedo
+      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
+      title: Fit PCA ellipsoid to pointcloud (vedo)
 
     # Spherical harmonics measurements & curvature
     - id: napari-stress.measure_curvature
@@ -78,15 +92,6 @@ contributions:
     - id: napari-stress.measure_intensity_on_surface
       python_name: napari_stress._measurements.intensity:_measure_intensity_on_surface
       title: Measure intensity on a surface
-
-    # Ellipsoids
-    - id: napari-stress.fit_ellipsoid_points
-      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_points
-      title: Fit PCA ellipsoid to pointcloud and return points
-
-    - id: napari-stress.fit_ellipsoid_vectors
-      python_name: napari_stress._surface:fit_ellipsoid_to_pointcloud_vectors
-      title: Fit PCA ellipsoid to pointcloud and return major axis
 
     # Vectors
     - id: napari-stress.normal_vectors_on_pointcloud
@@ -166,10 +171,10 @@ contributions:
       display_name: Create points from surface vertices
 
     # Ellipsoid
-    - command: napari-stress.fit_ellipsoid_points
+    - command: napari-stress.fit_ellipsoid_points_vedo
       autogenerate: true
-      display_name: Fit ellipsoid to pointcloud (points)
-    - command: napari-stress.fit_ellipsoid_vectors
+      display_name: Fit ellipsoid to pointcloud (vedo)
+    - command: napari-stress.fit_ellipsoid_vectors_vedo
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
     - command: napari-stress.fit_lsq_ellipsoid
@@ -206,3 +211,10 @@ contributions:
     - command: napari-stress.get_droplet_image_sample_4d
       display_name: 4d Droplet image
       key: PC_3
+
+  menus:
+    napari/layers/project:
+      - command: napari-stress.fit_lsq_ellipsoid
+      - command: napari-stress.expand_ellipsoid
+      - command: napari-stress.normals_on_lsq_ellipsoid
+      
