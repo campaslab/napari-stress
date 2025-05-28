@@ -25,7 +25,9 @@ def deviation_from_ellipsoidal_mode(
     expander = approximation.EllipsoidExpander()
     expander.fit(points)
     ellipsoid = expander.coefficients_
-    errors = vectors.pairwise_point_distances(points, expander.expand(points))[:, 1]
+    errors = vectors.pairwise_point_distances(points, expander.expand(points))[
+        :, 1
+    ]
     normals = expander.properties["normals"][:, 1]
     signed_errors = -1.0 * np.multiply(normals, errors).sum(axis=1)
 
