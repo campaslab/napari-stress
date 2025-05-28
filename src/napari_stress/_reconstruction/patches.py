@@ -1,4 +1,4 @@
-from typing import Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -87,7 +87,7 @@ def _create_fitted_coordinates(points, fitting_params):
 
 def _find_neighbor_indices(
     pointcloud: "napari.types.PointsData",
-    patch_radius: Tuple[float, np.ndarray],
+    patch_radius: tuple[float, np.ndarray],
 ):
     """
     For each point in the pointcloud, find the indices and distances of all points

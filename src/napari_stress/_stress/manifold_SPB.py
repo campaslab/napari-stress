@@ -613,11 +613,9 @@ def Radial_Manifold_R_Def(theta, phi, r_0, Manny_Name):
 
     else:
         print(
-            "\n"
-            + "ERROR: RADIAL Manifold Name: "
+            + "\nERROR: RADIAL Manifold Name: "
             + str(Manny_Name)
-            + ", Not Recognized"
-            + "\n"
+            + ", Not Recognized\n"
         )
 
 

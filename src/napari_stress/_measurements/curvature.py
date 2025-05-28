@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 from napari.layers import Layer
@@ -308,7 +306,7 @@ def mean_curvature_on_ellipse_cardinal_points(
 )
 def gauss_bonnet_test(
     input_manifold: manifold, viewer: "napari.Viewer" = None
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Use Gauss-Bonnet theorem to measure resolution on manifold.
 
@@ -358,7 +356,7 @@ def gauss_bonnet_test(
 )
 def calculate_mean_curvature_on_manifold(
     input_manifold: manifold,
-) -> Tuple[np.ndarray, float, float]:
+) -> tuple[np.ndarray, float, float]:
     """
     Calculate mean curvatures for a given manifold.
 
@@ -423,7 +421,7 @@ def calculate_mean_curvature_on_manifold(
 )
 def average_mean_curvatures_on_manifold(
     input_manifold: manifold,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Calculate averaged mean curvatures on manifold.
 

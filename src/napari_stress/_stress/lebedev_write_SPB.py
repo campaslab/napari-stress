@@ -4826,9 +4826,8 @@ def Lebedev(n):
     try:
         lebPoints_cart_w = LebFunc[n]()
         return np.array(lebPoints_cart_w)
-    except Exception:
-        raise "No grid available for %d" % n
-    return None
+    except (KeyError, TypeError, ValueError) as err:
+        raise ValueError(f"No grid available for {n}") from None
 
 
 if __name__ == "__main__":
@@ -4868,12 +4867,12 @@ if __name__ == "__main__":
         5294,
         5810,
     ]:
-        print("    %d : [" % i)
+        print(f"    {i} : [")
         lf = LebFunc[i]()
         for xyzw in lf:
-            print("        (%16.12f,%16.12f,%16.12f,%16.12f)," % xyzw)
+            print(f"        ({xyzw[0]:16.12f},{xyzw[1]:16.12f},{xyzw[2]:16.12f},{xyzw[3]:16.12f}),")
         print("    ],")
-    print("}")
+        print("}")
 
 # if __name__ == '__init__':
 #  self.x      = [];

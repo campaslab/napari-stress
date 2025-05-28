@@ -113,8 +113,6 @@ def project_point_on_ellipse_surface(
     np.ndarray
         Point on the surface of the ellipsoid.
     """
-    import vedo
-
     # transformation matrix to turn ellipsoid into a sphere
     T = np.array([[1 / a, 0, 0], [0, 1 / b, 0], [0, 0, 1 / c]])
 
@@ -156,7 +154,7 @@ def test_curvature():
         sphere, search_radius=0.25
     )
     features = result[1]["metadata"]["features"]
-    assert "mean_curvature" in features.keys()
+    assert "mean_curvature" in features
     assert np.allclose(features["mean_curvature"].mean(), 1.0, atol=0.1)
 
     # Test mean curvature on ellipsoid

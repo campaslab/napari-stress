@@ -1,6 +1,6 @@
 import inspect
 from enum import Enum
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -307,7 +307,7 @@ def estimate_fit_parameters(intensity):
 
 def _mean_squared_error(
     fit_function: callable, x: np.ndarray, y: np.ndarray, fit_params: list
-) -> List[float]:
+) -> list[float]:
     """
     Calculate error parameters for a given fit functions and the determined parameters.
 

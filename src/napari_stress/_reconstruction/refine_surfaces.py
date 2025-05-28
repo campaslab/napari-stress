@@ -1,5 +1,5 @@
 import warnings
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -31,7 +31,7 @@ def trace_refinement_of_surface(
     remove_outliers: bool = True,
     outlier_tolerance: float = 1.5,
     interpolation_method: interpolation_types = interpolation_types.cubic,
-) -> List[LayerDataTuple]:
+) -> list[LayerDataTuple]:
     """
     Generate intensity profiles along traces.
 

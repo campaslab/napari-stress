@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -60,18 +60,15 @@ class droplet_reconstruction_toolbox(QWidget):
 
     def _set_scales(self):
         """Get scales from loaded data."""
-        try:
-            scales = self.image_layer_select.value.scale
-            scales = scales[-3:]  # scales may be 4D
-            self.doubleSpinBox_voxelsize_x.setValue(scales[2])
-            self.doubleSpinBox_voxelsize_y.setValue(scales[1])
-            self.doubleSpinBox_voxelsize_z.setValue(scales[0])
+        scales = self.image_layer_select.value.scale
+        scales = scales[-3:]  # scales may be 4D
+        self.doubleSpinBox_voxelsize_x.setValue(scales[2])
+        self.doubleSpinBox_voxelsize_y.setValue(scales[1])
+        self.doubleSpinBox_voxelsize_z.setValue(scales[0])
 
-            # set target voxel size to mean of scales as default
-            mean_scale = np.mean([scales[0], scales[2]])
-            self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
-        except Exception as e:
-            pass
+        # set target voxel size to mean of scales as default
+        mean_scale = np.mean([scales[0], scales[2]])
+        self.doubleSpinBox_target_voxelsize.setValue(mean_scale)
 
     def _export_settings(self, file_name: str = None):
         """
@@ -222,7 +219,7 @@ def reconstruct_droplet(
     sampling_distance: float = 0.5,
     interpolation_method: str = "cubic",
     return_intermediate_results: bool = False,
-) -> List[LayerDataTuple]:
+) -> list[LayerDataTuple]:
     """
     Reconstruct droplet surface from points layer.
 
@@ -267,8 +264,8 @@ def reconstruct_droplet(
 
     Returns
     -------
-    List[LayerDataTuple]
-        List of napari layers:
+    list[LayerDataTuple]
+        list of napari layers:
             - rescaled image: image rescaled to target voxel size
             - label image: connected components of rescaled image
             - points first guess: points sampled on fibonacci grid

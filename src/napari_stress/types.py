@@ -1,5 +1,3 @@
-from typing import List
-
 from magicgui import register_type
 from magicgui.widgets.protocols import CategoricalWidgetProtocol
 from napari import layers
@@ -82,7 +80,7 @@ _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB = (
 )
 
 
-def _get_layers_features(gui: CategoricalWidgetProtocol) -> List[layers.Layer]:
+def _get_layers_features(gui: CategoricalWidgetProtocol) -> list[layers.Layer]:
     """Retrieve layers matching gui.annotation, from the Viewer the gui is in.
 
     Parameters

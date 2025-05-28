@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import napari
@@ -18,7 +18,7 @@ def compile_data_from_layers(
     Parameters
     ----------
     results_stress_analysis : list
-        List of tuples containing the results of the stress analysis
+        list of tuples containing the results of the stress analysis
     n_frames : int
         Number of frames in the data
     time_step : float
@@ -139,7 +139,7 @@ def find_metadata_in_layers(layers: list, name: str) -> "napari.layers.Layer":
 
 
 def aggregate_ellipsoid_contribution_matrix(
-    results_stress_analysis: List[LayerDataTuple],
+    results_stress_analysis: list[LayerDataTuple],
 ) -> np.ndarray:
     from ..types import _METADATAKEY_ELIPSOID_DEVIATION_CONTRIB
 
@@ -153,7 +153,7 @@ def aggregate_ellipsoid_contribution_matrix(
 
 
 def aggregate_singular_values(
-    results_stress_analysis: List[LayerDataTuple],
+    results_stress_analysis: list[LayerDataTuple],
     n_frames: int,
     time_step: float,
 ) -> pd.DataFrame:
@@ -162,8 +162,8 @@ def aggregate_singular_values(
 
     Parameters
     ----------
-    results_stress_analysis : List[LayerDataTuple]
-        List of tuples containing the results of the stress analysis
+    results_stress_analysis : list[LayerDataTuple]
+        list of tuples containing the results of the stress analysis
     n_frames : int
         Number of frames in the data
     time_step : float
@@ -260,7 +260,7 @@ def aggregate_singular_values(
 
 
 def aggregate_extrema_results(
-    results_stress_analysis: List[LayerDataTuple],
+    results_stress_analysis: list[LayerDataTuple],
     n_frames: int,
     time_step: float,
 ) -> tuple:
@@ -269,8 +269,8 @@ def aggregate_extrema_results(
 
     Parameters
     ----------
-    results_stress_analysis : List[LayerDataTuple]
-        List of tuples containing the results of the stress analysis
+    results_stress_analysis : list[LayerDataTuple]
+        list of tuples containing the results of the stress analysis
     n_frames : int
         Number of frames in the data
     time_step : float
@@ -408,7 +408,7 @@ def aggregate_extrema_results(
 
 
 def aggregate_spatial_autocorrelations_results(
-    results_stress_analysis: List[LayerDataTuple],
+    results_stress_analysis: list[LayerDataTuple],
     n_frames: int,
     time_step: float,
 ) -> tuple:
@@ -417,8 +417,8 @@ def aggregate_spatial_autocorrelations_results(
 
     Parameters
     ----------
-    results_stress_analysis : List[LayerDataTuple]
-        List of tuples containing the results of the stress analysis
+    results_stress_analysis : list[LayerDataTuple]
+        list of tuples containing the results of the stress analysis
     n_frames : int
         Number of frames in the data
     time_step : float
