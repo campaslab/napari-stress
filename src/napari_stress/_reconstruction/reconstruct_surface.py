@@ -1,12 +1,12 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
-
 
 
 @register_function(
@@ -31,8 +31,9 @@ def reconstruct_surface_from_quadrature_points(
 
     """
     from scipy.spatial import Delaunay
-    from .._utils import sanitize_faces
+
     from .._stress import lebedev_write_SPB as lebedev_write
+    from .._utils import sanitize_faces
 
     n_quadrature_points = len(points)
 

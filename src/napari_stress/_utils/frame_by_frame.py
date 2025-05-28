@@ -1,6 +1,5 @@
 import inspect
 from functools import wraps
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -160,7 +159,7 @@ class TimelapseConverter:
             "napari.types.LabelsData": self._list_of_images_to_image,
             LayerDataTuple: self._list_of_ldtuple_to_layerdatatuple,
             "napari.types.LayerDataTuple": self._list_of_ldtuple_to_layerdatatuple,
-            List[
+            list[
                 LayerDataTuple
             ]: self._list_of_multiple_ldtuples_to_multiple_ldt_tuples,
             VectorsData: self._list_of_vectors_to_vectors,
@@ -190,7 +189,7 @@ class TimelapseConverter:
         ----------
         data : 4D data to be converted
         layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
-        `ImageData`, `LabelsData`, `List[LayerDataTuple]`, `LayerDataTuple` or
+        `ImageData`, `LabelsData`, `list[LayerDataTuple]`, `LayerDataTuple` or
         pd.DataFrame.
 
         Raises
@@ -201,12 +200,10 @@ class TimelapseConverter:
 
         Returns
         -------
-        list: List of 3D objects of input layertype
+        list: list of 3D objects of input layertype
 
         """
-        if layertype not in list(
-            self.data_to_list_conversion_functions
-        ):
+        if layertype not in list(self.data_to_list_conversion_functions):
             raise TypeError(
                 f"{layertype} data to list conversion currently not supported."
             )
@@ -222,7 +219,7 @@ class TimelapseConverter:
         ----------
         data : list of 3D data (time)frames
         layertype : layerdata type. Can be any of 'PointsData', `SurfaceData`,
-        `ImageData`, `LabelsData`, `List[LayerDataTuple]`, `LayerDataTuple` or
+        `ImageData`, `LabelsData`, `list[LayerDataTuple]`, `LayerDataTuple` or
         pd.DataFrame.
 
         Raises
@@ -314,12 +311,14 @@ class TimelapseConverter:
 
         list_of_props = [
             {"features": features, "metadata": metadata}
-            for features, metadata in zip(list_of_features, list_of_metadata)
+            for features, metadata in zip(
+                list_of_features, list_of_metadata, strict=False
+            )
         ]
 
         list_of_ldtuples = [
             (data, props, layertype)
-            for data, props in zip(list_of_data, list_of_props)
+            for data, props in zip(list_of_data, list_of_props, strict=False)
         ]
 
         return list_of_ldtuples
@@ -327,7 +326,7 @@ class TimelapseConverter:
     def _list_of_multiple_ldtuples_to_multiple_ldt_tuples(
         self,
         tuple_data: list,
-    ) -> List[LayerDataTuple]:
+    ) -> list[LayerDataTuple]:
         """If a function returns a list of LayerDataTuple"""
 
         layertypes = [td[-1] for td in tuple_data[0]]
@@ -393,7 +392,7 @@ class TimelapseConverter:
                 for key in metadata_list[0]:
                     new_metadata[key] = [frame[key] for frame in metadata_list]
 
-                new_metadata["frame"] = [t for t in range(len(metadata_list))]
+                new_metadata["frame"] = list(range(len(metadata_list)))
                 _properties["metadata"] = new_metadata
                 [frame.pop("metadata") for frame in properties]
 
@@ -500,7 +499,7 @@ class TimelapseConverter:
 
         output_vectors = [
             np.stack([pt, vec]).transpose((1, 0, 2))
-            for pt, vec in zip(point_list, vector_list)
+            for pt, vec in zip(point_list, vector_list, strict=False)
         ]
         return output_vectors
 

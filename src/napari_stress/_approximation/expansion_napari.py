@@ -1,5 +1,7 @@
-from napari_tools_menu import register_function
 from typing import TYPE_CHECKING
+
+from napari_tools_menu import register_function
+
 if TYPE_CHECKING:
     import napari
 

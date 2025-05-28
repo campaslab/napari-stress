@@ -8,12 +8,15 @@ Depending on how you have your Python set up on your machine, different preparat
 - [Getting started with Python and Anaconda](https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html): If you have not yet installed Python or Anaconda on your computer **at all**, this explains how to set it up and create an environment that contain the most basic functionality ([napari](https://napari.org/stable/) & [Jupyterlab](https://jupyter.org/))
 - Setting up a new environment: If you already have Python installed and want to create a new environment for napari-stress, follow these steps to create a new environment and install napari-stress into it.
 
-```bash
-conda create -n stress Python=3.9
-conda acticate stress
-conda install mamba -c conda-forge
+```{important}
+Please note that napari-stress is not compatible with Python 3.9 or lower. You need to use Python 3.10 or higher.
+```
 
-mamba install napari pyqt devbio-napari
+```bash
+conda create -n stress Python=3.10
+conda acticate stress
+
+conda install napari pyqt devbio-napari
 pip install napari-stress
 ```
 

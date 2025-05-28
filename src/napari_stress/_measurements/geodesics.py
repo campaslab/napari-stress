@@ -1,4 +1,4 @@
-from typing import List
+from typing import TYPE_CHECKING
 
 import numpy as np
 from napari.types import LayerDataTuple, SurfaceData
@@ -6,7 +6,6 @@ from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import napari
 
@@ -30,6 +29,7 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
 
     """
     import gdist
+
     from .._utils import sanitize_faces
 
     # Reorder the faces of the surface to ensure consistent orientation
@@ -38,7 +38,8 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     faces = sanitized_surface[1]
 
     distance_matrix = gdist.local_gdist_matrix(
-        vertices, faces, max_distance=1e9).toarray()
+        vertices, faces, max_distance=1e9
+    ).toarray()
 
     return distance_matrix
 
@@ -68,6 +69,7 @@ def geodesic_path(
 
     """
     import potpourri3d as pp3d
+
     from .._utils import sanitize_faces
 
     sanitized_surface = sanitize_faces(surface)
@@ -208,7 +210,7 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 )
 def local_extrema_analysis(
     surface: "napari.types.SurfaceData", distance_matrix: np.ndarray = None
-) -> List[LayerDataTuple]:
+) -> list[LayerDataTuple]:
     """
     Get local maximum and minimum and analyze their mutual distances.
 
@@ -225,7 +227,7 @@ def local_extrema_analysis(
 
     Returns
     -------
-    List[LayerDataTuple]
+    list[LayerDataTuple]
         A list of LayerDataTuples, each containing features and metadata related to local extrema.
         The 'features' key includes:
             - `local_max_and_min`: -1 if local minimum, +1 if local maximum, 0 otherwise.
@@ -236,6 +238,7 @@ def local_extrema_analysis(
             - `min_max_pair_anisotropies`: Difference in input value `(vertices, faces, values)` between all pairs of local minima and maxima.
     """
     from .._utils import sanitize_faces
+
     feature = surface[2]
     surface = sanitize_faces(surface)
     triangles = surface[1]

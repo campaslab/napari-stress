@@ -6,7 +6,6 @@ functions (e.g., those functions that are visible to napari) in a separated plac
 """
 
 import warnings
-from typing import Tuple
 
 import numpy as np
 import vedo
@@ -21,7 +20,7 @@ from .fit_utils import Least_Squares_Harmonic_Fit
 
 def stress_spherical_harmonics_expansion(
     points: PointsData, max_degree: int = 5, expansion_type: str = "cartesian"
-) -> Tuple[PointsData, np.ndarray]:
+) -> tuple[PointsData, np.ndarray]:
     """
     Approximate a surface by spherical harmonics expansion with stress implementation.
 
@@ -139,7 +138,7 @@ def lebedev_quadrature(
     coefficients: np.ndarray,
     number_of_quadrature_points: int = 500,
     use_minimal_point_set: bool = True,
-) -> Tuple[PointsData, lebedev_info.lbdv_info]:
+) -> tuple[PointsData, lebedev_info.lbdv_info]:
     """
     Calculate lebedev quadrature points for a given spherical harmonics expansion.
 
@@ -192,7 +191,8 @@ def lebedev_quadrature(
         max_degree + 1
     ):
         warnings.warn(
-            r"Note: Only {necessary_n_points} are required for exact results."
+            r"Note: Only {necessary_n_points} are required for exact results.",
+            stacklevel=2,
         )
 
     # Create spherical harmonics functions to represent z/y/x
@@ -317,7 +317,9 @@ def calculate_mean_curvature_on_manifold(
 
     # Makre sure orientation is inward, so H is positive
     # (for Ellipsoid, and small deviations):
-    Orientations = [np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals)]
+    Orientations = [
+        np.dot(x, y) for x, y in zip(centered_lbdv_pts, normals, strict=False)
+    ]
     num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
     Orientation = 1.0  # unchanged (we want INWARD)

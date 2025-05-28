@@ -1,4 +1,4 @@
-jupyter-book>=0.7.0b
+jupyter-book>=1.0.4
 napari
 QtPy
 napari-stress>=0.3.9

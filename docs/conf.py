@@ -13,7 +13,6 @@ author = "Johannes Soltwedel"
 autosummary_generate = True
 bibtex_bibfiles = ["references.bib"]
 comments_config = {"hypothesis": False, "utterances": False}
-copyright = "2022"
 exclude_patterns = ["**.ipynb_checkpoints", ".DS_Store", "Thumbs.db", "_build"]
 extensions = [
     "sphinx_togglebutton",

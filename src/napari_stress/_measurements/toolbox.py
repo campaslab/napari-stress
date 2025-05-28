@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import napari
+    pass
 
 import numpy as np
 from magicgui.widgets import create_widget
@@ -280,7 +280,7 @@ def comprehensive_analysis(
     maximal_distance: int = None,
     gamma: float = 26.0,
     verbose=False,
-) -> List[LayerDataTuple]:
+) -> list[LayerDataTuple]:
     """
     Comprehensive stress analysis of droplet points layer.
 
@@ -301,8 +301,8 @@ def comprehensive_analysis(
 
     Returns
     -------
-    List[LayerDataTuple]
-        List of layer data tuples:
+    list[LayerDataTuple]
+        list of layer data tuples:
         - layer_spherical_harmonics: 'napari.types.PointsData'
             fitted spherical harmonics expansion
         - layer_fitted_ellipsoid_points: 'napari.types.PointsData'
@@ -597,9 +597,7 @@ def comprehensive_analysis(
 
     GDM = None
     if GDM is None:
-        GDM = measurements.geodesic_distance_matrix(
-            surface_cell_stress
-        )
+        GDM = measurements.geodesic_distance_matrix(surface_cell_stress)
 
     if maximal_distance is None:
         maximal_distance = int(np.floor(np.nanmax(GDM[np.inf != GDM])))

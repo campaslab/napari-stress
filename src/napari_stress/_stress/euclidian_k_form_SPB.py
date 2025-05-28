@@ -2041,13 +2041,11 @@ class euc_k_form:
             Debug_Dict["div_V_B_pts"] = div_V_B_pts
 
             if debug_mode is True:
-                print(
-                    "\nAll_A_inv_successful = "
-                    + str(All_A_inv_successful)
-                )
+                print("\nAll_A_inv_successful = " + str(All_A_inv_successful))
                 print(
                     "All_B_inv_successful = "
-                    + str(All_B_inv_successful) + "\n"
+                    + str(All_B_inv_successful)
+                    + "\n"
                 )
                 return Debug_Dict
             else:

@@ -1,4 +1,5 @@
-from typing import Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     import napari
 
@@ -12,7 +13,7 @@ def anisotropic_stress(
     mean_curvature_ellipsoid: np.ndarray,
     H0_ellipsoid: float,
     gamma: float = 26.0,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate anisotropic stress from mean and averaged curvatures.
 
@@ -91,7 +92,7 @@ def maximal_tissue_anisotropy(
 
 def tissue_stress_tensor(
     ellipsoid: "napari.types.VectorsData", H0_ellipsoid: float, gamma: float
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculate tissue stress tensor(s).
 

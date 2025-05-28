@@ -22,13 +22,13 @@ Welcome to the documentation for napari-stress! This ressource provides informat
 
 ## Installation
 
-To install nappari-STRESS in your environment (provided you have Python and napari already installed), simply type this in your command:
+To install nappari-STRESS in your environment (provided you have Python>=3.10 and napari already installed), simply type this in your command:
 
 ```
 pip install napari-stress
 ```
 
-For more detailed installation instructions,, hints and some known issues, please refer to the [installation section](FAQ:installation).
+For more detailed installation instructions, hints and some known issues, please refer to the [installation section](FAQ:installation).
 
 ### Other useful packages
 
