@@ -471,63 +471,49 @@ class lbdv_info:  # Generates (ONCE) and stores Lebedev Info
                     for quad_pt in range(self.lbdv_quad_pts):
                         Theta_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][0]
                         Phi_Quad_Pt = self.Lbdv_Sph_Pts_Quad[quad_pt][1]
-                        # Dont need Weight, since Quadrature covers that
-
-                        if (
-                            M_Coef == 0
-                        ):  # We Dont need eta_A for first der in this case
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
-                                N_Coef
-                            ][quad_pt] = Der_Phi_Basis_Fn(
+                        # Don't need Weight, since Quadrature covers that
+            
+                        if M_Coef == 0:  # We don't need eta_A for first derivative in this case
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = Der_Phi_Basis_Fn(
                                 M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                             )
-
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
-                                N_Coef
-                            ][quad_pt] = eta_A(
-                                lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(
+            
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+                                lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-
+            
                         elif M_Coef >= 0:
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
-                                N_Coef
-                            ][quad_pt] = eta_A(
-                                lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Basis_Fn(
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+                                lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][
-                                N_Coef
-                            ][quad_pt] = eta_A(
-                                lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(
+            
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef - M_Coef][N_Coef][quad_pt] = eta_A(
+                                lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-
+            
                         else:  # M_Coef < 0
-                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef][
-                                N_Coef - (-1 * M_Coef)
-                            ][quad_pt] = eta_A(
-                                lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Basis_Fn(
+                            self.SPH_Phi_Der_At_Quad_Pts[N_Coef][N_Coef - (-1 * M_Coef)][quad_pt] = eta_A(
+                                lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
                                 Phi_Quad_Pt,
                             )
-
-                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef][
-                                N_Coef - (-1 * M_Coef)
-                            ][quad_pt] = eta_A(
-                                lambda Theta_Quad_Pt, Phi_Quad_Pt: Der_Phi_Phi_Basis_Fn(
+            
+                            self.SPH_Phi_Phi_Der_At_Quad_Pts[N_Coef][N_Coef - (-1 * M_Coef)][quad_pt] = eta_A(
+                                lambda Theta_Quad_Pt, Phi_Quad_Pt, M_Coef=M_Coef, N_Coef=N_Coef: Der_Phi_Phi_Basis_Fn(
                                     M_Coef, N_Coef, Theta_Quad_Pt, Phi_Quad_Pt
                                 ),
                                 Theta_Quad_Pt,
