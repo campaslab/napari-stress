@@ -149,7 +149,7 @@ def test_curvature_and_normals(generate_pointclouds, make_napari_viewer):
 
     # Test normals
     expander_ellipsoid = approximation.EllipsoidExpander()
-    expander_ellipsoid.fit(points)
+    _ = expander_ellipsoid.fit_expand(points)
     normals = expander_ellipsoid.properties['normals']
     assert normals is not None
 
