@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,7 +12,7 @@ def draw_chronological_kde_plot(
     colormap: str = "flare",
     legend: bool = True,
     grid: bool = True,
-) -> Tuple[plt.Figure, plt.Axes]:
+) -> tuple[plt.Figure, plt.Axes]:
     """
     Draw a KDE plot of the data in df, with x on the x-axis and hue as the
     color. The data is assumed to be chronological, so the hue is used to
@@ -66,7 +64,7 @@ def draw_chronological_lineplot_with_errors(
     error: str = "se",
     estimator=np.mean,
     **kwargs,
-) -> Tuple[plt.Figure, plt.Axes]:
+) -> tuple[plt.Figure, plt.Axes]:
     """
     Draw a line plot of the data in df, with x on the x-axis and hue as the
     color. The data is assumed to be chronological, so the hue is used to

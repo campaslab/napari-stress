@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 from napari.types import LayerDataTuple, SurfaceData
 from napari_tools_menu import register_function
@@ -208,7 +206,7 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
 )
 def local_extrema_analysis(
     surface: "napari.types.SurfaceData", distance_matrix: np.ndarray = None
-) -> List[LayerDataTuple]:
+) -> list[LayerDataTuple]:
     """
     Get local maximum and minimum and analyze their mutual distances.
 
@@ -225,7 +223,7 @@ def local_extrema_analysis(
 
     Returns
     -------
-    List[LayerDataTuple]
+    list[LayerDataTuple]
         A list of LayerDataTuples, each containing features and metadata related to local extrema.
         The 'features' key includes:
             - `local_max_and_min`: -1 if local minimum, +1 if local maximum, 0 otherwise.
