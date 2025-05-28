@@ -217,4 +217,4 @@ contributions:
       - command: napari-stress.fit_lsq_ellipsoid
       - command: napari-stress.expand_ellipsoid
       - command: napari-stress.normals_on_lsq_ellipsoid
-      
+

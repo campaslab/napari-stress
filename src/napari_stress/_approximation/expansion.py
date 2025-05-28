@@ -729,8 +729,8 @@ class EllipsoidExpander(Expander):
         return center, axes_lengths, eigenvectors
 
     def _calculate_normals(
-            self,
-            points: "napari.types.PointsData") -> "napari.types.VectorsData":
+        self, points: "napari.types.PointsData"
+    ) -> "napari.types.VectorsData":
         """
         Calculate normals on the fitted ellipsoid.
 
@@ -768,4 +768,6 @@ class EllipsoidExpander(Expander):
         ).reshape(len(xx), 1)
         grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
 
-        self._properties["normals"] = np.stack([points, grad_F_X_normed]).transpose((1, 0, 2))
+        self._properties["normals"] = np.stack(
+            [points, grad_F_X_normed]
+        ).transpose((1, 0, 2))

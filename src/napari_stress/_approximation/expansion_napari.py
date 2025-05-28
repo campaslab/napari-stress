@@ -55,6 +55,7 @@ def expand_points_on_fitted_ellipsoid(
 
     return expanded_points
 
+
 @frame_by_frame
 def normals_on_fitted_ellipsoid(
     points: "napari.types.PointsData",
