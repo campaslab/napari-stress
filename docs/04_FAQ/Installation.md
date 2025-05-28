@@ -15,9 +15,8 @@ Please note that napari-stress is not compatible with Python 3.9 or lower. You n
 ```bash
 conda create -n stress Python=3.10
 conda acticate stress
-conda install mamba -c conda-forge
 
-mamba install napari pyqt devbio-napari
+conda install napari pyqt devbio-napari
 pip install napari-stress
 ```
 
