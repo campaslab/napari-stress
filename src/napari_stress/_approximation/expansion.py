@@ -345,10 +345,11 @@ class SphericalHarmonicsExpander(Expander):
         """
         Calculate ellipsoidal coordinates for a set of points and an ellipsoid.
         """
-        from . import least_squares_ellipsoid
+        ellipsoid_expander = EllipsoidExpander()
+        ellipsoid_expander.fit(points)
 
         # Calculate ellipsoid properties
-        ellipsoid = least_squares_ellipsoid(points)
+        ellipsoid = ellipsoid_expander.coefficients_
         ellipsoid_center = ellipsoid[:, 0].mean(axis=0)
         axis_lengths = np.linalg.norm(ellipsoid[:, 1], axis=1)
         rotation_matrix_inverse = (ellipsoid[:, 1] / axis_lengths[:, None]).T
@@ -444,6 +445,7 @@ class EllipsoidExpander(Expander):
 
     def __init__(self):
         super().__init__()
+        self._fit_coefficients: np.ndarray = None
 
     def _fit(
         self, points: "napari.types.PointsData"
@@ -463,9 +465,9 @@ class EllipsoidExpander(Expander):
         ellipsoid_fitted_ : napari.types.VectorsData
             The fitted ellipsoid.
         """
-        coefficients = self._fit_ellipsoid_to_points(points)
+        self._fit_coefficients = self._fit_ellipsoid_to_points(points)
         self._center, self._axes, self._eigenvectors = (
-            self._extract_characteristics(coefficients)
+            self._extract_characteristics(self._fit_coefficients)
         )
 
         vectors = (
@@ -509,6 +511,7 @@ class EllipsoidExpander(Expander):
         """
         self._measure_residuals(input_points, output_points)
         self._measure_max_min_curvatures()
+        self._calculate_normals(input_points)
 
     @property
     def coefficients_(self):
@@ -724,3 +727,45 @@ class EllipsoidExpander(Expander):
         axes_lengths = np.sqrt(1.0 / np.abs(eigenvalues))
 
         return center, axes_lengths, eigenvectors
+
+    def _calculate_normals(
+            self,
+            points: "napari.types.PointsData") -> "napari.types.VectorsData":
+        """
+        Calculate normals on the fitted ellipsoid.
+
+        Parameters
+        ----------
+        points : napari.types.PointsData
+            The points to calculate normals for.
+
+        Returns
+        -------
+        normals : napari.types.VectorsData
+            The normals on the ellipsoid.
+        """
+        A = self._fit_coefficients.flatten()[0]
+        B = self._fit_coefficients.flatten()[1]
+        C = self._fit_coefficients.flatten()[2]
+        D = self._fit_coefficients.flatten()[3]
+        E = self._fit_coefficients.flatten()[4]
+        F = self._fit_coefficients.flatten()[5]
+        G = self._fit_coefficients.flatten()[6]
+        H = self._fit_coefficients.flatten()[7]
+        J = self._fit_coefficients.flatten()[8]
+
+        xx = points[:, 0][:, None]
+        yy = points[:, 1][:, None]
+        zz = points[:, 2][:, None]
+
+        grad_F_x = 2.0 * A * xx + D * yy + E * zz + G
+        grad_F_y = 2.0 * B * yy + D * xx + F * zz + H
+        grad_F_z = 2.0 * C * zz + E * xx + F * yy + J
+
+        grad_F_X = np.hstack((grad_F_x, grad_F_y, grad_F_z))
+        Vec_Norms = np.sqrt(
+            np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)
+        ).reshape(len(xx), 1)
+        grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
+
+        self._properties["normals"] = np.stack([points, grad_F_X_normed]).transpose((1, 0, 2))

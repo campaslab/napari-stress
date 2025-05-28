@@ -134,8 +134,10 @@ def test_curvature_and_normals(generate_pointclouds, make_napari_viewer):
     points = droplet_points()
 
     # Fit ellipsoid
-    ellipsoid = approximation.least_squares_ellipsoid(points)
-    fitted_points = approximation.expand_points_on_ellipse(ellipsoid, points)
+    ellipsoid_expander = approximation.EllipsoidExpander()
+    ellipsoid_expander.fit(points)
+    ellipsoid = ellipsoid_expander.coefficients_
+    fitted_points = ellipsoid_expander.expand(points)
 
     # Test curvature
     data, features, metadata = measurements.curvature_on_ellipsoid(
@@ -146,7 +148,9 @@ def test_curvature_and_normals(generate_pointclouds, make_napari_viewer):
     assert metadata is not None
 
     # Test normals
-    normals = approximation.normals_on_ellipsoid(points)
+    expander_ellipsoid = approximation.EllipsoidExpander()
+    expander_ellipsoid.fit(points)
+    normals = expander_ellipsoid.properties['normals']
     assert normals is not None
 
     # Validate metadata keys
