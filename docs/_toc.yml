@@ -13,7 +13,6 @@ parts:
     - file: 01_code_usage/code_usage
       sections:
       - file: 01_code_usage/demo_droplet_reconstruction_toolbox_code
-      - file: 01_code_usage/demo_anisotropic_stresses
       - file: 01_code_usage/demo_analyze_everything
       - file: 01_code_usage/demo_analyze_everything_batch
       - file: 01_code_usage/demo_fit_ellipsoid_code
