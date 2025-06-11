@@ -83,7 +83,6 @@ def trace_refinement_of_surface(
     from .._measurements.measurements import distance_to_k_nearest_neighbors
     from .fit_utils import (
         _fancy_edge_fit,
-        _identify_outliers,
         _mean_squared_error,
     )
 
@@ -170,18 +169,6 @@ def trace_refinement_of_surface(
 
     fit_data["start_points"] = list(start_points)
 
-    if remove_outliers:
-        # Remove outliers
-        good_points = _identify_outliers(
-            fit_data,
-            column_names=["fraction_variance_unexplained_log"],
-            which=["above"],
-            factor=outlier_tolerance,
-            merge="or",
-        )
-        fit_data = fit_data[good_points]
-        intensity_along_vector = intensity_along_vector[good_points]
-
     # get indeces of rows with nans
     no_nan_idx = np.where(~np.isnan(fit_data["surface_points_x"].to_numpy()))[
         0
@@ -238,6 +225,46 @@ def trace_refinement_of_surface(
     layer_normals = (trace_vectors, properties, "vectors")
 
     return (layer_points, layer_normals)
+
+
+def remove_outliers(
+        points: "napari.layers.Points",
+        outlier_tolerance: float = 1.5) -> "napari.layers.Points":
+    """
+    Remove outliers from points based on the fraction of variance unexplained.
+
+    Parameters
+    ----------
+    points : napari.layers.Points
+        Points layer from which to remove outliers.
+    outlier_tolerance : float, optional
+        Tolerance factor for outlier detection, by default 1.5
+    Returns
+    -------
+    napari.layers.Points
+        New points layer with outliers removed.
+    """
+    from .fit_utils import _identify_outliers
+
+    good_points = _identify_outliers(
+        points.features,
+        column_names=["fraction_variance_unexplained_log"],
+        which=["above"],
+        factor=outlier_tolerance,
+        merge="or",
+    )
+    retained_points = points.data[good_points]
+    retained_features = points.features.iloc[good_points]
+    
+    return napari.layers.Points(
+        retained_points,
+        features=retained_features,
+        scale=points.scale,
+        translate=points.translate,
+        rotate=points.rotate,
+    )
+
+
 
 
 @register_function(menu="Points > Resample spherical pointcloud (n-STRESS)")
