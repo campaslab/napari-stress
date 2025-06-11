@@ -28,6 +28,27 @@ class SphericalHarmonicsExpander(Expander):
         Type of expansion to perform. Can be either 'cartesian' or 'radial'.
     normalize_spectrum : bool
         Normalize power spectrum sum to 1.
+    
+    Attributes
+    ----------
+    coefficients_ : np.ndarray
+        Spherical harmonics coefficients of shape `(3, max_degree + 1, max_degree + 1)` for
+        'cartesian' expansion type or `(1, max_degree + 1, max_degree + 1)` for 'radial' expansion type.
+    properties : dict
+        Dictionary containing properties of the expansion, including residuals and power spectrum.
+        - residuals: np.ndarray
+            Residual euclidian distance between input points and expanded points.
+        - power_spectrum: np.ndarray
+            Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
+            is set to True, the power spectrum is normalized to sum to 1.
+            The spectrum :math:`P_l` is calculated as follows:
+
+            .. math::
+                P_l = \\sum_{m=-l}^{l} |a_{lm}|^2
+
+            where :math:`a_{lm}` are the spherical harmonics coefficients.
+
+
 
     Methods
     -------
@@ -61,7 +82,7 @@ class SphericalHarmonicsExpander(Expander):
         self.max_degree = max_degree
         self.normalize_spectrum = normalize_spectrum
 
-    def _fit(self, points: "napari.types.PointsData"):
+    def fit(self, points: "napari.types.PointsData"):
         """
         Fit spherical harmonics to input data.
         """
@@ -124,7 +145,7 @@ class SphericalHarmonicsExpander(Expander):
             optimal_fit_parameters, self.max_degree
         )[None, :]
 
-    def _expand(self, points: "napari.types.PointsData"):
+    def expand(self, points: "napari.types.PointsData"):
         """
         Expand spherical harmonics using input coefficients.
         """
@@ -160,47 +181,15 @@ class SphericalHarmonicsExpander(Expander):
             )
 
         return fitted_points
-
-    @property
-    def coefficients_(self):
+    
+    def fit_expand(
+        self, points: "napari.types.PointsData"
+    ) -> "napari.types.PointsData":
         """
-        The coefficients of the spherical harmonics expansion.
-
-        Returns
-        -------
-        coefficients_ : np.ndarray
-            The coefficients of the spherical harmonics expansion. The shape of the
-            coefficients depends on the type of expansion. If the expansion type is
-            'cartesian', the coefficients are of shape (3, max_degree + 1, max_degree + 1).
-            If the expansion type is 'radial', the coefficients are of shape
-            (1, max_degree + 1, max_degree + 1).
+        Fit spherical harmonics to input data and then expand them.
         """
-        return self._coefficients
-
-    @property
-    def properties(self):
-        """
-        Get properties of the expansion.
-
-        Returns
-        -------
-        properties : dict
-            Dictionary containing properties of the expansion with following keys:
-
-            - residuals: np.ndarray
-                Residual euclidian distance between input points and expanded points.
-            - power_spectrum: np.ndarray
-                Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
-                is set to True, the power spectrum is normalized to sum to 1.
-
-                The spectrum :math:`P_l` is calculated as follows:
-
-                .. math::
-                    P_l = \\sum_{m=-l}^{l} |a_{lm}|^2
-
-                where :math:`a_{lm}` are the spherical harmonics coefficients.
-        """
-        return self._properties
+        self.fit(points)
+        return self.expand(points)
 
     def _calculate_properties(self, input_points, expanded_points):
         """
@@ -428,6 +417,37 @@ class EllipsoidExpander(Expander):
     fit_expand(points: "napari.types.PointsData")
         Fit an ellipsoid to a set of points and then expand them.
 
+    Attributes
+    ----------
+    coefficients_ : napari.types.VectorsData
+        Coefficients of the fitted ellipsoid. The coefficients are of the form
+        (3, 2, 3); The first dimension represents the three axes of the ellipsoid
+        (major, medial and minor). The second dimension represents the components of
+        the ellipsoid vectors (base point and direction vector). The third dimension
+        represents the dimension of the space (z, y, x).
+    axes_ : np.ndarray
+        Lengths of the axes of the ellipsoid.
+    center_ : np.ndarray
+        Center of the ellipsoid.
+    properties : dict
+        Dictionary containing properties of the expansion with following keys:
+        - residuals: np.ndarray
+            Residual euclidian distance between input points and expanded points.
+        - maximum_mean_curvature: float
+            Maximum mean curvature of the ellipsoid.
+        - minimum_mean_curvature: float
+            Minimum mean curvature of the ellipsoid.
+
+        The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
+
+        .. math::
+            H_{max} = a / (2 * c^2) + a / (2 * b^2)
+
+            H_{min} = c / (2 * b^2) + c / (2 * a^2)
+
+        where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
+    
+
     Examples
     --------
 
@@ -445,7 +465,7 @@ class EllipsoidExpander(Expander):
     def __init__(self):
         super().__init__()
 
-    def _fit(
+    def fit(
         self, points: "napari.types.PointsData"
     ) -> "napari.types.VectorsData":
         """
@@ -477,7 +497,7 @@ class EllipsoidExpander(Expander):
 
         return ellipsoid_fitted_
 
-    def _expand(self, points: "napari.types.PointsData"):
+    def expand(self, points: "napari.types.PointsData"):
         """
         Expand a set of points to fit an ellipsoid.
 
@@ -502,6 +522,25 @@ class EllipsoidExpander(Expander):
         )
 
         return expanded_points
+    
+    def fit_expand(
+        self, points: "napari.types.PointsData"
+    ) -> "napari.types.PointsData":
+        """
+        Fit an ellipsoid to a set of points and then expand them.
+
+        Parameters
+        ----------
+        points : napari.types.PointsData
+            The points to fit an ellipsoid to and then expand.
+
+        Returns
+        -------
+        expanded_points : napari.types.PointsData
+            The expanded points.
+        """
+        self.fit(points)
+        return self.expand(points)
 
     def _calculate_properties(self, input_points, output_points):
         """
@@ -560,34 +599,6 @@ class EllipsoidExpander(Expander):
         """
         return self._center
 
-    @property
-    def properties(self):
-        """
-        Get properties of the expansion.
-
-        Returns
-        -------
-        properties : dict
-            Dictionary containing properties of the expansion with following keys:
-
-            - residuals: np.ndarray
-                Residual euclidian distance between input points and expanded points.
-            - maximum_mean_curvature: float
-                Maximum mean curvature of the ellipsoid.
-            - minimum_mean_curvature: float
-                Minimum mean curvature of the ellipsoid.
-
-            The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
-
-            .. math::
-                H_{max} = a / (2 * c^2) + a / (2 * b^2)
-
-                H_{min} = c / (2 * b^2) + c / (2 * a^2)
-
-            where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
-        """
-        return self._properties
-
     def _measure_max_min_curvatures(self):
         """
         Measure maximum and minimum curvatures of the ellipsoid.
@@ -621,7 +632,7 @@ class EllipsoidExpander(Expander):
         output_points : napari.types.PointsData
             The points after expansion.
         """
-        output_points = self._expand(input_points)
+        output_points = self.expand(input_points)
 
         distance = np.linalg.norm(input_points - output_points, axis=1)
         self._properties["residuals"] = distance
@@ -763,7 +774,7 @@ class EllipsoidImageExpander(Expander):
 
         self._fluorescence = fluorescence
 
-    def _fit(
+    def fit(
         self,
         image: "napari.types.ImageData",
     ) -> "napari.types.VectorsData":
@@ -794,7 +805,11 @@ class EllipsoidImageExpander(Expander):
         return self.coefficients_
     
     def expand(self, n_points):
-        return self._expand(n_points)
+        from .._reconstruction.fit_utils import _fibonacci_sampling
+        expanded_points = _fibonacci_sampling(n_points)
+        expanded_points  = expanded_points @ self._eigenvectors * self._axes[None, :]
+        expanded_points += np.asarray(self._center).reshape(1, 3)
+        return expanded_points
 
     def fit_expand(
             self,
@@ -802,15 +817,7 @@ class EllipsoidImageExpander(Expander):
             n_points: int = 512) -> "napari.types.PointsData":   
 
         self.fit(image)
-        return self._expand(n_points)
-
-    def _expand(self, n_points: int) -> "napari.types.PointsData":
-
-        from .._reconstruction.fit_utils import _fibonacci_sampling
-        points = _fibonacci_sampling(n_points)
-        points  = points @ self._eigenvectors.T * self._axes[None, :]
-        points += np.asarray(self._center).reshape(1, 3)
-        return points
+        return self.expand(n_points)
         
     def est_ellipsoid_from_volume(self, image: np.ndarray) -> tuple:
         """
@@ -907,6 +914,7 @@ class EllipsoidImageExpander(Expander):
         if value is not None:
             self._center = value[0, 0]
             self._axes = np.linalg.norm(value[:, 1], axis=1)
+            self._eigenvectors = value[:, 1] / np.linalg.norm(value[:, 1], axis=1)[:, np.newaxis]
             self._coefficients = value
 
     @property
