@@ -62,10 +62,6 @@ def trace_refinement_of_surface(
         Length of the normal vector, by default 10.0
     sampling_distance : float, optional
         Distance between each point along the normal vector, by default 0.5
-    remove_outliers : bool, optional
-        Whether to remove outliers from the intensity profile, by default True
-    outlier_tolerance : float, optional
-        Tolerance for outlier removal, by default 1.5
     interpolation_method : interpolation_types, optional
         Interpolation method to use for sampling the intensity image, by
         default interpolation_types.cubic
