@@ -26,6 +26,10 @@ def sanitize_faces(
     'napari.types.SurfaceData'
         The sanitized surface data.
     """
+    import vedo
+
+    mesh = vedo.Mesh((surface[0], surface[1])).clean()
+    surface = (mesh.vertices, np.asarray(mesh.cells))
     # Ensure faces are in the correct format
     faces = surface[1]
     vertices = surface[0]
