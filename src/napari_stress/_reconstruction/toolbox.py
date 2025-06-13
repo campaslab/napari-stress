@@ -275,7 +275,6 @@ def reconstruct_droplet(
             - droplet center: center of droplet
 
     """
-    import copy
 
     from skimage import filters, transform
 
@@ -294,8 +293,8 @@ def reconstruct_droplet(
     )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     points_first_guess = ellipse_expander.fit_expand(
-        rescaled_image,
-        n_points=n_points)
+        rescaled_image, n_points=n_points
+    )
 
     traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
         rescaled_image,
