@@ -93,10 +93,10 @@ class SphericalHarmonicsExpander(Expander):
             self.coefficients_ = self._fit_radial(points)
 
     def _fit_cartesian(self, points):
+        from .._stress import sph_func_SPB as sph_f
         from .._utils.coordinate_conversion import (
             cartesian_to_elliptical,
         )
-        from .._stress import sph_func_SPB as sph_f
 
         self._ellipsoid_expander = EllipsoidExpander()
         self._ellipsoid_expander.fit(points)
@@ -165,11 +165,9 @@ class SphericalHarmonicsExpander(Expander):
 
         if self.expansion_type == "cartesian":
             longitude, latitude = cartesian_to_elliptical(
-                self._ellipsoid_expander.coefficients_,
-                points,
-                invert=True
+                self._ellipsoid_expander.coefficients_, points, invert=True
             )
-                    # Create SPH_func to represent X, Y, Z:
+            # Create SPH_func to represent X, Y, Z:
             X_fit_sph = sph_f.spherical_harmonics_function(
                 self._coefficients[0], self.max_degree
             )
@@ -190,13 +188,16 @@ class SphericalHarmonicsExpander(Expander):
 
         elif self.expansion_type == "radial":
             import vedo
+
             _, longitude, latitude = self._cartesian_to_radial_coordinates(
                 points
             )
             r_fit_sph = sph_f.spherical_harmonics_function(
                 self.coefficients_[0], self.max_degree
             )
-            r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
+            r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(
+                longitude, latitude
+            ).squeeze()
             fitted_points = (
                 vedo.transformations.spher2cart(
                     r_fit_sph_UV_pts, latitude, longitude
@@ -316,7 +317,7 @@ class SphericalHarmonicsExpander(Expander):
         coefficients = np.linalg.lstsq(np.stack(All_Y_mn_pt_in).T, values)[0]
 
         return coefficients
-    
+
     def _cartesian_to_radial_coordinates(self, points):
         """
         Convert Cartesian coordinates to radial coordinates.
@@ -336,6 +337,7 @@ class SphericalHarmonicsExpander(Expander):
             The latitudes of the points.
         """
         from .._stress.charts_SPB import Cart_To_Coor_A
+
         center = points.mean(axis=0)
         points_relative = points - center[None, :]
         radii = np.sqrt(
