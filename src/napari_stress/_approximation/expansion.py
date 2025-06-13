@@ -180,6 +180,8 @@ class SphericalHarmonicsExpander(Expander):
                 + points.mean(axis=0)[None, :]
             )
 
+        self._calculate_properties(points, fitted_points)
+
         return fitted_points
 
     def fit_expand(
@@ -520,6 +522,8 @@ class EllipsoidExpander(Expander):
         expanded_points = elliptical_to_cartesian(
             U, V, self._coefficients, invert=True
         )
+
+        self._calculate_properties(points, expanded_points)
 
         return expanded_points
 
