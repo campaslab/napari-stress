@@ -16,7 +16,7 @@ def test_reconstruction():
 def test_surface_to_points():
     ellipse = vedo.shapes.Ellipsoid()
 
-    surface = (ellipse.vertices, np.asarray(ellipse.faces()))
+    surface = (ellipse.vertices, np.asarray(ellipse.cells))
     points = napari_stress.extract_vertex_points(surface)
 
     assert isinstance(points, np.ndarray)
