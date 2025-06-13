@@ -277,16 +277,16 @@ def reconstruct_droplet(
     """
     import copy
 
-    import vedo
-    from scipy.ndimage import binary_fill_holes
-    from skimage import filters, measure, transform
+    from skimage import filters, transform
 
-    from napari_stress import reconstruction, approximation
+    from napari_stress import approximation, reconstruction
 
     from .patches import iterative_curvature_adaptive_patch_fitting
     from .refine_surfaces import resample_pointcloud
 
-    ellipse_expander = approximation.EllipsoidImageExpander(fluorescence=edge_type)
+    ellipse_expander = approximation.EllipsoidImageExpander(
+        fluorescence=edge_type
+    )
 
     scaling_factors = voxelsize / target_voxelsize
     rescaled_image = transform.rescale(
@@ -296,16 +296,14 @@ def reconstruct_droplet(
     points_first_guess = ellipse_expander.fit_expand(n_points=n_points)
     points = copy.deepcopy(points_first_guess)
 
-    traced_points, trace_vectors = (
-        reconstruction.trace_refinement_of_surface(
-            rescaled_image,
-            resampled_points,
-            selected_fit_type=fit_type,
-            selected_edge=edge_type,
-            trace_length=trace_length,
-            sampling_distance=sampling_distance,
-            interpolation_method=interpolation_method,
-        )
+    traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
+        rescaled_image,
+        resampled_points,
+        selected_fit_type=fit_type,
+        selected_edge=edge_type,
+        trace_length=trace_length,
+        sampling_distance=sampling_distance,
+        interpolation_method=interpolation_method,
     )
 
     # repeat tracing `n_tracing_iterations` times

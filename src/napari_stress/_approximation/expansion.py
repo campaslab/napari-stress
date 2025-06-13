@@ -28,7 +28,7 @@ class SphericalHarmonicsExpander(Expander):
         Type of expansion to perform. Can be either 'cartesian' or 'radial'.
     normalize_spectrum : bool
         Normalize power spectrum sum to 1.
-    
+
     Attributes
     ----------
     coefficients_ : np.ndarray
@@ -181,7 +181,7 @@ class SphericalHarmonicsExpander(Expander):
             )
 
         return fitted_points
-    
+
     def fit_expand(
         self, points: "napari.types.PointsData"
     ) -> "napari.types.PointsData":
@@ -446,7 +446,7 @@ class EllipsoidExpander(Expander):
             H_{min} = c / (2 * b^2) + c / (2 * a^2)
 
         where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
-    
+
 
     Examples
     --------
@@ -522,7 +522,7 @@ class EllipsoidExpander(Expander):
         )
 
         return expanded_points
-    
+
     def fit_expand(
         self, points: "napari.types.PointsData"
     ) -> "napari.types.PointsData":
@@ -765,11 +765,10 @@ class EllipsoidImageExpander(Expander):
         Project a set of points onto their respective position on the fitted ellipsoid.
     fit_expand(image: "napari.types.ImageData")
         Fit an ellipsoid to a 3D image volume and then expand the points.
-    
+
     """
-    
-    def __init__(self,
-                 fluorescence: str = 'interior'):
+
+    def __init__(self, fluorescence: str = "interior"):
         super().__init__()
 
         self._fluorescence = fluorescence
@@ -798,27 +797,32 @@ class EllipsoidImageExpander(Expander):
         self._center, self._axes, self._eigenvectors = est_params
 
         self.coefficients_ = np.stack(
-            [np.asarray(self._center * 3).reshape(3,3),
-             self._eigenvectors * self._axes],
-             axis=1)
-        
+            [
+                np.asarray(self._center * 3).reshape(3, 3),
+                self._eigenvectors * self._axes,
+            ],
+            axis=1,
+        )
+
         return self.coefficients_
-    
+
     def expand(self, n_points):
         from .._reconstruction.fit_utils import _fibonacci_sampling
+
         expanded_points = _fibonacci_sampling(n_points)
-        expanded_points  = expanded_points @ self._eigenvectors * self._axes[None, :]
+        expanded_points = (
+            expanded_points @ self._eigenvectors * self._axes[None, :]
+        )
         expanded_points += np.asarray(self._center).reshape(1, 3)
         return expanded_points
 
     def fit_expand(
-            self,
-            image: "napari.types.ImageData",
-            n_points: int = 512) -> "napari.types.PointsData":   
+        self, image: "napari.types.ImageData", n_points: int = 512
+    ) -> "napari.types.PointsData":
 
         self.fit(image)
         return self.expand(n_points)
-        
+
     def est_ellipsoid_from_volume(self, image: np.ndarray) -> tuple:
         """
         Estimate the ellipsoid parameters from a 3D volume.
@@ -834,62 +838,65 @@ class EllipsoidImageExpander(Expander):
             rot_matrix (numpy.ndarray): Rotation matrix of the ellipsoid in ZYX order.
         """
         from skimage import filters
+
         # Get the dimensions of the volume
         z_dim, y_dim, x_dim = image.shape
 
         # Generate coordinate arrays
         Z, Y, X = np.meshgrid(
-            np.arange(z_dim), 
-            np.arange(y_dim), 
-            np.arange(x_dim), 
-            indexing='ij'
+            np.arange(z_dim), np.arange(y_dim), np.arange(x_dim), indexing="ij"
         )
 
         # Threshold value
         threshold_value = filters.threshold_otsu(image)
-        
+
         # Binary volume based on threshold
         V_bool = (image > threshold_value).astype(float)
-        
+
         # Sum of binary volume
         sumV = np.sum(V_bool)
-        
+
         # Center of mass (COM)
         xCOM = np.sum(X * V_bool) / sumV
         yCOM = np.sum(Y * V_bool) / sumV
         zCOM = np.sum(Z * V_bool) / sumV
-        
+
         # Intensity-weighted centered coordinates
-        XYZ = np.stack([(X - xCOM) * np.sqrt(V_bool),
-                        (Y - yCOM) * np.sqrt(V_bool),
-                        (Z - zCOM) * np.sqrt(V_bool)], axis=-1).reshape(-1, 3)
-        
+        XYZ = np.stack(
+            [
+                (X - xCOM) * np.sqrt(V_bool),
+                (Y - yCOM) * np.sqrt(V_bool),
+                (Z - zCOM) * np.sqrt(V_bool),
+            ],
+            axis=-1,
+        ).reshape(-1, 3)
+
         # Covariance matrix
         S = (1 / sumV) * (XYZ.T @ XYZ)
-        
+
         # Eigen decomposition
         eigvals, eigvecs = np.linalg.eigh(S)
-        
+
         # Reorder eigenvalues and eigenvectors to ZYX order
         eigvals = eigvals[::-1]
         eigvecs = eigvecs[:, ::-1]
-        
+
         # Rotation matrix
         rot_matrix = eigvecs
-        
+
         # Semi-axes lengths
-        if self._fluorescence == 'interior':
+        if self._fluorescence == "interior":
             semi_axes_lengths = np.sqrt(5 * eigvals)
-        elif self._fluorescence == 'surface':
+        elif self._fluorescence == "surface":
             semi_axes_lengths = np.sqrt(3 * eigvals)
         else:
             raise ValueError("Unexpected value for 'fluorescence'")
-        
+
         # Estimated center in ZYX order
         est_center = [zCOM, yCOM, xCOM]
-        
+
         return est_center, semi_axes_lengths, rot_matrix
-    
+
     @property
     def coefficients_(self):
         """
@@ -914,7 +921,10 @@ class EllipsoidImageExpander(Expander):
         if value is not None:
             self._center = value[0, 0]
             self._axes = np.linalg.norm(value[:, 1], axis=1)
-            self._eigenvectors = value[:, 1] / np.linalg.norm(value[:, 1], axis=1)[:, np.newaxis]
+            self._eigenvectors = (
+                value[:, 1]
+                / np.linalg.norm(value[:, 1], axis=1)[:, np.newaxis]
+            )
             self._coefficients = value
 
     @property
@@ -940,6 +950,6 @@ class EllipsoidImageExpander(Expander):
             The center of the ellipsoid.
         """
         return self._center
-    
+
     def _calculate_properties(self, input_points, output_points):
         pass
