@@ -636,8 +636,6 @@ class EllipsoidExpander(Expander):
         output_points : napari.types.PointsData
             The points after expansion.
         """
-        output_points = self.expand(input_points)
-
         distance = np.linalg.norm(input_points - output_points, axis=1)
         self._properties["residuals"] = distance
 
