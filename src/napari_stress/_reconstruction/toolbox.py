@@ -336,11 +336,11 @@ def reconstruct_droplet(
     # Returns
     # =========================================================================
 
-    properties = {"name": "surface_first_guess"}
+    properties = {"name": "Ellipsoid first guess", "size": 2}
     layer_first_guess = (
-        (mesh.vertices * target_voxelsize, np.asarray(mesh.cells)),
+        points_first_guess * target_voxelsize,
         properties,
-        "surface",
+        "points",
     )
 
     properties = {"name": "Droplet pointcloud (smoothed)", "size": 0.5}
@@ -349,9 +349,6 @@ def reconstruct_droplet(
         properties,
         "points",
     )
-
-    properties = {"name": "Label image", "scale": [target_voxelsize] * 3}
-    layer_label_image = (label_image, properties, "labels")
 
     traced_points = list(traced_points)
     traced_points[1]["name"] = "Droplet pointcloud (traced)"
@@ -381,7 +378,6 @@ def reconstruct_droplet(
 
     if return_intermediate_results:
         return [
-            layer_label_image,
             layer_first_guess,
             layer_patch_fitted,
             traced_points,
