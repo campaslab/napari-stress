@@ -28,6 +28,7 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
         at `distance_matrix[i, j]`
     """
     import gdist
+
     distance_matrix = gdist.local_gdist_matrix(
         surface[0], surface[1], max_distance=1e9
     ).toarray()
