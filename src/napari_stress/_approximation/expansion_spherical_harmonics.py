@@ -391,12 +391,6 @@ class LebedevExpander(SphericalHarmonicsExpander):
             euclidian_k_form_SPB as euc_kf,
             manifold_SPB as mnfd,
         )
-
-
-        from .._spherical_harmonics.spherical_harmonics import (
-            create_manifold,
-            lebedev_quadrature,
-        )
         # Coefficient matrix should be [DIM, DEG, DEG]; if DIM=1 this corresponds
         # to a radial spherical harmonics expansion
         if len(self.coefficients_.shape) == 2:
@@ -466,4 +460,154 @@ class LebedevExpander(SphericalHarmonicsExpander):
             Manny_Dict, manifold_type=manifold_type, raw_coordinates=lebedev_points
         )
 
+        self._calculate_properties()
+
         return self._manifold.get_coordinates().squeeze()
+    
+
+    def _calculate_properties(self):
+        """
+        Calculate properties of the Lebedev expansion.
+        """
+        self._calculate_normals()
+        self._calculate_mean_curvature()
+        self._calculate_average_mean_curvatures()
+
+    def _calculate_normals(self):
+        """
+        Calculate normals for the Lebedev quadrature points.
+        """
+        from .._stress import euclidian_k_form_SPB as euc_kf
+
+        normal_X_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
+            self._manifold.Normal_Vec_X_A_Pts,
+            self._manifold.Normal_Vec_X_B_Pts,
+            self._manifold.lebedev_info,
+        )
+        normal_Y_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
+            self._manifold.Normal_Vec_Y_A_Pts,
+            self._manifold.Normal_Vec_Y_B_Pts,
+            self._manifold.lebedev_info,
+        )
+        normal_Z_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
+            self._manifold.Normal_Vec_Z_A_Pts,
+            self._manifold.Normal_Vec_Z_B_Pts,
+            self._manifold.lebedev_info,
+        )
+
+        normals_lbdv_points = np.stack(
+            [normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts]
+        ).squeeze().T
+
+        self.properties["normals"] = normals_lbdv_points
+    
+    def _calculate_mean_curvature(self):
+        """
+        Calculate mean curvature on quadrature points
+        """
+        from .._stress import euclidian_k_form_SPB as euc_kf
+        from ..types import _METADATAKEY_MEAN_CURVATURE
+
+        # Test orientation:
+        points = self._manifold.get_coordinates().squeeze()
+        centered_lbdv_pts = points - points.mean(axis=0)[None, :]
+
+        # Makre sure orientation is inward,
+        # so H is positive (for Ellipsoid, and small deviations):
+        Orientations =  np.einsum('ij,ij->i', centered_lbdv_pts, self.properties['normals'])
+        num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
+
+        Orientation = 1.0  # unchanged (we want INWARD)
+        if num_pos_orr > 0.5 * len(centered_lbdv_pts):
+            Orientation = -1.0
+
+        self.properties[_METADATAKEY_MEAN_CURVATURE] = (
+            Orientation
+            * euc_kf.Combine_Chart_Quad_Vals(
+                self._manifold.H_A_pts,
+                self._manifold.H_B_pts,
+                self._manifold.lebedev_info,
+            ).squeeze()
+        )
+
+    def _calculate_average_mean_curvatures(self):
+        """
+        Calculate averaged mean curvatures on manifold.
+
+        The input can also be a layer with a manifold in its metadata. In this case
+        the results are stored in the layer's metadata.
+
+        Parameters
+        ----------
+        manifold: mnfd.manifold
+
+        Returns
+        -------
+        H0_arithmetic: float
+            Arithmetic average of mean curvature
+        H0_surface_integral: float
+            Averaged curvature by integrating surface area
+        H0_volume_integral: float
+            Averaged curvature by deriving volume-integral
+            of manifold.
+        S2_volume: float
+            Volume of the unit sphere
+        H0_radial_surface: float
+            Averaged curvature on radially expanded surface.
+            Only calculated if  `mnfd.manifold.manifold_type`
+            is `radial`.
+        """
+        from ..types import (
+            _METADATAKEY_MEAN_CURVATURE,
+            _METADATAKEY_H0_ARITHMETIC,
+            _METADATAKEY_H0_SURFACE_INTEGRAL,
+            _METADATAKEY_H0_VOLUME_INTEGRAL,
+            _METADATAKEY_S2_VOLUME_INTEGRAL,
+            _METADATAKEY_H0_RADIAL_SURFACE
+        )
+        from .._stress import euclidian_k_form_SPB as euc_kf
+        from .._stress.sph_func_SPB import S2_Integral
+
+        mean_curvature = self.properties[_METADATAKEY_MEAN_CURVATURE]
+
+        # Arithmetic average of curvature
+        self.properties[_METADATAKEY_H0_ARITHMETIC] = mean_curvature.flatten().mean()
+
+        # Integrating surface area - this is the one used for downstream analysis
+        # Calculate mean curvature by integrating surface area.
+        Integral_on_surface = euc_kf.Integral_on_Manny(
+            mean_curvature,self._manifold, self._manifold.lebedev_info
+        )
+        Integral_on_sphere = euc_kf.Integral_on_Manny(
+            np.ones_like(mean_curvature).astype(float),
+            self._manifold,
+            self._manifold.lebedev_info,
+        )
+        self.properties[_METADATAKEY_H0_SURFACE_INTEGRAL] = Integral_on_surface / Integral_on_sphere
+
+
+        S2volume = None
+        H0_from_Vol_Int = None
+        H0_radial_int = None
+        if self.expansion_type == "radial":
+            radii = self._manifold.raw_coordinates
+            lbdv_info = self._manifold.lebedev_info
+
+            S2volume = S2_Integral(radii[:, None] ** 3 / 3, lbdv_info)
+            H0_from_Vol_Int = ((4.0 * np.pi) / (3.0 * S2volume)) ** (
+                1.0 / 3.0
+            )  # approx ~1/R, for V ~ (4/3)*pi*R^3
+
+            sphere_radii = np.ones_like(mean_curvature)
+
+            area_radial_manifold = euc_kf.Integral_on_Manny(
+                mean_curvature, self._manifold, self._manifold.lebedev_info
+            )
+            area_unit_sphere = euc_kf.Integral_on_Manny(
+                sphere_radii, self._manifold, self._manifold.lebedev_info
+            )
+            H0_radial_int = area_radial_manifold / area_unit_sphere
+
+        self.properties[_METADATAKEY_S2_VOLUME_INTEGRAL] = S2volume
+        self.properties[_METADATAKEY_H0_VOLUME_INTEGRAL] = H0_from_Vol_Int
+        self.properties[_METADATAKEY_H0_RADIAL_SURFACE] = H0_radial_int
