@@ -13,41 +13,18 @@ from scipy.optimize import curve_fit
 def _sigmoid(
     array: np.ndarray,
     center: float,
-    amp: float,
+    amplitude: float,
     slope: float,
+    background_slope: float,
     offset: float,
-    baseline: float,
 ):
     """
     Sigmoidal fit function
     https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
-
-    Function definition:
-    f(x) = (amp + lambda * (x - mu)) / (1 + exp(-k * (x - mu))) + offset
-
-    where:
-    - amp: amplitude of the sigmoid
-    - lambda: background slope of the sigmoid
-    - mu: center of the sigmoid
-    - k: slope of the sigmoid
-    - offset: offset of the sigmoid
-    This function fits a sigmoidal curve to the provided data points.
-    
-    Parameters
-    ----------
-    array : np.ndarray
-        1D array of data points to fit the sigmoid to.
-    center : float
-        Center of the sigmoid.
-    offset : float
-        Offset of the sigmoid.
-    slope : float
-        Slope of the sigmoid.
-    baseline : float
-        Baseline of the sigmoid.
-
     """
-    return (offset + amp * (array - center)) / (1 + np.exp(slope * (array - center))) + baseline
+    return (amplitude + background_slope * (-1) * (array - center)) / (
+        1 + np.exp((-1) * slope * (array - center))
+    ) + offset
 
 
 def _gaussian(
@@ -210,30 +187,26 @@ def _fancy_edge_fit(
     try:
         if selected_edge_func == _sigmoid:
             # estimate parameters and trim intensity array
-            parameter_estimate = (
-                len(array) / 2,
-                max(array) - min(array),
-                np.abs((max(array) - min(array)) / (np.argmax(array) - np.argmin(array))),
-                1.0,  # offset
-                min(array),
+            parameter_estimate, trimmed_array, trimmed_idx = (
+                estimate_fit_parameters(array)
             )
-            # trimmed_indices = np.arange(trimmed_idx[0], trimmed_idx[1])
+            trimmed_indices = np.arange(trimmed_idx[0], trimmed_idx[1])
 
             boundaries = np.array(
                 [
-                    [0, len(array)],  # center
-                    [0, max(array) * 1.5], # amplitude
-                    [0, np.inf], # slope
-                    [0, np.inf],  # offset
-                    [0.5 * min(array), 2 * min(array)], # baseline
+                    [0, len(array)],
+                    [0.5 * max(array), max(array) * 1.5],
+                    [-np.inf, np.inf],
+                    [-np.inf, np.inf],
+                    [0, 0.5 * max(array)],
                 ]
             )
 
             # run fit
             optimal_fit_parameters, _covariance = curve_fit(
                 selected_edge_func,
-                np.arange(len(array)),
-                array,
+                trimmed_indices,
+                trimmed_array,
                 parameter_estimate,
                 bounds=boundaries.T,
             )
