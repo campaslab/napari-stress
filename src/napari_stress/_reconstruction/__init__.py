@@ -11,12 +11,11 @@ according to the fitted patches.
 
 from .patches import fit_patches, iterative_curvature_adaptive_patch_fitting
 from .reconstruct_surface import reconstruct_surface_from_quadrature_points
-from .refine_surfaces import resample_pointcloud, trace_refinement_of_surface, remove_outliers
+from .refine_surfaces import resample_pointcloud, trace_refinement_of_surface
 from .toolbox import reconstruct_droplet
 
 __all__ = [
     "trace_refinement_of_surface",
-    "remove_outliers",
     "resample_pointcloud",
     "reconstruct_droplet",
     "reconstruct_surface_from_quadrature_points",
