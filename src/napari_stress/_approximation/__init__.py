@@ -1,8 +1,8 @@
 """Approximation subpackage for napari-stress."""
 
 from .expansion_ellipsoid import (
-    EllipsoidImageExpander,
     EllipsoidExpander,
+    EllipsoidImageExpander,
 )
 from .expansion_napari import (
     expand_ellipsoid_on_image,
