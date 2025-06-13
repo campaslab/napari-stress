@@ -33,7 +33,7 @@ def test_normal_vectors_on_surface():
     from napari_stress import vectors
 
     sphere = vedo.Sphere(r=10, res=100)
-    sphere = (sphere.vertices, np.asarray(sphere.faces()))
+    sphere = (sphere.vertices, np.asarray(sphere.cells))
     normal_vectors = vectors.normal_vectors_on_surface(sphere)
     assert len(normal_vectors) == len(sphere[0])
 
