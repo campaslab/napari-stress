@@ -24,12 +24,15 @@ warnings.filterwarnings("ignore")
 @frame_by_frame
 def trace_refinement_of_surface(
     intensity_image: ImageData,
-    normal_vectors: 'napari.types.VectorsData',
+    points: PointsData,
     selected_fit_type: fit_types = fit_types.fancy_edge_fit,
     selected_edge: edge_functions = edge_functions.interior,
+    trace_length: float = 10.0,
     sampling_distance: float = 0.5,
+    remove_outliers: bool = True,
+    outlier_tolerance: float = 1.5,
     interpolation_method: interpolation_types = interpolation_types.cubic,
-) -> 'napari.types.LayerDataTuple':
+) -> list[LayerDataTuple]:
     """
     Generate intensity profiles along traces.
 
@@ -51,8 +54,8 @@ def trace_refinement_of_surface(
     ----------
     intensity_image : ImageData
         Intensity image
-    normal_vectors: 'napari.types.VectorsData'
-        VectorsData containing the normal vectors at the points on the surface.
+    points : PointsData
+        Pointcloud with points on the surface of the object
     selected_fit_type : fit_types, optional
         Type of fit to use for determining the surface location, by default
         fit_types.fancy_edge_fit
@@ -75,6 +78,7 @@ def trace_refinement_of_surface(
     List[LayerDataTuple]
         List of napari layer data tuples
     """
+    from .. import _vectors as vectors
     from .._measurements.intensity import sample_intensity_along_vector
     from .._measurements.measurements import distance_to_k_nearest_neighbors
     from .fit_utils import (
@@ -95,16 +99,21 @@ def trace_refinement_of_surface(
     else:
         edge_detection_function = selected_edge.value[selected_fit_type.value]
 
+    # Convert to mesh and calculate outward normals
+    unit_normals = vectors.normal_vectors_on_pointcloud(points)[:, 1] * (-1)
+
     # Define start and end points for the surface tracing vectors
-    vector_lengths = np.linalg.norm(normal_vectors[:, 1], axis=1)
-    n_samples = np.ceil(vector_lengths / sampling_distance).astype(np.int32)
+    n_samples = int(trace_length / sampling_distance)
+    n_points = len(points)
+
     # Define trace vectors (full length and single step
-    start_points = normal_vectors[:, 0]
-    vector_step = normal_vectors[:, 1] / n_samples[:, np.newaxis]
+    start_points = points - 0.5 * trace_length * unit_normals
+    trace_vectors = trace_length * unit_normals
+    vector_step = trace_vectors / n_samples
 
     # measure intensity along the vectors
     intensity_along_vector = sample_intensity_along_vector(
-        normal_vectors,
+        np.stack([start_points, trace_vectors]).transpose((1, 0, 2)),
         intensity_image,
         sampling_distance=sampling_distance,
         interpolation_method=interpolation_method.value,
@@ -120,10 +129,10 @@ def trace_refinement_of_surface(
         fit_parameters, fit_errors = [fit_parameters[0]], [fit_errors[0]]
 
     # create empty dataframe to keep track of results
-    fit_data = pd.DataFrame(columns=columns, index=np.arange(len(normal_vectors)))
+    fit_data = pd.DataFrame(columns=columns, index=np.arange(n_points))
 
     # Iterate over all provided target points
-    for idx in range(len(normal_vectors)):
+    for idx in range(n_points):
         array = np.array(intensity_along_vector.loc[idx].to_numpy())
         # Simple or fancy fit?
         if selected_fit_type == fit_types.quick_edge_fit:
@@ -205,7 +214,17 @@ def trace_refinement_of_surface(
     )
     layer_points = (data, properties, "points")
 
-    return layer_points
+    # reformat to layerdatatuple: normal vectors
+    start_points = np.stack(fit_data["start_points"].to_numpy()).squeeze()
+    trace_vectors = trace_vectors[fit_data.index.to_numpy()]
+    trace_vectors = np.stack([start_points, trace_vectors]).transpose(
+        (1, 0, 2)
+    )
+
+    properties = {"name": "Normals"}
+    layer_normals = (trace_vectors, properties, "vectors")
+
+    return (layer_points, layer_normals)
 
 
 def remove_outliers(
