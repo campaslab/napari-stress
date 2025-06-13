@@ -92,7 +92,7 @@ class SphericalHarmonicsExpander(Expander):
         elif self.expansion_type == "radial":
             coefficients = self._fit_radial(points)
 
-        return coefficients
+        self.coefficients_ = coefficients
 
     def _fit_cartesian(self, points):
         from .._stress import sph_func_SPB as sph_f
@@ -495,7 +495,7 @@ class EllipsoidExpander(Expander):
         base = np.stack([self._center] * 3)
         ellipsoid_fitted_ = np.stack([base, vectors], axis=1)
 
-        return ellipsoid_fitted_
+        self.coefficients_ = ellipsoid_fitted_
 
     def expand(self, points: "napari.types.PointsData"):
         """
@@ -803,8 +803,6 @@ class EllipsoidImageExpander(Expander):
             ],
             axis=1,
         )
-
-        return self.coefficients_
 
     def expand(self, n_points):
         from .._reconstruction.fit_utils import _fibonacci_sampling
