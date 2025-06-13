@@ -294,11 +294,10 @@ def reconstruct_droplet(
     )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
     points_first_guess = ellipse_expander.fit_expand(rescaled_image, n_points=n_points)
-    points = copy.deepcopy(points_first_guess)
 
     traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
         rescaled_image,
-        resampled_points,
+        points_first_guess,
         selected_fit_type=fit_type,
         selected_edge=edge_type,
         trace_length=trace_length,
@@ -309,7 +308,7 @@ def reconstruct_droplet(
     # repeat tracing `n_tracing_iterations` times
     for _ in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
-            points, sampling_length=resampling_length
+            traced_points, sampling_length=resampling_length
         )
 
         traced_points, trace_vectors = (
