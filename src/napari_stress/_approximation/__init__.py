@@ -2,6 +2,7 @@
 
 from .expansion_ellipsoid import (
     EllipsoidImageExpander,
+    EllipsoidExpander,
 )
 from .expansion_napari import (
     expand_ellipsoid_on_image,
