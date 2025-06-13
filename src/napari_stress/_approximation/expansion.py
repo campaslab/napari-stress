@@ -815,29 +815,25 @@ class EllipsoidImageExpander(Expander):
         sumV = np.sum(V_bool)
 
         # Center of mass (COM)
-        xCOM = np.sum(X * V_bool) / sumV
-        yCOM = np.sum(Y * V_bool) / sumV
         zCOM = np.sum(Z * V_bool) / sumV
+        yCOM = np.sum(Y * V_bool) / sumV
+        xCOM = np.sum(X * V_bool) / sumV        
 
         # Intensity-weighted centered coordinates
-        XYZ = np.stack(
+        ZYX = np.stack(
             [
-                (X - xCOM) * np.sqrt(V_bool),
-                (Y - yCOM) * np.sqrt(V_bool),
                 (Z - zCOM) * np.sqrt(V_bool),
+                (Y - yCOM) * np.sqrt(V_bool),
+                (X - xCOM) * np.sqrt(V_bool),
             ],
             axis=-1,
         ).reshape(-1, 3)
 
         # Covariance matrix
-        S = (1 / sumV) * (XYZ.T @ XYZ)
+        S = (1 / sumV) * (ZYX.T @ ZYX)
 
         # Eigen decomposition
         eigvals, eigvecs = np.linalg.eigh(S)
-
-        # Reorder eigenvalues and eigenvectors to ZYX order
-        eigvals = eigvals[::-1]
-        eigvecs = eigvecs[:, ::-1]
 
         # Rotation matrix
         rot_matrix = eigvecs
