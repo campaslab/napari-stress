@@ -6,9 +6,9 @@ from .expansion import (
     SphericalHarmonicsExpander,
 )
 from .expansion_napari import (
+    expand_ellipsoid_on_image,
     expand_points_on_fitted_ellipsoid,
     expand_spherical_harmonics,
-    expand_ellipsoid_on_image,
 )
 from .fit_ellipsoid import (
     expand_points_on_ellipse,

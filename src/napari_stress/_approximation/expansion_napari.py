@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 
 from napari_tools_menu import register_function
-from napari.layers import Image
 
 if TYPE_CHECKING:
     import napari
@@ -10,7 +9,7 @@ from .._utils import frame_by_frame
 from .expansion import (
     EllipsoidExpander,
     EllipsoidImageExpander,
-    SphericalHarmonicsExpander
+    SphericalHarmonicsExpander,
 )
 
 
@@ -110,9 +109,9 @@ def expand_spherical_harmonics(
 
 @frame_by_frame
 def expand_ellipsoid_on_image(
-    image: 'napari.types.ImageData',
+    image: "napari.types.ImageData",
     n_points: int = 512,
-) -> 'napari.types.PointsData':
+) -> "napari.types.PointsData":
     """
     Fit and expand an ellipsoid on an image.
 
@@ -130,8 +129,8 @@ def expand_ellipsoid_on_image(
     """
     expander = EllipsoidImageExpander()
     points = expander.fit_expand(image, n_points=n_points)
-    
-    # assuming points are Nx3 and scale is length 3, 
+
+    # assuming points are Nx3 and scale is length 3,
     # multiply all points with scale
 
     return points
