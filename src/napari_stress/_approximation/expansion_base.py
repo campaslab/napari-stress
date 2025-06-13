@@ -20,6 +20,7 @@ class Expander(ABC):
         self._coefficients = None
         self._properties = {}
 
+    @abstractmethod
     def fit(self, points: "napari.types.PointsData"):
         """
         Fit the expander to the given points.
@@ -33,9 +34,9 @@ class Expander(ABC):
         -------
         self
         """
-        self._coefficients = self._fit(points)
-        return self
+        raise NotImplementedError
 
+    @abstractmethod
     def expand(self, points: "napari.types.PointsData"):
         """
         Expand the given points using the fitted expander.
@@ -50,10 +51,9 @@ class Expander(ABC):
         expanded_points : napari.types.PointsData
             The expanded points.
         """
-        expanded_points = self._expand(points)
-        self._calculate_properties(points, expanded_points)
-        return expanded_points
+        raise NotImplementedError
 
+    @abstractmethod
     def fit_expand(self, points: "napari.types.PointsData"):
         """
         Fit the expander to the given points and then expand them.
@@ -66,61 +66,6 @@ class Expander(ABC):
         Returns
         -------
         expanded_points : napari.types.PointsData
-            The expanded points.
-        """
-        self.fit(points)
-        return self.expand(points)
-
-    @abstractmethod
-    def _fit(self, points: "napari.types.PointsData"):
-        """
-        Fit the expander to the given points.
-
-        This method should be implemented by subclasses.
-
-        Parameters
-        ----------
-        points : napari.types.PointsData
-            The points to fit the expander to.
-
-        Returns
-        -------
-        coefficients : array-like
-            The coefficients of the fitted expander.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _expand(self, points: "napari.types.PointsData"):
-        """
-        Expand the given points using the fitted expander.
-
-        This method should be implemented by subclasses.
-
-        Parameters
-        ----------
-        points : napari.types.PointsData
-            The points to expand.
-
-        Returns
-        -------
-        expanded_points : napari.types.PointsData
-            The expanded points.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _calculate_properties(self, input_points, output_points):
-        """
-        Calculate properties of the expanded points.
-
-        This method should be implemented by subclasses.
-
-        Parameters
-        ----------
-        input_points : napari.types.PointsData
-            The original points.
-        output_points : napari.types.PointsData
             The expanded points.
         """
         raise NotImplementedError
@@ -148,3 +93,15 @@ class Expander(ABC):
             The new coefficients for the expander.
         """
         self._coefficients = value
+
+    @property
+    def properties(self):
+        """
+        Get the properties of the fitted expander.
+
+        Returns
+        -------
+        properties : dict
+            The properties of the fitted expander.
+        """
+        return self._properties

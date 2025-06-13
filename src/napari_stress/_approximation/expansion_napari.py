@@ -6,7 +6,13 @@ if TYPE_CHECKING:
     import napari
 
 from .._utils import frame_by_frame
-from .expansion import EllipsoidExpander, SphericalHarmonicsExpander
+from .expansion_ellipsoid import (
+    EllipsoidExpander,
+    EllipsoidImageExpander,
+)
+from .expansion_spherical_harmonics import (
+    SphericalHarmonicsExpander,
+)
 
 
 @register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
@@ -101,3 +107,32 @@ def expand_spherical_harmonics(
     }
     points_layer = (expanded_points, properties, "points")
     return points_layer
+
+
+@frame_by_frame
+def expand_ellipsoid_on_image(
+    image: "napari.types.ImageData",
+    n_points: int = 512,
+) -> "napari.types.PointsData":
+    """
+    Fit and expand an ellipsoid on an image.
+
+    Parameters
+    ----------
+    image : napari.types.ImageData
+        The image to expand the ellipsoid on.
+    n_points : int
+        Number of points to use for the expansion.
+
+    Returns
+    -------
+    points : napari.types.PointsData
+        The expanded points.
+    """
+    expander = EllipsoidImageExpander()
+    points = expander.fit_expand(image, n_points=n_points)
+
+    # assuming points are Nx3 and scale is length 3,
+    # multiply all points with scale
+
+    return points
