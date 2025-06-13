@@ -26,19 +26,10 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     distance_matrix : np.ndarray
         Triangular matrix with differences between vertex i and j located
         at `distance_matrix[i, j]`
-
     """
     import gdist
-
-    from .._utils import sanitize_faces
-
-    # Reorder the faces of the surface to ensure consistent orientation
-    sanitized_surface = sanitize_faces(surface)
-    vertices = sanitized_surface[0]
-    faces = sanitized_surface[1]
-
     distance_matrix = gdist.local_gdist_matrix(
-        vertices, faces, max_distance=1e9
+        surface[0], surface[1], max_distance=1e9
     ).toarray()
 
     return distance_matrix
@@ -68,17 +59,10 @@ def geodesic_path(
         coordinates, the second dimension is the vector from point to point.
 
     """
-    import potpourri3d as pp3d
+    from pygeodesic import geodesic
 
-    from .._utils import sanitize_faces
-
-    sanitized_surface = sanitize_faces(surface)
-    vertices = sanitized_surface[0]
-    faces = sanitized_surface[1]
-
-    path_solver = pp3d.EdgeFlipGeodesicSolver(vertices, faces)
-    path = path_solver.find_geodesic_path(index_1, index_2)
-
+    geoalg = geodesic.PyGeodesicAlgorithmExact(surface[0], surface[1])
+    _, path = geoalg.geodesicDistance(index_1, index_2)
     # convert points to vectors from point to point
     vectors = []
     for i in range(len(path) - 1):
@@ -237,10 +221,7 @@ def local_extrema_analysis(
             - `min_max_pair_distances`: Distances between all pairs of local minima and maxima.
             - `min_max_pair_anisotropies`: Difference in input value `(vertices, faces, values)` between all pairs of local minima and maxima.
     """
-    from .._utils import sanitize_faces
-
     feature = surface[2]
-    surface = sanitize_faces(surface)
     triangles = surface[1]
 
     quad_fit = len(feature)
