@@ -179,7 +179,6 @@ class droplet_reconstruction_toolbox(QWidget):
             voxelsize=current_voxel_size,
             target_voxelsize=self.doubleSpinBox_target_voxelsize.value(),
             smoothing_sigma=self.doubleSpinBox_gaussian_blur.value(),
-            n_smoothing_iterations=self.spinBox_n_smoothing.value(),
             n_tracing_iterations=self.spinBox_n_refinement_steps.value(),
             resampling_length=self.doubleSpinBox_sampling_length.value(),
             n_points=self.spinBox_n_vertices.value(),
@@ -208,7 +207,6 @@ def reconstruct_droplet(
     voxelsize: np.ndarray = None,
     target_voxelsize: float = 1.0,
     smoothing_sigma: float = 1.0,
-    n_smoothing_iterations: int = 10,
     n_points: int = 512,
     n_tracing_iterations: int = 1,
     resampling_length: float = 5,
@@ -309,7 +307,7 @@ def reconstruct_droplet(
     # repeat tracing `n_tracing_iterations` times
     for _ in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
-            traced_points, sampling_length=resampling_length
+            traced_points[0], sampling_length=resampling_length
         )
 
         traced_points, trace_vectors = (
@@ -321,6 +319,8 @@ def reconstruct_droplet(
                 trace_length=trace_length,
                 sampling_distance=sampling_distance,
                 interpolation_method=interpolation_method,
+                remove_outliers=remove_outliers,
+                outlier_tolerance=outlier_tolerance,
             )
         )
         points = traced_points[0]
@@ -372,7 +372,6 @@ def reconstruct_droplet(
         "blending": "additive",
         "scale": [target_voxelsize] * 3,
     }
-    layer_rescaled_image = (rescaled_image, properties, "image")
 
     if return_intermediate_results:
         return [
@@ -381,7 +380,6 @@ def reconstruct_droplet(
             traced_points,
             trace_vectors,
             droplet_center,
-            layer_rescaled_image,
         ]
     else:
         return [
