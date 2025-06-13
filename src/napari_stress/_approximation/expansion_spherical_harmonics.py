@@ -353,3 +353,117 @@ class SphericalHarmonicsExpander(Expander):
 
         return radii, longitude, latitude
 
+
+class LebedevExpander(SphericalHarmonicsExpander):
+    """
+    Lebedev grid-based spherical harmonics expander.
+
+    This class is a specialized version of the SphericalHarmonicsExpander that uses
+    Lebedev grids for sampling points on the sphere.
+    """
+
+    def __init__(
+            self,
+            max_degree: int = 5,
+            n_quadrature_points: int = 434,
+            expansion_type: str = "cartesian",
+            use_minimal_point_set: bool = False,
+            normalize_spectrum: bool = True,):
+        super().__init__(
+            max_degree=max_degree,
+            expansion_type=expansion_type,
+            normalize_spectrum=normalize_spectrum,)
+        
+        # Clip number of quadrature points
+        if n_quadrature_points > 5810:
+            n_quadrature_points = 5810
+        self.n_quadrature_points = n_quadrature_points
+        self.use_minimal_point_set = use_minimal_point_set
+        self._manifold = None
+
+    def fit(self, points: "napari.types.PointsData"):
+        super().fit(points)
+
+    def expand(self, points: "napari.types.PointsData"):
+        from .._stress import (
+            lebedev_info_SPB as lebedev_info,
+            sph_func_SPB as sph_f,
+            euclidian_k_form_SPB as euc_kf,
+            manifold_SPB as mnfd,
+        )
+
+
+        from .._spherical_harmonics.spherical_harmonics import (
+            create_manifold,
+            lebedev_quadrature,
+        )
+        # Coefficient matrix should be [DIM, DEG, DEG]; if DIM=1 this corresponds
+        # to a radial spherical harmonics expansion
+        if len(self.coefficients_.shape) == 2:
+            self.coefficients_ = self.coefficients_[None, :]
+
+        possible_n_points = np.asarray(
+            list(lebedev_info.pts_of_lbdv_lookup.values())
+        )
+        index_correct_n_points = np.argmin(
+            abs(possible_n_points - self.n_quadrature_points)
+        )
+        self.n_quadrature_points = possible_n_points[index_correct_n_points]
+
+        if self.use_minimal_point_set:
+            self.n_quadrature_points = lebedev_info.look_up_lbdv_pts(
+                self.max_degree + 1
+            )
+
+        # Create spherical harmonics functions to represent z/y/x
+        fit_functions = [
+            sph_f.spherical_harmonics_function(x, self.max_degree) for x in self.coefficients_
+        ]
+
+        # Get {Z/Y/X} Coordinates at lebedev points, so we can
+        # leverage our code more efficiently (and uniformly) on surface:
+        LBDV_Fit = lebedev_info.lbdv_info(self.max_degree, self.n_quadrature_points)
+        lebedev_points = [
+            euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
+            for f in fit_functions
+        ]
+        lebedev_points = np.stack(lebedev_points).squeeze().transpose()
+
+        # create manifold object for this quadrature
+        # manifold = create_manifold(
+        #     lebedev_points, lebedev_fit=LBDV_Fit, max_degree=self.max_degree
+        # )
+        Manny_Dict = {}
+        Manny_Name_Dict = {}  # sph point cloud at lbdv
+
+        manifold_type = None
+        if self.expansion_type == "radial":
+            manifold_type = "radial"
+            coordinates = np.stack(
+                [
+                    LBDV_Fit.X * lebedev_points[:, None],
+                    LBDV_Fit.Y * lebedev_points[:, None],
+                    LBDV_Fit.Z * lebedev_points[:, None],
+                ]
+            ).T.squeeze()
+            Manny_Name_Dict["coordinates"] = coordinates
+
+        elif self.expansion_type == "cartesian":
+            manifold_type = "cartesian"
+            Manny_Name_Dict["coordinates"] = lebedev_points
+
+        # create manifold to calculate H, average H:
+        Manny_Dict["Pickle_Manny_Data"] = False
+        Manny_Dict["Maniold_lbdv"] = LBDV_Fit
+
+        Manny_Dict["Manifold_SPH_deg"] = self.max_degree
+        Manny_Dict["use_manifold_name"] = (
+            False  # we are NOT using named shapes in these tests
+        )
+        Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
+
+        self._manifold = mnfd.manifold(
+            Manny_Dict, manifold_type=manifold_type, raw_coordinates=lebedev_points
+        )
+
+        return self._manifold.get_coordinates().squeeze()

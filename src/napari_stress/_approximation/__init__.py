@@ -2,10 +2,12 @@
 
 from .expansion_spherical_harmonics import (
     SphericalHarmonicsExpander,
+    LebedevExpander
 )
 
 from .expansion_ellipsoid import (
     EllipsoidImageExpander,
+    EllipsoidExpander
 )
 from .expansion_napari import (
     expand_ellipsoid_on_image,
@@ -21,6 +23,7 @@ from .fit_ellipsoid import (
 
 __all__ = [
     "SphericalHarmonicsExpander",
+    "LebedevExpander",
     "EllipsoidExpander",
     "EllipsoidImageExpander",
     "least_squares_ellipsoid",
