@@ -352,4 +352,3 @@ class SphericalHarmonicsExpander(Expander):
         )
 
         return radii, longitude, latitude
-

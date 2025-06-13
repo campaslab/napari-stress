@@ -6,13 +6,14 @@ if TYPE_CHECKING:
     import napari
 
 from .._utils import frame_by_frame
-from .expansion_spherical_harmonics import (
-    SphericalHarmonicsExpander,
-)
 from .expansion_ellipsoid import (
     EllipsoidExpander,
     EllipsoidImageExpander,
 )
+from .expansion_spherical_harmonics import (
+    SphericalHarmonicsExpander,
+)
+
 
 @register_function(menu="Points > Fit ellipsoid to pointcloud (n-STRESS)")
 @frame_by_frame

@@ -1,9 +1,5 @@
 """Approximation subpackage for napari-stress."""
 
-from .expansion_spherical_harmonics import (
-    SphericalHarmonicsExpander,
-)
-
 from .expansion_ellipsoid import (
     EllipsoidImageExpander,
 )
@@ -11,7 +7,9 @@ from .expansion_napari import (
     expand_ellipsoid_on_image,
     expand_points_on_fitted_ellipsoid,
     expand_spherical_harmonics,
-    expand_ellipsoid_on_image
+)
+from .expansion_spherical_harmonics import (
+    SphericalHarmonicsExpander,
 )
 from .fit_ellipsoid import (
     expand_points_on_ellipse,

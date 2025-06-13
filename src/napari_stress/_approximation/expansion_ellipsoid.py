@@ -1,6 +1,6 @@
+from typing import TYPE_CHECKING
 
 import numpy as np
-from typing import TYPE_CHECKING
 
 from .expansion_base import Expander
 
