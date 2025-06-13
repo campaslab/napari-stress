@@ -293,7 +293,9 @@ def reconstruct_droplet(
         image, scaling_factors, preserve_range=True, anti_aliasing=True
     )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
-    points_first_guess = ellipse_expander.fit_expand(rescaled_image, n_points=n_points)
+    points_first_guess = ellipse_expander.fit_expand(
+        rescaled_image,
+        n_points=n_points)
 
     traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
         rescaled_image,
