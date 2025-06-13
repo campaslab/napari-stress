@@ -817,7 +817,7 @@ class EllipsoidImageExpander(Expander):
         # Center of mass (COM)
         zCOM = np.sum(Z * V_bool) / sumV
         yCOM = np.sum(Y * V_bool) / sumV
-        xCOM = np.sum(X * V_bool) / sumV        
+        xCOM = np.sum(X * V_bool) / sumV
 
         # Intensity-weighted centered coordinates
         ZYX = np.stack(
