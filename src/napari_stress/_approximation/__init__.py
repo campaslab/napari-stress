@@ -8,6 +8,7 @@ from .expansion import (
 from .expansion_napari import (
     expand_points_on_fitted_ellipsoid,
     expand_spherical_harmonics,
+    expand_ellipsoid_on_image,
 )
 from .fit_ellipsoid import (
     expand_points_on_ellipse,
@@ -21,6 +22,7 @@ __all__ = [
     "EllipsoidImageExpander",
     "least_squares_ellipsoid",
     "expand_points_on_ellipse",
+    "expand_ellipsoid_on_image",
     "normals_on_ellipsoid",
     "expand_spherical_harmonics",
     "expand_points_on_fitted_ellipsoid",

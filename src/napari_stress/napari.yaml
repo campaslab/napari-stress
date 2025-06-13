@@ -44,7 +44,9 @@ contributions:
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
-
+    - id: napari-stress.approximate_elliposid_image
+      python_name: napari_stress._approximation.expansion_napari:expand_ellipsoid_on_image
+      title: Approximate ellipsoid from image data
     - id: napari-stress.expand_ellipsoid
       python_name: napari_stress._approximation.expansion_napari:expand_points_on_fitted_ellipsoid
       title: Expand points on ellipsoid
@@ -169,6 +171,9 @@ contributions:
     - command: napari-stress.fit_ellipsoid_points
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (points)
+    - command: napari-stress.approximate_elliposid_image
+      autogenerate: true
+      display_name: Approximate ellipsoid from image data
     - command: napari-stress.fit_ellipsoid_vectors
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
