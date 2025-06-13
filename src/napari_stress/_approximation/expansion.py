@@ -88,19 +88,24 @@ class SphericalHarmonicsExpander(Expander):
         """
 
         if self.expansion_type == "cartesian":
-            coefficients = self._fit_cartesian(points)
+            self.coefficients_ = self._fit_cartesian(points)
         elif self.expansion_type == "radial":
-            coefficients = self._fit_radial(points)
-
-        self.coefficients_ = coefficients
+            self.coefficients_ = self._fit_radial(points)
 
     def _fit_cartesian(self, points):
+        from .._utils.coordinate_conversion import (
+            cartesian_to_elliptical,
+        )
         from .._stress import sph_func_SPB as sph_f
 
-        # Convert coordinates to ellipsoidal (latitude/longitude)
-        longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(
-            points
+        self._ellipsoid_expander = EllipsoidExpander()
+        self._ellipsoid_expander.fit(points)
+        # get LS Ellipsoid estimate and get point cordinates in elliptical coordinates
+        longitude, latitude = cartesian_to_elliptical(
+            self._ellipsoid_expander.coefficients_, points, invert=True
         )
+        longitude = longitude.squeeze()
+        latitude = latitude.squeeze()
 
         # This implementation fits a superposition of three sets of spherical harmonics
         # to the data, one for each cardinal direction (x/y/z).
@@ -114,15 +119,21 @@ class SphericalHarmonicsExpander(Expander):
             optimal_fit_parameters.append(params)
         optimal_fit_parameters = np.vstack(optimal_fit_parameters).transpose()
 
-        fit_sph_coef_mats = np.empty(
-            (3, self.max_degree + 1, self.max_degree + 1)
+        X_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
+            optimal_fit_parameters[:, 0], self.max_degree
         )
-        for idx in range(3):
-            fit_sph_coef_mats[idx] = sph_f.Un_Flatten_Coef_Vec(
-                optimal_fit_parameters[:, idx], self.max_degree
-            )
+        Y_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
+            optimal_fit_parameters[:, 1], self.max_degree
+        )
+        Z_fit_sph_coef_mat = sph_f.Un_Flatten_Coef_Vec(
+            optimal_fit_parameters[:, 2], self.max_degree
+        )
 
-        return fit_sph_coef_mats
+        coefficients = np.stack(
+            [X_fit_sph_coef_mat, Y_fit_sph_coef_mat, Z_fit_sph_coef_mat]
+        )
+
+        return coefficients
 
     def _fit_radial(self, points):
         """
@@ -150,32 +161,45 @@ class SphericalHarmonicsExpander(Expander):
         Expand spherical harmonics using input coefficients.
         """
         from .._stress import sph_func_SPB as sph_f
+        from .._utils.coordinate_conversion import cartesian_to_elliptical
 
         if self.expansion_type == "cartesian":
-            longitude, latitude = self._cartesian_to_ellipsoidal_coordinates(
-                points
+            longitude, latitude = cartesian_to_elliptical(
+                self._ellipsoid_expander.coefficients_,
+                points,
+                invert=True
+            )
+                    # Create SPH_func to represent X, Y, Z:
+            X_fit_sph = sph_f.spherical_harmonics_function(
+                self._coefficients[0], self.max_degree
+            )
+            Y_fit_sph = sph_f.spherical_harmonics_function(
+                self._coefficients[1], self.max_degree
+            )
+            Z_fit_sph = sph_f.spherical_harmonics_function(
+                self._coefficients[2], self.max_degree
+            )
+
+            X_fit_sph_UV_pts = X_fit_sph.Eval_SPH(longitude, latitude)
+            Y_fit_sph_UV_pts = Y_fit_sph.Eval_SPH(longitude, latitude)
+            Z_fit_sph_UV_pts = Z_fit_sph.Eval_SPH(longitude, latitude)
+
+            fitted_points = np.hstack(
+                (X_fit_sph_UV_pts, Y_fit_sph_UV_pts, Z_fit_sph_UV_pts)
             )
 
         elif self.expansion_type == "radial":
+            import vedo
             _, longitude, latitude = self._cartesian_to_radial_coordinates(
                 points
             )
-
-        fitted_points = np.array(
-            [
-                sph_f.spherical_harmonics_function(
-                    coef, self.max_degree
-                ).Eval_SPH(longitude, latitude)
-                for coef in self._coefficients
-            ]
-        ).T
-
-        if self.expansion_type == "radial":
-            import vedo
-
+            r_fit_sph = sph_f.spherical_harmonics_function(
+                self.coefficients_[0], self.max_degree
+            )
+            r_fit_sph_UV_pts = r_fit_sph.Eval_SPH(longitude, latitude).squeeze()
             fitted_points = (
                 vedo.transformations.spher2cart(
-                    fitted_points.squeeze(), latitude, longitude
+                    r_fit_sph_UV_pts, latitude, longitude
                 ).transpose()
                 + points.mean(axis=0)[None, :]
             )
@@ -246,45 +270,6 @@ class SphericalHarmonicsExpander(Expander):
         self._properties["power_spectrum"] = power_spectrum
         return power_spectrum
 
-    def _least_squares_harmonic_fit(
-        self, fit_degree: int, sample_locations: tuple, values: np.ndarray
-    ) -> np.ndarray:
-        """
-        Perform least squares harmonic fit on input points.
-
-        Parameters
-        ----------
-
-        fit_degree: int
-        sample_locations: tuple
-            Input points in elliptical coordinates - required least squares
-            fit to find ellipsoid major/minor axes
-        values: np.ndarray
-            Values to be expanded on the surface. Can be cartesian point coordinates
-            (x/y/z) or radii for a radial expansion.
-
-        Returns
-        -------
-        coefficients: np.ndarray
-            Numpy array holding spherical harmonics expansion coefficients. The size
-            on the type of expansion (cartesian or radial).
-        """
-        from .._stress import lebedev_info_SPB as lebedev_info
-
-        U, V = sample_locations[0], sample_locations[1]
-
-        All_Y_mn_pt_in = []
-
-        for n in range(fit_degree + 1):
-            for m in range(-1 * n, n + 1):
-                Y_mn_coors_in = []
-                Y_mn_coors_in = lebedev_info.Eval_SPH_Basis(m, n, U, V)
-                All_Y_mn_pt_in.append(Y_mn_coors_in)
-        All_Y_mn_pt_in_mat = np.hstack(All_Y_mn_pt_in)
-
-        coefficients = np.linalg.lstsq(All_Y_mn_pt_in_mat, values)[0]
-        return coefficients
-
     def _calculate_power_spectrum_individual(
         self, coefficients, normalize=True
     ):
@@ -331,67 +316,38 @@ class SphericalHarmonicsExpander(Expander):
         coefficients = np.linalg.lstsq(np.stack(All_Y_mn_pt_in).T, values)[0]
 
         return coefficients
-
-    def _cartesian_to_ellipsoidal_coordinates(self, points):
-        """
-        Calculate ellipsoidal coordinates for a set of points and an ellipsoid.
-        """
-        from . import least_squares_ellipsoid
-
-        # Calculate ellipsoid properties
-        ellipsoid = least_squares_ellipsoid(points)
-        ellipsoid_center = ellipsoid[:, 0].mean(axis=0)
-        axis_lengths = np.linalg.norm(ellipsoid[:, 1], axis=1)
-        rotation_matrix_inverse = (ellipsoid[:, 1] / axis_lengths[:, None]).T
-
-        # Transform points to align with ellipsoid
-        aligned_points = np.linalg.solve(
-            rotation_matrix_inverse, (points - ellipsoid_center).T
-        ).T
-
-        # Calculate U coordinates (similar to longitude)
-        u_coordinates = np.arctan2(
-            aligned_points[:, 1] * axis_lengths[0],
-            aligned_points[:, 0] * axis_lengths[1],
-        )
-        u_coordinates = np.where(
-            u_coordinates < 0, u_coordinates + 2 * np.pi, u_coordinates
-        )
-
-        # Calculate V coordinates (similar to latitude)
-        cylinder_radius = np.sqrt(
-            aligned_points[:, 0] ** 2 + aligned_points[:, 1] ** 2
-        )
-        cylinder_radius_expanded = np.sqrt(
-            (axis_lengths[0] * np.cos(u_coordinates)) ** 2
-            + (axis_lengths[1] * np.sin(u_coordinates)) ** 2
-        )
-
-        v_coordinates = np.arctan2(
-            cylinder_radius * axis_lengths[2],
-            aligned_points[:, 2] * cylinder_radius_expanded,
-        )
-        v_coordinates = np.where(
-            v_coordinates < 0, v_coordinates + 2 * np.pi, v_coordinates
-        )
-
-        return u_coordinates, v_coordinates
-
+    
     def _cartesian_to_radial_coordinates(self, points):
         """
-        Calculate radial coordinates for a set of points.
+        Convert Cartesian coordinates to radial coordinates.
+
+        Parameters
+        ----------
+        points : napari.types.PointsData
+            The points in Cartesian coordinates.
+
+        Returns
+        -------
+        radii : np.ndarray
+            The radial distances of the points.
+        longitude : np.ndarray
+            The longitudes of the points.
+        latitude : np.ndarray
+            The latitudes of the points.
         """
         from .._stress.charts_SPB import Cart_To_Coor_A
-
-        points_relative = points - points.mean(axis=0)[None, :]
+        center = points.mean(axis=0)
+        points_relative = points - center[None, :]
         radii = np.sqrt(
             points_relative[:, 0] ** 2
             + points_relative[:, 1] ** 2
             + points_relative[:, 2] ** 2
         )
+
         longitude, latitude = Cart_To_Coor_A(
             points_relative[:, 0], points_relative[:, 1], points_relative[:, 2]
         )
+
         return radii, longitude, latitude
 
 
