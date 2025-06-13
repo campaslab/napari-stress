@@ -33,7 +33,6 @@ def reconstruct_surface_from_quadrature_points(
     from scipy.spatial import Delaunay
 
     from .._stress import lebedev_write_SPB as lebedev_write
-    from .._utils import sanitize_faces
 
     n_quadrature_points = len(points)
 
@@ -58,4 +57,4 @@ def reconstruct_surface_from_quadrature_points(
                 delauney_triangles[tri_i, vert_ind] = vertex
                 vert_ind = vert_ind + 1
 
-    return sanitize_faces((points, delauney_triangles.astype(int)))
+    return (points, delauney_triangles.astype(int))
