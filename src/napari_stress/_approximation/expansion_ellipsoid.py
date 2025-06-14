@@ -372,6 +372,39 @@ class EllipsoidImageExpander(Expander):
         The type of fluorescence to use for estimating the ellipsoid.
         Can be either 'interior' or 'surface'.
         Default is 'interior'.
+
+    Attributes
+    ----------
+    coefficients_ : napari.types.VectorsData
+        Coefficients of the fitted ellipsoid. The coefficients are of the form
+        (3, 2, 3); The first dimension represents the three axes of the ellipsoid
+        (major, medial and minor). The second dimension represents the components of
+        the ellipsoid vectors (base point and direction vector). The third dimension
+        represents the dimension of the space (z, y, x).
+    axes_ : np.ndarray
+        Lengths of the axes of the ellipsoid.
+    center_ : np.ndarray
+        Center of the ellipsoid.
+    properties : dict
+        Dictionary containing properties of the expansion with following keys:
+        - residuals: np.ndarray
+            Residual euclidian distance between input points and expanded points.
+        - maximum_mean_curvature: float
+            Maximum mean curvature of the ellipsoid.
+        - minimum_mean_curvature: float
+            Minimum mean curvature of the ellipsoid.
+        The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
+        .. math::
+            H_{max} = a / (2 * c^2) + a / (2 * b^2)
+
+            H_{min} = c / (2 * b^2) + c / (2 * a^2)
+
+        where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
+    fluorescence : str
+        The type of fluorescence used for estimating the ellipsoid.
+        Can be either 'interior' or 'surface'.
+        Default is 'interior'.
+
     Methods
     -------
     fit(image: "napari.types.ImageData")
@@ -380,6 +413,16 @@ class EllipsoidImageExpander(Expander):
         Project a set of points onto their respective position on the fitted ellipsoid.
     fit_expand(image: "napari.types.ImageData")
         Fit an ellipsoid to a 3D image volume and then expand the points.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        # Instantiate and fit an ellipsoid expander to a 3D image volume
+        expander = EllipsoidImageExpander(fluorescence='interior')
+        expander.fit(image)
+        # Expand the points on the fitted ellipsoid
+        fitted_points = expander.fit_expand(image, n_points=512)
 
     """
 
