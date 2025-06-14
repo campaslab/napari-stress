@@ -360,6 +360,123 @@ class LebedevExpander(SphericalHarmonicsExpander):
 
     This class is a specialized version of the SphericalHarmonicsExpander that uses
     Lebedev grids for sampling points on the sphere.
+
+    Parameters
+    ----------
+    max_degree : int
+        Maximum degree of spherical harmonics expansion.
+    n_quadrature_points : int
+        Number of quadrature points to use for Lebedev sampling.
+        Possible values are 6, 14, 26, 38, 50, 74, 86, 110, 146, 170, 194, 230, 266, 302, 350, 434, 590, 770, 974, 1202, 1454, 1730, 2030, 2354, 2702, 3074, 3470, 3890, 4334, 4802, 5294, 5810.
+    expansion_type : str
+        Type of expansion to perform. Can be either 'cartesian' or 'radial'.
+    use_minimal_point_set : bool
+        If True, use a minimal point set for the Lebedev quadrature. For every degree, a
+        corresponding number of quadrature points is used, which is the minimum number of points.
+        The table below lists the expansion degree and the corresponding minimal number of points:
+
+        | Degree | Points |
+        |-------:|-------:|
+        |      2 |      6 |
+        |      3 |     14 |
+        |      4 |     26 |
+        |      5 |     38 |
+        |      6 |     50 |
+        |      7 |     74 |
+        |      8 |     86 |
+        |      9 |    110 |
+        |     10 |    146 |
+        |     11 |    170 |
+        |     12 |    194 |
+        |     13 |    230 |
+        |     14 |    266 |
+        |     15 |    302 |
+        |     16 |    350 |
+        |     18 |    434 |
+        |     21 |    590 |
+        |     24 |    770 |
+        |     27 |    974 |
+        |     30 |   1202 |
+        |     33 |   1454 |
+        |     36 |   1730 |
+        |     39 |   2030 |
+        |     42 |   2354 |
+        |     45 |   2702 |
+        |     48 |   3074 |
+        |     51 |   3470 |
+        |     54 |   3890 |
+        |     57 |   4334 |
+        |     60 |   4802 |
+        |     63 |   5294 |
+        |     66 |   5810 |
+
+        If False, the number of quadrature points is set to the maximum number of points
+        available for the given degree, which is 5810 for degree 66.
+    normalize_spectrum : bool
+        Normalize power spectrum sum to 1. If False, the power spectrum is not normalized.
+
+    Attributes
+    ----------
+    coefficients_ : np.ndarray
+        Spherical harmonics coefficients of shape `(3, max_degree + 1, max_degree + 1)` for
+        'cartesian' expansion type or `(1, max_degree + 1, max_degree + 1)` for 'radial' expansion type.
+    properties : dict
+        Dictionary containing properties of the expansion.
+
+        - normals: np.ndarray
+            Outward normals at Lebedev quadrature points.
+        - mean_curvature: np.ndarray
+            Mean curvature :math:`H` at Lebedev quadrature points, computed as
+
+            .. math::
+                H = \\frac{1}{2}(k_1 + k_2)
+
+            where :math:`k_1` and :math:`k_2` are the principal curvatures.
+        - H0_arithmetic: float
+            Arithmetic average of mean curvature:
+
+            .. math::
+                H_0^{\\mathrm{arith}} = \\frac{1}{N} \\sum_{i=1}^N H_i
+
+            where :math:`N` is the number of quadrature points.
+        - H0_surface_integral: float
+            Surface-area-weighted average mean curvature:
+
+            .. math::
+                H_0^{\\mathrm{surf}} = \\frac{\\int_S H \\, dA}{\\int_S dA}
+
+            where :math:`S` is the surface, :math:`H` is the mean curvature, and :math:`dA` is the surface element.
+        - H0_volume_integral: float
+            Average mean curvature estimated via the volume integral of the manifold:
+
+            .. math::
+                H_0^{\\mathrm{vol}} \\approx \\left( \\frac{4\\pi}{3V} \\right)^{1/3}
+
+            where :math:`V` is the volume enclosed by the surface.
+        - S2_volume_integral: float
+            Volume of the unit sphere, typically :math:`\\frac{4}{3}\\pi`.
+        - H0_radial_surface: float
+            Surface-area-weighted average mean curvature on the radially expanded surface.
+        - power_spectrum: np.ndarray
+            Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
+            is set to True, the power spectrum is normalized to sum to 1.
+
+            The spectrum :math:`P_l` is calculated as:
+
+            .. math::
+                P_l = \\sum_{m=-l}^{l} |a_{lm}|^2
+
+            where :math:`a_{lm}` are the spherical harmonics coefficients.
+
+    Methods
+    -------
+    fit(points: "napari.types.PointsData")
+        Fit Lebedev quadrature points to input data.
+    expand() -> "napari.types.SurfaceData"
+        Expand spherical harmonics using Lebedev quadrature points.
+        Calculates properties of the expansion as listed above.
+    fit_expand(points: "napari.types.PointsData") -> "napari.types.SurfaceData"
+        Fit Lebedev quadrature points to input data and then expand them.
     """
 
     def __init__(
