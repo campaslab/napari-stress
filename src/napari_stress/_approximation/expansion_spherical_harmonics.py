@@ -30,6 +30,24 @@ class SphericalHarmonicsExpander(Expander):
     normalize_spectrum : bool
         Normalize power spectrum sum to 1.
 
+    Examples
+    --------
+    >>> from napari_stress import SphericalHarmonicsExpander
+    >>> expander = SphericalHarmonicsExpander(max_degree=5, expansion_type='cartesian')
+    >>> # Generate points roughly on the surface of a sphere
+    >>> n = 100
+    >>> theta = np.linspace(0, np.pi, n)
+    >>> phi = np.linspace(0, 2 * np.pi, n)
+    >>> theta, phi = np.meshgrid(theta, phi)
+    >>> x = np.sin(theta) * np.cos(phi)
+    >>> y = np.sin(theta) * np.sin(phi)
+    >>> z = np.cos(theta)
+    >>> points = np.stack([x.ravel(), y.ravel(), z.ravel()], axis=1)
+    >>> expander.fit(points)  # Fit spherical harmonics to points
+    >>> expanded_points = expander.expand(points)  # Expand points using spherical harmonics
+
+
+
     Attributes
     ----------
     coefficients_ : np.ndarray
@@ -48,8 +66,6 @@ class SphericalHarmonicsExpander(Expander):
                 P_l = \\sum_{m=-l}^{l} |a_{lm}|^2
 
             where :math:`a_{lm}` are the spherical harmonics coefficients.
-
-
 
     Methods
     -------
