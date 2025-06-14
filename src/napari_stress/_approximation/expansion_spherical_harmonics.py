@@ -490,6 +490,7 @@ class LebedevExpander(SphericalHarmonicsExpander):
             max_degree=max_degree,
             expansion_type=expansion_type,
             normalize_spectrum=normalize_spectrum,)
+        from .._stress import lebedev_info_SPB as lebedev_info
         
         # Clip number of quadrature points
         if n_quadrature_points > 5810:
