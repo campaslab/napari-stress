@@ -381,6 +381,18 @@ class LebedevExpander(SphericalHarmonicsExpander):
         self.use_minimal_point_set = use_minimal_point_set
         self._manifold = None
 
+        possible_n_points = np.asarray(
+            list(lebedev_info.pts_of_lbdv_lookup.values())
+        )
+        index_correct_n_points = np.argmin(
+            abs(possible_n_points - self.n_quadrature_points)
+        )
+        self.n_quadrature_points = possible_n_points[index_correct_n_points]
+
+        if self.use_minimal_point_set:
+            self.n_quadrature_points = lebedev_info.look_up_lbdv_pts(
+                self.max_degree + 1
+            )
     def fit(self, points: "napari.types.PointsData"):
         super().fit(points)
 
@@ -395,19 +407,6 @@ class LebedevExpander(SphericalHarmonicsExpander):
         # to a radial spherical harmonics expansion
         if len(self.coefficients_.shape) == 2:
             self.coefficients_ = self.coefficients_[None, :]
-
-        possible_n_points = np.asarray(
-            list(lebedev_info.pts_of_lbdv_lookup.values())
-        )
-        index_correct_n_points = np.argmin(
-            abs(possible_n_points - self.n_quadrature_points)
-        )
-        self.n_quadrature_points = possible_n_points[index_correct_n_points]
-
-        if self.use_minimal_point_set:
-            self.n_quadrature_points = lebedev_info.look_up_lbdv_pts(
-                self.max_degree + 1
-            )
 
         # Create spherical harmonics functions to represent z/y/x
         fit_functions = [
