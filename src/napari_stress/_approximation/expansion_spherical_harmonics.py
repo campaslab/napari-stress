@@ -510,6 +510,11 @@ class LebedevExpander(SphericalHarmonicsExpander):
             self.n_quadrature_points = lebedev_info.look_up_lbdv_pts(
                 self.max_degree + 1
             )
+
+    def fit_expand(self, points):
+        self.fit(points)
+        return self.expand()
+
     def fit(self, points: "napari.types.PointsData"):
         super().fit(points)
 
