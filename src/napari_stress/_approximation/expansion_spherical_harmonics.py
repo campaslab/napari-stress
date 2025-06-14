@@ -513,7 +513,20 @@ class LebedevExpander(SphericalHarmonicsExpander):
     def fit(self, points: "napari.types.PointsData"):
         super().fit(points)
 
-    def expand(self, points: "napari.types.PointsData"):
+    def expand(self) -> "napari.layers.Surface":
+        """
+        Expand spherical harmonics using Lebedev quadrature points.
+
+        Parameters
+        ----------
+        points : "napari.types.PointsData"
+            Points to expand using spherical harmonics.
+        
+        Returns
+        -------
+        surface : "napari.types.SurfaceData"
+            Tuple of points and faces representing the expanded surface.
+        """
         from .._stress import (
             lebedev_info_SPB as lebedev_info,
             sph_func_SPB as sph_f,
