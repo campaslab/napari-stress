@@ -383,7 +383,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
         Maximum degree of spherical harmonics expansion.
     n_quadrature_points : int
         Number of quadrature points to use for Lebedev sampling.
-        Possible values are 6, 14, 26, 38, 50, 74, 86, 110, 146, 170, 194, 230, 266, 302, 350, 434, 590, 770, 974, 1202, 1454, 1730, 2030, 2354, 2702, 3074, 3470, 3890, 4334, 4802, 5294, 5810.
+        Possible values are listed in the table below. If the value is larger than
+        the maximum number of points available (5810) for the given degree, it is clipped to
+        5810.
     expansion_type : str
         Type of expansion to perform. Can be either 'cartesian' or 'radial'.
     use_minimal_point_set : bool
