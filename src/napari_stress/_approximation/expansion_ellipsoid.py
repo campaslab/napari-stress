@@ -389,9 +389,10 @@ class EllipsoidImageExpander(Expander):
     """
     Expand a set of points to fit an ellipsoid estimated from a 3D image volume.
     The ellipsoid is estimated from the image volume using a thresholding method
-    and least squares fitting.
+    and least squares fitting.s
 
     The ellipsoid equation is of the form:
+
     .. math::
         Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz = 1
 
