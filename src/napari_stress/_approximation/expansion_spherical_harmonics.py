@@ -518,14 +518,14 @@ class LebedevExpander(SphericalHarmonicsExpander):
             Gauss-Bonnet error for the radial expansion, calculated as:
 
             .. math::
-                \int_{\mathcal{M}} f(\\theta, \\phi) \, dA - 4\pi
-            
+                \\int_{\\mathcal{M}} f(\\theta, \\phi) \\, dA - 4\\pi
+
             where :math:`K` is the Gaussian curvature.
         - Gauss_Bonnet_relative_error_radial: float
             Relative Gauss-Bonnet error for the radial expansion, calculated as:
 
             .. math::
-                \\frac{\int_{\mathcal{M}} f(\\theta, \phi) \, dA - 4\pi}{4\pi}
+                \\frac{\\int_{\\mathcal{M}} f(\\theta, \\phi) \\, dA - 4\\pi}{4\\pi}
 
         - power_spectrum: np.ndarray
             Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
@@ -909,7 +909,6 @@ class LebedevExpander(SphericalHarmonicsExpander):
 
         return (points, delauney_triangles.astype(int))
 
-
     def _gauss_bonnet_test(self):
         from .._stress import (
             euclidian_k_form_SPB as euc_kf,
@@ -918,6 +917,7 @@ class LebedevExpander(SphericalHarmonicsExpander):
             _METADATAKEY_GAUSS_BONNET_ABS,
             _METADATAKEY_GAUSS_BONNET_REL,
         )
+
         K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
             self._manifold.K_A_pts,
             self._manifold.K_B_pts,
