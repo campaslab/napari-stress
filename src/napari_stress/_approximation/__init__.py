@@ -8,7 +8,6 @@ from .expansion_spherical_harmonics import (
 from .expansion_ellipsoid import (
     EllipsoidExpander,
     EllipsoidImageExpander,
-    EllipsoidExpander
 )
 from .expansion_napari import (
     expand_ellipsoid_on_image,
