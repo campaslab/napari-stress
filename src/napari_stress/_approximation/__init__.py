@@ -6,6 +6,7 @@ from .expansion_spherical_harmonics import (
 )
 
 from .expansion_ellipsoid import (
+    EllipsoidExpander,
     EllipsoidImageExpander,
     EllipsoidExpander
 )
@@ -13,12 +14,8 @@ from .expansion_napari import (
     expand_ellipsoid_on_image,
     expand_points_on_fitted_ellipsoid,
     expand_spherical_harmonics,
-    expand_ellipsoid_on_image
-)
-from .fit_ellipsoid import (
-    expand_points_on_ellipse,
-    least_squares_ellipsoid,
-    normals_on_ellipsoid,
+    fit_ellipsoid_to_pointcloud,
+    normals_on_fitted_ellipsoid,
 )
 
 __all__ = [
@@ -26,10 +23,9 @@ __all__ = [
     "LebedevExpander",
     "EllipsoidExpander",
     "EllipsoidImageExpander",
-    "least_squares_ellipsoid",
-    "expand_points_on_ellipse",
-    "expand_ellipsoid_on_image",
-    "normals_on_ellipsoid",
-    "expand_spherical_harmonics",
     "expand_points_on_fitted_ellipsoid",
+    "expand_ellipsoid_on_image",
+    "expand_spherical_harmonics",
+    "fit_ellipsoid_to_pointcloud",
+    "normals_on_fitted_ellipsoid",
 ]
