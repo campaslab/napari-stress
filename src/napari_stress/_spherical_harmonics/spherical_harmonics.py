@@ -6,7 +6,7 @@ functions (e.g., those functions that are visible to napari) in a separated plac
 """
 
 import warnings
-from warnings import deprecated
+import deprecated
 
 import numpy as np
 import vedo
