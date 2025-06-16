@@ -734,31 +734,51 @@ class LebedevExpander(SphericalHarmonicsExpander):
         Calculate mean curvature on quadrature points
         """
         from .._stress import euclidian_k_form_SPB as euc_kf
+
         from ..types import _METADATAKEY_MEAN_CURVATURE
 
-        # Test orientation:
-        points = self._manifold.get_coordinates().squeeze()
-        centered_lbdv_pts = points - points.mean(axis=0)[None, :]
+        if self.expansion_type == 'cartesian':
+            # Test orientation:
+            points = self._manifold.get_coordinates().squeeze()
+            centered_lbdv_pts = points - points.mean(axis=0)[None, :]
 
-        # Makre sure orientation is inward,
-        # so H is positive (for Ellipsoid, and small deviations):
-        Orientations = np.einsum(
-            "ij,ij->i", centered_lbdv_pts, self.properties["normals"]
-        )
-        num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
+            # Makre sure orientation is inward,
+            # so H is positive (for Ellipsoid, and small deviations):
+            Orientations = np.einsum(
+                "ij,ij->i", centered_lbdv_pts, self.properties["normals"]
+            )
+            num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
-        Orientation = 1.0  # unchanged (we want INWARD)
-        if num_pos_orr > 0.5 * len(centered_lbdv_pts):
-            Orientation = -1.0
+            Orientation = 1.0  # unchanged (we want INWARD)
+            if num_pos_orr > 0.5 * len(centered_lbdv_pts):
+                Orientation = -1.0
 
-        self.properties[_METADATAKEY_MEAN_CURVATURE] = (
-            Orientation
-            * euc_kf.Combine_Chart_Quad_Vals(
+            self.properties[_METADATAKEY_MEAN_CURVATURE] = (
+                Orientation
+                * euc_kf.Combine_Chart_Quad_Vals(
+                    self._manifold.H_A_pts,
+                    self._manifold.H_B_pts,
+                    self._manifold.lebedev_info,
+                ).squeeze()
+            )
+        elif self.expansion_type == 'radial':
+            mean_curvature_radial = euc_kf.Combine_Chart_Quad_Vals(
                 self._manifold.H_A_pts,
                 self._manifold.H_B_pts,
                 self._manifold.lebedev_info,
             ).squeeze()
-        )
+            H0_radial_surface = euc_kf.Integral_on_Manny(
+                mean_curvature_radial,
+                self._manifold,
+                self._manifold.lebedev_info,
+            )
+            H0_radial_surface /= euc_kf.Integral_on_Manny(
+                np.ones_like(mean_curvature_radial),
+                self._manifold,
+                self._manifold.lebedev_info,
+            )
+            mean_curvature_radial *= abs(H0_radial_surface) / H0_radial_surface
+            self.properties[_METADATAKEY_MEAN_CURVATURE] = mean_curvature_radial
 
     def _calculate_average_mean_curvatures(self):
         """
