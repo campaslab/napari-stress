@@ -513,6 +513,20 @@ class LebedevExpander(SphericalHarmonicsExpander):
             Volume of the unit sphere, typically :math:`\\frac{4}{3}\\pi`.
         - H0_radial_surface: float
             Surface-area-weighted average mean curvature on the radially expanded surface.
+            Only calculated if `expansion_type` is 'radial'.
+        - Gauss_Bonnet_error_radial: float
+            Gauss-Bonnet error for the radial expansion, calculated as:
+
+            .. math::
+                \int_{\mathcal{M}} f(\\theta, \\phi) \, dA - 4\pi
+            
+            where :math:`K` is the Gaussian curvature.
+        - Gauss_Bonnet_relative_error_radial: float
+            Relative Gauss-Bonnet error for the radial expansion, calculated as:
+
+            .. math::
+                \\frac{\int_{\mathcal{M}} f(\\theta, \phi) \, dA - 4\pi}{4\pi}
+
         - power_spectrum: np.ndarray
             Power spectrum of spherical harmonics coefficients. If 'normalize_spectrum'
             is set to True, the power spectrum is normalized to sum to 1.
@@ -683,6 +697,7 @@ class LebedevExpander(SphericalHarmonicsExpander):
         self._calculate_normals()
         self._calculate_mean_curvature()
         self._calculate_average_mean_curvatures()
+        self._gauss_bonnet_test()
 
     def _calculate_normals(self):
         """
@@ -873,3 +888,28 @@ class LebedevExpander(SphericalHarmonicsExpander):
                     vert_ind = vert_ind + 1
 
         return (points, delauney_triangles.astype(int))
+
+
+    def _gauss_bonnet_test(self):
+        from .._stress import (
+            euclidian_k_form_SPB as euc_kf,
+        )
+        from ..types import (
+            _METADATAKEY_GAUSS_BONNET_ABS,
+            _METADATAKEY_GAUSS_BONNET_REL,
+        )
+        K_lbdv_pts = euc_kf.Combine_Chart_Quad_Vals(
+            self._manifold.K_A_pts,
+            self._manifold.K_B_pts,
+            self._manifold.lebedev_info,
+        )
+        Gauss_Bonnet_Err = (
+            euc_kf.Integral_on_Manny(
+                K_lbdv_pts, self._manifold, self._manifold.lebedev_info
+            )
+            - 4 * np.pi
+        )
+        Gauss_Bonnet_Rel_Err = abs(Gauss_Bonnet_Err) / (4 * np.pi)
+
+        self._properties[_METADATAKEY_GAUSS_BONNET_ABS] = Gauss_Bonnet_Err
+        self._properties[_METADATAKEY_GAUSS_BONNET_REL] = Gauss_Bonnet_Rel_Err
