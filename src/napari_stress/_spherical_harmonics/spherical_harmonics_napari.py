@@ -1,11 +1,12 @@
 from enum import Enum
 
+import deprecated
 import napari
 import numpy as np
 from napari.layers import Points
 from napari.types import LayerDataTuple, PointsData
 from napari_tools_menu import register_function
-import deprecated
+
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import (
     create_manifold,
@@ -22,7 +23,7 @@ class expansion_types(Enum):
 
 @frame_by_frame
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.expand_spherical_harmonics` instead, which has a more consistent API.",
 )
 def fit_spherical_harmonics(
@@ -82,7 +83,7 @@ def fit_spherical_harmonics(
 )
 @frame_by_frame
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.expand_spherical_harmonics_on_lebedev_grid` instead, which has a more consistent API.",
 )
 def perform_lebedev_quadrature(

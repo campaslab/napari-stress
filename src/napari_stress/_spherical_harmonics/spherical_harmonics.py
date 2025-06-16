@@ -7,9 +7,9 @@ functions (e.g., those functions that are visible to napari) in a separated plac
 
 import warnings
 
+import deprecated
 import numpy as np
 import vedo
-import deprecated
 from napari.types import PointsData
 
 from .._stress import euclidian_k_form_SPB as euc_kf
@@ -20,7 +20,7 @@ from .fit_utils import Least_Squares_Harmonic_Fit
 
 
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.SphericalHarmonicsExpander` instead, which has a more consistent API.",
 )
 def stress_spherical_harmonics_expansion(
@@ -140,7 +140,7 @@ def stress_spherical_harmonics_expansion(
 
 
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
 )
 def lebedev_quadrature(
@@ -222,7 +222,7 @@ def lebedev_quadrature(
 
 
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
 )
 def create_manifold(
@@ -264,7 +264,7 @@ def create_manifold(
 
 
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
 )
 def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
@@ -304,7 +304,7 @@ def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
 
 
 @deprecated.deprecated(
-    version='0.5.0',
+    version="0.5.0",
     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
 )
 def calculate_mean_curvature_on_manifold(

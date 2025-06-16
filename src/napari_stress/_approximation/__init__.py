@@ -1,10 +1,5 @@
 """Approximation subpackage for napari-stress."""
 
-from .expansion_spherical_harmonics import (
-    SphericalHarmonicsExpander,
-    LebedevExpander
-)
-
 from .expansion_ellipsoid import (
     EllipsoidExpander,
     EllipsoidImageExpander,
@@ -13,9 +8,13 @@ from .expansion_napari import (
     expand_ellipsoid_on_image,
     expand_points_on_fitted_ellipsoid,
     expand_spherical_harmonics,
+    expand_spherical_harmonics_on_lebedev_grid,
     fit_ellipsoid_to_pointcloud,
     normals_on_fitted_ellipsoid,
-    expand_spherical_harmonics_on_lebedev_grid
+)
+from .expansion_spherical_harmonics import (
+    LebedevExpander,
+    SphericalHarmonicsExpander,
 )
 
 __all__ = [
@@ -28,5 +27,5 @@ __all__ = [
     "expand_spherical_harmonics",
     "fit_ellipsoid_to_pointcloud",
     "normals_on_fitted_ellipsoid",
-    "expand_spherical_harmonics_on_lebedev_grid"
+    "expand_spherical_harmonics_on_lebedev_grid",
 ]

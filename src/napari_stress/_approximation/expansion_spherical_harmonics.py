@@ -536,18 +536,20 @@ class LebedevExpander(SphericalHarmonicsExpander):
     """
 
     def __init__(
-            self,
-            max_degree: int = 5,
-            n_quadrature_points: int = 434,
-            expansion_type: str = "cartesian",
-            use_minimal_point_set: bool = False,
-            normalize_spectrum: bool = True,):
+        self,
+        max_degree: int = 5,
+        n_quadrature_points: int = 434,
+        expansion_type: str = "cartesian",
+        use_minimal_point_set: bool = False,
+        normalize_spectrum: bool = True,
+    ):
         super().__init__(
             max_degree=max_degree,
             expansion_type=expansion_type,
-            normalize_spectrum=normalize_spectrum,)
+            normalize_spectrum=normalize_spectrum,
+        )
         from .._stress import lebedev_info_SPB as lebedev_info
-        
+
         # Clip number of quadrature points
         if n_quadrature_points > 5810:
             n_quadrature_points = 5810
@@ -568,7 +570,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
                 self.max_degree + 1
             )
 
-    def fit_expand(self, points: "napari.types.PointsData") -> "napari.types.Surface":
+    def fit_expand(
+        self, points: "napari.types.PointsData"
+    ) -> "napari.types.Surface":
         self.fit(points)
         return self.expand()
 
@@ -583,18 +587,25 @@ class LebedevExpander(SphericalHarmonicsExpander):
         ----------
         points : "napari.types.PointsData"
             Points to expand using spherical harmonics.
-        
+
         Returns
         -------
         surface : "napari.types.SurfaceData"
             Tuple of points and faces representing the expanded surface.
         """
         from .._stress import (
-            lebedev_info_SPB as lebedev_info,
-            sph_func_SPB as sph_f,
             euclidian_k_form_SPB as euc_kf,
+        )
+        from .._stress import (
+            lebedev_info_SPB as lebedev_info,
+        )
+        from .._stress import (
             manifold_SPB as mnfd,
         )
+        from .._stress import (
+            sph_func_SPB as sph_f,
+        )
+
         # Coefficient matrix should be [DIM, DEG, DEG]; if DIM=1 this corresponds
         # to a radial spherical harmonics expansion
         if len(self.coefficients_.shape) == 2:
@@ -602,12 +613,15 @@ class LebedevExpander(SphericalHarmonicsExpander):
 
         # Create spherical harmonics functions to represent z/y/x
         fit_functions = [
-            sph_f.spherical_harmonics_function(x, self.max_degree) for x in self.coefficients_
+            sph_f.spherical_harmonics_function(x, self.max_degree)
+            for x in self.coefficients_
         ]
 
         # Get {Z/Y/X} Coordinates at lebedev points, so we can
         # leverage our code more efficiently (and uniformly) on surface:
-        LBDV_Fit = lebedev_info.lbdv_info(self.max_degree, self.n_quadrature_points)
+        LBDV_Fit = lebedev_info.lbdv_info(
+            self.max_degree, self.n_quadrature_points
+        )
         lebedev_points = [
             euc_kf.get_quadrature_points_from_sh_function(f, LBDV_Fit, "A")
             for f in fit_functions
@@ -648,7 +662,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
         Manny_Dict["Maniold_Name_Dict"] = Manny_Name_Dict
 
         self._manifold = mnfd.manifold(
-            Manny_Dict, manifold_type=manifold_type, raw_coordinates=lebedev_points
+            Manny_Dict,
+            manifold_type=manifold_type,
+            raw_coordinates=lebedev_points,
         )
 
         self._calculate_properties()
@@ -659,7 +675,6 @@ class LebedevExpander(SphericalHarmonicsExpander):
         )
 
         return surface
-    
 
     def _calculate_properties(self):
         """
@@ -691,12 +706,14 @@ class LebedevExpander(SphericalHarmonicsExpander):
             self._manifold.lebedev_info,
         )
 
-        normals_lbdv_points = np.stack(
-            [normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts]
-        ).squeeze().T
+        normals_lbdv_points = (
+            np.stack([normal_X_lbdv_pts, normal_Y_lbdv_pts, normal_Z_lbdv_pts])
+            .squeeze()
+            .T
+        )
 
         self.properties["normals"] = normals_lbdv_points
-    
+
     def _calculate_mean_curvature(self):
         """
         Calculate mean curvature on quadrature points
@@ -710,7 +727,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
 
         # Makre sure orientation is inward,
         # so H is positive (for Ellipsoid, and small deviations):
-        Orientations =  np.einsum('ij,ij->i', centered_lbdv_pts, self.properties['normals'])
+        Orientations = np.einsum(
+            "ij,ij->i", centered_lbdv_pts, self.properties["normals"]
+        )
         num_pos_orr = np.sum(np.asarray(Orientations).flatten() > 0)
 
         Orientation = 1.0  # unchanged (we want INWARD)
@@ -753,34 +772,37 @@ class LebedevExpander(SphericalHarmonicsExpander):
             Only calculated if  `mnfd.manifold.manifold_type`
             is `radial`.
         """
-        from ..types import (
-            _METADATAKEY_MEAN_CURVATURE,
-            _METADATAKEY_H0_ARITHMETIC,
-            _METADATAKEY_H0_SURFACE_INTEGRAL,
-            _METADATAKEY_H0_VOLUME_INTEGRAL,
-            _METADATAKEY_S2_VOLUME_INTEGRAL,
-            _METADATAKEY_H0_RADIAL_SURFACE
-        )
         from .._stress import euclidian_k_form_SPB as euc_kf
         from .._stress.sph_func_SPB import S2_Integral
+        from ..types import (
+            _METADATAKEY_H0_ARITHMETIC,
+            _METADATAKEY_H0_RADIAL_SURFACE,
+            _METADATAKEY_H0_SURFACE_INTEGRAL,
+            _METADATAKEY_H0_VOLUME_INTEGRAL,
+            _METADATAKEY_MEAN_CURVATURE,
+            _METADATAKEY_S2_VOLUME_INTEGRAL,
+        )
 
         mean_curvature = self.properties[_METADATAKEY_MEAN_CURVATURE]
 
         # Arithmetic average of curvature
-        self.properties[_METADATAKEY_H0_ARITHMETIC] = mean_curvature.flatten().mean()
+        self.properties[_METADATAKEY_H0_ARITHMETIC] = (
+            mean_curvature.flatten().mean()
+        )
 
         # Integrating surface area - this is the one used for downstream analysis
         # Calculate mean curvature by integrating surface area.
         Integral_on_surface = euc_kf.Integral_on_Manny(
-            mean_curvature,self._manifold, self._manifold.lebedev_info
+            mean_curvature, self._manifold, self._manifold.lebedev_info
         )
         Integral_on_sphere = euc_kf.Integral_on_Manny(
             np.ones_like(mean_curvature).astype(float),
             self._manifold,
             self._manifold.lebedev_info,
         )
-        self.properties[_METADATAKEY_H0_SURFACE_INTEGRAL] = Integral_on_surface / Integral_on_sphere
-
+        self.properties[_METADATAKEY_H0_SURFACE_INTEGRAL] = (
+            Integral_on_surface / Integral_on_sphere
+        )
 
         S2volume = None
         H0_from_Vol_Int = None
@@ -809,9 +831,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
         self.properties[_METADATAKEY_H0_RADIAL_SURFACE] = H0_radial_int
 
     def _reconstruct_surface_from_quadrature_points(
-            self,
-            points: "napari.types.PointsData",
-        ) -> "napari.types.SurfaceData":
+        self,
+        points: "napari.types.PointsData",
+    ) -> "napari.types.SurfaceData":
         """
         Reconstruct the surface for a given set of quadrature points.
 
@@ -822,12 +844,17 @@ class LebedevExpander(SphericalHarmonicsExpander):
 
         """
         from scipy.spatial import Delaunay
+
         from .._stress import lebedev_write_SPB as lebedev_write
 
-        Lbdv_Cart_Pts_and_Wt_Quad = lebedev_write.Lebedev(self.n_quadrature_points)
+        Lbdv_Cart_Pts_and_Wt_Quad = lebedev_write.Lebedev(
+            self.n_quadrature_points
+        )
         lbdv_coordinate_array = Lbdv_Cart_Pts_and_Wt_Quad[:, :-1]
 
-        lbdv_plus_center = np.vstack((lbdv_coordinate_array, np.array([0, 0, 0])))
+        lbdv_plus_center = np.vstack(
+            (lbdv_coordinate_array, np.array([0, 0, 0]))
+        )
         delauney_tetras = Delaunay(lbdv_plus_center)
 
         tetras = delauney_tetras.simplices
