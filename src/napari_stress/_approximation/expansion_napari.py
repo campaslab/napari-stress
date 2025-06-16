@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-
+from magicgui import magicgui
 from napari_timelapse_processor import frame_by_frame
 
 if TYPE_CHECKING:
@@ -85,6 +85,80 @@ def normals_on_fitted_ellipsoid(
     expander.fit(points)
 
     return expander.properties["normals"]
+
+
+@frame_by_frame
+def expand_spherical_harmonics_on_lebedev_grid(
+    points: 'napari.types.PointsData',
+    max_degree: int = 5,
+    n_quadrature_points: int = 434,
+    use_minimal_point_set: bool = False,
+    expansion_type: str = 'cartesian',
+    normalize_spectrum: bool = True,
+    ) -> "napari.types.LayerDataTuple":
+    """
+    Expand points using Lebedev quadrature and spherical harmonics.
+
+    Parameters
+    ----------
+    points : np.ndarray
+        Points to be expanded.
+    max_degree : int
+        Maximum degree of spherical harmonics expansion.
+    n_quadrature_points : int
+        Number of quadrature points to use for Lebedev grid.
+    use_minimal_point_set : bool
+        Whether to use the minimal pointset for Lebedev quadrature.
+    expansion_type : str
+        Type of expansion to use ('cartesian', 'radial', etc.).
+    normalize_spectrum : bool
+        Whether to normalize the spectrum of the expansion.
+    Returns
+    -------
+    expanded_points : np.ndarray
+        Expanded points.
+
+    """
+    from .expansion_spherical_harmonics import (
+        LebedevExpander,
+    )
+    from ..types import (
+        _METADATAKEY_MEAN_CURVATURE,
+        _METADATAKEY_H0_ARITHMETIC,
+        _METADATAKEY_H0_SURFACE_INTEGRAL,
+        _METADATAKEY_H0_VOLUME_INTEGRAL,
+        _METADATAKEY_S2_VOLUME_INTEGRAL,
+        _METADATAKEY_H0_RADIAL_SURFACE
+    )
+    expander = LebedevExpander(
+        max_degree=max_degree,
+        n_quadrature_points=n_quadrature_points,
+        use_minimal_point_set=use_minimal_point_set,
+        expansion_type=expansion_type,
+        normalize_spectrum=normalize_spectrum,
+    )
+
+    expansion_surface = expander.fit_expand(
+        points,
+    )
+
+    return (
+        expansion_surface,
+        {
+            'features': {
+                'mean_curvature': expander.properties['mean_curvature'],
+            },
+            'metadata': {
+                _METADATAKEY_MEAN_CURVATURE: expander.properties[_METADATAKEY_MEAN_CURVATURE],
+                _METADATAKEY_H0_ARITHMETIC: expander.properties[_METADATAKEY_H0_ARITHMETIC],
+                _METADATAKEY_H0_SURFACE_INTEGRAL: expander.properties[_METADATAKEY_H0_SURFACE_INTEGRAL],
+                _METADATAKEY_H0_VOLUME_INTEGRAL: expander.properties[_METADATAKEY_H0_VOLUME_INTEGRAL],
+                _METADATAKEY_S2_VOLUME_INTEGRAL: expander.properties[_METADATAKEY_S2_VOLUME_INTEGRAL],
+                _METADATAKEY_H0_RADIAL_SURFACE: expander.properties[_METADATAKEY_H0_RADIAL_SURFACE],
+            },
+        },
+        'surface'
+    )
 
 
 @frame_by_frame

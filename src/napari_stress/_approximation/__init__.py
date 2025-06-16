@@ -15,6 +15,7 @@ from .expansion_napari import (
     expand_spherical_harmonics,
     fit_ellipsoid_to_pointcloud,
     normals_on_fitted_ellipsoid,
+    expand_spherical_harmonics_on_lebedev_grid
 )
 
 __all__ = [
@@ -27,4 +28,5 @@ __all__ = [
     "expand_spherical_harmonics",
     "fit_ellipsoid_to_pointcloud",
     "normals_on_fitted_ellipsoid",
+    "expand_spherical_harmonics_on_lebedev_grid"
 ]

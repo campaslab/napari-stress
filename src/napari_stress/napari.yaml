@@ -42,6 +42,9 @@ contributions:
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
+    - id: napari-stress.lebedev_quadrature_expansion
+      python_name: napari_stress._approximation.expansion_napari:expand_spherical_harmonics_on_lebedev_grid
+      title: Expand spherical harmonics on Lebedev grid
 
     # Ellipsoids
     - id: napari-stress.fit_lsq_ellipsoid
@@ -131,6 +134,9 @@ contributions:
     - command: napari-stress.lebedev_quadrature
       autogenerate: True
       display_name: Lebedev quadrature
+    - command: napari-stress.lebedev_quadrature_expansion
+      autogenerate: true
+      display_name: Expand spherical harmonics on Lebedev grid
 
     # Measurement: stresses
     - command: napari-stress.measure_curvature
