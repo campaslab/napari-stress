@@ -17,7 +17,6 @@ from qtpy.QtWidgets import QWidget
 from .._spherical_harmonics.spherical_harmonics import (
     create_manifold,
     lebedev_quadrature,
-    stress_spherical_harmonics_expansion,
 )
 from .._stress import lebedev_info_SPB
 from .._utils.frame_by_frame import frame_by_frame
@@ -345,9 +344,9 @@ def comprehensive_analysis(
         _METADATAKEY_GAUSS_BONNET_REL,
         _METADATAKEY_GAUSS_BONNET_REL_RAD,
         _METADATAKEY_H0_ARITHMETIC,
+        _METADATAKEY_H0_RADIAL_SURFACE,
         _METADATAKEY_H0_SURFACE_INTEGRAL,
         _METADATAKEY_H0_VOLUME_INTEGRAL,
-        _METADATAKEY_H0_RADIAL_SURFACE,
         _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
@@ -393,8 +392,7 @@ def comprehensive_analysis(
         expansion_type="radial",
     )
     fitted_pointcloud = Expander_SH_cartesian.fit_expand(pointcloud)
-    quadrature_points = Expander_Lebedev_droplet.fit_expand(
-        fitted_pointcloud)
+    quadrature_points = Expander_Lebedev_droplet.fit_expand(fitted_pointcloud)
 
     # =====================================================================
     # Ellipsoid fit
@@ -444,20 +442,33 @@ def comprehensive_analysis(
     # (mean) curvature on droplet and ellipsoid
     # =========================================================================
     # Droplet (cartesian)
-    mean_curvature_droplet = Expander_Lebedev_droplet.properties['mean_curvature']
-    H0_arithmetic_droplet = Expander_Lebedev_droplet.properties[_METADATAKEY_H0_ARITHMETIC]
-    H0_surface_droplet = Expander_Lebedev_droplet.properties[_METADATAKEY_H0_SURFACE_INTEGRAL]
+    mean_curvature_droplet = Expander_Lebedev_droplet.properties[
+        "mean_curvature"
+    ]
+    H0_arithmetic_droplet = Expander_Lebedev_droplet.properties[
+        _METADATAKEY_H0_ARITHMETIC
+    ]
+    H0_surface_droplet = Expander_Lebedev_droplet.properties[
+        _METADATAKEY_H0_SURFACE_INTEGRAL
+    ]
 
     # Droplet (radial)
     from napari_stress._stress.euclidian_k_form_SPB import (
-        Combine_Chart_Quad_Vals,
         Integral_on_Manny,
     )
 
-    H0_volume_droplet = Expander_Lebedev_droplet_radial.properties[_METADATAKEY_H0_VOLUME_INTEGRAL]
-    S2_volume_droplet = Expander_Lebedev_droplet_radial.properties[_METADATAKEY_S2_VOLUME_INTEGRAL]
-    H0_radial_surface = Expander_Lebedev_droplet_radial.properties[_METADATAKEY_H0_RADIAL_SURFACE]
-    mean_curvature_radial = Expander_Lebedev_droplet_radial.properties['mean_curvature']
+    H0_volume_droplet = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_H0_VOLUME_INTEGRAL
+    ]
+    S2_volume_droplet = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_S2_VOLUME_INTEGRAL
+    ]
+    H0_radial_surface = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_H0_RADIAL_SURFACE
+    ]
+    mean_curvature_radial = Expander_Lebedev_droplet_radial.properties[
+        "mean_curvature"
+    ]
 
     stress_total_radial = (
         2 * gamma * (mean_curvature_radial - abs(H0_radial_surface))
@@ -710,10 +721,18 @@ def comprehensive_analysis(
         ],
     }
     metadata = {
-        _METADATAKEY_GAUSS_BONNET_REL: Expander_Lebedev_droplet.properties[_METADATAKEY_GAUSS_BONNET_REL],
-        _METADATAKEY_GAUSS_BONNET_ABS: Expander_Lebedev_droplet.properties[_METADATAKEY_GAUSS_BONNET_ABS],
-        _METADATAKEY_GAUSS_BONNET_ABS_RAD: Expander_Lebedev_droplet_radial.properties[_METADATAKEY_GAUSS_BONNET_ABS],
-        _METADATAKEY_GAUSS_BONNET_REL_RAD: Expander_Lebedev_droplet_radial.properties[_METADATAKEY_GAUSS_BONNET_REL],
+        _METADATAKEY_GAUSS_BONNET_REL: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_GAUSS_BONNET_REL
+        ],
+        _METADATAKEY_GAUSS_BONNET_ABS: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_GAUSS_BONNET_ABS
+        ],
+        _METADATAKEY_GAUSS_BONNET_ABS_RAD: Expander_Lebedev_droplet_radial.properties[
+            _METADATAKEY_GAUSS_BONNET_ABS
+        ],
+        _METADATAKEY_GAUSS_BONNET_REL_RAD: Expander_Lebedev_droplet_radial.properties[
+            _METADATAKEY_GAUSS_BONNET_REL
+        ],
         _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
         _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
         _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
