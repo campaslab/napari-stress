@@ -37,24 +37,24 @@ contributions:
     # APPROXIMATION
     # spherical harmonics
     - id: napari-stress.fit_spherical_harmonics
-      python_name: napari_stress.approximation:expand_spherical_harmonics
+      python_name: napari_stress._approximation.expansion_napari:expand_spherical_harmonics
       title: Approximate point cloud by spherical harmonics expansion
     - id: napari-stress.lebedev_quadrature
       python_name: napari_stress._spherical_harmonics.spherical_harmonics_napari:perform_lebedev_quadrature
       title: Perform lebedev quadrature after spherical harmonics expansion
 
-    # ellipsoids
+    # Ellipsoids
     - id: napari-stress.fit_lsq_ellipsoid
-      python_name: napari_stress.approximation:fit_ellipsoid_to_pointcloud
+      python_name: napari_stress._approximation.expansion_napari:fit_ellipsoid_to_pointcloud
       title: Fit least squares ellipsoid
     - id: napari-stress.approximate_elliposid_image
       python_name: napari_stress._approximation.expansion_napari:expand_ellipsoid_on_image
       title: Approximate ellipsoid from image data
     - id: napari-stress.expand_ellipsoid
-      python_name: napari_stress.approximation:expand_points_on_fitted_ellipsoid
+      python_name: napari_stress._approximation.expansion_napari:expand_points_on_fitted_ellipsoid
       title: Expand points on ellipsoid
     - id: napari-stress.normals_on_lsq_ellipsoid
-      python_name: napari_stress.approximation:normals_on_fitted_ellipsoid
+      python_name: napari_stress._approximation.expansion_napari:normals_on_fitted_ellipsoid
       title: Calculate normals on least squares ellipsoid
 
   # vedo functions
@@ -74,7 +74,7 @@ contributions:
       python_name: napari_stress._measurements.curvature:gauss_bonnet_test
       title: Measure Gauss-Bonnet error
     - id: napari-stress.curvature_on_ellipsoid
-      python_name: napari_stress.approximation:curvature_on_ellipsoid
+      python_name: napari_stress._approximation.expansion_napari:curvature_on_ellipsoid
       title: Measure curvature on ellipsoid
     - id: napari-stress.calculate_patch_fitted_curvature_surface
       python_name: napari_stress._measurements.curvature:_calculate_patch_fitted_curvature_on_surface
@@ -178,13 +178,11 @@ contributions:
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (vedo)
     - command: napari-stress.fit_ellipsoid_vectors_vedo
+      autogenerate: true
       display_name: Fit ellipsoid to pointcloud (points)
     - command: napari-stress.approximate_elliposid_image
       autogenerate: true
       display_name: Approximate ellipsoid from image data
-    - command: napari-stress.fit_ellipsoid_vectors
-      autogenerate: true
-      display_name: Fit ellipsoid to pointcloud (major axis)
     - command: napari-stress.fit_lsq_ellipsoid
       autogenerate: true
       display_name: Fit least squares ellipsoid
@@ -221,7 +219,11 @@ contributions:
       key: PC_3
 
   menus:
-    napari/layers/project:
+    napari-stress/approximation:
+      - command: napari-stress.approximate_elliposid_image
       - command: napari-stress.fit_lsq_ellipsoid
       - command: napari-stress.expand_ellipsoid
-      - command: napari-stress.normals_on_lsq_ellipsoid
+
+  submenus:
+    - id: napari-stress/approximation
+      label: A submenu for specific analyses
