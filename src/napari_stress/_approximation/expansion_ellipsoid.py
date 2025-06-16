@@ -53,14 +53,14 @@ class EllipsoidExpander(Expander):
         - minimum_mean_curvature: float
             Minimum mean curvature of the ellipsoid.
 
-        The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
+            The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
 
-        .. math::
-            H_{max} = a / (2 * c^2) + a / (2 * b^2)
+            .. math::
+                H_{max} = a / (2 * c^2) + a / (2 * b^2)
 
-            H_{min} = c / (2 * b^2) + c / (2 * a^2)
+                H_{min} = c / (2 * b^2) + c / (2 * a^2)
 
-        where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
+            where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
 
 
     Examples
@@ -254,6 +254,17 @@ class EllipsoidExpander(Expander):
         self._properties["residuals"] = distance
         
     def _normals_on_ellipsoid(self, points: "napari.types.PointsData"):
+        """
+        Calculate normals on the ellipsoid at given points.
+        Parameters
+        ----------
+        points : napari.types.PointsData
+            The points on the ellipsoid where normals are to be calculated.
+
+        Returns
+        -------
+        None
+        """
         
         A, B, C, D, E, F, G, H, J = self._ellipse_coefficients[:-1]
         xx = points[:, 0][:, None]
