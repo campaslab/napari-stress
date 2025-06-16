@@ -19,10 +19,10 @@ from .._stress import sph_func_SPB as sph_f
 from .fit_utils import Least_Squares_Harmonic_Fit
 
 
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.SphericalHarmonicsExpander` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.SphericalHarmonicsExpander` instead, which has a more consistent API.",
+# )
 def stress_spherical_harmonics_expansion(
     points: PointsData, max_degree: int = 5, expansion_type: str = "cartesian"
 ) -> tuple[PointsData, np.ndarray]:
@@ -139,10 +139,10 @@ def stress_spherical_harmonics_expansion(
         return fitted_points, coefficients
 
 
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
+# )
 def lebedev_quadrature(
     coefficients: np.ndarray,
     number_of_quadrature_points: int = 500,
@@ -221,10 +221,10 @@ def lebedev_quadrature(
     return lebedev_points, LBDV_Fit
 
 
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
+# )
 def create_manifold(
     points: PointsData, lebedev_fit: lebedev_info.lbdv_info, max_degree: int
 ) -> mnfd.manifold:
@@ -263,10 +263,10 @@ def create_manifold(
     )
 
 
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
+# )
 def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
     """
     Calculate the outwards pointing normal vectors on a manifold.
@@ -303,10 +303,10 @@ def get_normals_on_manifold(manifold: mnfd.manifold) -> np.ndarray:
     return normals_lbdv_points.squeeze().transpose()
 
 
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.LebedevExpander` instead, which has a more consistent API.",
+# )
 def calculate_mean_curvature_on_manifold(
     lebedev_points: PointsData,
     lebedev_fit: lebedev_info.lbdv_info,

@@ -21,10 +21,10 @@ class expansion_types(Enum):
 
 
 @frame_by_frame
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.expand_spherical_harmonics` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.expand_spherical_harmonics` instead, which has a more consistent API.",
+# )
 def fit_spherical_harmonics(
     points: PointsData,
     max_degree: int = 5,
@@ -81,10 +81,10 @@ def fit_spherical_harmonics(
     number_of_quadrature_points={"min": 6, "max": 5180},
 )
 @frame_by_frame
-@deprecated.deprecated(
-    version="0.5.0",
-    reason="Use `approximation.expand_spherical_harmonics_on_lebedev_grid` instead, which has a more consistent API.",
-)
+# @deprecated.deprecated(
+#     version="0.5.0",
+#     reason="Use `approximation.expand_spherical_harmonics_on_lebedev_grid` instead, which has a more consistent API.",
+# )
 def perform_lebedev_quadrature(
     points: Points,
     number_of_quadrature_points: int = 500,
