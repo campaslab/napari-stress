@@ -383,12 +383,12 @@ def comprehensive_analysis(
     )
     Expander_Lebedev_droplet = approximation.LebedevExpander(
         max_degree=max_degree,
-        number_of_quadrature_points=n_quadrature_points,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
     Expander_Lebedev_droplet_radial = approximation.LebedevExpander(
         max_degree=max_degree,
-        number_of_quadrature_points=n_quadrature_points,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
         expansion_type="radial",
     )
