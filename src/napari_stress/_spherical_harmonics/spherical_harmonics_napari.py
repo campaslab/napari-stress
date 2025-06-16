@@ -1,6 +1,5 @@
 from enum import Enum
 
-import deprecated
 import napari
 import numpy as np
 from napari.layers import Points
