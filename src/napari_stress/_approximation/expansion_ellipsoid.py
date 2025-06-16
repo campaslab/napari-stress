@@ -265,7 +265,7 @@ class EllipsoidExpander(Expander):
         -------
         None
         """
-        
+
         A, B, C, D, E, F, G, H, J = self._ellipse_coefficients[:-1]
         xx = points[:, 0][:, None]
         yy = points[:, 1][:, None]
