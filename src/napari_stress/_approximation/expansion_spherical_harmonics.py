@@ -734,10 +734,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
         Calculate mean curvature on quadrature points
         """
         from .._stress import euclidian_k_form_SPB as euc_kf
-
         from ..types import _METADATAKEY_MEAN_CURVATURE
 
-        if self.expansion_type == 'cartesian':
+        if self.expansion_type == "cartesian":
             # Test orientation:
             points = self._manifold.get_coordinates().squeeze()
             centered_lbdv_pts = points - points.mean(axis=0)[None, :]
@@ -761,7 +760,7 @@ class LebedevExpander(SphericalHarmonicsExpander):
                     self._manifold.lebedev_info,
                 ).squeeze()
             )
-        elif self.expansion_type == 'radial':
+        elif self.expansion_type == "radial":
             mean_curvature_radial = euc_kf.Combine_Chart_Quad_Vals(
                 self._manifold.H_A_pts,
                 self._manifold.H_B_pts,
@@ -778,7 +777,9 @@ class LebedevExpander(SphericalHarmonicsExpander):
                 self._manifold.lebedev_info,
             )
             mean_curvature_radial *= abs(H0_radial_surface) / H0_radial_surface
-            self.properties[_METADATAKEY_MEAN_CURVATURE] = mean_curvature_radial
+            self.properties[_METADATAKEY_MEAN_CURVATURE] = (
+                mean_curvature_radial
+            )
 
     def _calculate_average_mean_curvatures(self):
         """
