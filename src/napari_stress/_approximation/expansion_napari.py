@@ -5,7 +5,6 @@ from napari_timelapse_processor import frame_by_frame
 if TYPE_CHECKING:
     import napari
 
-from .._utils import frame_by_frame
 from .expansion_ellipsoid import (
     EllipsoidExpander,
     EllipsoidImageExpander,
