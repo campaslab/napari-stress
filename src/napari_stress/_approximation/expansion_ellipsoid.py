@@ -53,14 +53,14 @@ class EllipsoidExpander(Expander):
         - minimum_mean_curvature: float
             Minimum mean curvature of the ellipsoid.
 
-        The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
+            The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
 
-        .. math::
-            H_{max} = a / (2 * c^2) + a / (2 * b^2)
+            .. math::
+                H_{max} = a / (2 * c^2) + a / (2 * b^2)
 
-            H_{min} = c / (2 * b^2) + c / (2 * a^2)
+                H_{min} = c / (2 * b^2) + c / (2 * a^2)
 
-        where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
+            where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
 
 
     Examples
@@ -98,9 +98,9 @@ class EllipsoidExpander(Expander):
         ellipsoid_fitted_ : napari.types.VectorsData
             The fitted ellipsoid.
         """
-        coefficients = self._fit_ellipsoid_to_points(points)
+        self._ellipse_coefficients = self._fit_ellipsoid_to_points(points)
         self._center, self._axes, self._eigenvectors = (
-            self._extract_characteristics(coefficients)
+            self._extract_characteristics(self._ellipse_coefficients)
         )
 
         vectors = (
@@ -165,6 +165,7 @@ class EllipsoidExpander(Expander):
         """
         self._measure_residuals(input_points, output_points)
         self._measure_max_min_curvatures()
+        self._normals_on_ellipsoid(output_points)
 
     @property
     def coefficients_(self):
@@ -251,6 +252,38 @@ class EllipsoidExpander(Expander):
         """
         distance = np.linalg.norm(input_points - output_points, axis=1)
         self._properties["residuals"] = distance
+
+    def _normals_on_ellipsoid(self, points: "napari.types.PointsData"):
+        """
+        Calculate normals on the ellipsoid at given points.
+        Parameters
+        ----------
+        points : napari.types.PointsData
+            The points on the ellipsoid where normals are to be calculated.
+
+        Returns
+        -------
+        None
+        """
+
+        A, B, C, D, E, F, G, H, J = self._ellipse_coefficients[:-1]
+        xx = points[:, 0][:, None]
+        yy = points[:, 1][:, None]
+        zz = points[:, 2][:, None]
+
+        grad_F_x = 2.0 * A * xx + D * yy + E * zz + G
+        grad_F_y = 2.0 * B * yy + D * xx + F * zz + H
+        grad_F_z = 2.0 * C * zz + E * xx + F * yy + J
+
+        grad_F_X = np.hstack((grad_F_x, grad_F_y, grad_F_z))
+        Vec_Norms = np.sqrt(
+            np.sum(np.multiply(grad_F_X, grad_F_X), axis=1)
+        ).reshape(len(xx), 1)
+        grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
+
+        self.properties["normals"] = np.stack(
+            [points, grad_F_X_normed]
+        ).transpose((1, 0, 2))
 
     def _fit_ellipsoid_to_points(
         self,
@@ -356,9 +389,10 @@ class EllipsoidImageExpander(Expander):
     """
     Expand a set of points to fit an ellipsoid estimated from a 3D image volume.
     The ellipsoid is estimated from the image volume using a thresholding method
-    and least squares fitting.
+    and least squares fitting.s
 
     The ellipsoid equation is of the form:
+
     .. math::
         Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz = 1
 
