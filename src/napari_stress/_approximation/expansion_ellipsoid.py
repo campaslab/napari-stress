@@ -252,7 +252,7 @@ class EllipsoidExpander(Expander):
         """
         distance = np.linalg.norm(input_points - output_points, axis=1)
         self._properties["residuals"] = distance
-        
+
     def _normals_on_ellipsoid(self, points: "napari.types.PointsData"):
         """
         Calculate normals on the ellipsoid at given points.
@@ -282,7 +282,8 @@ class EllipsoidExpander(Expander):
         grad_F_X_normed = np.divide(grad_F_X, Vec_Norms)
 
         self.properties["normals"] = np.stack(
-            [points, grad_F_X_normed]).transpose((1, 0, 2))
+            [points, grad_F_X_normed]
+        ).transpose((1, 0, 2))
 
     def _fit_ellipsoid_to_points(
         self,
