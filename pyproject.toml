@@ -42,7 +42,7 @@ dependencies = [
     "vispy",
     "deprecation",
     "gdist",
-    "potpourri3d",
+    "pygeodesic",
     # "bokeh >= 3.1.0",
 ]
 

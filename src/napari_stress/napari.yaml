@@ -47,6 +47,9 @@ contributions:
     - id: napari-stress.fit_lsq_ellipsoid
       python_name: napari_stress.approximation:fit_ellipsoid_to_pointcloud
       title: Fit least squares ellipsoid
+    - id: napari-stress.approximate_elliposid_image
+      python_name: napari_stress._approximation.expansion_napari:expand_ellipsoid_on_image
+      title: Approximate ellipsoid from image data
     - id: napari-stress.expand_ellipsoid
       python_name: napari_stress.approximation:expand_points_on_fitted_ellipsoid
       title: Expand points on ellipsoid
@@ -175,6 +178,11 @@ contributions:
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (vedo)
     - command: napari-stress.fit_ellipsoid_vectors_vedo
+      display_name: Fit ellipsoid to pointcloud (points)
+    - command: napari-stress.approximate_elliposid_image
+      autogenerate: true
+      display_name: Approximate ellipsoid from image data
+    - command: napari-stress.fit_ellipsoid_vectors
       autogenerate: true
       display_name: Fit ellipsoid to pointcloud (major axis)
     - command: napari-stress.fit_lsq_ellipsoid

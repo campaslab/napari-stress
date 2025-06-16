@@ -179,7 +179,6 @@ class droplet_reconstruction_toolbox(QWidget):
             voxelsize=current_voxel_size,
             target_voxelsize=self.doubleSpinBox_target_voxelsize.value(),
             smoothing_sigma=self.doubleSpinBox_gaussian_blur.value(),
-            n_smoothing_iterations=self.spinBox_n_smoothing.value(),
             n_tracing_iterations=self.spinBox_n_refinement_steps.value(),
             resampling_length=self.doubleSpinBox_sampling_length.value(),
             n_points=self.spinBox_n_vertices.value(),
@@ -208,8 +207,7 @@ def reconstruct_droplet(
     voxelsize: np.ndarray = None,
     target_voxelsize: float = 1.0,
     smoothing_sigma: float = 1.0,
-    n_smoothing_iterations: int = 10,
-    n_points: int = 256,
+    n_points: int = 512,
     n_tracing_iterations: int = 1,
     resampling_length: float = 5,
     fit_type: str = "fancy",
@@ -275,54 +273,41 @@ def reconstruct_droplet(
             - droplet center: center of droplet
 
     """
-    import copy
 
-    import vedo
-    from scipy.ndimage import binary_fill_holes
-    from skimage import filters, measure, transform
+    from skimage import filters, transform
 
-    from napari_stress import reconstruction
+    from napari_stress import approximation, reconstruction
 
     from .patches import iterative_curvature_adaptive_patch_fitting
     from .refine_surfaces import resample_pointcloud
+
+    ellipse_expander = approximation.EllipsoidImageExpander(
+        fluorescence=edge_type
+    )
 
     scaling_factors = voxelsize / target_voxelsize
     rescaled_image = transform.rescale(
         image, scaling_factors, preserve_range=True, anti_aliasing=True
     )
     rescaled_image = filters.gaussian(rescaled_image, sigma=smoothing_sigma)
-    threshold = filters.threshold_otsu(rescaled_image)
-    binarized_image = rescaled_image > threshold
-
-    if edge_type == "surface":
-        binarized_image = binary_fill_holes(binarized_image)
-
-    # convert to surface
-    label_image = measure.label(binarized_image)
-    largest_object_size = 0
-    largest_object_label = 1
-    for i in range(1, label_image.max() + 1):
-        if np.sum(label_image == i) > largest_object_size:
-            largest_object_size = np.sum(label_image == i)
-            largest_object_label = i
-    vertices, faces, _, _ = measure.marching_cubes(
-        label_image == largest_object_label
+    points_first_guess = ellipse_expander.fit_expand(
+        rescaled_image, n_points=n_points
     )
-    mesh = vedo.Mesh(
-        (vertices.astype(float), np.asarray(faces).astype(int))
-    ).clean()
 
-    # Smooth and decimate
-    mesh = mesh.smooth(
-        niter=n_smoothing_iterations, feature_angle=120, edge_angle=90
-    ).decimate(n=n_points)
-    points_first_guess = mesh.vertices
-    points = copy.deepcopy(points_first_guess)
+    traced_points, trace_vectors = reconstruction.trace_refinement_of_surface(
+        rescaled_image,
+        points_first_guess,
+        selected_fit_type=fit_type,
+        selected_edge=edge_type,
+        trace_length=trace_length,
+        sampling_distance=sampling_distance,
+        interpolation_method=interpolation_method,
+    )
 
     # repeat tracing `n_tracing_iterations` times
     for _ in range(n_tracing_iterations):
         resampled_points = resample_pointcloud(
-            points, sampling_length=resampling_length
+            traced_points[0], sampling_length=resampling_length
         )
 
         traced_points, trace_vectors = (
@@ -333,9 +318,9 @@ def reconstruct_droplet(
                 selected_edge=edge_type,
                 trace_length=trace_length,
                 sampling_distance=sampling_distance,
+                interpolation_method=interpolation_method,
                 remove_outliers=remove_outliers,
                 outlier_tolerance=outlier_tolerance,
-                interpolation_method=interpolation_method,
             )
         )
         points = traced_points[0]
@@ -349,11 +334,11 @@ def reconstruct_droplet(
     # Returns
     # =========================================================================
 
-    properties = {"name": "surface_first_guess"}
+    properties = {"name": "Ellipsoid first guess", "size": 2}
     layer_first_guess = (
-        (mesh.vertices * target_voxelsize, np.asarray(mesh.cells)),
+        points_first_guess * target_voxelsize,
         properties,
-        "surface",
+        "points",
     )
 
     properties = {"name": "Droplet pointcloud (smoothed)", "size": 0.5}
@@ -362,9 +347,6 @@ def reconstruct_droplet(
         properties,
         "points",
     )
-
-    properties = {"name": "Label image", "scale": [target_voxelsize] * 3}
-    layer_label_image = (label_image, properties, "labels")
 
     traced_points = list(traced_points)
     traced_points[1]["name"] = "Droplet pointcloud (traced)"
@@ -390,17 +372,14 @@ def reconstruct_droplet(
         "blending": "additive",
         "scale": [target_voxelsize] * 3,
     }
-    layer_rescaled_image = (rescaled_image, properties, "image")
 
     if return_intermediate_results:
         return [
-            layer_label_image,
             layer_first_guess,
             layer_patch_fitted,
             traced_points,
             trace_vectors,
             droplet_center,
-            layer_rescaled_image,
         ]
     else:
         return [
