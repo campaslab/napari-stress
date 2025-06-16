@@ -6,6 +6,7 @@ import numpy as np
 from napari.layers import Points
 from napari.types import LayerDataTuple, PointsData
 from napari_tools_menu import register_function
+from warnings import deprecated
 
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import (
