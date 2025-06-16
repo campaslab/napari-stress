@@ -568,7 +568,7 @@ class LebedevExpander(SphericalHarmonicsExpander):
                 self.max_degree + 1
             )
 
-    def fit_expand(self, points):
+    def fit_expand(self, points: "napari.types.PointsData") -> "napari.types.Surface":
         self.fit(points)
         return self.expand()
 
