@@ -393,6 +393,7 @@ def comprehensive_analysis(
     )
     fitted_pointcloud = Expander_SH_cartesian.fit_expand(pointcloud)
     quadrature_surface = Expander_Lebedev_droplet.fit_expand(fitted_pointcloud)
+    _ = Expander_Lebedev_droplet_radial.fit_expand(fitted_pointcloud)  # triggers properties calculation
 
     # =====================================================================
     # Ellipsoid fit
