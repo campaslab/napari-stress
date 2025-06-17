@@ -327,7 +327,7 @@ def comprehensive_analysis(
         - layer_surface_autocorrelation: 'napari.types.SurfaceData'
             Surface representation of autocorrelations of total stress.
     """
-    from .. import approximation, measurements, reconstruction, vectors
+    from .. import approximation, measurements, vectors
     from ..types import (
         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1,
         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2,
@@ -420,7 +420,9 @@ def comprehensive_analysis(
     )
 
     # expand quadrature points on droplet on ellipsoid surface
-    quadrature_points_ellipsoid = Expander_ellipsoid.expand(quadrature_surface[0])
+    quadrature_points_ellipsoid = Expander_ellipsoid.expand(
+        quadrature_surface[0]
+    )
 
     # =========================================================================
     # Evaluate fit quality
