@@ -392,7 +392,7 @@ def comprehensive_analysis(
         expansion_type="radial",
     )
     fitted_pointcloud = Expander_SH_cartesian.fit_expand(pointcloud)
-    quadrature_points = Expander_Lebedev_droplet.fit_expand(fitted_pointcloud)
+    quadrature_surface = Expander_Lebedev_droplet.fit_expand(fitted_pointcloud)
 
     # =====================================================================
     # Ellipsoid fit
@@ -419,7 +419,7 @@ def comprehensive_analysis(
     )
 
     # expand quadrature points on droplet on ellipsoid surface
-    quadrature_points_ellipsoid = Expander_ellipsoid.expand(quadrature_points)
+    quadrature_points_ellipsoid = Expander_ellipsoid.expand(quadrature_surface[0])
 
     # =========================================================================
     # Evaluate fit quality
@@ -545,17 +545,9 @@ def comprehensive_analysis(
     # Geodesics
     # =============================================================================
 
-    # Find the surface triangles for the quadrature points and create
-    # SurfaceData from it
-    surface_droplet = (
-        reconstruction.reconstruct_surface_from_quadrature_points(
-            quadrature_points
-        )
-    )
-
-    surface_cell_stress = list(surface_droplet) + [stress_cell]
-    surface_total_stress = list(surface_droplet) + [stress_total]
-    surface_tissue_stress = list(surface_droplet) + [stress_tissue]
+    surface_cell_stress = list(quadrature_surface) + [stress_cell]
+    surface_total_stress = list(quadrature_surface) + [stress_total]
+    surface_tissue_stress = list(quadrature_surface) + [stress_tissue]
 
     GDM = None
     if GDM is None:
@@ -749,17 +741,17 @@ def comprehensive_analysis(
         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST: extrema_cellular_stress[1][
             "metadata"
         ]["all_pair_distance"],
+        _METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
+        _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
+        _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue,
     }
 
     properties = {
         "name": "Result of lebedev quadrature (droplet)",
         "features": features,
         "metadata": metadata,
-        "face_colormap": "twilight",
-        "face_color": _METADATAKEY_STRESS_CELL,
-        "size": size,
     }
-    layer_quadrature = (quadrature_points, properties, "points")
+    layer_quadrature = (quadrature_surface, properties, "surface")
 
     max_min_geodesics_total[1]["name"] = (
         "Total stress: " + max_min_geodesics_total[1]["name"]
@@ -774,14 +766,6 @@ def comprehensive_analysis(
         "Cell stress: " + min_max_geodesics_cell[1]["name"]
     )
 
-    metadata = {
-        _METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
-        _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
-        _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue,
-    }
-    properties = {"name": "stress_autocorrelations", "metadata": metadata}
-    layer_surface_autocorrelation = (surface_droplet, properties, "surface")
-
     return [
         layer_spherical_harmonics,
         layer_fitted_ellipsoid_points,
@@ -792,5 +776,4 @@ def comprehensive_analysis(
         min_max_geodesics_total,
         max_min_geodesics_cell,
         min_max_geodesics_cell,
-        layer_surface_autocorrelation,
     ]
