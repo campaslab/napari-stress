@@ -48,6 +48,39 @@ class EllipsoidExpander(Expander):
         Dictionary containing properties of the expansion with following keys:
         - residuals: np.ndarray
             Residual euclidian distance between input points and expanded points.
+        - normals: napari.types.VectorsData
+            Normals on the ellipsoid at the input points.
+        - mean_curvature: np.ndarray
+            Calculate point-wise mean curvature :math:`H_i` for an ellipsoid.
+
+            The formula for :math:`H_i` is given as:
+
+            .. math::
+                H(U, V) = \\frac{
+                a_0 a_1 a_2 \\Bigg(
+                3 \\left(a_0^2 + a_1^2\\right)
+                + 2 \\left(a_2^2\\right)
+                + \\left(a_0^2 + a_1^2 - 2 a_2^2\\right) \\cos(2V)
+                - 2 \\left(a_0^2 - a_1^2\\right) \\cos(2U) \\sin^2(V)
+                \\Bigg)
+                }{
+                8 \\Bigg(
+                \\left(a_0 a_1 \\cos(V)\\right)^2
+                + \\left(a_2 \\sin(V)\\right)^2
+                \\Big(
+                \\left(a_1 \\cos(U)\\right)^2 + \\left(a_0 \\sin(U)\\right)^2
+                \\Big)
+                \\Bigg)^{1.5}
+                }
+
+        - principal_curvatures1: np.ndarray
+            First principal curvature at the input points. Calculated as the maximum curvature at the input points:
+        - principal_curvatures2: np.ndarray
+            Second principal curvature at the input points. Calculated as the minimum curvature at the input points.
+        - h0_ellipsoid: np.ndarray
+            Averaged mean curvature :math:`H_0` on the ellipsoid, calculated as the mean of the point-wise mean curvature :math:`H_i`.
+        - h_e123_ellipsoid: np.ndarray
+            Maximum, medial and minimum mean curvature of the ellipsoid.
         - maximum_mean_curvature: float
             Maximum mean curvature of the ellipsoid.
         - minimum_mean_curvature: float
@@ -446,19 +479,38 @@ class EllipsoidImageExpander(Expander):
         Center of the ellipsoid.
     properties : dict
         Dictionary containing properties of the expansion with following keys:
-        - residuals: np.ndarray
-            Residual euclidian distance between input points and expanded points.
-        - maximum_mean_curvature: float
-            Maximum mean curvature of the ellipsoid.
-        - minimum_mean_curvature: float
-            Minimum mean curvature of the ellipsoid.
-        The maximum and minimum curvatures :math:`H_{max}` and :math:`H_{min}` are calculated as follows:
-        .. math::
-            H_{max} = a / (2 * c^2) + a / (2 * b^2)
+        - mean_curvature: np.ndarray
+            Calculate point-wise mean curvature :math:`H_i` for an ellipsoid.
 
-            H_{min} = c / (2 * b^2) + c / (2 * a^2)
+            The formula for :math:`H_i` is given as:
 
-        where a, b and c are the lengths of the ellipsoid axes along the three spatial dimensions.
+            .. math::
+                H(U, V) = \\frac{
+                a_0 a_1 a_2 \\Bigg(
+                3 \\left(a_0^2 + a_1^2\\right)
+                + 2 \\left(a_2^2\\right)
+                + \\left(a_0^2 + a_1^2 - 2 a_2^2\\right) \\cos(2V)
+                - 2 \\left(a_0^2 - a_1^2\\right) \\cos(2U) \\sin^2(V)
+                \\Bigg)
+                }{
+                8 \\Bigg(
+                \\left(a_0 a_1 \\cos(V)\\right)^2
+                + \\left(a_2 \\sin(V)\\right)^2
+                \\Big(
+                \\left(a_1 \\cos(U)\\right)^2 + \\left(a_0 \\sin(U)\\right)^2
+                \\Big)
+                \\Bigg)^{1.5}
+                }
+
+        - principal_curvatures1: np.ndarray
+            First principal curvature at the input points. Calculated as the maximum curvature at the input points:
+        - principal_curvatures2: np.ndarray
+            Second principal curvature at the input points. Calculated as the minimum curvature at the input points.
+        - h0_ellipsoid: np.ndarray
+            Averaged mean curvature :math:`H_0` on the ellipsoid, calculated as the mean of the point-wise mean curvature :math:`H_i`.
+        - h_e123_ellipsoid: np.ndarray
+            Maximum, medial and minimum mean curvature of the ellipsoid.
+
     fluorescence : str
         The type of fluorescence used for estimating the ellipsoid.
         Can be either 'interior' or 'surface'.
@@ -728,11 +780,11 @@ def _curvature_on_ellipsoid(
         cartesian_to_elliptical,
     )
     from ..types import (
-        _METADATAKEY_H0_ELLIPSOID,
-        _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_PRINCIPAL_CURVATURES1,
         _METADATAKEY_PRINCIPAL_CURVATURES2,
+        _METADATAKEY_H0_ELLIPSOID,
+        _METADATAKEY_H_E123_ELLIPSOID,
     )
 
     # lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
