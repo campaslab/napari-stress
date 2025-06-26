@@ -703,10 +703,9 @@ def comprehensive_analysis(
         "points",
     )
 
-    # Curvatures and stresses: Show on droplet surface (points)
+    # Curvatures and stresses: Show on droplet surface
     features = {
         _METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
-        _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
         _METADATAKEY_STRESS_CELL: stress_cell,
         _METADATAKEY_STRESS_TOTAL: stress_total,
         _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial,
@@ -730,6 +729,7 @@ def comprehensive_analysis(
         _METADATAKEY_GAUSS_BONNET_REL_RAD: Expander_Lebedev_droplet_radial.properties[
             _METADATAKEY_GAUSS_BONNET_REL
         ],
+        _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
         _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
         _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
         _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
