@@ -347,6 +347,7 @@ def comprehensive_analysis(
         _METADATAKEY_H0_RADIAL_SURFACE,
         _METADATAKEY_H0_SURFACE_INTEGRAL,
         _METADATAKEY_H0_VOLUME_INTEGRAL,
+        _METADATAKEY_H0_ELLIPSOID,
         _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
@@ -402,28 +403,15 @@ def comprehensive_analysis(
     # =====================================================================
 
     Expander_ellipsoid = approximation.EllipsoidExpander()
-    Expander_ellipsoid_SH = approximation.SphericalHarmonicsExpander(
-        max_degree=max_degree
-    )
-
-    ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
-    ellipsoid = Expander_ellipsoid.coefficients_
-
-    Expander_ellipsoid_SH.fit(ellipsoid_points)
-
-    quadrature_points_ellipsoid, lebedev_info_ellipsoid = lebedev_quadrature(
-        coefficients=Expander_ellipsoid_SH.coefficients_,
-        number_of_quadrature_points=n_quadrature_points,
+    Expander_ellipsoid_Lebedev = approximation.LebedevExpander(
+        max_degree=max_degree,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
 
-    manifold_ellipsoid = create_manifold(
-        quadrature_points_ellipsoid, lebedev_info_ellipsoid, max_degree
-    )
-
-    # expand quadrature points on droplet on ellipsoid surface
-    quadrature_points_ellipsoid = Expander_ellipsoid.expand(
-        quadrature_surface[0]
+    ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
+    quadrature_points_ellipsoid = Expander_ellipsoid_Lebedev.fit_expand(
+        ellipsoid_points
     )
 
     # =========================================================================
@@ -495,19 +483,12 @@ def comprehensive_analysis(
     )
 
     # Ellipsoid
-    curvature_ellipsoid = measurements.curvature_on_ellipsoid(
-        ellipsoid, quadrature_points_ellipsoid
-    )[1]
-    curvature_ellipsoid_sh = measurements.calculate_mean_curvature_on_manifold(
-        manifold_ellipsoid
-    )
-
-    features = curvature_ellipsoid["features"]
-    metadata = curvature_ellipsoid["metadata"]
-    mean_curvature_ellipsoid = features[_METADATAKEY_MEAN_CURVATURE]
-    _ = metadata[_METADATAKEY_H_E123_ELLIPSOID]
-    _ = curvature_ellipsoid_sh[1]
-    H0_surface_ellipsoid = curvature_ellipsoid_sh[2]
+    mean_curvature_ellipsoid = Expander_ellipsoid.properties[
+        _METADATAKEY_MEAN_CURVATURE
+    ]
+    H0_surface_ellipsoid = Expander_ellipsoid.properties[
+        _METADATAKEY_H0_ELLIPSOID
+    ]
 
     # =========================================================================
     # Stresses
@@ -530,7 +511,7 @@ def comprehensive_analysis(
     )
 
     result = measurements.tissue_stress_tensor(
-        ellipsoid, H0_surface_ellipsoid, gamma=gamma
+        Expander_ellipsoid.coefficients_, H0_surface_ellipsoid, gamma=gamma
     )
     stress_tensor_ellipsoidal = result[0]
     stress_tensor_cartesian = result[1]
@@ -642,7 +623,11 @@ def comprehensive_analysis(
         "name": "Result of least squares ellipsoid",
         "edge_width": size,
     }
-    layer_fitted_ellipsoid = (ellipsoid, properties, "vectors")
+    layer_fitted_ellipsoid = (
+        Expander_ellipsoid.coefficients_,
+        properties,
+        "vectors",
+    )
 
     # Quadrature points on ellipsoid
     features = {
