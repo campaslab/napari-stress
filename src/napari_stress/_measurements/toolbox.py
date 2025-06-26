@@ -430,14 +430,8 @@ def comprehensive_analysis(
     # (mean) curvature on droplet and ellipsoid
     # =========================================================================
     # Droplet (cartesian)
-    mean_curvature_droplet = Expander_Lebedev_droplet.properties[
-        "mean_curvature"
-    ]
     H0_arithmetic_droplet = Expander_Lebedev_droplet.properties[
         _METADATAKEY_H0_ARITHMETIC
-    ]
-    H0_surface_droplet = Expander_Lebedev_droplet.properties[
-        _METADATAKEY_H0_SURFACE_INTEGRAL
     ]
 
     # Droplet (radial)
@@ -489,9 +483,15 @@ def comprehensive_analysis(
     # Stresses
     # =========================================================================
     stress_total, stress_tissue, stress_cell = measurements.anisotropic_stress(
-        mean_curvature_droplet=mean_curvature_droplet,
-        H0_droplet=H0_surface_droplet,
-        mean_curvature_ellipsoid=mean_curvature_ellipsoid,
+        mean_curvature_droplet=Expander_Lebedev_droplet.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
+        H0_droplet=Expander_Lebedev_droplet.properties[
+            _METADATAKEY_H0_SURFACE_INTEGRAL
+        ],
+        mean_curvature_ellipsoid=Expander_ellipsoid_Lebedev.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
         H0_ellipsoid=H0_surface_ellipsoid,
         gamma=gamma,
     )
@@ -562,7 +562,7 @@ def comprehensive_analysis(
     )
 
     #########################################################################
-    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
+    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps):
     (
         extrema_total_stress,
         max_min_geodesics_total,
@@ -685,7 +685,9 @@ def comprehensive_analysis(
 
     # Curvatures and stresses: Show on droplet surface
     features = {
-        _METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
+        _METADATAKEY_MEAN_CURVATURE: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
         _METADATAKEY_STRESS_CELL: stress_cell,
         _METADATAKEY_STRESS_TOTAL: stress_total,
         _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial,
@@ -712,7 +714,9 @@ def comprehensive_analysis(
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
         _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
         _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
-        _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
+        _METADATAKEY_H0_SURFACE_INTEGRAL: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_H0_SURFACE_INTEGRAL
+        ],
         _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet,
         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO: extrema_cellular_stress[
             1
