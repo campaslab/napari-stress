@@ -236,7 +236,7 @@ def aggregate_singular_values(
             continue
         if _METADATAKEY_STRESS_TOTAL in layer[1]["features"]:
             df_total_stress = pd.DataFrame(layer[1]["features"])
-            df_total_stress["time"] = layer[0][:, 0] * time_step
+            df_total_stress["time"] = layer[1]["features"]["frame"] * time_step
 
         if _METADATAKEY_STRESS_TISSUE in layer[1]["features"]:
             df_tissue_stress = pd.DataFrame(layer[1]["features"])

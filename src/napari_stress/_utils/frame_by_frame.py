@@ -362,7 +362,7 @@ class TimelapseConverter:
             if "features" in properties[0]:
                 _properties["features"] = tuple_data[0][1]["features"]
                 _properties["features"]["frame"] = np.zeros(
-                    len(tuple_data[0][0]), dtype=int
+                    len(pd.DataFrame(_properties["features"])), dtype=int
                 )
                 [frame.pop("features") for frame in properties]
             if "metadata" in properties[0]:
