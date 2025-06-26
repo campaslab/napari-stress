@@ -728,11 +728,11 @@ def _curvature_on_ellipsoid(
         cartesian_to_elliptical,
     )
     from ..types import (
+        _METADATAKEY_H0_ELLIPSOID,
+        _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_PRINCIPAL_CURVATURES1,
         _METADATAKEY_PRINCIPAL_CURVATURES2,
-        _METADATAKEY_H0_ELLIPSOID,
-        _METADATAKEY_H_E123_ELLIPSOID,
     )
 
     # lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)

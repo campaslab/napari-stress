@@ -14,10 +14,6 @@ from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
 from qtpy.QtWidgets import QWidget
 
-from .._spherical_harmonics.spherical_harmonics import (
-    create_manifold,
-    lebedev_quadrature,
-)
 from .._stress import lebedev_info_SPB
 from .._utils.frame_by_frame import frame_by_frame
 
@@ -344,11 +340,10 @@ def comprehensive_analysis(
         _METADATAKEY_GAUSS_BONNET_REL,
         _METADATAKEY_GAUSS_BONNET_REL_RAD,
         _METADATAKEY_H0_ARITHMETIC,
+        _METADATAKEY_H0_ELLIPSOID,
         _METADATAKEY_H0_RADIAL_SURFACE,
         _METADATAKEY_H0_SURFACE_INTEGRAL,
         _METADATAKEY_H0_VOLUME_INTEGRAL,
-        _METADATAKEY_H0_ELLIPSOID,
-        _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
         _METADATAKEY_S2_VOLUME_INTEGRAL,
