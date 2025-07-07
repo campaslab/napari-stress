@@ -29,7 +29,6 @@ dependencies = [
     "joblib",
     "mpmath",
     "napari",
-    "napari-tools-menu>=0.1.15",
     "napari-timelapse-processor>=0.1.1",
     "pandas",
     "scikit-image",

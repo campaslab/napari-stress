@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from napari.types import LayerDataTuple
-from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
@@ -11,9 +10,6 @@ if TYPE_CHECKING:
     import napari
 
 
-@register_function(
-    menu="Measurement > Measure intensities on surface (n-STRESS)"
-)
 @frame_by_frame
 def _measure_intensity_on_surface(
     surface: "napari.types.SurfaceData",
@@ -126,9 +122,6 @@ def measure_intensity_on_surface(
     return intensities
 
 
-@register_function(
-    menu="Measurement > Measure intensities along normals (n-STRESS)"
-)
 @frame_by_frame
 def _sample_intensity_along_vector(
     sample_vectors: "napari.types.VectorsData",

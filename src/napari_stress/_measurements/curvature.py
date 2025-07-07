@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from napari.layers import Layer
-from napari_tools_menu import register_function
 
 from .._spherical_harmonics.spherical_harmonics import get_normals_on_manifold
 from .._stress import euclidian_k_form_SPB as euc_kf
@@ -28,10 +27,6 @@ from ..types import (
 if TYPE_CHECKING:
     import napari
 
-
-@register_function(
-    menu="Measurement > Measure mean curvature on ellipsoid (n-STRESS)"
-)
 @frame_by_frame
 def curvature_on_ellipsoid(
     ellipsoid: "napari.types.VectorsData",
@@ -130,9 +125,6 @@ def curvature_on_ellipsoid(
     return (sample_points, properties, "points")
 
 
-@register_function(
-    menu="Measurement > Measure patch-fitted-curvature on surface (n-STRESS)"
-)
 @frame_by_frame
 def _calculate_patch_fitted_curvature_on_surface(
     surface: "napari.types.SurfaceData",
@@ -303,9 +295,6 @@ def mean_curvature_on_ellipse_cardinal_points(
     return [H_ellps_e_1, H_ellps_e_2, H_ellps_e_3]
 
 
-@register_function(
-    menu="Measurement > Measure Gauss-Bonnet error on manifold (n-STRESS"
-)
 def gauss_bonnet_test(
     input_manifold: manifold, viewer: "napari.Viewer" = None
 ) -> tuple[float, float]:
@@ -353,9 +342,6 @@ def gauss_bonnet_test(
     return Gauss_Bonnet_Err, Gauss_Bonnet_Rel_Err
 
 
-@register_function(
-    menu="Measurement > Measure mean curvature on manifold (n-STRESS)"
-)
 def calculate_mean_curvature_on_manifold(
     input_manifold: manifold,
 ) -> tuple[np.ndarray, float, float]:
@@ -420,9 +406,6 @@ def calculate_mean_curvature_on_manifold(
     return mean_curvatures, H0_arithmetic, H0_surface_integral
 
 
-@register_function(
-    menu="Measurement > Measure average mean curvature on manifold (n-STRESS)"
-)
 def average_mean_curvatures_on_manifold(
     input_manifold: manifold,
 ) -> tuple[float, float]:

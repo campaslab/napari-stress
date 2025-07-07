@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from napari.types import LayerDataTuple, SurfaceData
-from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
@@ -36,7 +35,6 @@ def geodesic_distance_matrix(surface: SurfaceData) -> np.ndarray:
     return distance_matrix
 
 
-@register_function(menu="Surfaces > Geodesic path (pygeodesics, n-STRESS)")
 @frame_by_frame
 def geodesic_path(
     surface: SurfaceData, index_1: int, index_2: int
@@ -190,9 +188,6 @@ def _avg_around_pt(dist_x_c, dists_pts, vals_at_pts, max_dist_used):
     return sum_pts_within_1, sum_weights
 
 
-@register_function(
-    menu="Measurement > Local maxima on surface (pygeodesics, n-STRESS)"
-)
 def local_extrema_analysis(
     surface: "napari.types.SurfaceData", distance_matrix: np.ndarray = None
 ) -> list[LayerDataTuple]:

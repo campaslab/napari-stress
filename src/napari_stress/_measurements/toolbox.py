@@ -9,7 +9,6 @@ import numpy as np
 from magicgui.widgets import create_widget
 from napari.layers import Layer, Points
 from napari.types import LayerDataTuple, PointsData
-from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
 from qtpy.QtWidgets import QWidget
@@ -18,9 +17,6 @@ from .._stress import lebedev_info_SPB
 from .._utils.frame_by_frame import frame_by_frame
 
 
-@register_dock_widget(
-    menu="Measurement > Measure stresses on droplet pointcloud (n-STRESS)"
-)
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 

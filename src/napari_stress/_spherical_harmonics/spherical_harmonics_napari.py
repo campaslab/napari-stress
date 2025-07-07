@@ -4,7 +4,6 @@ import napari
 import numpy as np
 from napari.layers import Points
 from napari.types import LayerDataTuple, PointsData
-from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 from .spherical_harmonics import (
@@ -76,10 +75,6 @@ def fit_spherical_harmonics(
     return (fitted_points, properties, "points")
 
 
-@register_function(
-    menu="Points > Perform lebedev quadrature (n-STRESS)",
-    number_of_quadrature_points={"min": 6, "max": 5180},
-)
 @frame_by_frame
 # @deprecated.deprecated(
 #     version="0.5.0",
