@@ -238,7 +238,9 @@ def aggregate_singular_values(
             df_total_stress = pd.DataFrame(layer[1]["features"])
 
             if n_frames > 1:
-                df_total_stress["time"] = layer[1]["features"]["frame"] * time_step
+                df_total_stress["time"] = (
+                    layer[1]["features"]["frame"] * time_step
+                )
             else:
                 df_total_stress["time"] = np.zeros(
                     len(df_total_stress), dtype=float

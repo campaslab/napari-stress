@@ -3,6 +3,7 @@ from napari.types import LayerDataTuple, PointsData
 
 from .._utils.frame_by_frame import frame_by_frame
 
+
 @frame_by_frame
 def deviation_from_ellipsoidal_mode(
     points: PointsData, max_degree: int = 5, viewer: napari.Viewer = None

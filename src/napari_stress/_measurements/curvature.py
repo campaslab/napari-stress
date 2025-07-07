@@ -27,6 +27,7 @@ from ..types import (
 if TYPE_CHECKING:
     import napari
 
+
 @frame_by_frame
 def curvature_on_ellipsoid(
     ellipsoid: "napari.types.VectorsData",

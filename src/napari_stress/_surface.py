@@ -4,6 +4,7 @@ from napari.types import PointsData, SurfaceData, VectorsData
 
 from napari_stress._utils.frame_by_frame import frame_by_frame
 
+
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(
     points: PointsData, inside_fraction: float = 0.673
