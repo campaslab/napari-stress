@@ -468,7 +468,7 @@ def comprehensive_analysis(
     )
 
     # Ellipsoid
-    mean_curvature_ellipsoid = Expander_ellipsoid.properties[
+    mean_curvature_ellipsoid = Expander_ellipsoid_Lebedev.properties[
         _METADATAKEY_MEAN_CURVATURE
     ]
     H0_surface_ellipsoid = Expander_ellipsoid.properties[
@@ -669,14 +669,11 @@ def comprehensive_analysis(
         "name": "Result of lebedev quadrature on ellipsoid",
         "features": features,
         "metadata": metadata,
-        "face_color": _METADATAKEY_STRESS_TISSUE,
-        "face_colormap": "twilight",
-        "size": size,
     }
     layer_quadrature_ellipsoid = (
         quadrature_points_ellipsoid,
         properties,
-        "points",
+        "surface",
     )
 
     # Curvatures and stresses: Show on droplet surface
