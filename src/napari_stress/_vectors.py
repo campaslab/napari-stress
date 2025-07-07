@@ -4,6 +4,7 @@ if TYPE_CHECKING:
     import napari
 
 import numpy as np
+
 from ._utils.frame_by_frame import frame_by_frame
 
 
