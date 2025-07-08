@@ -30,6 +30,7 @@ dependencies = [
     "mpmath",
     "napari",
     "napari-timelapse-processor>=0.1.1",
+    "numpy<2.0.0",
     "pandas",
     "scikit-image",
     "scipy>=1.9.0",
