@@ -1,13 +1,9 @@
 import napari
 from napari.types import LayerDataTuple, PointsData
-from napari_tools_menu import register_function
 
 from .._utils.frame_by_frame import frame_by_frame
 
 
-@register_function(
-    menu="Measurement > Measure deviation from ellipsoid (n-STRESS)"
-)
 @frame_by_frame
 def deviation_from_ellipsoidal_mode(
     points: PointsData, max_degree: int = 5, viewer: napari.Viewer = None

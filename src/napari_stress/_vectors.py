@@ -4,14 +4,10 @@ if TYPE_CHECKING:
     import napari
 
 import numpy as np
-from napari_tools_menu import register_function
 
 from ._utils.frame_by_frame import frame_by_frame
 
 
-@register_function(
-    menu="Points > Move point along vectors by absolute value (n-STRESS)"
-)
 @frame_by_frame
 def absolute_move_points_along_vector(
     points: "napari.types.PointsData",
@@ -37,9 +33,6 @@ def absolute_move_points_along_vector(
     return points + position * unit_vector
 
 
-@register_function(
-    menu="Points > Move point along vectors by relative factor (n-STRESS)"
-)
 @frame_by_frame
 def relative_move_points_along_vector(
     points: "napari.types.PointsData",
@@ -68,9 +61,6 @@ def relative_move_points_along_vector(
     return points + position * vectors[:, 1]
 
 
-@register_function(
-    menu="Points > Calculate pairwise distance vectors (n-STRESS)"
-)
 @frame_by_frame
 def pairwise_point_distances(
     points: "napari.types.PointsData", fitted_points: "napari.types.PointsData"
@@ -108,9 +98,6 @@ def pairwise_point_distances(
     return np.stack([fitted_points, delta]).transpose((1, 0, 2))
 
 
-@register_function(
-    menu="Points > Calculate normal vectors on pointcloud (n-STRESS, vedo)",
-)
 @frame_by_frame
 def normal_vectors_on_pointcloud(
     points: "napari.types.PointsData",
@@ -148,9 +135,6 @@ def normal_vectors_on_pointcloud(
     return normals
 
 
-@register_function(
-    menu="Surfaces > Calculate normal vectors on surface (n-STRESS, vedo)"
-)
 @frame_by_frame
 def normal_vectors_on_surface(
     surface: "napari.types.SurfaceData",

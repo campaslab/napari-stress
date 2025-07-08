@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 import numpy as np
 import pandas as pd
 from napari.types import ImageData, LayerDataTuple, PointsData
-from napari_tools_menu import register_function
 
 from .._utils import frame_by_frame
 from .fit_utils import (
@@ -20,7 +19,6 @@ from .fit_utils import (
 warnings.filterwarnings("ignore")
 
 
-@register_function(menu="Points > Trace-refine points (n-STRESS)")
 @frame_by_frame
 def trace_refinement_of_surface(
     intensity_image: ImageData,
@@ -240,7 +238,6 @@ def trace_refinement_of_surface(
     return (layer_points, layer_normals)
 
 
-@register_function(menu="Points > Resample spherical pointcloud (n-STRESS)")
 @frame_by_frame
 def resample_pointcloud(
     points: "napari.types.PointsData", sampling_length: float = 5

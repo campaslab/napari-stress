@@ -61,4 +61,14 @@ parts:
 
   - caption: API
     chapters:
-    - file: 05_API/api
+      - file: 05_API/reconstruction
+      - file: 05_API/approximation
+        sections:
+          - file: 05_API/approximation/EllipsoidExpander
+          - file: 05_API/approximation/EllipsoidImageExpander
+          - file: 05_API/approximation/SphericalHarmonicsExpander
+          - file: 05_API/approximation/LebedevExpander
+
+      - file: 05_API/measurements
+      - file: 05_API/vectors
+      - file: 05_API/utils

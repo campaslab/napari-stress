@@ -48,6 +48,39 @@ class EllipsoidExpander(Expander):
         Dictionary containing properties of the expansion with following keys:
         - residuals: np.ndarray
             Residual euclidian distance between input points and expanded points.
+        - normals: napari.types.VectorsData
+            Normals on the ellipsoid at the input points.
+        - mean_curvature: np.ndarray
+            Calculate point-wise mean curvature :math:`H_i` for an ellipsoid.
+
+            The formula for :math:`H_i` is given as:
+
+            .. math::
+                H(U, V) = \\frac{
+                a_0 a_1 a_2 \\Bigg(
+                3 \\left(a_0^2 + a_1^2\\right)
+                + 2 \\left(a_2^2\\right)
+                + \\left(a_0^2 + a_1^2 - 2 a_2^2\\right) \\cos(2V)
+                - 2 \\left(a_0^2 - a_1^2\\right) \\cos(2U) \\sin^2(V)
+                \\Bigg)
+                }{
+                8 \\Bigg(
+                \\left(a_0 a_1 \\cos(V)\\right)^2
+                + \\left(a_2 \\sin(V)\\right)^2
+                \\Big(
+                \\left(a_1 \\cos(U)\\right)^2 + \\left(a_0 \\sin(U)\\right)^2
+                \\Big)
+                \\Bigg)^{1.5}
+                }
+
+        - principal_curvatures1: np.ndarray
+            First principal curvature at the input points. Calculated as the maximum curvature at the input points:
+        - principal_curvatures2: np.ndarray
+            Second principal curvature at the input points. Calculated as the minimum curvature at the input points.
+        - h0_ellipsoid: np.ndarray
+            Averaged mean curvature :math:`H_0` on the ellipsoid, calculated as the mean of the point-wise mean curvature :math:`H_i`.
+        - h_e123_ellipsoid: np.ndarray
+            Maximum, medial and minimum mean curvature of the ellipsoid.
         - maximum_mean_curvature: float
             Maximum mean curvature of the ellipsoid.
         - minimum_mean_curvature: float
@@ -166,6 +199,7 @@ class EllipsoidExpander(Expander):
         self._measure_residuals(input_points, output_points)
         self._measure_max_min_curvatures()
         self._normals_on_ellipsoid(output_points)
+        self._calculate_curvatures(output_points)
 
     @property
     def coefficients_(self):
@@ -284,6 +318,30 @@ class EllipsoidExpander(Expander):
         self.properties["normals"] = np.stack(
             [points, grad_F_X_normed]
         ).transpose((1, 0, 2))
+
+    def _calculate_curvatures(
+        self,
+        sample_points: "napari.types.PointsData",
+    ):
+        """
+        Calculate mean curvature on ellipsoid.
+
+        Parameters
+        ----------
+        sample_points : napari.types.PointsData
+            Sample points to calculate mean curvature on.
+
+        Returns
+        -------
+        result : dict
+            Dictionary containing the mean curvature, principal curvatures and the averaged mean curvature
+            on the ellipsoid.
+        """
+        result = _curvature_on_ellipsoid(
+            self.coefficients_, sample_points, self.axes_
+        )
+        for key, value in result.items():
+            self.properties[key] = value
 
     def _fit_ellipsoid_to_points(
         self,
@@ -406,6 +464,58 @@ class EllipsoidImageExpander(Expander):
         The type of fluorescence to use for estimating the ellipsoid.
         Can be either 'interior' or 'surface'.
         Default is 'interior'.
+
+    Attributes
+    ----------
+    coefficients_ : napari.types.VectorsData
+        Coefficients of the fitted ellipsoid. The coefficients are of the form
+        (3, 2, 3); The first dimension represents the three axes of the ellipsoid
+        (major, medial and minor). The second dimension represents the components of
+        the ellipsoid vectors (base point and direction vector). The third dimension
+        represents the dimension of the space (z, y, x).
+    axes_ : np.ndarray
+        Lengths of the axes of the ellipsoid.
+    center_ : np.ndarray
+        Center of the ellipsoid.
+    properties : dict
+        Dictionary containing properties of the expansion with following keys:
+        - mean_curvature: np.ndarray
+            Calculate point-wise mean curvature :math:`H_i` for an ellipsoid.
+
+            The formula for :math:`H_i` is given as:
+
+            .. math::
+                H(U, V) = \\frac{
+                a_0 a_1 a_2 \\Bigg(
+                3 \\left(a_0^2 + a_1^2\\right)
+                + 2 \\left(a_2^2\\right)
+                + \\left(a_0^2 + a_1^2 - 2 a_2^2\\right) \\cos(2V)
+                - 2 \\left(a_0^2 - a_1^2\\right) \\cos(2U) \\sin^2(V)
+                \\Bigg)
+                }{
+                8 \\Bigg(
+                \\left(a_0 a_1 \\cos(V)\\right)^2
+                + \\left(a_2 \\sin(V)\\right)^2
+                \\Big(
+                \\left(a_1 \\cos(U)\\right)^2 + \\left(a_0 \\sin(U)\\right)^2
+                \\Big)
+                \\Bigg)^{1.5}
+                }
+
+        - principal_curvatures1: np.ndarray
+            First principal curvature at the input points. Calculated as the maximum curvature at the input points:
+        - principal_curvatures2: np.ndarray
+            Second principal curvature at the input points. Calculated as the minimum curvature at the input points.
+        - h0_ellipsoid: np.ndarray
+            Averaged mean curvature :math:`H_0` on the ellipsoid, calculated as the mean of the point-wise mean curvature :math:`H_i`.
+        - h_e123_ellipsoid: np.ndarray
+            Maximum, medial and minimum mean curvature of the ellipsoid.
+
+    fluorescence : str
+        The type of fluorescence used for estimating the ellipsoid.
+        Can be either 'interior' or 'surface'.
+        Default is 'interior'.
+
     Methods
     -------
     fit(image: "napari.types.ImageData")
@@ -414,6 +524,16 @@ class EllipsoidImageExpander(Expander):
         Project a set of points onto their respective position on the fitted ellipsoid.
     fit_expand(image: "napari.types.ImageData")
         Fit an ellipsoid to a 3D image volume and then expand the points.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        # Instantiate and fit an ellipsoid expander to a 3D image volume
+        expander = EllipsoidImageExpander(fluorescence='interior')
+        expander.fit(image)
+        # Expand the points on the fitted ellipsoid
+        fitted_points = expander.fit_expand(image, n_points=512)
 
     """
 
@@ -468,7 +588,10 @@ class EllipsoidImageExpander(Expander):
     ) -> "napari.types.PointsData":
 
         self.fit(image)
-        return self.expand(n_points)
+        output_points = self.expand(n_points)
+
+        self._calculate_properties(output_points)
+        return output_points
 
     def est_ellipsoid_from_volume(self, image: np.ndarray) -> tuple:
         """
@@ -594,5 +717,140 @@ class EllipsoidImageExpander(Expander):
         """
         return self._center
 
-    def _calculate_properties(self, input_points, output_points):
-        pass
+    def _calculate_properties(self, output_points):
+        self._calculate_curvatures(output_points)
+
+    def _calculate_curvatures(
+        self,
+        sample_points: "napari.types.PointsData",
+    ):
+        """
+        Calculate mean curvature on ellipsoid.
+
+        Parameters
+        ----------
+        sample_points : napari.types.PointsData
+            Sample points to calculate mean curvature on.
+
+        Returns
+        -------
+        result : dict
+            Dictionary containing the mean curvature, principal curvatures and the averaged mean curvature
+            on the ellipsoid.
+        """
+        result = _curvature_on_ellipsoid(
+            self.coefficients_, sample_points, self.axes_
+        )
+        for key, value in result.items():
+            self.properties[key] = value
+
+
+def _curvature_on_ellipsoid(
+    ellipsoid: "napari.types.VectorsData",
+    sample_points: "napari.types.PointsData",
+    lengths: np.ndarray,
+) -> dict:
+    """
+    Calculate mean curvature on ellipsoid.
+
+    Parameters
+    ----------
+    ellipsoid : VectorsData
+        Ellipsoid major axes to calculate mean curvature for.
+    sample_points : PointsData
+        Sample points to calculate mean curvature on.
+
+    Returns
+    -------
+    LayerDataTuple (tuple)
+        The sample points, properties and layer type. The properties contain
+        the mean curvature, principal curvatures and the averaged mean curvature
+        on the ellipsoid.
+
+    See Also
+    --------
+
+    `Mean curvature <https://en.wikipedia.org/wiki/Mean_curvature>`_.
+        Mean curvature on Wikipedia.
+    `Ellipsoid definition <https://mathworld.wolfram.com/Ellipsoid.html>`_
+        Ellipsoid definition on Wolfram MathWorld.
+
+    """
+    from .._utils.coordinate_conversion import (
+        cartesian_to_elliptical,
+    )
+    from ..types import (
+        _METADATAKEY_H0_ELLIPSOID,
+        _METADATAKEY_H_E123_ELLIPSOID,
+        _METADATAKEY_MEAN_CURVATURE,
+        _METADATAKEY_PRINCIPAL_CURVATURES1,
+        _METADATAKEY_PRINCIPAL_CURVATURES2,
+    )
+
+    # lengths = conversion._axes_lengths_from_ellipsoid(ellipsoid)
+    a0 = lengths[0]
+    a1 = lengths[1]
+    a2 = lengths[2]
+    U, V = cartesian_to_elliptical(ellipsoid, sample_points, invert=True)
+
+    # calculate point-wise mean curvature H_i
+    num_H_ellps = (
+        a0
+        * a1
+        * a2
+        * (
+            3.0 * (a0**2 + a1**2)
+            + 2.0 * (a2**2)
+            + (a0**2 + a1**2 - 2.0 * a2**2) * np.cos(2.0 * V)
+            - 2.0 * (a0**2 - a1**2) * np.cos(2.0 * U) * np.sin(V) ** 2
+        )
+    )
+    den_H_ellps = (
+        8.0
+        * (
+            (a0 * a1 * np.cos(V)) ** 2
+            + (a2 * np.sin(V)) ** 2
+            * ((a1 * np.cos(U)) ** 2 + (a0 * np.sin(U)) ** 2)
+        )
+        ** 1.5
+    )
+    H_ellps_pts = (num_H_ellps / den_H_ellps).squeeze()
+
+    # also calculate principal curvatures
+    k_upstairs = a0**2 * a1**2 * a2**2
+    K_downstairs = (
+        a0**2 * a1**2 * np.cos(V) ** 2
+        + a2**2
+        * (a1**2 * np.cos(U) ** 2 + a0**2 * np.sin(U) ** 2)
+        * np.sin(V) ** 2
+    ) ** 2
+    k = k_upstairs / K_downstairs.squeeze()
+    k1 = H_ellps_pts + np.sqrt(H_ellps_pts**2 - k)
+    k2 = H_ellps_pts - np.sqrt(H_ellps_pts**2 - k)
+
+    # calculate averaged curvatures H_0:
+    # 1st method of H0 computation, for Ellipsoid in UV points
+    H0_ellps_avg_ellps_UV_curvs = H_ellps_pts.mean(axis=0)
+
+    # calculate maximum/minimum mean curvatures from largest to shortest axis
+    order = np.argsort(lengths)[::-1]
+    lengths_sorted = lengths[order]
+    a0 = lengths_sorted[0]
+    a1 = lengths_sorted[1]
+    a2 = lengths_sorted[2]
+
+    H_ellps_e_1 = a0 / (2.0 * a1**2) + a0 / (2.0 * a2**2)
+    H_ellps_e_2 = a1 / (2.0 * a0**2) + a1 / (2.0 * a2**2)
+    H_ellps_e_3 = a2 / (2.0 * a0**2) + a2 / (2.0 * a1**2)
+
+    result = {
+        _METADATAKEY_MEAN_CURVATURE: H_ellps_pts,
+        _METADATAKEY_PRINCIPAL_CURVATURES1: k1,
+        _METADATAKEY_PRINCIPAL_CURVATURES2: k2,
+        _METADATAKEY_H0_ELLIPSOID: H0_ellps_avg_ellps_UV_curvs,
+        _METADATAKEY_H_E123_ELLIPSOID: np.array(
+            [H_ellps_e_1, H_ellps_e_2, H_ellps_e_3]
+        ),
+    }
+
+    return result
