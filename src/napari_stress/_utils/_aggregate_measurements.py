@@ -259,7 +259,7 @@ def aggregate_singular_values(
     df_over_time["time"] = df_over_time["frame"] * time_step
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = (
         temporal_autocorrelation(
-            df_total_stress, "stress_total_radial", frame_column_name="frame"
+            df_total_stress, "stress_total", frame_column_name="frame"
         )
     )
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = (
