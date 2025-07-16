@@ -373,14 +373,16 @@ def comprehensive_analysis(
     Expander_SH_cartesian = approximation.SphericalHarmonicsExpander(
         max_degree=max_degree, expansion_type="cartesian"
     )
-    
+
     Expander_Lebedev_droplet = approximation.LebedevExpander(
         max_degree=max_degree,
         n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
     fitted_pointcloud = Expander_SH_cartesian.fit_expand(pointcloud)
-    Expander_Lebedev_droplet.coefficients_ = Expander_SH_cartesian.coefficients_
+    Expander_Lebedev_droplet.coefficients_ = (
+        Expander_SH_cartesian.coefficients_
+    )
     quadrature_surface = Expander_Lebedev_droplet.expand()
 
     # Radial
@@ -394,8 +396,12 @@ def comprehensive_analysis(
         expansion_type="radial",
     )
     Expander_SH_radial.fit(pointcloud)
-    Expander_Lebedev_droplet_radial.coefficients_ = Expander_SH_radial.coefficients_
-    _ = Expander_Lebedev_droplet_radial.expand()  # triggers properties calculation
+    Expander_Lebedev_droplet_radial.coefficients_ = (
+        Expander_SH_radial.coefficients_
+    )
+    _ = (
+        Expander_Lebedev_droplet_radial.expand()
+    )  # triggers properties calculation
 
     # =====================================================================
     # Ellipsoid fit
