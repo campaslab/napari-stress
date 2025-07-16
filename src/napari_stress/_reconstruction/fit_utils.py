@@ -252,8 +252,7 @@ def estimate_fit_parameters(intensity):
     """
     # Check if there are too few points
     if len(intensity) < 5:
-        print("Warning: Too few points in trace (length < 5)")
-        return [np.nan] * 5, intensity, intensity
+        raise ValueError("Warning: Too few points in trace (length < 5)")
 
     # Calculate the first derivative (dY)
     dY = 0.5 * (
