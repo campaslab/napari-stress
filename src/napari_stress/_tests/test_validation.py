@@ -1,8 +1,12 @@
 def test_validation(make_napari_viewer):
     from napari_stress import measurements, sample_data, utils
     import os
+    from pathlib import Path
     import pandas as pd
     import numpy as np
+
+    # directory of this file
+    current_dir = Path(__file__).parent
     
     # Load sample data
     viewer = make_napari_viewer()
@@ -20,9 +24,12 @@ def test_validation(make_napari_viewer):
         results_stress_analysis, n_frames=n_frames, time_step=time_step)
     
     df_STRESS = pd.DataFrame()
-    for file in os.listdir('./results_STRESS/'):
+    results_dir = os.path.join(current_dir, 'results_STRESS')
+    files = [os.path.join(results_dir, f) for f in os.listdir(results_dir) if f.endswith('.csv')]
+    for file in files:
         # read from file with data stored in row direction
-        single_result = pd.read_csv(f'./results_STRESS/{file}', header=None).T
+        single_result = pd.read_csv(
+            os.path.join(results_dir, file), header=None).T
 
         column_name = file.split('.')[0]
         df_STRESS[column_name] = single_result.values.flatten()
