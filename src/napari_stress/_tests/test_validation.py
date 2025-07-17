@@ -7,7 +7,7 @@ def test_validation(make_napari_viewer):
     # Load sample data
     viewer = make_napari_viewer()
     layer = viewer.open_sample('napari-stress', sample='PC_2')[0]
-    n_frames = int(layer.data[:, 0].max())
+    n_frames = int(layer.data[:, 0].max()) + 1
     time_step = 3
 
     results_stress_analysis = measurements.comprehensive_analysis(
