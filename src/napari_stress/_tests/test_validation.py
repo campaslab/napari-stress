@@ -1,13 +1,14 @@
 def test_validation(make_napari_viewer):
     import os
     from pathlib import Path
-    import pandas as pd
+
     import numpy as np
+    import pandas as pd
+
     from napari_stress import measurements, utils
 
     # directory of this file
     current_dir = Path(__file__).parent
-    
 
     # Load sample data
     viewer = make_napari_viewer()
@@ -21,16 +22,22 @@ def test_validation(make_napari_viewer):
 
     # Compile data
     df_over_time, _, _, _, _ = utils.compile_data_from_layers(
-        results_stress_analysis, n_frames=n_frames, time_step=time_step)
-    
+        results_stress_analysis, n_frames=n_frames, time_step=time_step
+    )
+
     df_STRESS = pd.DataFrame()
-    results_dir = os.path.join(current_dir, 'results_STRESS')
-    files = [os.path.join(results_dir, f) for f in os.listdir(results_dir) if f.endswith('.csv')]
+    results_dir = os.path.join(current_dir, "results_STRESS")
+    files = [
+        os.path.join(results_dir, f)
+        for f in os.listdir(results_dir)
+        if f.endswith(".csv")
+    ]
 
     for file in files:
         # read from file with data stored in row direction
         single_result = pd.read_csv(
-            os.path.join(results_dir, file), header=None).T
+            os.path.join(results_dir, file), header=None
+        ).T
         df_STRESS = pd.DataFrame()
 
         column_name = file.split(".")[0]
