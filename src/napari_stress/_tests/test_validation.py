@@ -17,7 +17,11 @@ def test_validation(make_napari_viewer):
     time_step = 3
 
     results_stress_analysis = measurements.comprehensive_analysis(
-        layer.data, max_degree=20, n_quadrature_points=434, use_dask=True
+        layer.data,
+        max_degree=20,
+        n_quadrature_points=434,
+        use_dask=True,
+        gamma=3.3,
     )
 
     # Compile data
@@ -25,7 +29,6 @@ def test_validation(make_napari_viewer):
         results_stress_analysis, n_frames=n_frames, time_step=time_step
     )
 
-    df_STRESS = pd.DataFrame()
     results_dir = os.path.join(current_dir, "results_STRESS")
     files = [
         os.path.join(results_dir, f)
@@ -33,15 +36,14 @@ def test_validation(make_napari_viewer):
         if f.endswith(".csv")
     ]
 
+    df_STRESS = pd.DataFrame()
     for file in files:
         # read from file with data stored in row direction
         single_result = pd.read_csv(
             os.path.join(results_dir, file), header=None
         ).T
-        df_STRESS = pd.DataFrame()
 
-        column_name = file.split(".")[0]
-        df_STRESS[column_name] = single_result.values.flatten()
+        df_STRESS[Path(file).stem] = single_result.values.flatten()
 
     to_compare = [
         "stress_total_anisotropy",
