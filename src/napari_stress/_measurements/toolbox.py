@@ -9,23 +9,14 @@ import numpy as np
 from magicgui.widgets import create_widget
 from napari.layers import Layer, Points
 from napari.types import LayerDataTuple, PointsData
-from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
 from qtpy.QtWidgets import QWidget
 
-from .._spherical_harmonics.spherical_harmonics import (
-    create_manifold,
-    lebedev_quadrature,
-    stress_spherical_harmonics_expansion,
-)
 from .._stress import lebedev_info_SPB
 from .._utils.frame_by_frame import frame_by_frame
 
 
-@register_dock_widget(
-    menu="Measurement > Measure stresses on droplet pointcloud (n-STRESS)"
-)
 class stress_analysis_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -328,7 +319,7 @@ def comprehensive_analysis(
         - layer_surface_autocorrelation: 'napari.types.SurfaceData'
             Surface representation of autocorrelations of total stress.
     """
-    from .. import approximation, measurements, reconstruction, vectors
+    from .. import approximation, measurements, vectors
     from ..types import (
         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X1,
         _METADATAKEY_ANGLE_ELLIPSOID_CART_E1_X2,
@@ -345,9 +336,10 @@ def comprehensive_analysis(
         _METADATAKEY_GAUSS_BONNET_REL,
         _METADATAKEY_GAUSS_BONNET_REL_RAD,
         _METADATAKEY_H0_ARITHMETIC,
+        _METADATAKEY_H0_ELLIPSOID,
+        _METADATAKEY_H0_RADIAL_SURFACE,
         _METADATAKEY_H0_SURFACE_INTEGRAL,
         _METADATAKEY_H0_VOLUME_INTEGRAL,
-        _METADATAKEY_H_E123_ELLIPSOID,
         _METADATAKEY_MEAN_CURVATURE,
         _METADATAKEY_MEAN_CURVATURE_DIFFERENCE,
         _METADATAKEY_S2_VOLUME_INTEGRAL,
@@ -377,74 +369,55 @@ def comprehensive_analysis(
     # =====================================================================
     # Spherical harmonics expansion
     # =====================================================================
-    Expander_SH = approximation.SphericalHarmonicsExpander(
-        max_degree=max_degree
+    # Cartesian
+    Expander_SH_cartesian = approximation.SphericalHarmonicsExpander(
+        max_degree=max_degree, expansion_type="cartesian"
     )
-    fitted_pointcloud = Expander_SH.fit_expand(pointcloud)
 
-    quadrature_points, lebedev_info = lebedev_quadrature(
-        coefficients=Expander_SH.coefficients_,
-        number_of_quadrature_points=n_quadrature_points,
+    Expander_Lebedev_droplet = approximation.LebedevExpander(
+        max_degree=max_degree,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
-
-    manifold_droplet = create_manifold(
-        quadrature_points, lebedev_info, max_degree
+    fitted_pointcloud = Expander_SH_cartesian.fit_expand(pointcloud)
+    Expander_Lebedev_droplet.coefficients_ = (
+        Expander_SH_cartesian.coefficients_
     )
+    quadrature_surface = Expander_Lebedev_droplet.expand()
 
-    # RADIAL
-    (
-        fitted_pointcloud_radial,
-        coefficients_radial,
-    ) = stress_spherical_harmonics_expansion(
-        pointcloud, max_degree=max_degree, expansion_type="radial"
+    # Radial
+    Expander_SH_radial = approximation.SphericalHarmonicsExpander(
+        max_degree=max_degree, expansion_type="radial"
     )
-
-    quadrature_points_radial, _ = lebedev_quadrature(
-        coefficients=coefficients_radial,
-        number_of_quadrature_points=n_quadrature_points,
+    Expander_Lebedev_droplet_radial = approximation.LebedevExpander(
+        max_degree=max_degree,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
+        expansion_type="radial",
     )
-
-    manifold_droplet_radial = create_manifold(
-        quadrature_points, lebedev_info, max_degree
+    Expander_SH_radial.fit(pointcloud)
+    Expander_Lebedev_droplet_radial.coefficients_ = (
+        Expander_SH_radial.coefficients_
     )
-
-    # Gauss Bonnet test
-    gauss_bonnet_absolute, gauss_bonnet_relative = (
-        measurements.gauss_bonnet_test(manifold_droplet)
-    )
-    (
-        gauss_bonnet_absolute_radial,
-        gauss_bonnet_relative_radial,
-    ) = measurements.gauss_bonnet_test(manifold_droplet_radial)
+    _ = (
+        Expander_Lebedev_droplet_radial.expand()
+    )  # triggers properties calculation
 
     # =====================================================================
     # Ellipsoid fit
     # =====================================================================
 
     Expander_ellipsoid = approximation.EllipsoidExpander()
-    Expander_ellipsoid_SH = approximation.SphericalHarmonicsExpander(
-        max_degree=max_degree
-    )
-
-    ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
-    ellipsoid = Expander_ellipsoid.coefficients_
-
-    Expander_ellipsoid_SH.fit(ellipsoid_points)
-
-    quadrature_points_ellipsoid, lebedev_info_ellipsoid = lebedev_quadrature(
-        coefficients=Expander_ellipsoid_SH.coefficients_,
-        number_of_quadrature_points=n_quadrature_points,
+    Expander_ellipsoid_Lebedev = approximation.LebedevExpander(
+        max_degree=max_degree,
+        n_quadrature_points=n_quadrature_points,
         use_minimal_point_set=False,
     )
 
-    manifold_ellipsoid = create_manifold(
-        quadrature_points_ellipsoid, lebedev_info_ellipsoid, max_degree
+    ellipsoid_points = Expander_ellipsoid.fit_expand(pointcloud)
+    quadrature_points_ellipsoid = Expander_ellipsoid_Lebedev.fit_expand(
+        ellipsoid_points
     )
-
-    # expand quadrature points on droplet on ellipsoid surface
-    quadrature_points_ellipsoid = Expander_ellipsoid.expand(quadrature_points)
 
     # =========================================================================
     # Evaluate fit quality
@@ -467,47 +440,28 @@ def comprehensive_analysis(
     # (mean) curvature on droplet and ellipsoid
     # =========================================================================
     # Droplet (cartesian)
-    curvature_droplet = measurements.calculate_mean_curvature_on_manifold(
-        manifold_droplet
-    )
-    mean_curvature_droplet = curvature_droplet[0]
-
-    averaged_curvatures = measurements.average_mean_curvatures_on_manifold(
-        manifold_droplet
-    )
-    H0_arithmetic_droplet = averaged_curvatures[0]
-    H0_surface_droplet = averaged_curvatures[1]
+    H0_arithmetic_droplet = Expander_Lebedev_droplet.properties[
+        _METADATAKEY_H0_ARITHMETIC
+    ]
 
     # Droplet (radial)
     from napari_stress._stress.euclidian_k_form_SPB import (
-        Combine_Chart_Quad_Vals,
         Integral_on_Manny,
     )
 
-    averaged_curvatures_radial = (
-        measurements.average_mean_curvatures_on_manifold(
-            manifold_droplet_radial
-        )
-    )
-    H0_volume_droplet = averaged_curvatures_radial[2]
-    S2_volume_droplet = averaged_curvatures_radial[3]
+    H0_volume_droplet = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_H0_VOLUME_INTEGRAL
+    ]
+    S2_volume_droplet = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_S2_VOLUME_INTEGRAL
+    ]
+    H0_radial_surface = Expander_Lebedev_droplet_radial.properties[
+        _METADATAKEY_H0_RADIAL_SURFACE
+    ]
+    mean_curvature_radial = Expander_Lebedev_droplet_radial.properties[
+        "mean_curvature"
+    ]
 
-    mean_curvature_radial = Combine_Chart_Quad_Vals(
-        manifold_droplet_radial.H_A_pts,
-        manifold_droplet_radial.H_B_pts,
-        manifold_droplet_radial.lebedev_info,
-    ).squeeze()
-    H0_radial_surface = Integral_on_Manny(
-        mean_curvature_radial,
-        manifold_droplet_radial,
-        manifold_droplet_radial.lebedev_info,
-    )
-    H0_radial_surface /= Integral_on_Manny(
-        np.ones_like(mean_curvature_radial),
-        manifold_droplet_radial,
-        manifold_droplet_radial.lebedev_info,
-    )
-    mean_curvature_radial *= abs(H0_radial_surface) / H0_radial_surface
     stress_total_radial = (
         2 * gamma * (mean_curvature_radial - abs(H0_radial_surface))
     )
@@ -516,39 +470,38 @@ def comprehensive_analysis(
         [
             Integral_on_Manny(
                 mean_curvature_radial - mean_curvature_radial,
-                manifold_droplet_radial,
-                manifold_droplet_radial.lebedev_info,
+                Expander_Lebedev_droplet_radial._manifold,
+                Expander_Lebedev_droplet_radial._manifold.lebedev_info,
             ),
             Integral_on_Manny(
                 mean_curvature_radial - mean_curvature_radial,
-                manifold_droplet,
-                manifold_droplet.lebedev_info,
+                Expander_Lebedev_droplet._manifold,
+                Expander_Lebedev_droplet._manifold.lebedev_info,
             ),
         ]
     )
 
     # Ellipsoid
-    curvature_ellipsoid = measurements.curvature_on_ellipsoid(
-        ellipsoid, quadrature_points_ellipsoid
-    )[1]
-    curvature_ellipsoid_sh = measurements.calculate_mean_curvature_on_manifold(
-        manifold_ellipsoid
-    )
-
-    features = curvature_ellipsoid["features"]
-    metadata = curvature_ellipsoid["metadata"]
-    mean_curvature_ellipsoid = features[_METADATAKEY_MEAN_CURVATURE]
-    _ = metadata[_METADATAKEY_H_E123_ELLIPSOID]
-    _ = curvature_ellipsoid_sh[1]
-    H0_surface_ellipsoid = curvature_ellipsoid_sh[2]
+    mean_curvature_ellipsoid = Expander_ellipsoid_Lebedev.properties[
+        _METADATAKEY_MEAN_CURVATURE
+    ]
+    H0_surface_ellipsoid = Expander_ellipsoid.properties[
+        _METADATAKEY_H0_ELLIPSOID
+    ]
 
     # =========================================================================
     # Stresses
     # =========================================================================
     stress_total, stress_tissue, stress_cell = measurements.anisotropic_stress(
-        mean_curvature_droplet=mean_curvature_droplet,
-        H0_droplet=H0_surface_droplet,
-        mean_curvature_ellipsoid=mean_curvature_ellipsoid,
+        mean_curvature_droplet=Expander_Lebedev_droplet.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
+        H0_droplet=Expander_Lebedev_droplet.properties[
+            _METADATAKEY_H0_SURFACE_INTEGRAL
+        ],
+        mean_curvature_ellipsoid=Expander_ellipsoid_Lebedev.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
         H0_ellipsoid=H0_surface_ellipsoid,
         gamma=gamma,
     )
@@ -563,7 +516,7 @@ def comprehensive_analysis(
     )
 
     result = measurements.tissue_stress_tensor(
-        ellipsoid, H0_surface_ellipsoid, gamma=gamma
+        Expander_ellipsoid.coefficients_, H0_surface_ellipsoid, gamma=gamma
     )
     stress_tensor_ellipsoidal = result[0]
     stress_tensor_cartesian = result[1]
@@ -583,17 +536,9 @@ def comprehensive_analysis(
     # Geodesics
     # =============================================================================
 
-    # Find the surface triangles for the quadrature points and create
-    # SurfaceData from it
-    surface_droplet = (
-        reconstruction.reconstruct_surface_from_quadrature_points(
-            quadrature_points
-        )
-    )
-
-    surface_cell_stress = list(surface_droplet) + [stress_cell]
-    surface_total_stress = list(surface_droplet) + [stress_total]
-    surface_tissue_stress = list(surface_droplet) + [stress_tissue]
+    surface_cell_stress = list(quadrature_surface) + [stress_cell]
+    surface_total_stress = list(quadrature_surface) + [stress_total]
+    surface_tissue_stress = list(quadrature_surface) + [stress_tissue]
 
     GDM = None
     if GDM is None:
@@ -627,7 +572,7 @@ def comprehensive_analysis(
     )
 
     #########################################################################
-    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps) data:
+    # Do Local Max/Min analysis on 2\gamma*(H - H0) and 2\gamma*(H - H_ellps):
     (
         extrema_total_stress,
         max_min_geodesics_total,
@@ -683,7 +628,11 @@ def comprehensive_analysis(
         "name": "Result of least squares ellipsoid",
         "edge_width": size,
     }
-    layer_fitted_ellipsoid = (ellipsoid, properties, "vectors")
+    layer_fitted_ellipsoid = (
+        Expander_ellipsoid.coefficients_,
+        properties,
+        "vectors",
+    )
 
     # Quadrature points on ellipsoid
     features = {
@@ -734,20 +683,18 @@ def comprehensive_analysis(
         "name": "Result of lebedev quadrature on ellipsoid",
         "features": features,
         "metadata": metadata,
-        "face_color": _METADATAKEY_STRESS_TISSUE,
-        "face_colormap": "twilight",
-        "size": size,
     }
     layer_quadrature_ellipsoid = (
         quadrature_points_ellipsoid,
         properties,
-        "points",
+        "surface",
     )
 
-    # Curvatures and stresses: Show on droplet surface (points)
+    # Curvatures and stresses: Show on droplet surface
     features = {
-        _METADATAKEY_MEAN_CURVATURE: mean_curvature_droplet,
-        _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
+        _METADATAKEY_MEAN_CURVATURE: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_MEAN_CURVATURE
+        ],
         _METADATAKEY_STRESS_CELL: stress_cell,
         _METADATAKEY_STRESS_TOTAL: stress_total,
         _METADATAKEY_STRESS_TOTAL_RADIAL: stress_total_radial,
@@ -759,13 +706,24 @@ def comprehensive_analysis(
         ],
     }
     metadata = {
-        _METADATAKEY_GAUSS_BONNET_REL: gauss_bonnet_relative,
-        _METADATAKEY_GAUSS_BONNET_ABS: gauss_bonnet_absolute,
-        _METADATAKEY_GAUSS_BONNET_ABS_RAD: gauss_bonnet_absolute_radial,
-        _METADATAKEY_GAUSS_BONNET_REL_RAD: gauss_bonnet_relative_radial,
+        _METADATAKEY_GAUSS_BONNET_REL: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_GAUSS_BONNET_REL
+        ],
+        _METADATAKEY_GAUSS_BONNET_ABS: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_GAUSS_BONNET_ABS
+        ],
+        _METADATAKEY_GAUSS_BONNET_ABS_RAD: Expander_Lebedev_droplet_radial.properties[
+            _METADATAKEY_GAUSS_BONNET_ABS
+        ],
+        _METADATAKEY_GAUSS_BONNET_REL_RAD: Expander_Lebedev_droplet_radial.properties[
+            _METADATAKEY_GAUSS_BONNET_REL
+        ],
+        _METADATAKEY_MEAN_CURVATURE_DIFFERENCE: delta_mean_curvature,
         _METADATAKEY_H0_VOLUME_INTEGRAL: H0_volume_droplet,
         _METADATAKEY_H0_ARITHMETIC: H0_arithmetic_droplet,
-        _METADATAKEY_H0_SURFACE_INTEGRAL: H0_surface_droplet,
+        _METADATAKEY_H0_SURFACE_INTEGRAL: Expander_Lebedev_droplet.properties[
+            _METADATAKEY_H0_SURFACE_INTEGRAL
+        ],
         _METADATAKEY_S2_VOLUME_INTEGRAL: S2_volume_droplet,
         _METADATAKEY_STRESS_CELL_NEAREST_PAIR_ANISO: extrema_cellular_stress[
             1
@@ -779,17 +737,17 @@ def comprehensive_analysis(
         _METADATAKEY_STRESS_CELL_ALL_PAIR_DIST: extrema_cellular_stress[1][
             "metadata"
         ]["all_pair_distance"],
+        _METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
+        _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
+        _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue,
     }
 
     properties = {
         "name": "Result of lebedev quadrature (droplet)",
         "features": features,
         "metadata": metadata,
-        "face_colormap": "twilight",
-        "face_color": _METADATAKEY_STRESS_CELL,
-        "size": size,
     }
-    layer_quadrature = (quadrature_points, properties, "points")
+    layer_quadrature = (quadrature_surface, properties, "surface")
 
     max_min_geodesics_total[1]["name"] = (
         "Total stress: " + max_min_geodesics_total[1]["name"]
@@ -804,14 +762,6 @@ def comprehensive_analysis(
         "Cell stress: " + min_max_geodesics_cell[1]["name"]
     )
 
-    metadata = {
-        _METADATAKEY_AUTOCORR_SPATIAL_TOTAL: autocorrelations_total,
-        _METADATAKEY_AUTOCORR_SPATIAL_CELL: autocorrelations_cell,
-        _METADATAKEY_AUTOCORR_SPATIAL_TISSUE: autocorrelations_tissue,
-    }
-    properties = {"name": "stress_autocorrelations", "metadata": metadata}
-    layer_surface_autocorrelation = (surface_droplet, properties, "surface")
-
     return [
         layer_spherical_harmonics,
         layer_fitted_ellipsoid_points,
@@ -822,5 +772,4 @@ def comprehensive_analysis(
         min_max_geodesics_total,
         max_min_geodesics_cell,
         min_max_geodesics_cell,
-        layer_surface_autocorrelation,
     ]

@@ -9,7 +9,6 @@ import numpy as np
 from magicgui.widgets import create_widget
 from napari.layers import Image, Layer
 from napari.types import ImageData, LayerDataTuple
-from napari_tools_menu import register_dock_widget
 from qtpy import uic
 from qtpy.QtCore import QEvent, QObject
 from qtpy.QtWidgets import QWidget
@@ -17,9 +16,6 @@ from qtpy.QtWidgets import QWidget
 from .._utils.frame_by_frame import frame_by_frame
 
 
-@register_dock_widget(
-    menu="Surfaces > Droplet reconstruction toolbox (n-STRESS)"
-)
 class droplet_reconstruction_toolbox(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 

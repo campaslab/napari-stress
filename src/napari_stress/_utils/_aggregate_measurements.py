@@ -236,16 +236,30 @@ def aggregate_singular_values(
             continue
         if _METADATAKEY_STRESS_TOTAL in layer[1]["features"]:
             df_total_stress = pd.DataFrame(layer[1]["features"])
-            df_total_stress["time"] = layer[0][:, 0] * time_step
+
+            if n_frames > 1:
+                df_total_stress["time"] = (
+                    layer[1]["features"]["frame"] * time_step
+                )
+            else:
+                df_total_stress["time"] = np.zeros(
+                    len(df_total_stress), dtype=float
+                )
 
         if _METADATAKEY_STRESS_TISSUE in layer[1]["features"]:
             df_tissue_stress = pd.DataFrame(layer[1]["features"])
-            df_tissue_stress["time"] = layer[0][:, 0] * time_step
+
+            if n_frames > 1:
+                df_tissue_stress["time"] = layer[0][0][:, 0] * time_step
+            else:
+                df_tissue_stress["time"] = np.zeros(
+                    len(df_tissue_stress), dtype=float
+                )
 
     df_over_time["time"] = df_over_time["frame"] * time_step
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_TOTAL] = (
         temporal_autocorrelation(
-            df_total_stress, "stress_total_radial", frame_column_name="frame"
+            df_total_stress, "stress_total", frame_column_name="frame"
         )
     )
     df_over_time[_METADATAKEY_AUTOCORR_TEMPORAL_CELL] = (

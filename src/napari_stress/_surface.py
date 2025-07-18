@@ -1,14 +1,10 @@
 import numpy as np
 import vedo
 from napari.types import PointsData, SurfaceData, VectorsData
-from napari_tools_menu import register_function
 
 from napari_stress._utils.frame_by_frame import frame_by_frame
 
 
-@register_function(
-    menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)"
-)
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_points(
     points: PointsData, inside_fraction: float = 0.673
@@ -36,9 +32,6 @@ def fit_ellipsoid_to_pointcloud_points(
     return output_points
 
 
-@register_function(
-    menu="Points > Fit ellipsoid to pointcloud (vedo, n-STRESS)"
-)
 @frame_by_frame
 def fit_ellipsoid_to_pointcloud_vectors(
     points: PointsData, inside_fraction: float = 0.673, normalize: bool = False
@@ -82,9 +75,6 @@ def fit_ellipsoid_to_pointcloud_vectors(
     return vectors
 
 
-@register_function(
-    menu="Points > Create surface from points (flying edges, vedo, n-STRESS)"
-)
 @frame_by_frame
 def reconstruct_surface(
     points: PointsData,
@@ -122,9 +112,6 @@ def reconstruct_surface(
     return (surface.vertices, np.asarray(surface.cells, dtype=int))
 
 
-@register_function(
-    menu="Points > Create points from surface vertices (n-STRESS)"
-)
 @frame_by_frame
 def extract_vertex_points(surface: SurfaceData) -> PointsData:
     """
@@ -142,7 +129,6 @@ def extract_vertex_points(surface: SurfaceData) -> PointsData:
     return surface[0]
 
 
-@register_function(menu="Surfaces > Smoothing (Windowed Sinc, vedo, n-STRESS)")
 @frame_by_frame
 def smooth_sinc(
     surface: SurfaceData,
@@ -163,7 +149,6 @@ def smooth_sinc(
     return (mesh.vertices, np.asarray(mesh.cells, dtype=int))
 
 
-@register_function(menu="Surfaces > Smoothing (MLS2D, vedo, n-STRESS)")
 @frame_by_frame
 def smoothMLS2D(
     points: PointsData, factor: float = 0.5, radius: float = None
@@ -177,7 +162,6 @@ def smoothMLS2D(
         return pointcloud.vertices
 
 
-@register_function(menu="Surfaces > Simplify (decimate, vedo, n-STRESS)")
 @frame_by_frame
 def decimate(surface: SurfaceData, fraction: float = 0.1) -> SurfaceData:
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
