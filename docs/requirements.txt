@@ -2,5 +2,4 @@ jupyter-book>=1.0.4
 napari
 PyQt5
 qtpy
-napari-stress>=0.3.9
 sphinx>=5.0.0
