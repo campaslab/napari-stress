@@ -1,5 +1,4 @@
 jupyter-book>=1.0.4
-napari
 PyQt5
 qtpy
 sphinx>=5.0.0
