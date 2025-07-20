@@ -18,7 +18,7 @@ and has been made open source in [this repository](https://github.com/campaslab/
 
 ## Usage
 
-For documentation on how to use napari-stress both interactively from the napari-viewer or from code, please visit the [**documentation**](https://campaslab.github.io/napari-stress/intro.html)
+For documentation on how to use napari-stress both interactively from the napari-viewer or from code, please visit the [**documentation**](https://napari-stress.readthedocs.io/)
 
 
 ## Installation
