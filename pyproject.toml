@@ -59,7 +59,7 @@ napari-stress = "napari_stress:napari.yaml"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/campaslab/napari-stress/issues"
-"Documentation" = "https://campaslab.github.io/napari-stress"
+"Documentation" = "https://napari-stress.readthedocs.io/"
 "Source Code" = "https://github.com/campaslab/napari-stress"
 "User Support" = "https://github.com/campaslab/napari-stress/issues"
 
