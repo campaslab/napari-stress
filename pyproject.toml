@@ -33,7 +33,7 @@ dependencies = [
     "numpy<2.0.0",
     "pandas",
     "scikit-image",
-    "scipy>=1.9.0",
+    "scipy>=1.15.0",
     "seaborn",
     "tqdm",
     "napari-vedo-bridge>=0.2.2",
