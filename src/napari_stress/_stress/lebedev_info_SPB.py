@@ -177,7 +177,8 @@ def Der_Phi_Basis_Fn(
                 return (
                     np.sqrt((N_Coef) * (N_Coef + 1))
                     * (
-                        (np.exp(-1j * Theta)) * sph_harm_y(1, N_Coef, Theta, Phi)
+                        (np.exp(-1j * Theta))
+                        * sph_harm_y(1, N_Coef, Theta, Phi)
                     ).real
                 )
             else:
