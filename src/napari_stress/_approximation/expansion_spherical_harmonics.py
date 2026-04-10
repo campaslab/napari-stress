@@ -315,7 +315,7 @@ class SphericalHarmonicsExpander(Expander):
         """
         Perform least squares harmonic fit on input points using vectorized spherical harmonics.
         """
-        from scipy.special import sph_harm
+        from scipy.special import sph_harm_y
 
         U, V = sample_locations
 
@@ -325,10 +325,10 @@ class SphericalHarmonicsExpander(Expander):
             for m in range(-1 * n, n + 1):
                 Y_mn_coors_in = []
                 if m >= 0:
-                    Y_mn_coors_in = sph_harm(m, n, U, V).real
+                    Y_mn_coors_in = sph_harm_y(m, n, U, V).real
 
                 else:  # m<0, we use Y^(-m)_n.imag
-                    Y_mn_coors_in = sph_harm(-1 * m, n, U, V).imag
+                    Y_mn_coors_in = sph_harm_y(-1 * m, n, U, V).imag
                 All_Y_mn_pt_in.append(Y_mn_coors_in)
 
         coefficients = np.linalg.lstsq(np.stack(All_Y_mn_pt_in).T, values)[0]

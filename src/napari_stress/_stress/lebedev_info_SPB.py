@@ -9,7 +9,7 @@ import pickle as pkl
 
 import mpmath
 import numpy as np
-from scipy.special import sph_harm
+from scipy.special import sph_harm_y
 
 from .charts_SPB import Cart_To_Coor_A, Domain, eta_A
 from .lebedev_write_SPB import Lebedev  # lists all Lebdv quadratures
@@ -109,10 +109,10 @@ def get_quad_degree(quad_pts):
 
 def Eval_SPH_Basis(M_Coef, N_Coef, Theta, Phi):
     if M_Coef >= 0:
-        return sph_harm(M_Coef, N_Coef, Theta, Phi).real
+        return sph_harm_y(M_Coef, N_Coef, Theta, Phi).real
 
     else:  # m<0, we use Y^(-m)_n.imag
-        return sph_harm(-1 * M_Coef, N_Coef, Theta, Phi).imag
+        return sph_harm_y(-1 * M_Coef, N_Coef, Theta, Phi).imag
 
 
 # Evaluates d_phi(Y^m_n) at SINGLE PT
@@ -132,7 +132,7 @@ def Der_Phi_Basis_Fn(
                     np.sqrt((N_Coef) * (N_Coef + 1))
                     * (
                         (np.e ** (-1j * Theta))
-                        * sph_harm(1, N_Coef, Theta, Phi)
+                        * sph_harm_y(1, N_Coef, Theta, Phi)
                     ).real
                 )
             else:
@@ -140,7 +140,7 @@ def Der_Phi_Basis_Fn(
 
         elif M_Coef < 0:
             m_sph = -1 * M_Coef
-            Der_Phi_Val += (m_sph * mpmath.cot(Phi)) * sph_harm(
+            Der_Phi_Val += (m_sph * mpmath.cot(Phi)) * sph_harm_y(
                 m_sph, N_Coef, Theta, Phi
             ).imag
 
@@ -149,13 +149,13 @@ def Der_Phi_Basis_Fn(
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
                         (np.e ** (-1j * Theta))
-                        * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                     ).imag
                 )
 
         else:  # M_Coef >= 0
             m_sph = M_Coef
-            Der_Phi_Val += (m_sph * mpmath.cot(Phi)) * sph_harm(
+            Der_Phi_Val += (m_sph * mpmath.cot(Phi)) * sph_harm_y(
                 m_sph, N_Coef, Theta, Phi
             ).real
 
@@ -164,7 +164,7 @@ def Der_Phi_Basis_Fn(
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
                         (np.e ** (-1j * Theta))
-                        * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                     ).real
                 )
 
@@ -177,7 +177,8 @@ def Der_Phi_Basis_Fn(
                 return (
                     np.sqrt((N_Coef) * (N_Coef + 1))
                     * (
-                        (np.exp(-1j * Theta)) * sph_harm(1, N_Coef, Theta, Phi)
+                        (np.exp(-1j * Theta))
+                        * sph_harm_y(1, N_Coef, Theta, Phi)
                     ).real
                 )
             else:
@@ -185,7 +186,7 @@ def Der_Phi_Basis_Fn(
 
         elif M_Coef < 0:
             m_sph = -1 * M_Coef
-            Der_Phi_Val += (m_sph * (1.0 / np.tan(Phi))) * sph_harm(
+            Der_Phi_Val += (m_sph * (1.0 / np.tan(Phi))) * sph_harm_y(
                 m_sph, N_Coef, Theta, Phi
             ).imag
 
@@ -194,13 +195,13 @@ def Der_Phi_Basis_Fn(
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
                         (np.exp(-1j * Theta))
-                        * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                     ).imag
                 )
 
         else:  # M_Coef >= 0
             m_sph = M_Coef
-            Der_Phi_Val += (m_sph * (1.0 / np.tan(Phi))) * sph_harm(
+            Der_Phi_Val += (m_sph * (1.0 / np.tan(Phi))) * sph_harm_y(
                 m_sph, N_Coef, Theta, Phi
             ).real
 
@@ -209,7 +210,7 @@ def Der_Phi_Basis_Fn(
                     np.sqrt((N_Coef - m_sph) * (N_Coef + m_sph + 1))
                     * (
                         (np.exp(-1j * Theta))
-                        * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                        * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                     ).real
                 )
 
@@ -227,7 +228,7 @@ def Der_Phi_Phi_Basis_Fn(
         Der_Phi_Phi_Val += (
             m_sph
             * (m_sph * (mpmath.cot(Phi) ** 2) - (mpmath.csc(Phi) ** 2))
-            * sph_harm(m_sph, N_Coef, Theta, Phi).imag
+            * sph_harm_y(m_sph, N_Coef, Theta, Phi).imag
         )
 
         if m_sph < N_Coef:
@@ -237,7 +238,7 @@ def Der_Phi_Phi_Basis_Fn(
                 * mpmath.cot(Phi)
                 * (
                     (np.e ** (-1j * Theta))
-                    * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                    * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                 ).imag
             )
 
@@ -251,7 +252,7 @@ def Der_Phi_Phi_Basis_Fn(
                 )
                 * (
                     (np.e ** (-2j * Theta))
-                    * sph_harm(m_sph + 2, N_Coef, Theta, Phi)
+                    * sph_harm_y(m_sph + 2, N_Coef, Theta, Phi)
                 ).imag
             )
 
@@ -260,7 +261,7 @@ def Der_Phi_Phi_Basis_Fn(
         Der_Phi_Phi_Val += (
             m_sph
             * (m_sph * (mpmath.cot(Phi) ** 2) - (mpmath.csc(Phi) ** 2))
-            * sph_harm(m_sph, N_Coef, Theta, Phi).real
+            * sph_harm_y(m_sph, N_Coef, Theta, Phi).real
         )
 
         if m_sph < N_Coef:
@@ -270,7 +271,7 @@ def Der_Phi_Phi_Basis_Fn(
                 * mpmath.cot(Phi)
                 * (
                     (np.e ** (-1j * Theta))
-                    * sph_harm(m_sph + 1, N_Coef, Theta, Phi)
+                    * sph_harm_y(m_sph + 1, N_Coef, Theta, Phi)
                 ).real
             )
         if m_sph < (N_Coef - 1):
@@ -283,7 +284,7 @@ def Der_Phi_Phi_Basis_Fn(
                 )
                 * (
                     (np.e ** (-2j * Theta))
-                    * sph_harm(m_sph + 2, N_Coef, Theta, Phi)
+                    * sph_harm_y(m_sph + 2, N_Coef, Theta, Phi)
                 ).real
             )
 
