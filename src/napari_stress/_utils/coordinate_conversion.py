@@ -71,7 +71,7 @@ def polynomial_to_parameters3D(coefficients: np.ndarray):
     # print('normed \n',R3test)
     s1 = -R[3, 3]
     R3S = R3 / s1
-    (el, ec) = np.linalg.eig(R3S)
+    el, ec = np.linalg.eig(R3S)
 
     recip = 1.0 / np.abs(el)
     axes = np.sqrt(recip)
